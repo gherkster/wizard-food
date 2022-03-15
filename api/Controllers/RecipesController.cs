@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Net;
 using API.Models;
 using API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -69,5 +70,28 @@ public class RecipesController
     {
         await _dbRepository.DeleteRecipe(id);
         return new OkResult();
+    }
+
+    [HttpPost("slugs")]
+    public async Task<ActionResult> CreateSlug(string chosenSlug)
+    {
+        var slugs = await _dbRepository.GetQueryableRecipes().Select(r => r.Slug).ToListAsync();
+
+        if (slugs.All(s => s != chosenSlug)) return new OkResult();
+
+        var slugsWithIdentifiers = slugs
+            .Where(s => s.Contains(chosenSlug))                 // Check all the matching slugs in use ...
+            .Where(s => char.IsDigit(chosenSlug[^1])).ToList(); // which have an identifier appended.
+
+        // Now select just the identifier which is the maximum currently in use
+        var maxSlugIdentifier = slugsWithIdentifiers.Count > 0
+            ? slugsWithIdentifiers.Select(s => int.Parse(s[^1].ToString())).Max()
+            : 0;
+        
+        return new ContentResult()
+        {
+            // Increment the highest matching slug identifier currently in use to provide a unique slug
+            Content = string.Concat(chosenSlug, "-", maxSlugIdentifier + 1)
+        };
     }
 }

@@ -10,7 +10,7 @@ using VueCliMiddleware;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddSingleton<ILiteDbRepository, LiteDbRepository>();
+builder.Services.AddSingleton<ILiteDbRepository, LiteDbRepository>(); // https://github.com/mbdavid/LiteDB/wiki/Concurrency
 builder.Services.Configure<DatabaseOptions>(builder.Configuration.GetSection(DatabaseOptions.Position));
 
 builder.Services.AddControllers();
