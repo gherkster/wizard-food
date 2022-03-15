@@ -1,3 +1,3 @@
 # Recipe Manager
 
-Personal recipe manager backend and ui integrating with Strapi content management system
+Personal recipe manager, using ASP.NET 6 API and Vue SPA

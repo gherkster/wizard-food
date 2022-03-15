@@ -45,5 +45,4 @@ public class LiteDbRepository : ILiteDbRepository
     public async Task UpdateRecipe(Guid id, Recipe recipe) => await _db.GetCollection<Recipe>(nameof(Recipe)).UpdateAsync(id, recipe);
 
     public async Task DeleteRecipe(Guid id) => await _db.GetCollection<Recipe>(nameof(Recipe)).DeleteAsync(id);
-
 }
