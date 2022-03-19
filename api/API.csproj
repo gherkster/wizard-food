@@ -8,16 +8,23 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="LiteDB" Version="5.0.11" />
-        <PackageReference Include="LiteDB.Async" Version="0.0.11" />
         <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0-preview.2.22153.1">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.0-preview.2.22153.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
         <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="6.2.3" />
         <PackageReference Include="VueCliMiddleware" Version="6.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Persistence" />
+      <None Remove="Persistence\sqlite.db" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="Persistence\sqlite.db" />
     </ItemGroup>
 
 </Project>

@@ -14,7 +14,7 @@
       </v-row>
       <!-- Ingredients -->
       <h2>Ingredients</h2>
-      <v-row v-for="item in model.ingredients" :key="item.id">
+      <v-row v-for="item in model.ingredients" :key="item.uuid">
         <v-text-field
           v-if="item.type === 'section'"
           label="Section"
@@ -29,7 +29,7 @@
       <v-btn @click="addIngredient">Add ingredient</v-btn>
       <!-- Instructions -->
       <h2>Instructions</h2>
-      <v-row v-for="item in model.instructions" :key="item.id">
+      <v-row v-for="item in model.instructions" :key="item.uuid">
         <v-text-field
           v-if="item.type === 'section'"
           label="Section"
@@ -54,29 +54,57 @@
           />
         </v-col>
         <v-col>
+          <v-combobox label="Category" v-model="model.category" :items="categories" />
+        </v-col>
+        <v-col>
           <v-combobox label="Cuisine" v-model="model.cuisine" :items="cuisines"/>
         </v-col>
       </v-row>
       <v-row>
+        <p>Preparation time</p>
         <v-col>
-          <v-text-field label="Prep time" v-model="model.preparationTime" />
-          <v-select v-model="model.preparationTimeUnits" :items="timeOptions" />
+          <v-text-field label="Minutes" v-model="model.preparationTimeMinutes" />
         </v-col>
         <v-col>
-          <v-text-field label="Cooking time" v-model="model.cookingTime" />
-          <v-select v-model="model.cookingTimeUnits" :items="timeOptions" />
+          <v-text-field label="Hours" v-model="model.preparationTimeHours" />
         </v-col>
         <v-col>
-          <v-text-field label="Custom time" v-model="model.customTime" />
-          <v-select v-model="model.customTimeUnits" :items="timeOptions" />
+          <v-text-field label="Days" v-model="model.preparationTimeDays" />
+        </v-col>
+      </v-row>
+      <v-row>
+        <p>Cooking time</p>
+        <v-col>
+          <v-text-field label="Minutes" v-model="model.cookingTimeMinutes" />
+        </v-col>
+        <v-col>
+          <v-text-field label="Hours" v-model="model.cookingTimeHours" />
+        </v-col>
+        <v-col>
+          <v-text-field label="Days" v-model="model.cookingTimeDays" />
+        </v-col>
+      </v-row>
+      <p>Custom times</p>
+      <v-row v-for="item in model.customTimes" :key="item.uuid">
+        <v-text-field label="Minutes" v-model="item.customTimeMinutes" />
+        <v-text-field label="Hours" v-model="item.customTimeHours" />
+        <v-text-field label="Days" v-model="item.customTimeDays" />
+        <v-combobox
+          label="Type"
+          v-model="item.customTimeLabel"
+          :items="customTimeTypes"
+        />
+      </v-row>
+      <v-btn @click="addCustomTime">Add custom time</v-btn>
+      <v-row>
+        <v-col>
           <v-combobox
-            label="Custom time type"
-            v-model="model.customTimeTypeLabel"
-            :items="customTimeTypes"
+            label="Tags"
+            chips
+            multiple
+            v-model="model.tags"
+            :items="tags"
           />
-        </v-col>
-        <v-col>
-          <v-combobox label="Tags" chips multiple v-model="model.tags" :items="tags" />
           <v-text-field label="Slug" prefix="/" v-model="model.slug" />
         </v-col>
       </v-row>
@@ -99,7 +127,7 @@
           <v-text-field label="Sodium" v-model="model.nutrition.sodium" />
         </v-col>
       </v-row>
-      <v-btn @click="submitRecipe">Submit</v-btn>
+      <v-btn @click="submit">Submit</v-btn>
     </v-form>
   </div>
 </template>
@@ -115,6 +143,7 @@ export default {
     timeOptions: ["minutes", "hours", "days"],
     customTimeTypes: ["fermenting", "aging"],
     servingTypes: ["servings", "slices"],
+    categories: ["main", "side", "snack", "salad", "dessert", "drink"],
     cuisines: ["chinese", "thai"],
     tags: ["food", "meat"],
     model: {
@@ -125,13 +154,13 @@ export default {
       cuisine: "",
       servings: 0,
       servingType: "",
-      preparationTime: "",
-      preparationTimeUnits: "minutes",
-      cookingTime: "",
-      cookingTimeUnits: "minutes",
-      customTime: "",
-      customTimeUnits: "minutes",
-      customTimeTypeLabel: "",
+      preparationTimeDays: 0,
+      preparationTimeHours: 0,
+      preparationTimeMinutes: 0,
+      cookingTimeDays: 0,
+      cookingTimeHours: 0,
+      cookingTimeMinutes: 0,
+      customTimes: [],
       nutrition: {
         kj: 0,
         protein: 0,
@@ -149,36 +178,46 @@ export default {
     },
     addIngredientsSection() {
       this.model.ingredients.push({
-        id: uuid.v1(),
-        type: "section",
+        uuid: uuid.v1(),
+        itemType: "section",
         label: "",
         note: "",
       });
     },
     addIngredient() {
       this.model.ingredients.push({
-        id: uuid.v1(),
-        type: "ingredient",
+        uuid: uuid.v1(),
+        itemType: "item",
         label: "",
         note: "",
       });
     },
     addInstructionsSection() {
       this.model.instructions.push({
-        id: uuid.v1(),
-        type: "section",
+        uuid: uuid.v1(),
+        itemType: "section",
         label: "",
       });
     },
     addInstruction() {
       this.model.instructions.push({
-        id: uuid.v1(),
-        type: "ingredient",
+        uuid: uuid.v1(),
+        itemType: "item",
         label: "",
       });
     },
-    submitRecipe() {
+    addCustomTime() {
+      this.model.customTimes.push({
+        uuid: uuid.v1(),
+        customTimeDays: 0,
+        customTimeHours: 0,
+        customTimeMinutes: 0,
+        customTimeLabel: "",
+      });
+    },
+    submit() {
       this.$refs.editor.validate();
+
       console.log("stringifying");
       let x = JSON.stringify(this.model);
       console.log(x);
