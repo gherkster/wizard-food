@@ -1,6 +1,6 @@
+using System.Text.Json.Serialization;
 using API.Configs;
-using API.Repositories;
-using API.Repositories.Interfaces;
+using API.Models.Database.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.SpaServices;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,10 +10,13 @@ using VueCliMiddleware;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddSingleton<ILiteDbRepository, LiteDbRepository>(); // https://github.com/mbdavid/LiteDB/wiki/Concurrency
+builder.Services.AddDbContext<DatabaseContext>();
 builder.Services.Configure<DatabaseOptions>(builder.Configuration.GetSection(DatabaseOptions.Position));
 
-builder.Services.AddControllers();
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(opt => opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
 builder.Services.AddSpaStaticFiles(opt => opt.RootPath = "../frontend/dist");
 
 builder.Services.AddEndpointsApiExplorer();

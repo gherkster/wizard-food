@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using System.Net;
+using API.Extensions;
 using API.Models;
-using API.Repositories.Interfaces;
+using API.Models.View;
+using API.Models.Database.Context;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace API.Controllers;
@@ -11,87 +14,110 @@ namespace API.Controllers;
 [Route("[controller]")]
 public class RecipesController
 {
-    private readonly ILiteDbRepository _dbRepository;
+    private readonly DatabaseContext _db;
     private readonly ILogger<RecipesController> _logger;
 
-    public RecipesController(ILiteDbRepository dbRepository, ILogger<RecipesController> logger)
+    public RecipesController(DatabaseContext dbContext, ILogger<RecipesController> logger)
     {
-        _dbRepository = dbRepository;
+        _db = dbContext;
         _logger = logger;
     }
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<Recipe>> GetRecipe([FromRoute] Guid id)
     {
-        var recipe = await _dbRepository.GetRecipe(id);
+        var recipe = await _db.Recipes.FindAsync(id);
         if (recipe == null)
         {
             return new NotFoundResult();
         }
         
-        return recipe;
-    }
-
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes([FromQuery] string? category, [FromQuery] string? cuisine)
-    {
-        var recipes = _dbRepository.GetQueryableRecipes();
-
-        if (category is not null)
-        {
-            recipes = recipes.Where(r => r.Category == category);
-        }
-        if (cuisine is not null)
-        {
-            recipes = recipes.Where(r => r.Cuisine == cuisine);
-        }
-        
-        return await recipes.ToListAsync();
+        return recipe.AsViewModel();
     }
 
     [HttpPost]
     public async Task<ActionResult> CreateRecipe(Recipe recipe)
     {
-        var id = await _dbRepository.CreateRecipe(recipe);
+        var dbRecipe = recipe.AsDatabaseModel();
+
+        // Prevent duplicate keys from being inserted by replacing all provided dropdown options
+        // in the recipe with the matching database entity if it exists
+        var dbOptions = await _db.GetDropdownOptionsAsync();
         
-        //return new CreatedAtActionResult(nameof(GetRecipe), nameof(RecipesController), new { id = recipe.Id}, recipe);
-        return new CreatedResult(id.ToString(), recipe);
+        dbRecipe.Category = dbOptions.Categories.FirstOrDefault(c => c == dbRecipe.Category) ?? dbRecipe.Category;
+        dbRecipe.Cuisine = dbOptions.Cuisines.FirstOrDefault(c => c == dbRecipe.Cuisine) ?? dbRecipe.Cuisine;
+        foreach (var customTime in dbRecipe.CustomTimes)
+        {
+            customTime.Label = dbOptions.CustomTimeTypes.FirstOrDefault(ct => ct == customTime.Label) ?? customTime.Label; 
+        }
+        dbRecipe.ServingType = dbOptions.ServingTypes.FirstOrDefault(st => st == dbRecipe.ServingType) ??
+                               dbRecipe.ServingType;
+        dbRecipe.Tags = dbRecipe.Tags.Select(recipeTag => dbOptions.Tags.FirstOrDefault(dbTag => dbTag == recipeTag) ?? recipeTag).ToList();
+
+        await _db.Recipes.AddAsync(dbRecipe);
+        await _db.SaveChangesAsync();
+        
+        return new CreatedResult(dbRecipe.Id.ToString(), recipe);
     }
 
     [HttpPut("{id:guid}")]
     public async Task<ActionResult> UpdateRecipe(Guid id, Recipe recipe)
     {
-        await _dbRepository.UpdateRecipe(id, recipe);
+        var dbRecipe = await _db.Recipes.FindAsync(id);
+        if (dbRecipe is null)
+        {
+            return new NotFoundResult();
+        }
+        
+        _db.Entry(dbRecipe).CurrentValues.SetValues(recipe.AsDatabaseModel());
+        await _db.SaveChangesAsync();
+        
         return new OkResult();
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> DeleteRecipe(Guid id)
     {
-        await _dbRepository.DeleteRecipe(id);
+        var recipe = await _db.Recipes.FindAsync(id);
+        if (recipe is null)
+        {
+            return new NotFoundResult();
+        }
+        
+        _db.Recipes.Remove(recipe);
+        await _db.SaveChangesAsync();
+        
         return new OkResult();
     }
 
     [HttpPost("slugs")]
     public async Task<ActionResult> CreateSlug(string chosenSlug)
     {
-        var slugs = await _dbRepository.GetQueryableRecipes().Select(r => r.Slug).ToListAsync();
+        var dbSlug = await _db.Slugs.FindAsync(chosenSlug);
+        if (dbSlug is null)
+        {
+            return new OkResult();
+        }
 
-        if (slugs.All(s => s != chosenSlug)) return new OkResult();
-
-        var slugsWithIdentifiers = slugs
-            .Where(s => s.Contains(chosenSlug))                 // Check all the matching slugs in use ...
-            .Where(s => char.IsDigit(chosenSlug[^1])).ToList(); // which have an identifier appended.
+        var allSlugs = _db.Slugs.AsQueryable();
+        
+        var slugsWithIdentifiers = await allSlugs
+            .Where(s => s.Label.Contains(chosenSlug))                    // Check all the matching slugs in use ...
+            .Where(s => char.IsDigit(chosenSlug[chosenSlug.Length - 1])) // which have an identifier appended.
+            .ToListAsync(); 
 
         // Now select just the identifier which is the maximum currently in use
-        var maxSlugIdentifier = slugsWithIdentifiers.Count > 0
-            ? slugsWithIdentifiers.Select(s => int.Parse(s[^1].ToString())).Max()
+        var largestSlugIdentifier = slugsWithIdentifiers.Count > 0
+            ? slugsWithIdentifiers.Select(s => int.Parse(s.Label[^1].ToString())).Max()
             : 0;
         
         return new ContentResult()
         {
             // Increment the highest matching slug identifier currently in use to provide a unique slug
-            Content = string.Concat(chosenSlug, "-", maxSlugIdentifier + 1)
+            Content = string.Concat(chosenSlug, "-", largestSlugIdentifier + 1)
         };
     }
+
+    [HttpGet("editor/dropdown-options")]
+    public async Task<ActionResult<DropdownOptions>> GetDropdownOptions() => await _db.GetDropdownOptionsAsync();
 }
