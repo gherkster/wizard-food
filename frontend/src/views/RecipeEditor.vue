@@ -5,59 +5,31 @@
     <v-form ref="editor">
       <v-row>
         <v-col>
-          <v-text-field label="Recipe Title" v-model="model.title" />
+          <v-text-field label="Recipe Title" v-model="model.title" :rules="[rules.required('Title')]" />
         </v-col>
         <v-col>
           <v-file-input accept="image/*" label="Recipe Banner" />
           <!-- TODO setup v-model -->
         </v-col>
       </v-row>
-      <!-- Ingredients -->
       <h2>Ingredients</h2>
-      <v-row v-for="item in model.ingredients" :key="item.uuid">
-        <v-text-field
-          v-if="item.type === 'section'"
-          label="Section"
-          v-model="item.label"
-        />
-        <template v-else>
-          <v-text-field label="Ingredient" v-model="item.label" />
-          <v-text-field label="Notes" v-model="item.note" />
-        </template>
-      </v-row>
-      <v-btn @click="addIngredientsSection">Add ingredient section</v-btn>
-      <v-btn @click="addIngredient">Add ingredient</v-btn>
-      <!-- Instructions -->
+      <item-list v-model="model.ingredients" item-label="Ingredient" has-note />
       <h2>Instructions</h2>
-      <v-row v-for="item in model.instructions" :key="item.uuid">
-        <v-text-field
-          v-if="item.type === 'section'"
-          label="Section"
-          v-model="item.label"
-        />
-        <v-text-field v-else label="Instruction" v-model="item.label" />
-        <!-- TODO: Validation to prevent duplicate instructions -->
-      </v-row>
-      <v-btn @click="addInstructionsSection">Add instruction section</v-btn>
-      <v-btn @click="addInstruction">Add instruction</v-btn>
+      <item-list v-model="model.instructions" item-label="Instruction" />
       <!-- Metadata -->
       <h2>Metadata</h2>
       <v-row>
         <v-col>
-          <v-text-field label="Servings" v-model="model.servings" />
+          <v-text-field label="Servings" v-model="model.servings" :rules="[rules.required('Servings')]" />
         </v-col>
         <v-col>
-          <v-combobox
-            label="Serving Type"
-            v-model="model.servingType"
-            :items="servingTypes"
-          />
+          <v-combobox label="Serving Type" v-model="model.servingType" :items="servingTypes" :rules="[rules.required('Serving Type')]" />
         </v-col>
         <v-col>
-          <v-combobox label="Category" v-model="model.category" :items="categories" />
+          <v-combobox label="Category" v-model="model.category" :items="categories" :rules="[rules.required('Category')]" />
         </v-col>
         <v-col>
-          <v-combobox label="Cuisine" v-model="model.cuisine" :items="cuisines"/>
+          <v-combobox label="Cuisine" v-model="model.cuisine" :items="cuisines" :rules="[rules.required('Cuisine')]" />
         </v-col>
       </v-row>
       <v-row>
@@ -93,19 +65,23 @@
           label="Type"
           v-model="item.customTimeLabel"
           :items="customTimeTypes"
+          :rules="[rules.required('Type'), noDuplicateCustomTimes(model.customTimes)]"
         />
       </v-row>
       <v-btn @click="addCustomTime">Add custom time</v-btn>
       <v-row>
         <v-col>
-          <v-combobox
-            label="Tags"
-            chips
-            multiple
-            v-model="model.tags"
-            :items="tags"
+          <v-combobox label="Tags" chips multiple v-model="model.tags" :items="tags" />
+          <v-text-field
+            label="Slug"
+            prefix="/"
+            v-model="model.slug"
+            :rules="[rules.required('Slug')]"
+            append-outer-icon="mdi-reload"
+            @click:append-outer="createSlug"
+            :hint="suggestedSlug ? 'For example: ' + suggestedSlug : ''"
+            persistent-hint
           />
-          <v-text-field label="Slug" prefix="/" v-model="model.slug" />
         </v-col>
       </v-row>
       <!-- Nutrition -->
@@ -118,7 +94,7 @@
           <v-text-field label="Protein" v-model="model.nutrition.protein" />
         </v-col>
         <v-col>
-          <v-text-field label="Carbohydrates" v-model="model.nutrition.carbohydrates"/>
+          <v-text-field label="Carbohydrates" v-model="model.nutrition.carbohydrates" />
         </v-col>
         <v-col>
           <v-text-field label="Fat" v-model="model.nutrition.fat" />
@@ -133,94 +109,119 @@
 </template>
 
 <script>
+import axios from "axios";
 import { uuid } from "vue-uuid";
+import ItemList from "@/components/ItemList";
+import { isRequired, noDuplicates } from "@/scripts/validations";
 
 export default {
   name: "RecipeEditor",
-  components: {},
+  components: { ItemList },
   data: () => ({
-    unitOptions: ["g", "kg", "tsp", "tbsp"],
     timeOptions: ["minutes", "hours", "days"],
-    customTimeTypes: ["fermenting", "aging"],
-    servingTypes: ["servings", "slices"],
-    categories: ["main", "side", "snack", "salad", "dessert", "drink"],
-    cuisines: ["chinese", "thai"],
-    tags: ["food", "meat"],
+    customTimeTypes: [],
+    servingTypes: [],
+    categories: [],
+    cuisines: [],
+    tags: [],
     model: {
       title: "",
       ingredients: [],
       instructions: [],
       category: "",
       cuisine: "",
-      servings: 0,
+      servings: "",
       servingType: "",
-      preparationTimeDays: 0,
-      preparationTimeHours: 0,
-      preparationTimeMinutes: 0,
-      cookingTimeDays: 0,
-      cookingTimeHours: 0,
-      cookingTimeMinutes: 0,
+      preparationTimeDays: "",
+      preparationTimeHours: "",
+      preparationTimeMinutes: "",
+      cookingTimeDays: "",
+      cookingTimeHours: "",
+      cookingTimeMinutes: "",
       customTimes: [],
       nutrition: {
-        kj: 0,
-        protein: 0,
-        carbohydrates: 0,
-        fat: 0,
-        sodium: 0,
+        kj: "",
+        protein: "",
+        carbohydrates: "",
+        fat: "",
+        sodium: "",
       },
       tags: [],
-      slug: "",
+      slug: null,
+    },
+    rules: {
+      required(labelName) {
+        return (value) => isRequired(value, `${labelName} is required`);
+      },
     },
   }),
+  computed: {
+    suggestedSlug: function () {
+      return this.model.title
+        .toLowerCase()
+        .replace(/[^\w ]+/g, "")
+        .replace(/ +/g, "-");
+    },
+    noDuplicateCustomTimes: function () {
+      return (values) =>
+        noDuplicates(
+          values.map((v) => v.customTimeLabel),
+          "No duplicate values"
+        );
+    },
+  },
+  async mounted() {
+    await axios
+      .get(process.env.VUE_APP_APIURL + "/recipes/editor/dropdown-options")
+      .then((response) => {
+        this.categories = response.data.categories.map((c) => c.label);
+        this.cuisines = response.data.cuisines.map((c) => c.label);
+        this.customTimeTypes = response.data.customTimeTypes.map((ct) => ct.label);
+        this.servingTypes = response.data.servingTypes.map((st) => st.label);
+        this.tags = response.data.tags.map((t) => t.label);
+
+        // Default to servings if it's a valid option
+        if (this.servingTypes.includes("servings")) {
+          this.model.servingType = "servings";
+        }
+      })
+      .catch((error) => console.log(error));
+  },
   methods: {
     goToRecipes() {
       this.$router.push("/");
     },
-    addIngredientsSection() {
-      this.model.ingredients.push({
-        uuid: uuid.v1(),
-        itemType: "section",
-        label: "",
-        note: "",
-      });
-    },
-    addIngredient() {
-      this.model.ingredients.push({
-        uuid: uuid.v1(),
-        itemType: "item",
-        label: "",
-        note: "",
-      });
-    },
-    addInstructionsSection() {
-      this.model.instructions.push({
-        uuid: uuid.v1(),
-        itemType: "section",
-        label: "",
-      });
-    },
-    addInstruction() {
-      this.model.instructions.push({
-        uuid: uuid.v1(),
-        itemType: "item",
-        label: "",
-      });
-    },
     addCustomTime() {
       this.model.customTimes.push({
         uuid: uuid.v1(),
-        customTimeDays: 0,
-        customTimeHours: 0,
-        customTimeMinutes: 0,
+        customTimeDays: "",
+        customTimeHours: "",
+        customTimeMinutes: "",
         customTimeLabel: "",
       });
     },
-    submit() {
+    async createSlug() {
+      await axios
+        .get(process.env.VUE_APP_APIURL + "/recipes/slugs", {
+          params: {
+            chosenSlug: this.model.slug ?? this.suggestedSlug,
+          },
+        })
+        .then((response) => {
+          if (this.model.slug !== response.data) {
+            // TODO: Notify user that the slug has been updated because the entered one was unavailable
+          }
+          this.model.slug = response.data;
+        })
+        .catch((error) => console.log(error));
+    },
+    async submit() {
       this.$refs.editor.validate();
-
-      console.log("stringifying");
-      let x = JSON.stringify(this.model);
-      console.log(x);
+      console.log(JSON.stringify(this.model));
+      /*await axios
+        .post(process.env.VUE_APP_APIURL + "/recipes", this.model)
+        .then((response) => console.log(response))
+        .catch((error) => console.log(error));*/
     },
   },
 };

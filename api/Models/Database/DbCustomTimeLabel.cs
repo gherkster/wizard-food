@@ -4,8 +4,8 @@ namespace API.Models.Database;
 
 public record DbCustomTimeLabel(string Label)
 {
-    [Key] 
+    [Key]
     public string Label { get; set; } = Label;
 
-    public List<DbCustomTime> CustomTimes { get; set; }
+    public virtual List<DbCustomTime> CustomTimes { get; set; }
 }
