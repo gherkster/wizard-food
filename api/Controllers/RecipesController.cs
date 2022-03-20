@@ -90,13 +90,13 @@ public class RecipesController
         return new OkResult();
     }
 
-    [HttpPost("slugs")]
-    public async Task<ActionResult> CreateSlug(string chosenSlug)
+    [HttpGet("slugs")]
+    public async Task<ActionResult<string>> GetAvailableSlug(string chosenSlug)
     {
         var dbSlug = await _db.Slugs.FindAsync(chosenSlug);
         if (dbSlug is null)
         {
-            return new OkResult();
+            return chosenSlug;
         }
 
         var allSlugs = _db.Slugs.AsQueryable();
@@ -110,12 +110,8 @@ public class RecipesController
         var largestSlugIdentifier = slugsWithIdentifiers.Count > 0
             ? slugsWithIdentifiers.Select(s => int.Parse(s.Label[^1].ToString())).Max()
             : 0;
-        
-        return new ContentResult()
-        {
-            // Increment the highest matching slug identifier currently in use to provide a unique slug
-            Content = string.Concat(chosenSlug, "-", largestSlugIdentifier + 1)
-        };
+
+        return string.Concat(chosenSlug, "-", largestSlugIdentifier + 1);
     }
 
     [HttpGet("editor/dropdown-options")]

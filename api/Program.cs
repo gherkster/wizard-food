@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using API.Configs;
 using API.Models.Database.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.SpaServices;
@@ -11,7 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<DatabaseContext>();
-builder.Services.Configure<DatabaseOptions>(builder.Configuration.GetSection(DatabaseOptions.Position));
 
 builder.Services
     .AddControllers()
@@ -43,13 +41,16 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
 
-    endpoints.MapToVueCliProxy(
-        pattern: "{*path}",
-        options: new SpaOptions() { SourcePath = "../frontend" },
-        npmScript: System.Diagnostics.Debugger.IsAttached ? "serve" : null,
-        regex: "Compiled successfully",
-        forceKill: true,
-        wsl: false);
+    if (app.Environment.IsDevelopment())
+    {
+        endpoints.MapToVueCliProxy(
+            pattern: "{*path}",
+            options: new SpaOptions() { SourcePath = "../frontend" },
+            npmScript: System.Diagnostics.Debugger.IsAttached ? "serve" : null,
+            regex: "Compiled successfully",
+            forceKill: true,
+            wsl: false);
+    }
 });
 
 app.Run();
