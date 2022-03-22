@@ -33,26 +33,16 @@
         </v-col>
       </v-row>
       <v-row>
-        <p>Preparation time</p>
         <v-col>
+          <p>Preparation time</p>
           <v-text-field label="Minutes" v-model="model.preparationTimeMinutes" />
-        </v-col>
-        <v-col>
           <v-text-field label="Hours" v-model="model.preparationTimeHours" />
-        </v-col>
-        <v-col>
           <v-text-field label="Days" v-model="model.preparationTimeDays" />
         </v-col>
-      </v-row>
-      <v-row>
-        <p>Cooking time</p>
         <v-col>
+          <p>Cooking time</p>
           <v-text-field label="Minutes" v-model="model.cookingTimeMinutes" />
-        </v-col>
-        <v-col>
           <v-text-field label="Hours" v-model="model.cookingTimeHours" />
-        </v-col>
-        <v-col>
           <v-text-field label="Days" v-model="model.cookingTimeDays" />
         </v-col>
       </v-row>
@@ -70,19 +60,18 @@
       </v-row>
       <v-btn @click="addCustomTime">Add custom time</v-btn>
       <v-row>
-        <v-col>
-          <v-combobox label="Tags" chips multiple v-model="model.tags" :items="tags" />
-          <v-text-field
-            label="Slug"
-            prefix="/"
-            v-model="model.slug"
-            :rules="[rules.required('Slug')]"
-            append-outer-icon="mdi-reload"
-            @click:append-outer="createSlug"
-            :hint="suggestedSlug ? 'For example: ' + suggestedSlug : ''"
-            persistent-hint
-          />
-        </v-col>
+        <v-combobox label="Tags" chips multiple v-model="model.tags" :items="tags" />
+        <v-text-field
+          label="Slug"
+          prefix="/"
+          v-model="model.slug"
+          :rules="[rules.required('Slug')]"
+          :append-outer-icon="isSlugValid ? 'mdi-check' : 'mdi-reload'"
+          @click:append-outer="createSlug"
+          @input="isSlugValid = false"
+          :hint="suggestedSlug ? 'For example: ' + suggestedSlug : ''"
+          persistent-hint
+        />
       </v-row>
       <!-- Nutrition -->
       <h2>Nutrition</h2>
@@ -113,6 +102,8 @@ import axios from "axios";
 import { uuid } from "vue-uuid";
 import ItemList from "@/components/ItemList";
 import { isRequired, noDuplicates } from "@/scripts/validations";
+import { eventBus } from "@/main";
+import { AlertKeys, Severity } from "@/constants/enums";
 
 export default {
   name: "RecipeEditor",
@@ -147,8 +138,9 @@ export default {
         sodium: "",
       },
       tags: [],
-      slug: null,
+      slug: "",
     },
+    isSlugValid: false,
     rules: {
       required(labelName) {
         return (value) => isRequired(value, `${labelName} is required`);
@@ -201,27 +193,35 @@ export default {
       });
     },
     async createSlug() {
+      let chosenSlug = this.model.slug ? this.model.slug : this.suggestedSlug ? this.suggestedSlug : "recipe";
+      console.log(chosenSlug);
       await axios
         .get(process.env.VUE_APP_APIURL + "/recipes/slugs", {
           params: {
-            chosenSlug: this.model.slug ?? this.suggestedSlug,
+            chosenSlug: chosenSlug,
           },
         })
         .then((response) => {
-          if (this.model.slug !== response.data) {
-            // TODO: Notify user that the slug has been updated because the entered one was unavailable
+          if (chosenSlug !== response.data) {
+            eventBus.$emit(AlertKeys.ADD, Severity.INFO, "The entered slug is already in use, a unique slug has been provided");
           }
           this.model.slug = response.data;
+          this.isSlugValid = true;
         })
         .catch((error) => console.log(error));
     },
     async submit() {
       this.$refs.editor.validate();
       console.log(JSON.stringify(this.model));
-      /*await axios
+      await axios
         .post(process.env.VUE_APP_APIURL + "/recipes", this.model)
-        .then((response) => console.log(response))
-        .catch((error) => console.log(error));*/
+        .then(() => {
+          eventBus.$emit(AlertKeys.ADD, Severity.SUCCESS, "Recipe created");
+        })
+        .catch((error) => {
+          eventBus.$emit(AlertKeys.ADD, Severity.ERROR, "An error occurred while creating the recipe");
+          console.log(error);
+        });
     },
   },
 };

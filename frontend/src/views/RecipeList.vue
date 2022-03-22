@@ -1,14 +1,14 @@
 <template>
   <div>
     <p>Recipe List</p>
-    <button @click="goToEditor">Go to editor</button>
+    <v-btn @click="goToEditor">Go to editor</v-btn>
   </div>
 </template>
 
 <script>
 export default {
   name: "RecipeList",
-  components: { },
+  components: {},
   methods: {
     goToEditor() {
       this.$router.push("/editor");

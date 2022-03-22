@@ -9,20 +9,20 @@ public record DbRecipe
 {
     public int Id { get; private set; }
     public string Title { get; set; } = string.Empty;
-    public DbImage? Image { get; set; }
+    public virtual DbImage? Image { get; set; }
 
-    public List<DbIngredient> Ingredients { get; set; } = new();
-    public List<DbInstruction> Instructions { get; set; } = new();
+    public virtual List<DbIngredient> Ingredients { get; set; } = new();
+    public virtual List<DbInstruction> Instructions { get; set; } = new();
 
-    public DbCategory Category { get; set; } = new(string.Empty);
-    public DbCuisine Cuisine { get; set; } = new(string.Empty);
+    public virtual DbCategory Category { get; set; } = new(string.Empty);
+    public virtual DbCuisine Cuisine { get; set; } = new(string.Empty);
     
     public int Servings { get; set; }
-    public DbServingType ServingType { get; set; } = new(string.Empty);
+    public virtual DbServingType ServingType { get; set; } = new(string.Empty);
     
     public TimeSpan PreparationTime { get; set; }
     public TimeSpan CookingTime { get; set; }
-    public List<DbCustomTime> CustomTimes { get; set; } = new();
+    public virtual List<DbCustomTime> CustomTimes { get; set; } = new();
     
     public decimal? Energy { get; set; }
     public decimal? Protein { get; set; }
@@ -30,6 +30,6 @@ public record DbRecipe
     public decimal? Fat { get; set; }
     public decimal? Sodium { get; set; }
     
-    public List<DbTag> Tags { get; set; } = new();
-    public DbSlug Slug { get; set; } = new(string.Empty);
+    public virtual List<DbTag> Tags { get; set; } = new();
+    public virtual DbSlug Slug { get; set; } = new(string.Empty);
 }
