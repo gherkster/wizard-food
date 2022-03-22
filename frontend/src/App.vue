@@ -36,17 +36,16 @@
     <v-main>
       <v-container>
         <router-view />
+        <alert-section />
       </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script>
+import AlertSection from "@/views/AlertSection";
 export default {
   name: "App",
-
-  data: () => ({
-    //
-  }),
+  components: { AlertSection },
 };
 </script>
