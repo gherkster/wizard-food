@@ -46,10 +46,8 @@ public class RecipesController
         
         dbRecipe.Category = dbOptions.Categories.FirstOrDefault(c => c == dbRecipe.Category) ?? dbRecipe.Category;
         dbRecipe.Cuisine = dbOptions.Cuisines.FirstOrDefault(c => c == dbRecipe.Cuisine) ?? dbRecipe.Cuisine;
-        foreach (var customTime in dbRecipe.CustomTimes)
-        {
-            customTime.Label = dbOptions.CustomTimeTypes.FirstOrDefault(ct => ct == customTime.Label) ?? customTime.Label; 
-        }
+        dbRecipe.CustomTimeLabel = dbOptions.CustomTimeTypes.FirstOrDefault(ctl => ctl == dbRecipe.CustomTimeLabel) ??
+                                   dbRecipe.CustomTimeLabel;
         dbRecipe.ServingType = dbOptions.ServingTypes.FirstOrDefault(st => st == dbRecipe.ServingType) ??
                                dbRecipe.ServingType;
         dbRecipe.Tags = dbRecipe.Tags.Select(recipeTag => dbOptions.Tags.FirstOrDefault(dbTag => dbTag == recipeTag) ?? recipeTag).ToList();

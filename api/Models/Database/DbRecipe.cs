@@ -22,7 +22,8 @@ public record DbRecipe
     
     public TimeSpan PreparationTime { get; set; }
     public TimeSpan CookingTime { get; set; }
-    public virtual List<DbCustomTime> CustomTimes { get; set; } = new();
+    public TimeSpan CustomTime { get; set; }
+    public virtual DbCustomTimeLabel? CustomTimeLabel { get; set; }
     
     public decimal? Energy { get; set; }
     public decimal? Protein { get; set; }

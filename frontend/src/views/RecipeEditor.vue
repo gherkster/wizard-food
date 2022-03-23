@@ -13,7 +13,7 @@
         </v-col>
       </v-row>
       <h2>Ingredients</h2>
-      <item-list v-model="model.ingredients" item-label="Ingredient" has-note />
+      <item-list v-model="model.ingredients" item-label="Ingredient" has-amount has-units has-note />
       <h2>Instructions</h2>
       <item-list v-model="model.instructions" item-label="Instruction" />
       <!-- Metadata -->
@@ -45,20 +45,21 @@
           <v-text-field label="Hours" v-model="model.cookingTimeHours" />
           <v-text-field label="Days" v-model="model.cookingTimeDays" />
         </v-col>
+        <v-col>
+          <p>Custom time</p>
+          <v-text-field label="Minutes" v-model="model.customTimeMinutes" />
+          <v-text-field label="Hours" v-model="model.customTimeHours" />
+          <v-text-field label="Days" v-model="model.customTimeDays" />
+          <v-combobox
+            label="Type"
+            v-model="model.customTimeType"
+            :items="customTimeTypes"
+            :rules="[
+              rules.customTimeTypeRequired(model.customTimeType, model.customTimeMinutes, model.customTimeHours, model.customTimeDays),
+            ]"
+          />
+        </v-col>
       </v-row>
-      <p>Custom times</p>
-      <v-row v-for="item in model.customTimes" :key="item.uuid">
-        <v-text-field label="Minutes" v-model="item.customTimeMinutes" />
-        <v-text-field label="Hours" v-model="item.customTimeHours" />
-        <v-text-field label="Days" v-model="item.customTimeDays" />
-        <v-combobox
-          label="Type"
-          v-model="item.customTimeLabel"
-          :items="customTimeTypes"
-          :rules="[rules.required('Type'), noDuplicateCustomTimes(model.customTimes)]"
-        />
-      </v-row>
-      <v-btn @click="addCustomTime">Add custom time</v-btn>
       <v-row>
         <v-combobox label="Tags" chips multiple v-model="model.tags" :items="tags" />
         <v-text-field
@@ -92,18 +93,18 @@
           <v-text-field label="Sodium" v-model="model.nutrition.sodium" />
         </v-col>
       </v-row>
-      <v-btn @click="submit">Submit</v-btn>
+      <v-btn @click="submit" :loading="isSubmitting">Submit</v-btn>
     </v-form>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import { uuid } from "vue-uuid";
 import ItemList from "@/components/ItemList";
-import { isRequired, noDuplicates } from "@/scripts/validations";
+import { isRequired } from "@/scripts/validations";
 import { eventBus } from "@/main";
 import { AlertKeys, Severity } from "@/constants/enums";
+import { mapRecipeToApi } from "@/scripts/mapping";
 
 export default {
   name: "RecipeEditor",
@@ -129,21 +130,29 @@ export default {
       cookingTimeDays: "",
       cookingTimeHours: "",
       cookingTimeMinutes: "",
-      customTimes: [],
+      customTimeDays: "",
+      customTimeHours: "",
+      customTimeMinutes: "",
+      customTimeType: "",
       nutrition: {
-        kj: "",
+        energy: "",
         protein: "",
         carbohydrates: "",
         fat: "",
         sodium: "",
       },
       tags: [],
+      units: [],
       slug: "",
     },
     isSlugValid: false,
+    isSubmitting: false,
     rules: {
       required(labelName) {
         return (value) => isRequired(value, `${labelName} is required`);
+      },
+      customTimeTypeRequired(customTimeType, customMinutes, customHours, customDays) {
+        return !!customTimeType || (!customMinutes && !customHours && !customDays && !customTimeType) || "Custom time type is required";
       },
     },
   }),
@@ -153,13 +162,6 @@ export default {
         .toLowerCase()
         .replace(/[^\w ]+/g, "")
         .replace(/ +/g, "-");
-    },
-    noDuplicateCustomTimes: function () {
-      return (values) =>
-        noDuplicates(
-          values.map((v) => v.customTimeLabel),
-          "No duplicate values"
-        );
     },
   },
   async mounted() {
@@ -171,6 +173,7 @@ export default {
         this.customTimeTypes = response.data.customTimeTypes.map((ct) => ct.label);
         this.servingTypes = response.data.servingTypes.map((st) => st.label);
         this.tags = response.data.tags.map((t) => t.label);
+        this.units = response.data.units.map((u) => u.label);
 
         // Default to servings if it's a valid option
         if (this.servingTypes.includes("servings")) {
@@ -182,15 +185,6 @@ export default {
   methods: {
     goToRecipes() {
       this.$router.push("/");
-    },
-    addCustomTime() {
-      this.model.customTimes.push({
-        uuid: uuid.v1(),
-        customTimeDays: "",
-        customTimeHours: "",
-        customTimeMinutes: "",
-        customTimeLabel: "",
-      });
     },
     async createSlug() {
       let chosenSlug = this.model.slug ? this.model.slug : this.suggestedSlug ? this.suggestedSlug : "recipe";
@@ -211,14 +205,20 @@ export default {
         .catch((error) => console.log(error));
     },
     async submit() {
-      this.$refs.editor.validate();
+      if (!this.$refs.editor.validate()) {
+        eventBus.$emit(AlertKeys.ADD, Severity.ERROR, "The recipe is invalid. Please check your entered data");
+        return;
+      }
+      this.isSubmitting = true;
       console.log(JSON.stringify(this.model));
       await axios
-        .post(process.env.VUE_APP_APIURL + "/recipes", this.model)
+        .post(process.env.VUE_APP_APIURL + "/recipes", mapRecipeToApi(this.model))
         .then(() => {
+          this.isSubmitting = false;
           eventBus.$emit(AlertKeys.ADD, Severity.SUCCESS, "Recipe created");
         })
         .catch((error) => {
+          this.isSubmitting = false;
           eventBus.$emit(AlertKeys.ADD, Severity.ERROR, "An error occurred while creating the recipe");
           console.log(error);
         });

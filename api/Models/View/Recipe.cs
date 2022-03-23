@@ -13,15 +13,17 @@ public class Recipe
     public int Servings { get; set; }
     public string ServingType { get; set; } = string.Empty;
     
-    public int PreparationTimeDays { get; set; }
+    public int? PreparationTimeDays { get; set; }
     public int PreparationTimeHours { get; set; }
     public int PreparationTimeMinutes { get; set; }
-    
     public int CookingTimeDays { get; set; }
     public int CookingTimeHours { get; set; }
     public int CookingTimeMinutes { get; set; }
-    public List<CustomTime> CustomTimes { get; set; } = new List<CustomTime>();
-
+    public int CustomTimeDays { get; set; }
+    public int CustomTimeHours { get; set; }
+    public int CustomTimeMinutes { get; set; }
+    public string CustomTimeType { get; set; } = string.Empty;
+    
     public Nutrition Nutrition { get; set; } = new();
     
     public List<string> Tags { get; set; } = new();

@@ -47,11 +47,18 @@ export default {
   right: 0;
   width: 30%; /* TODO: Update for mobile */
 }
+.alert-enter {
+  transform: translateY(30px);
+}
 .alert-move,
+.alert-enter-active,
 .alert-leave-active {
-  transition: opacity 0.5s ease;
+  transition: all 0.5s ease;
 }
 .alert-leave-to {
   opacity: 0;
+}
+.alert-leave-active {
+  position: absolute;
 }
 </style>

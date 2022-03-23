@@ -94,6 +94,8 @@ namespace API.Migrations
                     ServingTypeLabel = table.Column<string>(type: "TEXT", nullable: false),
                     PreparationTime = table.Column<TimeSpan>(type: "TEXT", nullable: false),
                     CookingTime = table.Column<TimeSpan>(type: "TEXT", nullable: false),
+                    CustomTime = table.Column<TimeSpan>(type: "TEXT", nullable: false),
+                    CustomTimeLabelLabel = table.Column<string>(type: "TEXT", nullable: true),
                     Energy = table.Column<decimal>(type: "TEXT", nullable: true),
                     Protein = table.Column<decimal>(type: "TEXT", nullable: true),
                     Carbohydrates = table.Column<decimal>(type: "TEXT", nullable: true),
@@ -115,6 +117,11 @@ namespace API.Migrations
                         principalTable: "Cuisines",
                         principalColumn: "Label");
                     table.ForeignKey(
+                        name: "FK_Recipes_CustomTimeTypes_CustomTimeLabelLabel",
+                        column: x => x.CustomTimeLabelLabel,
+                        principalTable: "CustomTimeTypes",
+                        principalColumn: "Label");
+                    table.ForeignKey(
                         name: "FK_Recipes_DbImage_ImageId",
                         column: x => x.ImageId,
                         principalTable: "DbImage",
@@ -134,39 +141,14 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DbCustomTime",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    CustomTime = table.Column<TimeSpan>(type: "TEXT", nullable: false),
-                    RecipeId = table.Column<int>(type: "INTEGER", nullable: false),
-                    LabelId = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DbCustomTime", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DbCustomTime_CustomTimeTypes_LabelId",
-                        column: x => x.LabelId,
-                        principalTable: "CustomTimeTypes",
-                        principalColumn: "Label",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DbCustomTime_Recipes_RecipeId",
-                        column: x => x.RecipeId,
-                        principalTable: "Recipes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "DbIngredient",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     ItemType = table.Column<int>(type: "INTEGER", nullable: false),
+                    Amount = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Unit = table.Column<string>(type: "TEXT", nullable: false),
                     Label = table.Column<string>(type: "TEXT", nullable: false),
                     Note = table.Column<string>(type: "TEXT", nullable: false),
                     DbRecipeId = table.Column<int>(type: "INTEGER", nullable: true)
@@ -219,16 +201,6 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_DbCustomTime_LabelId",
-                table: "DbCustomTime",
-                column: "LabelId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DbCustomTime_RecipeId",
-                table: "DbCustomTime",
-                column: "RecipeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_DbIngredient_DbRecipeId",
                 table: "DbIngredient",
                 column: "DbRecipeId");
@@ -247,6 +219,11 @@ namespace API.Migrations
                 name: "IX_Recipes_CuisineLabel",
                 table: "Recipes",
                 column: "CuisineLabel");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Recipes_CustomTimeLabelLabel",
+                table: "Recipes",
+                column: "CustomTimeLabelLabel");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Recipes_ImageId",
@@ -273,9 +250,6 @@ namespace API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "DbCustomTime");
-
-            migrationBuilder.DropTable(
                 name: "DbIngredient");
 
             migrationBuilder.DropTable(
@@ -285,9 +259,6 @@ namespace API.Migrations
                 name: "Tags");
 
             migrationBuilder.DropTable(
-                name: "CustomTimeTypes");
-
-            migrationBuilder.DropTable(
                 name: "Recipes");
 
             migrationBuilder.DropTable(
@@ -295,6 +266,9 @@ namespace API.Migrations
 
             migrationBuilder.DropTable(
                 name: "Cuisines");
+
+            migrationBuilder.DropTable(
+                name: "CustomTimeTypes");
 
             migrationBuilder.DropTable(
                 name: "DbImage");
