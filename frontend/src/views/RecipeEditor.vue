@@ -5,7 +5,7 @@
     <v-form ref="editor">
       <v-row>
         <v-col>
-          <v-text-field label="Recipe Title" v-model="model.title" :rules="[rules.required('Title')]" />
+          <v-text-field label="Recipe Title" v-model="model.title" @input="updateSlug" :rules="[rules.required('Title')]" />
         </v-col>
         <v-col>
           <v-file-input accept="image/*" label="Recipe Banner" />
@@ -20,7 +20,7 @@
       <h2>Metadata</h2>
       <v-row>
         <v-col>
-          <v-text-field label="Servings" v-model="model.servings" :rules="[rules.required('Servings')]" />
+          <v-text-field label="Servings" v-model="model.servings" :rules="[rules.required('Servings'), rules.isDecimal('Servings')]" />
         </v-col>
         <v-col>
           <v-combobox label="Serving Type" v-model="model.servingType" :items="servingTypes" :rules="[rules.required('Serving Type')]" />
@@ -35,21 +35,21 @@
       <v-row>
         <v-col>
           <p>Preparation time</p>
-          <v-text-field label="Minutes" v-model="model.preparationTimeMinutes" />
-          <v-text-field label="Hours" v-model="model.preparationTimeHours" />
-          <v-text-field label="Days" v-model="model.preparationTimeDays" />
+          <v-text-field label="Minutes" v-model="model.preparationTimeMinutes" :rules="[rules.isInteger('Minutes')]" />
+          <v-text-field label="Hours" v-model="model.preparationTimeHours" :rules="[rules.isInteger('Hours')]" />
+          <v-text-field label="Days" v-model="model.preparationTimeDays" :rules="[rules.isInteger('Days')]" />
         </v-col>
         <v-col>
           <p>Cooking time</p>
-          <v-text-field label="Minutes" v-model="model.cookingTimeMinutes" />
-          <v-text-field label="Hours" v-model="model.cookingTimeHours" />
-          <v-text-field label="Days" v-model="model.cookingTimeDays" />
+          <v-text-field label="Minutes" v-model="model.cookingTimeMinutes" :rules="[rules.isInteger('Minutes')]" />
+          <v-text-field label="Hours" v-model="model.cookingTimeHours" :rules="[rules.isInteger('Hours')]" />
+          <v-text-field label="Days" v-model="model.cookingTimeDays" :rules="[rules.isInteger('Days')]" />
         </v-col>
         <v-col>
           <p>Custom time</p>
-          <v-text-field label="Minutes" v-model="model.customTimeMinutes" />
-          <v-text-field label="Hours" v-model="model.customTimeHours" />
-          <v-text-field label="Days" v-model="model.customTimeDays" />
+          <v-text-field label="Minutes" v-model="model.customTimeMinutes" :rules="[rules.isInteger('Minutes')]" />
+          <v-text-field label="Hours" v-model="model.customTimeHours" :rules="[rules.isInteger('Hours')]" />
+          <v-text-field label="Days" v-model="model.customTimeDays" :rules="[rules.isInteger('Days')]" />
           <v-combobox
             label="Type"
             v-model="model.customTimeType"
@@ -66,31 +66,29 @@
           label="Slug"
           prefix="/"
           v-model="model.slug"
-          :rules="[rules.required('Slug')]"
+          :rules="[rules.required('Slug'), rules.isSlug()]"
           :append-outer-icon="isSlugValid ? 'mdi-check' : 'mdi-reload'"
           @click:append-outer="createSlug"
           @input="isSlugValid = false"
-          :hint="suggestedSlug ? 'For example: ' + suggestedSlug : ''"
-          persistent-hint
         />
       </v-row>
       <!-- Nutrition -->
       <h2>Nutrition</h2>
       <v-row>
         <v-col>
-          <v-text-field label="KJ" v-model="model.nutrition.kj" />
+          <v-text-field label="Energy" v-model="model.nutrition.energy" :rules="[rules.isDecimal('Energy')]" />
         </v-col>
         <v-col>
-          <v-text-field label="Protein" v-model="model.nutrition.protein" />
+          <v-text-field label="Protein" v-model="model.nutrition.protein" :rules="[rules.isDecimal('Protein')]" />
         </v-col>
         <v-col>
-          <v-text-field label="Carbohydrates" v-model="model.nutrition.carbohydrates" />
+          <v-text-field label="Carbohydrates" v-model="model.nutrition.carbohydrates" :rules="[rules.isDecimal('Carbohydrates')]" />
         </v-col>
         <v-col>
-          <v-text-field label="Fat" v-model="model.nutrition.fat" />
+          <v-text-field label="Fat" v-model="model.nutrition.fat" :rules="[rules.isDecimal('Fat')]" />
         </v-col>
         <v-col>
-          <v-text-field label="Sodium" v-model="model.nutrition.sodium" />
+          <v-text-field label="Sodium" v-model="model.nutrition.sodium" :rules="[rules.isDecimal('Sodium')]" />
         </v-col>
       </v-row>
       <v-btn @click="submit" :loading="isSubmitting">Submit</v-btn>
@@ -101,7 +99,7 @@
 <script>
 import axios from "axios";
 import ItemList from "@/components/ItemList";
-import { isRequired } from "@/scripts/validations";
+import { isInteger, isDecimal, isRequired, isSlug } from "@/scripts/validations";
 import { eventBus } from "@/main";
 import { AlertKeys, Severity } from "@/constants/enums";
 import { mapRecipeToApi } from "@/scripts/mapping";
@@ -151,19 +149,21 @@ export default {
       required(labelName) {
         return (value) => isRequired(value, `${labelName} is required`);
       },
+      isInteger(labelName) {
+        return (value) => isInteger(value, `${labelName} must be an integer`);
+      },
+      isDecimal(labelName) {
+        return (value) => isDecimal(value, `${labelName} must be a number`);
+      },
+      isSlug() {
+        return (slug) =>
+          isSlug(slug, "URL slug must only contain alphanumeric characters and hyphens, such as my-new-recipe or MyNewRecipe");
+      },
       customTimeTypeRequired(customTimeType, customMinutes, customHours, customDays) {
         return !!customTimeType || (!customMinutes && !customHours && !customDays && !customTimeType) || "Custom time type is required";
       },
     },
   }),
-  computed: {
-    suggestedSlug: function () {
-      return this.model.title
-        .toLowerCase()
-        .replace(/[^\w ]+/g, "")
-        .replace(/ +/g, "-");
-    },
-  },
   async mounted() {
     await axios
       .get(process.env.VUE_APP_APIURL + "/recipes/editor/dropdown-options")
@@ -173,7 +173,6 @@ export default {
         this.customTimeTypes = response.data.customTimeTypes.map((ct) => ct.label);
         this.servingTypes = response.data.servingTypes.map((st) => st.label);
         this.tags = response.data.tags.map((t) => t.label);
-        this.units = response.data.units.map((u) => u.label);
 
         // Default to servings if it's a valid option
         if (this.servingTypes.includes("servings")) {
@@ -186,9 +185,15 @@ export default {
     goToRecipes() {
       this.$router.push("/");
     },
+    updateSlug() {
+      this.model.slug = this.model.title
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w ]+/g, "")
+        .replace(/ +/g, "-");
+    },
     async createSlug() {
-      let chosenSlug = this.model.slug ? this.model.slug : this.suggestedSlug ? this.suggestedSlug : "recipe";
-      console.log(chosenSlug);
+      let chosenSlug = this.model.slug || "recipe";
       await axios
         .get(process.env.VUE_APP_APIURL + "/recipes/slugs", {
           params: {
