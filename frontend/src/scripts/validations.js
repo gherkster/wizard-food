@@ -3,11 +3,11 @@ export function isRequired(value, message) {
 }
 
 export function isInteger(value, message) {
-  return /^\d+$/.test(value) || message;
+  return !value || /^\d+$/.test(value) || message;
 }
 
 export function isDecimal(value, message) {
-  return /^\d+(\.\d{1,2})?$/.test(value) || message;
+  return !value || /^\d+(\.\d{1,2})?$/.test(value) || message;
 }
 
 export function isBetween(value, minValue, maxValue, message) {
