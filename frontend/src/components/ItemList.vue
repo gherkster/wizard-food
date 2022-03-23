@@ -8,12 +8,16 @@
         :rules="[rules.required('Section')]"
       />
       <template v-else>
+        <v-text-field v-if="hasAmount" label="Amount" v-model="item.amount" :rules="[rules.required('Amount')]" />
+        <v-combobox v-if="hasUnits" label="Units" v-model="item.unit" :items="unitItems" :rules="[rules.required('Unit')]" />
         <v-text-field :label="itemLabel" v-model="item.label" :rules="[rules.required(itemLabel)]" />
         <v-text-field v-if="hasNote" label="Notes" v-model="item.note" />
       </template>
-      <v-btn @click="removeItem(index)">Remove item</v-btn>
+      <v-btn icon @click="removeItem(index)">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
     </v-row>
-    <v-btn @click="addItemSection">Add {{ itemLabel }} section</v-btn>
+    <v-btn @click="addItemGroup">Add {{ itemLabel }} group</v-btn>
     <v-btn @click="addItem">Add {{ itemLabel }}</v-btn>
   </div>
 </template>
@@ -33,6 +37,21 @@ export default {
     },
   }),
   props: {
+    hasAmount: {
+      type: Boolean,
+      default: false,
+      required: false,
+    },
+    hasUnits: {
+      type: Boolean,
+      default: false,
+      required: false,
+    },
+    unitItems: {
+      type: Array,
+      default: () => [],
+      required: false,
+    },
     itemLabel: {
       type: String,
       default: "",
@@ -45,12 +64,11 @@ export default {
     },
   },
   methods: {
-    addItemSection() {
+    addItemGroup() {
       this.items.push({
         uuid: uuid.v1(),
         itemType: "section",
         label: "",
-        note: "",
       });
       this.$emit("input", this.items);
     },
@@ -59,7 +77,9 @@ export default {
         uuid: uuid.v1(),
         itemType: "item",
         label: "",
-        note: "",
+        ...(this.hasAmount && { amount: "" }),
+        ...(this.hasUnits && { unit: "" }),
+        ...(this.hasNote && { note: "" }),
       });
       this.$emit("input", this.items);
     },

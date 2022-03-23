@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20220319145051_InitialCreate")]
+    [Migration("20220323142805_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -38,31 +38,6 @@ namespace API.Migrations
                     b.HasKey("Label");
 
                     b.ToTable("Cuisines");
-                });
-
-            modelBuilder.Entity("API.Models.Database.DbCustomTime", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<TimeSpan>("CustomTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LabelId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("RecipeId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LabelId");
-
-                    b.HasIndex("RecipeId");
-
-                    b.ToTable("DbCustomTime");
                 });
 
             modelBuilder.Entity("API.Models.Database.DbCustomTimeLabel", b =>
@@ -100,6 +75,9 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("TEXT");
+
                     b.Property<int?>("DbRecipeId")
                         .HasColumnType("INTEGER");
 
@@ -111,6 +89,10 @@ namespace API.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Unit")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -162,6 +144,12 @@ namespace API.Migrations
                     b.Property<string>("CuisineLabel")
                         .HasColumnType("TEXT");
 
+                    b.Property<TimeSpan>("CustomTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CustomTimeLabelLabel")
+                        .HasColumnType("TEXT");
+
                     b.Property<decimal?>("Energy")
                         .HasColumnType("TEXT");
 
@@ -200,6 +188,8 @@ namespace API.Migrations
                     b.HasIndex("CategoryLabel");
 
                     b.HasIndex("CuisineLabel");
+
+                    b.HasIndex("CustomTimeLabelLabel");
 
                     b.HasIndex("ImageId");
 
@@ -245,25 +235,6 @@ namespace API.Migrations
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("API.Models.Database.DbCustomTime", b =>
-                {
-                    b.HasOne("API.Models.Database.DbCustomTimeLabel", "Label")
-                        .WithMany("CustomTimes")
-                        .HasForeignKey("LabelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("API.Models.Database.DbRecipe", "Recipe")
-                        .WithMany("CustomTimes")
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Label");
-
-                    b.Navigation("Recipe");
-                });
-
             modelBuilder.Entity("API.Models.Database.DbIngredient", b =>
                 {
                     b.HasOne("API.Models.Database.DbRecipe", null)
@@ -288,6 +259,10 @@ namespace API.Migrations
                         .WithMany()
                         .HasForeignKey("CuisineLabel");
 
+                    b.HasOne("API.Models.Database.DbCustomTimeLabel", "CustomTimeLabel")
+                        .WithMany("Recipes")
+                        .HasForeignKey("CustomTimeLabelLabel");
+
                     b.HasOne("API.Models.Database.DbImage", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId");
@@ -308,6 +283,8 @@ namespace API.Migrations
 
                     b.Navigation("Cuisine");
 
+                    b.Navigation("CustomTimeLabel");
+
                     b.Navigation("Image");
 
                     b.Navigation("ServingType");
@@ -324,13 +301,11 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.Database.DbCustomTimeLabel", b =>
                 {
-                    b.Navigation("CustomTimes");
+                    b.Navigation("Recipes");
                 });
 
             modelBuilder.Entity("API.Models.Database.DbRecipe", b =>
                 {
-                    b.Navigation("CustomTimes");
-
                     b.Navigation("Ingredients");
 
                     b.Navigation("Instructions");
