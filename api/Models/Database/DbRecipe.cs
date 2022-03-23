@@ -17,7 +17,7 @@ public record DbRecipe
     public virtual DbCategory Category { get; set; } = new(string.Empty);
     public virtual DbCuisine Cuisine { get; set; } = new(string.Empty);
     
-    public int Servings { get; set; }
+    public decimal Servings { get; set; }
     public virtual DbServingType ServingType { get; set; } = new(string.Empty);
     
     public TimeSpan PreparationTime { get; set; }

@@ -10,7 +10,7 @@ public class Recipe
     public string Category { get; set; } = string.Empty;
     public string Cuisine { get; set; } = string.Empty;
     
-    public int Servings { get; set; }
+    public decimal Servings { get; set; }
     public string ServingType { get; set; } = string.Empty;
     
     public int? PreparationTimeDays { get; set; }
