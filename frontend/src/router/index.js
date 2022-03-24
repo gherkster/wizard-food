@@ -1,20 +1,29 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import RecipeList from "@/views/RecipeList";
-import RecipeEditor from "@/views/RecipeEditor";
+
+import Home from "@/views/Home";
+import Recipe from "@/views/Recipe";
+import Search from "@/views/Search";
+import Editor from "@/views/Editor";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    name: "Recipes",
-    component: RecipeList,
+    component: Home,
+  },
+  {
+    path: "/recipes",
+    component: Search,
+  },
+  {
+    path: "/recipes/:slug",
+    component: Recipe,
   },
   {
     path: "/editor",
-    name: "Editor",
-    component: RecipeEditor,
+    component: Editor,
   },
 ];
 

@@ -18,8 +18,17 @@ public class DatabaseContext : DbContext
         options.EnableSensitiveDataLogging(); // TODO: Remove for production
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
+        // TODO: These can probably move to an extension method or called directly once columns are finalized so it can be used explicitly
+        builder.Entity<DbRecipe>().Navigation(r => r.Ingredients).AutoInclude();
+        builder.Entity<DbRecipe>().Navigation(r => r.Instructions).AutoInclude();
+        builder.Entity<DbRecipe>().Navigation(r => r.Category).AutoInclude();
+        builder.Entity<DbRecipe>().Navigation(r => r.Cuisine).AutoInclude();
+        builder.Entity<DbRecipe>().Navigation(r => r.CustomTimeLabel).AutoInclude();
+        builder.Entity<DbRecipe>().Navigation(r => r.ServingType).AutoInclude();
+        builder.Entity<DbRecipe>().Navigation(r => r.Tags).AutoInclude();
+        builder.Entity<DbRecipe>().Navigation(r => r.Slug).AutoInclude();
     }
 
     public async Task<DropdownOptions> GetDropdownOptionsAsync()

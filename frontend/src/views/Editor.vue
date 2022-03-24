@@ -105,7 +105,7 @@ import { AlertKeys, Severity } from "@/constants/enums";
 import { mapRecipeToApi } from "@/scripts/mapping";
 
 export default {
-  name: "RecipeEditor",
+  name: "Editor",
   components: { ItemList },
   data: () => ({
     timeOptions: ["minutes", "hours", "days"],
@@ -164,9 +164,9 @@ export default {
       },
     },
   }),
-  async mounted() {
+  async created() {
     await axios
-      .get(process.env.VUE_APP_APIURL + "/recipes/editor/dropdown-options")
+      .get(process.env.VUE_APP_APIURL + "/api/recipes/editor/dropdown-options")
       .then((response) => {
         this.categories = response.data.categories.map((c) => c.label);
         this.cuisines = response.data.cuisines.map((c) => c.label);
@@ -195,7 +195,7 @@ export default {
     async createSlug() {
       let chosenSlug = this.model.slug || "recipe";
       await axios
-        .get(process.env.VUE_APP_APIURL + "/recipes/slugs", {
+        .get(process.env.VUE_APP_APIURL + "/api/recipes/slugs", {
           params: {
             chosenSlug: chosenSlug,
           },
@@ -217,7 +217,7 @@ export default {
       this.isSubmitting = true;
       console.log(JSON.stringify(this.model));
       await axios
-        .post(process.env.VUE_APP_APIURL + "/recipes", mapRecipeToApi(this.model))
+        .post(process.env.VUE_APP_APIURL + "/api/recipes", mapRecipeToApi(this.model))
         .then(() => {
           this.isSubmitting = false;
           eventBus.$emit(AlertKeys.ADD, Severity.SUCCESS, "Recipe created");
