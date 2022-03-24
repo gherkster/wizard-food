@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class RecipesController
 {
     private readonly DatabaseContext _db;
@@ -23,10 +23,17 @@ public class RecipesController
         _logger = logger;
     }
 
-    [HttpGet("{id:guid}")]
-    public async Task<ActionResult<Recipe>> GetRecipe([FromRoute] Guid id)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes()
     {
-        var recipe = await _db.Recipes.FindAsync(id);
+        var recipes = await _db.Recipes.ToListAsync();
+        return recipes.Select(r => r.AsViewModel()).ToList();
+    }
+
+    [HttpGet("{slug}")]
+    public async Task<ActionResult<Recipe>> GetRecipe(string slug)
+    {
+        var recipe = await _db.Recipes.Where(r => r.Slug.Label == slug).FirstOrDefaultAsync();
         if (recipe == null)
         {
             return new NotFoundResult();
