@@ -11,6 +11,7 @@ public static class MappingExtensions
         var recipe = new Recipe()
         {
             Title = dbRecipe.Title,
+            Description = dbRecipe.Description,
             Ingredients = dbRecipe.Ingredients.Select(ing => 
                 new Ingredient(ing.ItemType, ing.Label) { Amount = ing.Amount, Unit = ing.Unit, Note = ing.Note }).ToList(),
             Instructions = dbRecipe.Instructions.Select(ins => 
@@ -20,16 +21,26 @@ public static class MappingExtensions
             Cuisine = dbRecipe.Cuisine.Label,
             Servings = dbRecipe.Servings,
             ServingType = dbRecipe.ServingType.Label,
+            Rating = dbRecipe.Rating,
             
-            PreparationTimeDays = dbRecipe.PreparationTime.Days,
-            PreparationTimeHours = dbRecipe.PreparationTime.Hours,
-            PreparationTimeMinutes = dbRecipe.PreparationTime.Minutes,
-            CookingTimeDays = dbRecipe.CookingTime.Days,
-            CookingTimeHours = dbRecipe.CookingTime.Hours,
-            CookingTimeMinutes = dbRecipe.CookingTime.Minutes,
-            CustomTimeDays = dbRecipe.CustomTime.Days,
-            CustomTimeHours = dbRecipe.CustomTime.Hours,
-            CustomTimeMinutes = dbRecipe.CustomTime.Minutes,
+            PreparationTime = new RecipeDuration()
+            {
+                Minutes = dbRecipe.PreparationTime.Minutes,
+                Hours = dbRecipe.PreparationTime.Hours,
+                Days = dbRecipe.PreparationTime.Days
+            },
+            CookingTime = new RecipeDuration()
+            {
+                Minutes = dbRecipe.CookingTime.Minutes,
+                Hours = dbRecipe.CookingTime.Hours,
+                Days = dbRecipe.CookingTime.Days
+            },
+            CustomTime = new RecipeDuration()
+            {
+                Minutes = dbRecipe.CustomTime.Minutes,
+                Hours = dbRecipe.CustomTime.Hours,
+                Days = dbRecipe.CustomTime.Days
+            },
             CustomTimeType = dbRecipe.CustomTimeLabel?.Label ?? string.Empty,
             
             Nutrition = new Nutrition()
@@ -42,7 +53,7 @@ public static class MappingExtensions
             },
             
             Tags = dbRecipe.Tags.Select(t => t.Label).ToList(),
-            Slug = dbRecipe.Slug.Label
+            Slug = dbRecipe.Slug
         };
 
         return recipe;
@@ -53,6 +64,7 @@ public static class MappingExtensions
         var dbRecipe = new DbRecipe()
         {
             Title = recipe.Title,
+            Description = recipe.Description,
             Ingredients = recipe.Ingredients.Select(ing => 
                 new DbIngredient(ing.ItemType, ing.Unit, ing.Amount, ing.Label, ing.Note)).ToList(),
             Instructions = recipe.Instructions.Select(ins => 
@@ -62,10 +74,11 @@ public static class MappingExtensions
             Cuisine = new DbCuisine(Label: recipe.Cuisine),
             Servings = recipe.Servings,
             ServingType = new DbServingType(Label: recipe.ServingType),
+            Rating = recipe.Rating,
             
-            PreparationTime = new TimeSpan(recipe.PreparationTimeDays ?? 0, recipe.PreparationTimeHours, recipe.PreparationTimeMinutes, 0),
-            CookingTime = new TimeSpan(recipe.CookingTimeDays, recipe.CookingTimeHours, recipe.CookingTimeMinutes, 0),
-            CustomTime = new TimeSpan(recipe.CustomTimeDays, recipe.CustomTimeHours, recipe.CustomTimeMinutes, 0),
+            PreparationTime = new TimeSpan(recipe.PreparationTime.Days, recipe.PreparationTime.Hours, recipe.PreparationTime.Minutes, 0),
+            CookingTime = new TimeSpan(recipe.CookingTime.Days, recipe.CookingTime.Hours, recipe.CookingTime.Minutes, 0),
+            CustomTime = new TimeSpan(recipe.CustomTime.Days, recipe.CustomTime.Hours, recipe.CustomTime.Minutes, 0),
             CustomTimeLabel = new DbCustomTimeLabel(recipe.CustomTimeType),
             
             Energy = recipe.Nutrition.Energy,
@@ -75,7 +88,7 @@ public static class MappingExtensions
             Sodium = recipe.Nutrition.Sodium,
             
             Tags = recipe.Tags.Select(t => new DbTag(t)).ToList(),
-            Slug = new DbSlug(recipe.Slug)
+            Slug = recipe.Slug
         };
 
         return dbRecipe;

@@ -9,6 +9,7 @@ public record DbRecipe
 {
     public int Id { get; private set; }
     public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
     public virtual DbImage? Image { get; set; }
 
     public virtual List<DbIngredient> Ingredients { get; set; } = new();
@@ -16,6 +17,7 @@ public record DbRecipe
 
     public virtual DbCategory Category { get; set; } = new(string.Empty);
     public virtual DbCuisine Cuisine { get; set; } = new(string.Empty);
+    public decimal Rating { get; set; } = decimal.Zero;
     
     public decimal Servings { get; set; }
     public virtual DbServingType ServingType { get; set; } = new(string.Empty);
@@ -32,5 +34,6 @@ public record DbRecipe
     public decimal? Sodium { get; set; }
     
     public virtual List<DbTag> Tags { get; set; } = new();
-    public virtual DbSlug Slug { get; set; } = new(string.Empty);
+    public string Slug { get; set; } = string.Empty;
+    
 }

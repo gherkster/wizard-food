@@ -24,7 +24,7 @@
 
 <script>
 import { uuid } from "vue-uuid";
-import { isDecimal, isRequired } from "@/scripts/validations";
+import { isDecimal, isRequired } from "@/scripts/validation";
 
 export default {
   name: "ItemList",
