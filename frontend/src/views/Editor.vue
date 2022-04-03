@@ -11,6 +11,14 @@
           <v-file-input accept="image/*" label="Recipe Banner" />
           <!-- TODO setup v-model -->
         </v-col>
+        <v-col>
+          <v-rating length="5" size="40" hover v-model="model.rating" />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-textarea label="Description" v-model="model.description" />
+        </v-col>
       </v-row>
       <h2>Ingredients</h2>
       <item-list v-model="model.ingredients" item-label="Ingredient" has-amount has-units has-note />
@@ -35,27 +43,27 @@
       <v-row>
         <v-col>
           <p>Preparation time</p>
-          <v-text-field label="Minutes" v-model="model.preparationTimeMinutes" :rules="[rules.isInteger('Minutes')]" />
-          <v-text-field label="Hours" v-model="model.preparationTimeHours" :rules="[rules.isInteger('Hours')]" />
-          <v-text-field label="Days" v-model="model.preparationTimeDays" :rules="[rules.isInteger('Days')]" />
+          <v-text-field label="Minutes" v-model="model.preparationTime.minutes" :rules="[rules.isInteger('Minutes')]" />
+          <v-text-field label="Hours" v-model="model.preparationTime.hours" :rules="[rules.isInteger('Hours')]" />
+          <v-text-field label="Days" v-model="model.preparationTime.days" :rules="[rules.isInteger('Days')]" />
         </v-col>
         <v-col>
           <p>Cooking time</p>
-          <v-text-field label="Minutes" v-model="model.cookingTimeMinutes" :rules="[rules.isInteger('Minutes')]" />
-          <v-text-field label="Hours" v-model="model.cookingTimeHours" :rules="[rules.isInteger('Hours')]" />
-          <v-text-field label="Days" v-model="model.cookingTimeDays" :rules="[rules.isInteger('Days')]" />
+          <v-text-field label="Minutes" v-model="model.cookingTime.minutes" :rules="[rules.isInteger('Minutes')]" />
+          <v-text-field label="Hours" v-model="model.cookingTime.hours" :rules="[rules.isInteger('Hours')]" />
+          <v-text-field label="Days" v-model="model.cookingTime.days" :rules="[rules.isInteger('Days')]" />
         </v-col>
         <v-col>
           <p>Custom time</p>
-          <v-text-field label="Minutes" v-model="model.customTimeMinutes" :rules="[rules.isInteger('Minutes')]" />
-          <v-text-field label="Hours" v-model="model.customTimeHours" :rules="[rules.isInteger('Hours')]" />
-          <v-text-field label="Days" v-model="model.customTimeDays" :rules="[rules.isInteger('Days')]" />
+          <v-text-field label="Minutes" v-model="model.customTime.minutes" :rules="[rules.isInteger('Minutes')]" />
+          <v-text-field label="Hours" v-model="model.customTime.hours" :rules="[rules.isInteger('Hours')]" />
+          <v-text-field label="Days" v-model="model.customTime.days" :rules="[rules.isInteger('Days')]" />
           <v-combobox
             label="Type"
             v-model="model.customTimeType"
             :items="customTimeTypes"
             :rules="[
-              rules.customTimeTypeRequired(model.customTimeType, model.customTimeMinutes, model.customTimeHours, model.customTimeDays),
+              rules.customTimeTypeRequired(model.customTimeType, model.customTime.minutes, model.customTime.hours, model.customTime.days),
             ]"
           />
         </v-col>
@@ -99,7 +107,7 @@
 <script>
 import axios from "axios";
 import ItemList from "@/components/ItemList";
-import { isInteger, isDecimal, isRequired, isSlug } from "@/scripts/validations";
+import { isInteger, isDecimal, isRequired, isSlug } from "@/scripts/validation";
 import { eventBus } from "@/main";
 import { AlertKeys, Severity } from "@/constants/enums";
 import { mapRecipeToApi } from "@/scripts/mapping";
@@ -116,21 +124,29 @@ export default {
     tags: [],
     model: {
       title: "",
+      description: "",
       ingredients: [],
       instructions: [],
       category: "",
       cuisine: "",
       servings: "",
       servingType: "",
-      preparationTimeDays: "",
-      preparationTimeHours: "",
-      preparationTimeMinutes: "",
-      cookingTimeDays: "",
-      cookingTimeHours: "",
-      cookingTimeMinutes: "",
-      customTimeDays: "",
-      customTimeHours: "",
-      customTimeMinutes: "",
+      rating: 0,
+      preparationTime: {
+        days: "",
+        hours: "",
+        minutes: "",
+      },
+      cookingTime: {
+        days: "",
+        hours: "",
+        minutes: "",
+      },
+      customTime: {
+        days: "",
+        hours: "",
+        minutes: "",
+      },
       customTimeType: "",
       nutrition: {
         energy: "",
@@ -219,14 +235,13 @@ export default {
       await axios
         .post(process.env.VUE_APP_APIURL + "/api/recipes", mapRecipeToApi(this.model))
         .then(() => {
-          this.isSubmitting = false;
           eventBus.$emit(AlertKeys.ADD, Severity.SUCCESS, "Recipe created");
         })
         .catch((error) => {
-          this.isSubmitting = false;
           eventBus.$emit(AlertKeys.ADD, Severity.ERROR, "An error occurred while creating the recipe");
           console.log(error);
-        });
+        })
+        .finally(() => (this.isSubmitting = false));
     },
   },
 };

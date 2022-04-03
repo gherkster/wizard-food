@@ -2,15 +2,21 @@ export function mapRecipeToApi(recipe) {
   return {
     ...recipe,
     servings: recipe.servings || 0,
-    preparationTimeDays: recipe.preparationTimeDays || 0,
-    preparationTimeHours: recipe.preparationTimeHours || 0,
-    preparationTimeMinutes: recipe.preparationTimeMinutes || 0,
-    cookingTimeDays: recipe.cookingTimeDays || 0,
-    cookingTimeHours: recipe.cookingTimeHours || 0,
-    cookingTimeMinutes: recipe.cookingTimeMinutes || 0,
-    customTimeDays: recipe.customTimeDays || 0,
-    customTimeHours: recipe.customTimeHours || 0,
-    customTimeMinutes: recipe.customTimeMinutes || 0,
+    preparationTime: {
+      minutes: recipe.preparationTime.minutes || 0,
+      hours: recipe.preparationTime.hours || 0,
+      days: recipe.preparationTime.days || 0,
+    },
+    cookingTime: {
+      minutes: recipe.cookingTime.minutes || 0,
+      hours: recipe.cookingTime.hours || 0,
+      days: recipe.cookingTime.days || 0,
+    },
+    customTime: {
+      minutes: recipe.customTime.minutes || 0,
+      hours: recipe.customTime.hours || 0,
+      days: recipe.customTime.days || 0,
+    },
     nutrition: {
       energy: recipe.nutrition.energy || 0,
       protein: recipe.nutrition.protein || 0,

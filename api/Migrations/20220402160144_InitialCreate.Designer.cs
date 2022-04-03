@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20220323142805_InitialCreate")]
+    [Migration("20220402160144_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -150,6 +150,10 @@ namespace API.Migrations
                     b.Property<string>("CustomTimeLabelLabel")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<decimal?>("Energy")
                         .HasColumnType("TEXT");
 
@@ -165,14 +169,17 @@ namespace API.Migrations
                     b.Property<decimal?>("Protein")
                         .HasColumnType("TEXT");
 
+                    b.Property<decimal>("Rating")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ServingTypeLabel")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Servings")
-                        .HasColumnType("INTEGER");
+                    b.Property<decimal>("Servings")
+                        .HasColumnType("TEXT");
 
-                    b.Property<string>("SlugLabel")
+                    b.Property<string>("Slug")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -195,7 +202,8 @@ namespace API.Migrations
 
                     b.HasIndex("ServingTypeLabel");
 
-                    b.HasIndex("SlugLabel");
+                    b.HasIndex("Slug")
+                        .IsUnique();
 
                     b.ToTable("Recipes");
                 });
@@ -210,29 +218,29 @@ namespace API.Migrations
                     b.ToTable("ServingTypes");
                 });
 
-            modelBuilder.Entity("API.Models.Database.DbSlug", b =>
-                {
-                    b.Property<string>("Label")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Label");
-
-                    b.ToTable("Slugs");
-                });
-
             modelBuilder.Entity("API.Models.Database.DbTag", b =>
                 {
                     b.Property<string>("Label")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("DbRecipeId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Label");
 
-                    b.HasIndex("DbRecipeId");
-
                     b.ToTable("Tags");
+                });
+
+            modelBuilder.Entity("DbRecipeDbTag", b =>
+                {
+                    b.Property<int>("RecipesId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("TagsLabel")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("RecipesId", "TagsLabel");
+
+                    b.HasIndex("TagsLabel");
+
+                    b.ToTable("DbRecipeDbTag");
                 });
 
             modelBuilder.Entity("API.Models.Database.DbIngredient", b =>
@@ -273,12 +281,6 @@ namespace API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Models.Database.DbSlug", "Slug")
-                        .WithMany()
-                        .HasForeignKey("SlugLabel")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Category");
 
                     b.Navigation("Cuisine");
@@ -288,15 +290,21 @@ namespace API.Migrations
                     b.Navigation("Image");
 
                     b.Navigation("ServingType");
-
-                    b.Navigation("Slug");
                 });
 
-            modelBuilder.Entity("API.Models.Database.DbTag", b =>
+            modelBuilder.Entity("DbRecipeDbTag", b =>
                 {
                     b.HasOne("API.Models.Database.DbRecipe", null)
-                        .WithMany("Tags")
-                        .HasForeignKey("DbRecipeId");
+                        .WithMany()
+                        .HasForeignKey("RecipesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Models.Database.DbTag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsLabel")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("API.Models.Database.DbCustomTimeLabel", b =>
@@ -309,8 +317,6 @@ namespace API.Migrations
                     b.Navigation("Ingredients");
 
                     b.Navigation("Instructions");
-
-                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }

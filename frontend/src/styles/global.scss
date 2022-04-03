@@ -1,0 +1,53 @@
+@use "mixins" as mixins;
+@use "variables";
+
+/////////////////
+// Breakpoints //
+/////////////////
+
+$breakpoints: (
+"xs": 320,
+"sm": 480,
+"md": 768,
+"lg": 992,
+"xl": 1200,
+) !default;
+$breakpoint-min: map-get($breakpoints, "xs");
+$breakpoint-max: map-get($breakpoints, "xl");
+
+////////////////
+// Typography //
+////////////////
+
+// TODO: Combine into single import
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap'); // Montserrat
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap'); // Inter
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital@0;1&display=swap'); // Work Sans
+
+$font-sizes: (
+        h1: (font-size-min: 32, font-size-max: 64),
+        h2: (font-size-min: 26, font-size-max: 50),
+        h3: (font-size-min: 22, font-size-max: 32),
+        h4: (font-size-min: 18, font-size-max: 24),
+        h5: (font-size-min: 16, font-size-max: 20),
+        h6: (font-size-min: 16, font-size-max: 20),
+);
+
+@each $key, $value in $font-sizes {
+  #{$key} {
+    @include mixins.responsive-text(map-get($value, font-size-min), map-get($value, font-size-max), $breakpoint-min, $breakpoint-max)
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: variables.$font-family-headers;
+}
+
+p, pre, li, span {
+  font-family: variables.$font-family-paragraph;
+}
+
+.row {
+  margin: 0 0 10px 0 !important;
+  border-radius: 8px;
+}

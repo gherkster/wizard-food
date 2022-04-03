@@ -70,14 +70,14 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Slugs",
+                name: "Tags",
                 columns: table => new
                 {
                     Label = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Slugs", x => x.Label);
+                    table.PrimaryKey("PK_Tags", x => x.Label);
                 });
 
             migrationBuilder.CreateTable(
@@ -87,10 +87,12 @@ namespace API.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: false),
                     ImageId = table.Column<int>(type: "INTEGER", nullable: true),
                     CategoryLabel = table.Column<string>(type: "TEXT", nullable: true),
                     CuisineLabel = table.Column<string>(type: "TEXT", nullable: true),
-                    Servings = table.Column<int>(type: "INTEGER", nullable: false),
+                    Rating = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Servings = table.Column<decimal>(type: "TEXT", nullable: false),
                     ServingTypeLabel = table.Column<string>(type: "TEXT", nullable: false),
                     PreparationTime = table.Column<TimeSpan>(type: "TEXT", nullable: false),
                     CookingTime = table.Column<TimeSpan>(type: "TEXT", nullable: false),
@@ -101,7 +103,7 @@ namespace API.Migrations
                     Carbohydrates = table.Column<decimal>(type: "TEXT", nullable: true),
                     Fat = table.Column<decimal>(type: "TEXT", nullable: true),
                     Sodium = table.Column<decimal>(type: "TEXT", nullable: true),
-                    SlugLabel = table.Column<string>(type: "TEXT", nullable: false)
+                    Slug = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -130,12 +132,6 @@ namespace API.Migrations
                         name: "FK_Recipes_ServingTypes_ServingTypeLabel",
                         column: x => x.ServingTypeLabel,
                         principalTable: "ServingTypes",
-                        principalColumn: "Label",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Recipes_Slugs_SlugLabel",
-                        column: x => x.SlugLabel,
-                        principalTable: "Slugs",
                         principalColumn: "Label",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -184,20 +180,27 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tags",
+                name: "DbRecipeDbTag",
                 columns: table => new
                 {
-                    Label = table.Column<string>(type: "TEXT", nullable: false),
-                    DbRecipeId = table.Column<int>(type: "INTEGER", nullable: true)
+                    RecipesId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TagsLabel = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tags", x => x.Label);
+                    table.PrimaryKey("PK_DbRecipeDbTag", x => new { x.RecipesId, x.TagsLabel });
                     table.ForeignKey(
-                        name: "FK_Tags_Recipes_DbRecipeId",
-                        column: x => x.DbRecipeId,
+                        name: "FK_DbRecipeDbTag_Recipes_RecipesId",
+                        column: x => x.RecipesId,
                         principalTable: "Recipes",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DbRecipeDbTag_Tags_TagsLabel",
+                        column: x => x.TagsLabel,
+                        principalTable: "Tags",
+                        principalColumn: "Label",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -209,6 +212,11 @@ namespace API.Migrations
                 name: "IX_DbInstruction_DbRecipeId",
                 table: "DbInstruction",
                 column: "DbRecipeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DbRecipeDbTag_TagsLabel",
+                table: "DbRecipeDbTag",
+                column: "TagsLabel");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Recipes_CategoryLabel",
@@ -236,14 +244,10 @@ namespace API.Migrations
                 column: "ServingTypeLabel");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Recipes_SlugLabel",
+                name: "IX_Recipes_Slug",
                 table: "Recipes",
-                column: "SlugLabel");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tags_DbRecipeId",
-                table: "Tags",
-                column: "DbRecipeId");
+                column: "Slug",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -256,10 +260,13 @@ namespace API.Migrations
                 name: "DbInstruction");
 
             migrationBuilder.DropTable(
-                name: "Tags");
+                name: "DbRecipeDbTag");
 
             migrationBuilder.DropTable(
                 name: "Recipes");
+
+            migrationBuilder.DropTable(
+                name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "Categories");
@@ -275,9 +282,6 @@ namespace API.Migrations
 
             migrationBuilder.DropTable(
                 name: "ServingTypes");
-
-            migrationBuilder.DropTable(
-                name: "Slugs");
         }
     }
 }

@@ -26,14 +26,24 @@ public class RecipesController
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes()
     {
-        var recipes = await _db.Recipes.ToListAsync();
+        var recipes = await _db.Recipes.AsNoTracking().ToListAsync();
         return recipes.Select(r => r.AsViewModel()).ToList();
     }
 
     [HttpGet("{slug}")]
     public async Task<ActionResult<Recipe>> GetRecipe(string slug)
     {
-        var recipe = await _db.Recipes.Where(r => r.Slug.Label == slug).FirstOrDefaultAsync();
+        var recipe = await _db.Recipes.Where(r => r.Slug == slug)
+            .Include(r => r.Ingredients)
+            .Include(r => r.Instructions)
+            .Include(r => r.Category)
+            .Include(r => r.Cuisine)
+            .Include(r => r.CustomTimeLabel)
+            .Include(r => r.ServingType)
+            .Include(r => r.Tags)
+            .AsNoTracking()
+            .FirstOrDefaultAsync();
+        
         if (recipe == null)
         {
             return new NotFoundResult();
@@ -98,22 +108,20 @@ public class RecipesController
     [HttpGet("slugs")]
     public async Task<ActionResult<string>> GetAvailableSlug(string chosenSlug)
     {
-        var dbSlug = await _db.Slugs.FindAsync(chosenSlug);
-        if (dbSlug is null)
+        var allSlugs = await _db.Recipes.Select(r => r.Slug).AsNoTracking().ToListAsync();
+        if (allSlugs.All(s => s != chosenSlug))
         {
             return chosenSlug;
         }
-
-        var allSlugs = _db.Slugs.AsQueryable();
         
-        var slugsWithIdentifiers = await allSlugs
-            .Where(s => s.Label.Contains(chosenSlug))                    // Check all the matching slugs in use ...
+        var slugsWithIdentifiers = allSlugs
+            .Where(s => s.Contains(chosenSlug))                    // Check all the matching slugs in use ...
             .Where(s => char.IsDigit(chosenSlug[chosenSlug.Length - 1])) // which have an identifier appended.
-            .ToListAsync(); 
+            .ToList(); 
 
         // Now select just the identifier which is the maximum currently in use
         var largestSlugIdentifier = slugsWithIdentifiers.Count > 0
-            ? slugsWithIdentifiers.Select(s => int.Parse(s.Label[^1].ToString())).Max()
+            ? slugsWithIdentifiers.Select(s => int.Parse(s[^1].ToString())).Max()
             : 0;
 
         return string.Concat(chosenSlug, "-", largestSlugIdentifier + 1);
