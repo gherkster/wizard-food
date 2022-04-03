@@ -49,11 +49,17 @@
       <v-row v-if="this.groupedIngredients.length > 0" class="recipe__ingredients">
         <v-col>
           <h2>Ingredients</h2>
-          <div v-for="ingredientSection in this.groupedIngredients" :key="JSON.stringify(ingredientSection)">
-            <h3>{{ ingredientSection.section }}</h3>
+          <v-divider />
+          <div v-for="ingredientSection in this.groupedIngredients" :key="JSON.stringify(ingredientSection)" class="list-section">
+            <span v-if="ingredientSection.section">
+              <b>{{ ingredientSection.section }}</b>
+            </span>
             <ul>
               <li v-for="ingredient in ingredientSection.ingredients" :key="JSON.stringify(ingredient)">
-                {{ adjustIngredientByMultiplier(ingredient.amount) }}{{ ingredient.unit }} {{ ingredient.label }} {{ ingredient.note }}
+                <span>{{ adjustIngredientByMultiplier(ingredient.amount) }}</span>
+                <span>{{ ingredient.unit }}</span>
+                <span> {{ ingredient.label }}</span>
+                <span v-if="ingredient.note" class="text-muted"> {{ ingredient.note }}</span>
               </li>
             </ul>
           </div>
@@ -62,10 +68,15 @@
       <v-row v-if="this.groupedInstructions.length > 0" class="recipe__instructions">
         <v-col>
           <h2>Instructions</h2>
-          <div v-for="instructionSection in this.groupedInstructions" :key="JSON.stringify(instructionSection)">
-            <h3>{{ instructionSection.section }}</h3>
+          <v-divider />
+          <div v-for="instructionSection in this.groupedInstructions" :key="JSON.stringify(instructionSection)" class="list-section">
+            <span v-if="instructionSection.section">
+              <b>{{ instructionSection.section }}</b>
+            </span>
             <ol>
-              <li v-for="instruction in instructionSection.instructions" :key="JSON.stringify(instruction)">{{ instruction.label }}</li>
+              <li v-for="instruction in instructionSection.instructions" :key="JSON.stringify(instruction)">
+                <span>{{ instruction.label }}</span>
+              </li>
             </ol>
           </div>
         </v-col>
@@ -208,7 +219,7 @@ export default {
   &__facts {
   }
   &__servings {
-    background-color: variables.$bg-grey-light;
+    background-color: variables.$colour-bg-grey-light;
     > .col {
       align-self: center;
       > .ingredient-multiplier-wrapper {
@@ -224,12 +235,15 @@ export default {
     }
   }
   &__nutrition {
-    background-color: variables.$bg-grey-light;
+    background-color: variables.$colour-bg-grey-light;
     > div {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
   }
+}
+.list-section {
+  margin-top: 3vh;
 }
 </style>
