@@ -9,8 +9,3 @@ export const AlertKeys = Object.freeze({
   ADD: "addAlert",
   REMOVE: "removeAlert",
 });
-
-export const RecipeSections = Object.freeze({
-  INGREDIENTS: "ingredients",
-  INSTRUCTIONS: "instructions",
-});
