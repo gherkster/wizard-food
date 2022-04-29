@@ -1,0 +1,120 @@
+@use "variables";
+
+label {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor: text;
+}
+input, textarea {
+  position: relative;
+  outline: none;
+  overflow: hidden;
+  width: 100%;
+}
+
+textarea {
+  box-sizing: border-box;
+  height: auto;
+  resize: none;
+}
+
+.form-input-container {
+  margin-bottom: 12px;
+  padding: 12px 0;
+}
+.form-input {
+  display: flex;
+  position: relative;
+  align-items: center;
+  background-color: variables.$colour-input;
+  border-radius: variables.$border-radius;
+  border: solid variables.$colour-bg-light 2px;
+  &__error {
+    @extend .form-input;
+    border: solid variables.$colour-error 2px;
+    color: variables.$colour-error;
+    > span {
+      color: variables.$colour-error;
+    }
+  }
+  > label, textarea {
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    width: 100%;
+  }
+}
+.form-input-field {
+  position: relative;
+  padding: 16px;
+}
+
+.form-combo-box {
+  display: flex;
+  position: relative;
+  align-items: center;
+
+  &-input {
+    padding: 16px 28px 16px 16px;
+  }
+  &-icon {
+    // TODO: Rework this class, only needed while using vuetify
+    position: absolute !important;
+    right: 8px;
+  }
+}
+
+.form-button {
+  padding: 12px 48px;
+  border-radius: 32px;
+  border: solid transparent 3px;
+  &__primary {
+    color: white;
+    background: variables.$colour-primary;
+    transition: border-color 150ms ease;
+    &:hover {
+      opacity: 1;
+      border-color: variables.$colour-primary-active;
+    }
+  }
+  &__disabled {
+    background: variables.$colour-disabled;
+  }
+}
+
+.form-validation-message {
+  position: relative;
+}
+
+.form-dropdown-container {
+  background: variables.$colour-input;
+  z-index: 2;
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  width: 100%;
+  border: solid variables.$colour-bg-light 2px;
+  border-radius: variables.$border-radius;
+  box-shadow: 0 10px 20px -20px rgba(0,0,0,1);
+}
+.form-dropdown-item {
+  padding: 8px 8px;
+  color: black; // TODO: Dark theme
+  cursor: pointer;
+  &:hover {
+    background: variables.$colour-bg-light;
+  }
+}
+
+.form-chip-container {
+  padding-left: 12px; // TODO Standardise in variable
+}
+.form-chip {
+  background: variables.$colour-primary-light;
+  color: variables.$colour-primary;
+  padding: 4px 8px;
+  margin: 0 4px;
+  border-radius: 16px;
+}
