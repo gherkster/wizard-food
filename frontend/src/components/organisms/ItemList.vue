@@ -2,7 +2,13 @@
   <div>
     <v-row v-for="(item, index) in items" :key="item.uuid">
       <v-col cols="11" v-if="item.itemType === 'section'">
-        <text-field label="Section" path="section" :value="item.label" @input="handleInput($event, index)" />
+        <text-field
+          label="Section name"
+          path="label"
+          :value="item.label"
+          :error="getError('label', index)"
+          @input="handleInput($event, index)"
+        />
       </v-col>
       <template v-else>
         <v-col cols="2">
@@ -16,10 +22,24 @@
           />
         </v-col>
         <v-col cols="2">
-          <combo-box v-if="hasUnits" label="Units" v-model="item.unit" :items="unitItems" />
+          <combo-box
+            v-if="hasUnits"
+            label="Units"
+            path="unit"
+            :value="item.unit"
+            :items="unitItems"
+            :error="getError('unit', index)"
+            @input="handleInput($event, index)"
+          />
         </v-col>
         <v-col cols="4">
-          <text-field :label="itemLabel" path="label" :value="item.label" :error="getError('label', index)" @input="handleInput($event, index)" />
+          <text-field
+            :label="itemLabel"
+            path="label"
+            :value="item.label"
+            :error="getError('label', index)"
+            @input="handleInput($event, index)"
+          />
         </v-col>
         <v-col cols="3">
           <text-field v-if="hasNote" label="Notes" path="note" :value="item.note" @input="handleInput($event, index)" />
@@ -69,7 +89,6 @@ export default {
       required: true,
     },
     errors: {
-      type: Array,
       required: false,
       default: () => [
         {
@@ -136,6 +155,7 @@ export default {
     },
     getError(name, index) {
       if (this.errors && this.errors[index] && this.errors[index][name]) {
+        console.log("found error: ", this.errors[index][name]);
         return this.errors[index][name];
       } else {
         return "";

@@ -396,12 +396,20 @@ export default {
             is: "item",
             then: (schema) => schema.label("Unit").trim().required(RequiredMessage),
           }),
-          label: string().label("Ingredient").trim().required(RequiredMessage),
+          label: string().when("itemType", {
+            is: "item",
+            then: (schema) => schema.label("Ingredient").trim().required(RequiredMessage),
+            otherwise: (schema) => schema.label("Section name").trim().required(RequiredMessage),
+          }),
         })
       ),
       instructions: array().of(
         object().shape({
-          label: string().label("Instruction").trim().required(RequiredMessage),
+          label: string().when("itemType", {
+            is: "item",
+            then: (schema) => schema.label("Instruction").trim().required(RequiredMessage),
+            otherwise: (schema) => schema.label("Section name").trim().required(RequiredMessage)
+          }),
         })
       ),
       servings: number()
