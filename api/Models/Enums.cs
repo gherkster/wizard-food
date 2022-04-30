@@ -7,12 +7,4 @@ public class Enums
         Section,
         Item
     }
-
-    public enum DateTimeInterval
-    {
-        Seconds,
-        Minutes,
-        Hours,
-        Days
-    }
 }
