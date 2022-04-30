@@ -1,6 +1,5 @@
-using API.Configs;
-using API.Repositories;
-using API.Repositories.Interfaces;
+using System.Text.Json.Serialization;
+using API.Models.Database.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.SpaServices;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,10 +9,12 @@ using VueCliMiddleware;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddSingleton<ILiteDbRepository, LiteDbRepository>(); // https://github.com/mbdavid/LiteDB/wiki/Concurrency
-builder.Services.Configure<DatabaseOptions>(builder.Configuration.GetSection(DatabaseOptions.Position));
+builder.Services.AddDbContext<DatabaseContext>();
 
-builder.Services.AddControllers();
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(opt => opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
 builder.Services.AddSpaStaticFiles(opt => opt.RootPath = "../frontend/dist");
 
 builder.Services.AddEndpointsApiExplorer();
@@ -40,13 +41,16 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
 
-    endpoints.MapToVueCliProxy(
-        pattern: "{*path}",
-        options: new SpaOptions() { SourcePath = "../frontend" },
-        npmScript: System.Diagnostics.Debugger.IsAttached ? "serve" : null,
-        regex: "Compiled successfully",
-        forceKill: true,
-        wsl: false);
+    if (app.Environment.IsDevelopment())
+    {
+        endpoints.MapToVueCliProxy(
+            pattern: "{*path}",
+            options: new SpaOptions() { SourcePath = "../frontend" },
+            npmScript: System.Diagnostics.Debugger.IsAttached ? "serve" : null,
+            regex: "Compiled successfully",
+            forceKill: true,
+            wsl: false);
+    }
 });
 
 app.Run();

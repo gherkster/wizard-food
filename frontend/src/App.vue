@@ -23,11 +23,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
+      <v-btn href="https://github.com/vuetifyjs/vuetify/releases/latest" target="_blank" text>
         <span class="mr-2">Latest Release</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
@@ -36,17 +32,20 @@
     <v-main>
       <v-container>
         <router-view />
+        <alert-section />
       </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script>
+import AlertSection from "@/views/AlertSection";
 export default {
   name: "App",
-
-  data: () => ({
-    //
-  }),
+  components: { AlertSection },
 };
 </script>
+
+<style lang="scss">
+@use "./styles/global.scss";
+</style>

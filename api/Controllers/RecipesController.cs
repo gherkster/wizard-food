@@ -1,97 +1,132 @@
 using System.Collections.Generic;
 using System.Net;
+using API.Extensions;
 using API.Models;
-using API.Repositories.Interfaces;
+using API.Models.View;
+using API.Models.Database.Context;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class RecipesController
 {
-    private readonly ILiteDbRepository _dbRepository;
+    private readonly DatabaseContext _db;
     private readonly ILogger<RecipesController> _logger;
 
-    public RecipesController(ILiteDbRepository dbRepository, ILogger<RecipesController> logger)
+    public RecipesController(DatabaseContext dbContext, ILogger<RecipesController> logger)
     {
-        _dbRepository = dbRepository;
+        _db = dbContext;
         _logger = logger;
     }
 
-    [HttpGet("{id:guid}")]
-    public async Task<ActionResult<Recipe>> GetRecipe([FromRoute] Guid id)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes()
     {
-        var recipe = await _dbRepository.GetRecipe(id);
+        var recipes = await _db.Recipes.AsNoTracking().ToListAsync();
+        return recipes.Select(r => r.AsViewModel()).ToList();
+    }
+
+    [HttpGet("{slug}")]
+    public async Task<ActionResult<Recipe>> GetRecipe(string slug)
+    {
+        var recipe = await _db.Recipes.Where(r => r.Slug == slug)
+            .Include(r => r.Ingredients)
+            .Include(r => r.Instructions)
+            .Include(r => r.Category)
+            .Include(r => r.Cuisine)
+            .Include(r => r.CustomTimeLabel)
+            .Include(r => r.ServingType)
+            .Include(r => r.Tags)
+            .AsNoTracking()
+            .FirstOrDefaultAsync();
+        
         if (recipe == null)
         {
             return new NotFoundResult();
         }
         
-        return recipe;
-    }
-
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes([FromQuery] string? category, [FromQuery] string? cuisine)
-    {
-        var recipes = _dbRepository.GetQueryableRecipes();
-
-        if (category is not null)
-        {
-            recipes = recipes.Where(r => r.Category == category);
-        }
-        if (cuisine is not null)
-        {
-            recipes = recipes.Where(r => r.Cuisine == cuisine);
-        }
-        
-        return await recipes.ToListAsync();
+        return recipe.AsViewModel();
     }
 
     [HttpPost]
     public async Task<ActionResult> CreateRecipe(Recipe recipe)
     {
-        var id = await _dbRepository.CreateRecipe(recipe);
+        var dbRecipe = recipe.AsDatabaseModel();
+
+        // Prevent duplicate keys from being inserted by replacing all provided dropdown options
+        // in the recipe with the matching database entity if it exists
+        var dbOptions = await _db.GetDropdownOptionsAsync();
         
-        //return new CreatedAtActionResult(nameof(GetRecipe), nameof(RecipesController), new { id = recipe.Id}, recipe);
-        return new CreatedResult(id.ToString(), recipe);
+        dbRecipe.Category = dbOptions.Categories.FirstOrDefault(c => c == dbRecipe.Category) ?? dbRecipe.Category;
+        dbRecipe.Cuisine = dbOptions.Cuisines.FirstOrDefault(c => c == dbRecipe.Cuisine) ?? dbRecipe.Cuisine;
+        dbRecipe.CustomTimeLabel = dbOptions.CustomTimeTypes.FirstOrDefault(ctl => ctl == dbRecipe.CustomTimeLabel) ??
+                                   dbRecipe.CustomTimeLabel;
+        dbRecipe.ServingType = dbOptions.ServingTypes.FirstOrDefault(st => st == dbRecipe.ServingType) ??
+                               dbRecipe.ServingType;
+        dbRecipe.Tags = dbRecipe.Tags.Select(recipeTag => dbOptions.Tags.FirstOrDefault(dbTag => dbTag == recipeTag) ?? recipeTag).ToList();
+
+        await _db.Recipes.AddAsync(dbRecipe);
+        await _db.SaveChangesAsync();
+        
+        return new CreatedResult(dbRecipe.Id.ToString(), recipe);
     }
 
     [HttpPut("{id:guid}")]
     public async Task<ActionResult> UpdateRecipe(Guid id, Recipe recipe)
     {
-        await _dbRepository.UpdateRecipe(id, recipe);
+        var dbRecipe = await _db.Recipes.FindAsync(id);
+        if (dbRecipe is null)
+        {
+            return new NotFoundResult();
+        }
+        
+        _db.Entry(dbRecipe).CurrentValues.SetValues(recipe.AsDatabaseModel());
+        await _db.SaveChangesAsync();
+        
         return new OkResult();
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> DeleteRecipe(Guid id)
     {
-        await _dbRepository.DeleteRecipe(id);
+        var recipe = await _db.Recipes.FindAsync(id);
+        if (recipe is null)
+        {
+            return new NotFoundResult();
+        }
+        
+        _db.Recipes.Remove(recipe);
+        await _db.SaveChangesAsync();
+        
         return new OkResult();
     }
 
-    [HttpPost("slugs")]
-    public async Task<ActionResult> CreateSlug(string chosenSlug)
+    [HttpGet("slugs")]
+    public async Task<ActionResult<string>> GetAvailableSlug(string chosenSlug)
     {
-        var slugs = await _dbRepository.GetQueryableRecipes().Select(r => r.Slug).ToListAsync();
-
-        if (slugs.All(s => s != chosenSlug)) return new OkResult();
-
-        var slugsWithIdentifiers = slugs
-            .Where(s => s.Contains(chosenSlug))                 // Check all the matching slugs in use ...
-            .Where(s => char.IsDigit(chosenSlug[^1])).ToList(); // which have an identifier appended.
+        var allSlugs = await _db.Recipes.Select(r => r.Slug).AsNoTracking().ToListAsync();
+        if (allSlugs.All(s => s != chosenSlug))
+        {
+            return chosenSlug;
+        }
+        
+        var slugsWithIdentifiers = allSlugs
+            .Where(s => s.Contains(chosenSlug))                    // Check all the matching slugs in use ...
+            .Where(s => char.IsDigit(chosenSlug[chosenSlug.Length - 1])) // which have an identifier appended.
+            .ToList(); 
 
         // Now select just the identifier which is the maximum currently in use
-        var maxSlugIdentifier = slugsWithIdentifiers.Count > 0
+        var largestSlugIdentifier = slugsWithIdentifiers.Count > 0
             ? slugsWithIdentifiers.Select(s => int.Parse(s[^1].ToString())).Max()
             : 0;
-        
-        return new ContentResult()
-        {
-            // Increment the highest matching slug identifier currently in use to provide a unique slug
-            Content = string.Concat(chosenSlug, "-", maxSlugIdentifier + 1)
-        };
+
+        return string.Concat(chosenSlug, "-", largestSlugIdentifier + 1);
     }
+
+    [HttpGet("editor/dropdown-options")]
+    public async Task<ActionResult<DropdownOptions>> GetDropdownOptions() => await _db.GetDropdownOptionsAsync();
 }
