@@ -1,9 +1,18 @@
 <template>
   <div class="form-container">
     <div class="form-input-container">
-      <div :class="formInputClass">
+      <div :class="formInputClass" @click="$refs.inputField.focus()">
         <input-label :label="label" :is-active="isFieldActive" />
-        <textarea :value="value" :name="path" :rows="rows" class="form-input-field" @input="input" @focus="focus" @blur="blur" />
+        <textarea
+          ref="inputField"
+          :value="value"
+          :name="path"
+          :rows="rows"
+          class="form-input-field"
+          @input="input"
+          @focus="focus"
+          @blur="blur"
+        />
       </div>
     </div>
     <div class="form-validation-message">
