@@ -198,16 +198,22 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-combobox label="Tags" chips multiple :items="tags" />
-          <v-text-field
-            label="Slug"
-            prefix="/"
-            v-model="store.slug"
-            :rules="[rules.required('Slug'), rules.isSlug()]"
-            :append-outer-icon="isSlugValid ? 'mdi-check' : 'mdi-reload'"
-            @click:append-outer="createSlug"
-            @input="isSlugValid = false"
-          />
+          <v-col>
+            <chip-box label="Tags" path="tags" :value="new Set(store.tags)" :items="tags" @input="handleInput" @blur="handleBlur" />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-text-field
+              label="Slug"
+              prefix="/"
+              v-model="store.slug"
+              :rules="[rules.required('Slug'), rules.isSlug()]"
+              :append-outer-icon="isSlugValid ? 'mdi-check' : 'mdi-reload'"
+              @click:append-outer="createSlug"
+              @input="isSlugValid = false"
+            />
+          </v-col>
         </v-row>
         <!-- Nutrition -->
         <h2>Nutrition</h2>
@@ -284,10 +290,11 @@ import ComboBox from "@/components/molecules/ComboBox";
 import { object, string, number, array, ValidationError } from "yup";
 import { get, set } from "lodash";
 import { IntegerMessage, NumericMessage, PositiveMessage, RequiredMessage } from "@/constants/validationMessages";
+import ChipBox from "@/components/molecules/ChipBox";
 
 export default {
   name: "Editor",
-  components: { TextArea, TextField, ItemList, ComboBox },
+  components: { ChipBox, TextArea, TextField, ItemList, ComboBox },
   setup() {
     const store = useRecipeStore();
     return {
@@ -463,10 +470,12 @@ export default {
       this.$router.push("/");
     },
     async handleInput(event) {
+      console.log("handling input of: ", event.value);
       this.store.setValueAt(event.path, event.value);
       await this.validate(event.path);
     },
     async handleBlur(event) {
+      console.log("handling blur with value: ", event.value);
       this.store.setValueAt(event.path, event.value);
       await this.validate(event.path);
     },

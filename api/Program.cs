@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using API.Converters;
 using API.Models.Database.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.SpaServices;
@@ -13,7 +14,12 @@ builder.Services.AddDbContext<DatabaseContext>();
 
 builder.Services
     .AddControllers()
-    .AddJsonOptions(opt => opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+    .AddJsonOptions(
+        opt =>
+        {
+            opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            opt.JsonSerializerOptions.Converters.Add(new JsonStringTrimConverter());
+        });
 
 builder.Services.AddSpaStaticFiles(opt => opt.RootPath = "../frontend/dist");
 
@@ -45,7 +51,11 @@ app.UseEndpoints(endpoints =>
     {
         endpoints.MapToVueCliProxy(
             pattern: "{*path}",
-            options: new SpaOptions() { SourcePath = "../frontend" },
+            options: new SpaOptions()
+            {
+                SourcePath = "../frontend", 
+                StartupTimeout = TimeSpan.FromSeconds(60)
+            },
             npmScript: System.Diagnostics.Debugger.IsAttached ? "serve" : null,
             regex: "Compiled successfully",
             forceKill: true,

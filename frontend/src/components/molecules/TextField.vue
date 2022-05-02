@@ -1,10 +1,10 @@
 <template>
   <div class="form-container">
     <div class="form-input-container">
-      <div :class="formInputClass">
+      <div :class="formInputClass" @click="$refs.inputField.focus()">
         <input-label :label="label" :is-active="isFieldActive" />
         <label>
-          <input :value="value" :name="path" class="form-input-field" @input="input" @focus="focus" @blur="blur" />
+          <input ref="inputField" :value="value" :name="path" class="form-input-field" @input="input" @focus="focus" @blur="blur" />
         </label>
       </div>
     </div>
