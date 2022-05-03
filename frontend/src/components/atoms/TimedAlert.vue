@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { AlertKeys, Severity } from "@/constants/enums";
+import { Severity } from "@/constants/enums";
 
 export default {
   name: "TimedAlert",
@@ -19,17 +19,16 @@ export default {
       required: true,
       type: String,
     },
+    displayDuration: {
+      type: Number,
+      required: false,
+      default: 4000,
+    },
   },
-  data: () => ({
-    currentDuration: 0,
-    displayDuration: 4000,
-  }),
-  created() {
+  mounted() {
     setTimeout(() => {
-      this.$emit(AlertKeys.REMOVE);
+      this.$emit("expired");
     }, this.displayDuration);
   },
 };
 </script>
-
-<style scoped></style>
