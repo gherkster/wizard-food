@@ -204,14 +204,16 @@
         </v-row>
         <v-row>
           <v-col>
-            <v-text-field
+            <text-field
               label="Slug"
+              path="slug"
               prefix="/"
-              v-model="store.slug"
-              :rules="[rules.required('Slug'), rules.isSlug()]"
-              :append-outer-icon="isSlugValid ? 'mdi-check' : 'mdi-reload'"
-              @click:append-outer="createSlug"
-              @input="isSlugValid = false"
+              :value="store.slug"
+              :suffix-icon="isSlugValid ? 'fa-check' : 'fa-arrow-rotate-right'"
+              :error="errors.slug"
+              @input="handleSlugInput"
+              @blur="handleBlur"
+              @clickIcon="createSlug"
             />
           </v-col>
         </v-row>
@@ -415,7 +417,7 @@ export default {
           label: string().when("itemType", {
             is: "item",
             then: (schema) => schema.label("Instruction").trim().required(RequiredMessage),
-            otherwise: (schema) => schema.label("Section name").trim().required(RequiredMessage)
+            otherwise: (schema) => schema.label("Section name").trim().required(RequiredMessage),
           }),
         })
       ),
@@ -449,7 +451,6 @@ export default {
       }),
       slug: string()
         .label("Slug")
-        .trim()
         .required(RequiredMessage)
         .matches(
           slugPattern,
@@ -470,12 +471,14 @@ export default {
       this.$router.push("/");
     },
     async handleInput(event) {
-      console.log("handling input of: ", event.value);
       this.store.setValueAt(event.path, event.value);
       await this.validate(event.path);
     },
+    async handleSlugInput(event) {
+      this.isSlugValid = false;
+      await this.handleInput(event);
+    },
     async handleBlur(event) {
-      console.log("handling blur with value: ", event.value);
       this.store.setValueAt(event.path, event.value);
       await this.validate(event.path);
     },
@@ -519,6 +522,7 @@ export default {
         .replace(/ +/g, "-");
     },
     async createSlug() {
+      console.log("create slug");
       let chosenSlug = this.store.slug || "recipe";
       await axios
         .get(process.env.VUE_APP_APIURL + "/api/recipes/slugs", {

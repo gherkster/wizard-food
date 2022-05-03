@@ -6,9 +6,9 @@ import vuetify from "./plugins/vuetify";
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faXmark);
+library.add(faCheck, faArrowRotateRight);
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 
 Vue.config.productionTip = false;

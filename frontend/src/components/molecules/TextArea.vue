@@ -1,7 +1,7 @@
 <template>
   <div class="form-container">
     <div class="form-input-container">
-      <div :class="formInputClass" @click="$refs.inputField.focus()">
+      <div :class="formInputClass" @click.self="$refs.inputField.focus()">
         <input-label :label="label" :is-active="isFieldActive" />
         <textarea
           ref="inputField"
