@@ -12,7 +12,7 @@
               <text-field
                 label="Recipe Title"
                 path="header.title"
-                :value="store.header.title"
+                :value="recipeStore.header.title"
                 :error="errors.header.title"
                 @input="handleInput"
                 @blur="handleBlur"
@@ -23,7 +23,7 @@
               <!-- TODO setup v-model -->
             </v-col>
             <v-col>
-              <v-rating length="5" size="40" hover v-model="store.header.rating" />
+              <v-rating length="5" size="40" hover v-model="recipeStore.header.rating" />
             </v-col>
           </v-row>
           <v-row>
@@ -31,7 +31,7 @@
               <text-area
                 label="Description"
                 path="header.description"
-                :value="store.header.description"
+                :value="recipeStore.header.description"
                 @input="handleInput"
                 @blur="handleBlur"
               />
@@ -40,7 +40,7 @@
         </div>
         <h2>Ingredients</h2>
         <item-list
-          :value="store.ingredients"
+          :value="recipeStore.ingredients"
           :unit-items="['g', 'ml']"
           :errors="errors.ingredients"
           path="ingredients"
@@ -52,7 +52,7 @@
         />
         <h2>Instructions</h2>
         <item-list
-          :value="store.instructions"
+          :value="recipeStore.instructions"
           :errors="errors.instructions"
           path="instructions"
           item-label="Instruction"
@@ -65,7 +65,7 @@
             <text-field
               label="Servings"
               path="servings"
-              :value="store.servings"
+              :value="recipeStore.servings"
               :error="errors.servings"
               @input="handleInput"
               @blur="handleBlur"
@@ -75,7 +75,7 @@
             <combo-box
               label="Serving Type"
               path="servingType"
-              :value="store.servingType"
+              :value="recipeStore.servingType"
               :items="servingTypes"
               :error="errors.servingType"
               @input="handleInput"
@@ -86,7 +86,7 @@
             <combo-box
               label="Category"
               path="category"
-              :value="store.category"
+              :value="recipeStore.category"
               :items="categories"
               :error="errors.category"
               @input="handleInput"
@@ -97,7 +97,7 @@
             <combo-box
               label="Cuisine"
               path="cuisine"
-              :value="store.cuisine"
+              :value="recipeStore.cuisine"
               :items="cuisines"
               :error="errors.cuisine"
               @input="handleInput"
@@ -111,7 +111,7 @@
             <text-field
               label="Minutes"
               path="preparationTime.minutes"
-              :value="store.preparationTime.minutes"
+              :value="recipeStore.preparationTime.minutes"
               :error="errors.preparationTime.minutes"
               @input="handleInput"
               @blur="handleBlur"
@@ -119,7 +119,7 @@
             <text-field
               label="Hours"
               path="preparationTime.hours"
-              :value="store.preparationTime.hours"
+              :value="recipeStore.preparationTime.hours"
               :error="errors.preparationTime.hours"
               @input="handleInput"
               @blur="handleBlur"
@@ -127,7 +127,7 @@
             <text-field
               label="Days"
               path="preparationTime.days"
-              :value="store.preparationTime.days"
+              :value="recipeStore.preparationTime.days"
               :error="errors.preparationTime.days"
               @input="handleInput"
               @blur="handleBlur"
@@ -138,7 +138,7 @@
             <text-field
               label="Minutes"
               path="cookingTime.minutes"
-              :value="store.cookingTime.minutes"
+              :value="recipeStore.cookingTime.minutes"
               :error="errors.cookingTime.minutes"
               @input="handleInput"
               @blur="handleBlur"
@@ -146,7 +146,7 @@
             <text-field
               label="Hours"
               path="cookingTime.hours"
-              :value="store.cookingTime.hours"
+              :value="recipeStore.cookingTime.hours"
               :error="errors.cookingTime.hours"
               @input="handleInput"
               @blur="handleBlur"
@@ -154,7 +154,7 @@
             <text-field
               label="Days"
               path="cookingTime.days"
-              :value="store.cookingTime.days"
+              :value="recipeStore.cookingTime.days"
               :error="errors.cookingTime.days"
               @input="handleInput"
               @blur="handleBlur"
@@ -165,7 +165,7 @@
             <text-field
               label="Minutes"
               path="customTime.minutes"
-              :value="store.customTime.minutes"
+              :value="recipeStore.customTime.minutes"
               :error="errors.customTime.minutes"
               @input="handleInput"
               @blur="handleBlur"
@@ -173,7 +173,7 @@
             <text-field
               label="Hours"
               path="customTime.hours"
-              :value="store.customTime.hours"
+              :value="recipeStore.customTime.hours"
               :error="errors.customTime.hours"
               @input="handleInput"
               @blur="handleBlur"
@@ -181,7 +181,7 @@
             <text-field
               label="Days"
               path="customTime.days"
-              :value="store.customTime.days"
+              :value="recipeStore.customTime.days"
               :error="errors.customTime.days"
               @input="handleInput"
               @blur="handleBlur"
@@ -189,7 +189,7 @@
             <combo-box
               label="Type"
               path="customTimeType"
-              :value="store.customTimeType"
+              :value="recipeStore.customTimeType"
               :items="customTimeTypes"
               :error="errors.customTimeType"
               @input="handleInput"
@@ -199,7 +199,7 @@
         </v-row>
         <v-row>
           <v-col>
-            <chip-box label="Tags" path="tags" :value="new Set(store.tags)" :items="tags" @input="handleInput" @blur="handleBlur" />
+            <chip-box label="Tags" path="tags" :value="new Set(recipeStore.tags)" :items="tags" @input="handleInput" @blur="handleBlur" />
           </v-col>
         </v-row>
         <v-row>
@@ -208,7 +208,7 @@
               label="Slug"
               path="slug"
               prefix="/"
-              :value="store.slug"
+              :value="recipeStore.slug"
               :suffix-icon="isSlugValid ? 'fa-check' : 'fa-arrow-rotate-right'"
               :error="errors.slug"
               @input="handleSlugInput"
@@ -224,7 +224,7 @@
             <text-field
               label="Energy"
               path="nutrition.energy"
-              :value="store.nutrition.energy"
+              :value="recipeStore.nutrition.energy"
               :error="errors.nutrition.energy"
               @input="handleInput"
               @blur="handleBlur"
@@ -234,7 +234,7 @@
             <text-field
               label="Protein"
               path="nutrition.protein"
-              :value="store.nutrition.protein"
+              :value="recipeStore.nutrition.protein"
               :error="errors.nutrition.protein"
               @input="handleInput"
               @blur="handleBlur"
@@ -244,7 +244,7 @@
             <text-field
               label="Carbs"
               path="nutrition.carbohydrates"
-              :value="store.nutrition.carbohydrates"
+              :value="recipeStore.nutrition.carbohydrates"
               :error="errors.nutrition.carbohydrates"
               @input="handleInput"
               @blur="handleBlur"
@@ -254,7 +254,7 @@
             <text-field
               label="Fat"
               path="nutrition.fat"
-              :value="store.nutrition.fat"
+              :value="recipeStore.nutrition.fat"
               :error="errors.nutrition.fat"
               @input="handleInput"
               @blur="handleBlur"
@@ -264,7 +264,7 @@
             <text-field
               label="Sodium"
               path="nutrition.sodium"
-              :value="store.nutrition.sodium"
+              :value="recipeStore.nutrition.sodium"
               :errors="errors.nutrition.sodium"
               @input="handleInput"
               @blur="handleBlur"
@@ -281,9 +281,7 @@
 <script>
 import axios from "axios";
 import ItemList from "@/components/organisms/ItemList";
-import { isDecimal, isRequired, isSlug, slugPattern } from "@/scripts/validation";
-import { eventBus } from "@/main";
-import { AlertKeys, Severity } from "@/constants/enums";
+import { getFormInitialErrorState, slugPattern } from "@/scripts/validation";
 import { mapRecipeToApi } from "@/scripts/mapping";
 import { useRecipeStore } from "@/store/recipeStore";
 import TextArea from "@/components/molecules/TextArea";
@@ -293,14 +291,17 @@ import { object, string, number, array, ValidationError } from "yup";
 import { get, set } from "lodash";
 import { IntegerMessage, NumericMessage, PositiveMessage, RequiredMessage } from "@/constants/validationMessages";
 import ChipBox from "@/components/molecules/ChipBox";
+import { useAlertStore } from "@/store/alertStore";
 
 export default {
   name: "Editor",
   components: { ChipBox, TextArea, TextField, ItemList, ComboBox },
   setup() {
-    const store = useRecipeStore();
+    const recipeStore = useRecipeStore();
+    const alertStore = useAlertStore();
     return {
-      store,
+      recipeStore: recipeStore,
+      alertStore: alertStore,
     };
   },
   data: () => ({
@@ -313,52 +314,7 @@ export default {
     tags: [],
     isSlugValid: false,
     isSubmitting: false,
-    errors: {
-      header: {
-        title: "",
-      },
-      ingredients: [],
-      instructions: [],
-      servings: "",
-      servingType: "",
-      category: "",
-      cuisine: "",
-      preparationTime: {
-        minutes: "",
-        hours: "",
-        days: "",
-      },
-      cookingTime: {
-        minutes: "",
-        hours: "",
-        days: "",
-      },
-      customTime: {
-        minutes: "",
-        hours: "",
-        days: "",
-      },
-      customTimeType: "",
-      nutrition: {
-        energy: "",
-        protein: "",
-        carbohydrates: "",
-        fat: "",
-        sodium: "",
-      },
-      slug: "",
-    },
-    rules: {
-      required(labelName) {
-        return (value) => isRequired(value, `${labelName} is required`);
-      },
-      isDecimal(labelName) {
-        return (value) => isDecimal(value, `${labelName} must be a number`);
-      },
-      isSlug() {
-        return (slug) => isSlug(slug, "URL slug must only contain alphanumeric characters and hyphens, such as my-new-form or MyNewRecipe");
-      },
-    },
+    errors: getFormInitialErrorState(),
   }),
   async created() {
     await axios
@@ -372,7 +328,7 @@ export default {
 
         // Default to servings if it's a valid option
         if (this.servingTypes.includes("servings")) {
-          this.store.servingType = "servings";
+          this.recipeStore.servingType = "servings";
         }
       })
       .catch((error) => console.log(error));
@@ -471,21 +427,21 @@ export default {
       this.$router.push("/");
     },
     async handleInput(event) {
-      this.store.setValueAt(event.path, event.value);
-      await this.validate(event.path);
+      this.recipeStore.setValueAt(event.path, event.value);
+      await this.validateAt(event.path);
     },
     async handleSlugInput(event) {
       this.isSlugValid = false;
       await this.handleInput(event);
     },
     async handleBlur(event) {
-      this.store.setValueAt(event.path, event.value);
-      await this.validate(event.path);
+      this.recipeStore.setValueAt(event.path, event.value);
+      await this.validateAt(event.path);
     },
-    async validate(field) {
-      console.log("validating: ", field, "with value: ", get(this.store, field));
+    async validateAt(field) {
+      console.log("validating: ", field, "with value: ", get(this.recipeStore, field));
       await this.validationSchema
-        .validateAt(field, this.store, { abortEarly: false })
+        .validateAt(field, this.recipeStore, { abortEarly: false })
         .then(() => {
           set(this.errors, field, "");
         })
@@ -511,11 +467,33 @@ export default {
       // This ensures the user sees the field is required as soon as one of the above fields is modified,
       // without needing to interact with the customTimeType field directly.
       if (field.includes("customTime.")) {
-        await this.validate("customTimeType");
+        await this.validateAt("customTimeType");
       }
     },
+    async validateAll() {
+      await this.validationSchema
+        .validate(this.recipeStore, { abortEarly: false })
+        .then(() => {
+          this.errors = getFormInitialErrorState();
+        })
+        .catch((error) => {
+          if (error instanceof ValidationError) {
+            let validationErrors = error.inner.map((e) => ({ path: e.params.path.toString(), message: e.message }));
+
+            // If errors are an array clear them out first, as we are setting specific properties
+            // within the array which would hang around otherwise
+            if (Array.isArray(get(this.errors, error.path))) {
+              set(this.errors, error.path, []);
+            }
+
+            validationErrors.forEach((e) => {
+              set(this.errors, e.path, e.message);
+            });
+          }
+        });
+    },
     updateSlug() {
-      this.store.slug = this.store.title
+      this.recipeStore.slug = this.recipeStore.title
         .toLowerCase()
         .trim()
         .replace(/[^\w ]+/g, "")
@@ -523,7 +501,7 @@ export default {
     },
     async createSlug() {
       console.log("create slug");
-      let chosenSlug = this.store.slug || "recipe";
+      let chosenSlug = this.recipeStore.slug || "recipe";
       await axios
         .get(process.env.VUE_APP_APIURL + "/api/recipes/slugs", {
           params: {
@@ -532,27 +510,28 @@ export default {
         })
         .then((response) => {
           if (chosenSlug !== response.data) {
-            eventBus.$emit(AlertKeys.ADD, Severity.INFO, "The entered slug is already in use, a unique slug has been provided");
+            this.alertStore.showInfoAlert("The entered slug is already in use, a unique slug has been generated");
           }
-          this.store.slug = response.data;
+          this.recipeStore.slug = response.data;
           this.isSlugValid = true;
         })
         .catch((error) => console.log(error));
     },
     async submit() {
-      if (!this.$refs.editor.validate()) {
-        eventBus.$emit(AlertKeys.ADD, Severity.ERROR, "The form is invalid. Please check your entered data");
+      await this.validateAll();
+      if (this.errors) {
+        this.alertStore.showErrorAlert("The form is invalid. Please check your entered data");
         return;
       }
       this.isSubmitting = true;
-      console.log(JSON.stringify(this.store));
+      console.log(JSON.stringify(this.recipeStore));
       await axios
-        .post(process.env.VUE_APP_APIURL + "/api/recipes", mapRecipeToApi(this.store))
+        .post(process.env.VUE_APP_APIURL + "/api/recipes", mapRecipeToApi(this.recipeStore))
         .then(() => {
-          eventBus.$emit(AlertKeys.ADD, Severity.SUCCESS, "Recipe created");
+          this.alertStore.showSuccessAlert("Recipe created!");
         })
         .catch((error) => {
-          eventBus.$emit(AlertKeys.ADD, Severity.ERROR, "An error occurred while creating the form");
+          this.alertStore.showErrorAlert("An error occurred while creating the form");
           console.log(error);
         })
         .finally(() => (this.isSubmitting = false));

@@ -2,46 +2,44 @@ import { defineStore } from "pinia";
 import { get, set } from "lodash";
 
 export const useRecipeStore = defineStore("recipe", {
-  state: () => {
-    return {
-      header: {
-        title: "",
-        rating: 0,
-        description: "",
-      },
-      ingredients: [],
-      instructions: [],
-      category: "",
-      cuisine: "",
-      servings: "",
-      servingType: "",
-      preparationTime: {
-        days: "",
-        hours: "",
-        minutes: "",
-      },
-      cookingTime: {
-        days: "",
-        hours: "",
-        minutes: "",
-      },
-      customTime: {
-        days: "",
-        hours: "",
-        minutes: "",
-      },
-      customTimeType: "",
-      nutrition: {
-        energy: "",
-        protein: "",
-        carbohydrates: "",
-        fat: "",
-        sodium: "",
-      },
-      tags: [],
-      slug: "",
-    };
-  },
+  state: () => ({
+    header: {
+      title: "",
+      rating: 0,
+      description: "",
+    },
+    ingredients: [],
+    instructions: [],
+    category: "",
+    cuisine: "",
+    servings: "",
+    servingType: "",
+    preparationTime: {
+      days: "",
+      hours: "",
+      minutes: "",
+    },
+    cookingTime: {
+      days: "",
+      hours: "",
+      minutes: "",
+    },
+    customTime: {
+      days: "",
+      hours: "",
+      minutes: "",
+    },
+    customTimeType: "",
+    nutrition: {
+      energy: "",
+      protein: "",
+      carbohydrates: "",
+      fat: "",
+      sodium: "",
+    },
+    tags: [],
+    slug: "",
+  }),
   actions: {
     /**
      * @param path Dot path to the value in the store being updated, e.g. header.title

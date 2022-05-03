@@ -4,8 +4,3 @@ export const Severity = Object.freeze({
   WARNING: "warning",
   ERROR: "error",
 });
-
-export const AlertKeys = Object.freeze({
-  ADD: "addAlert",
-  REMOVE: "removeAlert",
-});
