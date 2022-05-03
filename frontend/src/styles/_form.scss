@@ -40,11 +40,22 @@ textarea {
       color: variables.$colour-error;
     }
   }
+  &-prefix {
+    position: absolute;
+    left: 8px;
+  }
   > label, textarea {
     display: flex;
     position: relative;
     flex-direction: row;
     width: 100%;
+  }
+  &-suffix-icon {
+    cursor: pointer;
+    &__disabled {
+      cursor: auto;
+      opacity: 0.5;
+    }
   }
 }
 .form-input-field {
