@@ -18,8 +18,7 @@ export default {
 @use "./src/styles/variables";
 span {
   position: absolute;
-  left: 12px;
-  bottom: -8px;
+  top: 100%;
   color: variables.$colour-error;
   line-height: 0.875em;
 }

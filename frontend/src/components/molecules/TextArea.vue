@@ -14,9 +14,9 @@
           @blur="blur"
         />
       </div>
-    </div>
-    <div class="form-validation-message">
-      <validation-message>{{ errors[0] }}</validation-message>
+      <div class="form-validation-message">
+        <validation-message>{{ errors[0] }}</validation-message>
+      </div>
     </div>
   </div>
 </template>

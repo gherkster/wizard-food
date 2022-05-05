@@ -9,9 +9,9 @@
         </label>
         <font-awesome-icon v-if="suffixIcon" :icon="suffixIcon" :class="suffixIconClass" @click="clickIcon"></font-awesome-icon>
       </div>
-    </div>
-    <div class="form-validation-message">
-      <validation-message v-show="error">{{ error }}</validation-message>
+      <div class="form-validation-message">
+        <validation-message v-show="error">{{ error }}</validation-message>
+      </div>
     </div>
   </div>
 </template>
@@ -51,6 +51,11 @@ export default {
       required: false,
       default: "",
     },
+    suffixIconDisabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   data: () => ({
     isActive: false,
@@ -63,7 +68,7 @@ export default {
       return this.error ? "form-input__error" : "form-input";
     },
     suffixIconClass: function () {
-      return this.error ? "form-input-suffix-icon__disabled" : "form-input-suffix-icon";
+      return this.suffixIconDisabled ? "form-input-suffix-icon__disabled" : "form-input-suffix-icon";
     },
   },
   methods: {
@@ -79,7 +84,7 @@ export default {
       this.$emit("blur", { path: this.path, value: event.target.value });
     },
     clickIcon() {
-      if (!this.error) {
+      if (!this.suffixIconDisabled) {
         this.$emit("clickIcon");
       }
     },

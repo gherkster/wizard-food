@@ -21,6 +21,7 @@ textarea {
 }
 
 .form-input-container {
+  position: relative;
   margin-bottom: 12px;
   padding: 12px 0;
 }
@@ -28,7 +29,7 @@ textarea {
   display: flex;
   position: relative;
   align-items: center;
-  padding: 16px;
+  padding: variables.$padding-input;
   background-color: variables.$colour-input;
   border-radius: variables.$border-radius;
   border: solid variables.$colour-bg-light 2px;
@@ -96,6 +97,8 @@ textarea {
 
 .form-validation-message {
   position: relative;
+  margin-top: 4px;
+  padding-left: variables.$padding-input;
 }
 
 .form-dropdown-container {
