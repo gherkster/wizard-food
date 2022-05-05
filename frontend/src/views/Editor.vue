@@ -3,7 +3,7 @@
     <v-spacer />
     <v-col cols="12" sm="12" md="10" lg="8">
       <v-btn @click="goToRecipes">Go to recipes</v-btn>
-      <v-form ref="editor">
+      <form>
         <div>
           <h2>New Recipe</h2>
           <!-- TODO: This should display the recipe name if the user is editing an existing recipe -->
@@ -14,7 +14,7 @@
                 path="header.title"
                 :value="recipeStore.header.title"
                 :error="errors.header.title"
-                @input="handleInput"
+                @input="handleTitleInput"
                 @blur="handleBlur"
               />
             </v-col>
@@ -209,7 +209,8 @@
               path="slug"
               prefix="/"
               :value="recipeStore.slug"
-              :suffix-icon="isSlugValid ? 'fa-check' : 'fa-arrow-rotate-right'"
+              :suffix-icon="!errors.slug ? 'fa-check' : 'fa-arrow-rotate-right'"
+              :suffix-icon-disabled="!errors.slug"
               :error="errors.slug"
               @input="handleSlugInput"
               @blur="handleBlur"
@@ -272,7 +273,7 @@
           </v-col>
         </v-row>
         <v-btn @click="submit" :loading="isSubmitting">Submit</v-btn>
-      </v-form>
+      </form>
     </v-col>
     <v-spacer />
   </v-row>
@@ -312,7 +313,6 @@ export default {
     categories: [],
     cuisines: [],
     tags: [],
-    isSlugValid: false,
     isSubmitting: false,
     errors: getFormInitialErrorState(),
   }),
@@ -405,12 +405,26 @@ export default {
         is: (ct) => ct.minutes || ct.hours || ct.days,
         then: (schema) => schema.label("Custom time type").trim().required(RequiredMessage),
       }),
-      slug: string()
+      slug: string() // TODO: Add api validation of slug with slugs endpoint
         .label("Slug")
         .required(RequiredMessage)
         .matches(
           slugPattern,
           "URL slug must be a unique combination of alphanumeric characters and hyphens, such as my-new-form or MyNewRecipe"
+        )
+        .test(
+          "is-slug-unique",
+          "Slug already exists. Enter a unique value or click the reload icon to generate one.",
+          async (value, testContext) => {
+            // Skip API validation of unique slug when user is still entering text.
+            // This ensures there is no latency/overuse of endpoint and text regex can run,
+            // while still validating when the blur event fires.
+            if (!testContext.options.skipApiValidation && value.trim()) {
+              return await this.validateSlug(value.trim());
+            } else {
+              return true;
+            }
+          }
         ),
       nutrition: object().shape({
         energy: number().label("Energy").transform(emptyToUndefined).typeError(NumericMessage),
@@ -430,18 +444,29 @@ export default {
       this.recipeStore.setValueAt(event.path, event.value);
       await this.validateAt(event.path);
     },
-    async handleSlugInput(event) {
-      this.isSlugValid = false;
+    /**
+     * Handle title input while also prefilling a potential URL slug
+     */
+    async handleTitleInput(event) {
       await this.handleInput(event);
+      this.createSlugFromTitle();
+    },
+    /**
+     * A separate input handler for slug input.
+     * This avoids calling the validation endpoint for each keypress, and only validates on input blur.
+     */
+    async handleSlugInput(event) {
+      this.recipeStore.setValueAt(event.path, event.value);
+      await this.validateAt(event.path, true);
     },
     async handleBlur(event) {
       this.recipeStore.setValueAt(event.path, event.value);
       await this.validateAt(event.path);
     },
-    async validateAt(field) {
+    async validateAt(field, skipApiValidation = false) {
       console.log("validating: ", field, "with value: ", get(this.recipeStore, field));
       await this.validationSchema
-        .validateAt(field, this.recipeStore, { abortEarly: false })
+        .validateAt(field, this.recipeStore, { abortEarly: false, skipApiValidation: skipApiValidation })
         .then(() => {
           set(this.errors, field, "");
         })
@@ -492,28 +517,44 @@ export default {
           }
         });
     },
-    updateSlug() {
-      this.recipeStore.slug = this.recipeStore.title
+    /**
+     * Generate a slug based on the recipe title, replacing spaces with hyphens
+     */
+    createSlugFromTitle() {
+      this.recipeStore.slug = this.recipeStore.header.title
         .toLowerCase()
         .trim()
         .replace(/[^\w ]+/g, "")
         .replace(/ +/g, "-");
     },
+    async validateSlug(slug) {
+      let isValidSlug;
+      await axios
+        .get(process.env.VUE_APP_APIURL + "/api/recipes/slugs", {
+          params: {
+            chosenSlug: slug,
+          },
+        })
+        .then((response) => {
+          isValidSlug = response.data === slug;
+        })
+        .catch((error) => console.log(error));
+
+      return isValidSlug;
+    },
     async createSlug() {
-      console.log("create slug");
-      let chosenSlug = this.recipeStore.slug || "recipe";
+      let chosenSlug = this.recipeStore.slug || this.createSlugFromTitle();
       await axios
         .get(process.env.VUE_APP_APIURL + "/api/recipes/slugs", {
           params: {
             chosenSlug: chosenSlug,
           },
         })
-        .then((response) => {
-          if (chosenSlug !== response.data) {
-            this.alertStore.showInfoAlert("The entered slug is already in use, a unique slug has been generated");
+        .then(async (response) => {
+          if (response.data) {
+            this.recipeStore.slug = response.data;
+            await this.validateAt("slug");
           }
-          this.recipeStore.slug = response.data;
-          this.isSlugValid = true;
         })
         .catch((error) => console.log(error));
     },

@@ -17,9 +17,9 @@
         <dropdown v-show="isActive" :items="items" @select="select" />
         <v-icon class="form-combo-box-icon">mdi-chevron-down</v-icon><!-- TODO: Animate -->
       </div>
-    </div>
-    <div class="form-validation-message">
-      <validation-message v-show="error">{{ error }}</validation-message>
+      <div class="form-validation-message">
+        <validation-message v-show="error">{{ error }}</validation-message>
+      </div>
     </div>
   </div>
 </template>
