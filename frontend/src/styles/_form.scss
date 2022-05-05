@@ -21,6 +21,7 @@ textarea {
 }
 
 .form-input-container {
+  position: relative;
   margin-bottom: 12px;
   padding: 12px 0;
 }
@@ -28,6 +29,7 @@ textarea {
   display: flex;
   position: relative;
   align-items: center;
+  padding: variables.$padding-input;
   background-color: variables.$colour-input;
   border-radius: variables.$border-radius;
   border: solid variables.$colour-bg-light 2px;
@@ -39,26 +41,35 @@ textarea {
       color: variables.$colour-error;
     }
   }
+  &-prefix {
+    position: absolute;
+    left: 8px;
+  }
   > label, textarea {
     display: flex;
     position: relative;
     flex-direction: row;
     width: 100%;
   }
+  &-suffix-icon {
+    cursor: pointer;
+    &__disabled {
+      cursor: auto;
+      opacity: 0.5;
+    }
+  }
 }
 .form-input-field {
   position: relative;
-  padding: 16px;
+  min-width: 80px;
 }
 
 .form-combo-box {
   display: flex;
+  flex: 1;
   position: relative;
   align-items: center;
 
-  &-input {
-    padding: 16px 28px 16px 16px;
-  }
   &-icon {
     // TODO: Rework this class, only needed while using vuetify
     position: absolute !important;
@@ -86,6 +97,8 @@ textarea {
 
 .form-validation-message {
   position: relative;
+  margin-top: 4px;
+  padding-left: variables.$padding-input;
 }
 
 .form-dropdown-container {
@@ -109,12 +122,32 @@ textarea {
 }
 
 .form-chip-container {
-  padding-left: 12px; // TODO Standardise in variable
+  display: flex;
+  flex-direction: row;
+  flex: 1 0 auto;
+  max-width: 90%;
+  flex-wrap: wrap;
+  > label > input {
+    padding: 0;
+  }
 }
 .form-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   background: variables.$colour-primary-light;
   color: variables.$colour-primary;
+  margin: 4px 8px 4px 0;
   padding: 4px 8px;
-  margin: 0 4px;
-  border-radius: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  > span {
+    user-select: none;
+  }
+  &:hover {
+    background: variables.$colour-primary-light-highlight;
+  }
+  &__active, &__active:hover {
+    background: variables.$colour-primary-light-active;
+  }
 }

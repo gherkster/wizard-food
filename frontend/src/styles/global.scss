@@ -1,6 +1,7 @@
 @use "mixins" as mixins;
 @use "variables";
 @use "form";
+@use "alerts";
 
 // TODO: Combine into single import
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap'); // Montserrat
