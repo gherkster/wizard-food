@@ -1,15 +1,17 @@
 <template>
   <div class="form-container">
     <div class="form-input-container">
-      <div :class="formInputClass">
+      <div :class="formInputClass" @click.self="$refs.inputField.focus()">
         <input-label :label="label" :is-active="isFieldActive" />
+        <span v-if="prefix" class="form-input-prefix">{{ prefix }}</span>
         <label>
-          <input :value="value" :name="path" class="form-input-field" @input="input" @focus="focus" @blur="blur" />
+          <input ref="inputField" :value="value" :name="path" class="form-input-field" @input="input" @focus="focus" @blur="blur" />
         </label>
+        <font-awesome-icon v-if="suffixIcon" :icon="suffixIcon" :class="suffixIconClass" @click="clickIcon"></font-awesome-icon>
       </div>
-    </div>
-    <div class="form-validation-message">
-      <validation-message v-show="error">{{ error }}</validation-message>
+      <div class="form-validation-message">
+        <validation-message v-show="error">{{ error }}</validation-message>
+      </div>
     </div>
   </div>
 </template>
@@ -39,6 +41,21 @@ export default {
       required: false,
       default: "",
     },
+    prefix: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    suffixIcon: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    suffixIconDisabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   data: () => ({
     isActive: false,
@@ -49,6 +66,9 @@ export default {
     },
     formInputClass: function () {
       return this.error ? "form-input__error" : "form-input";
+    },
+    suffixIconClass: function () {
+      return this.suffixIconDisabled ? "form-input-suffix-icon__disabled" : "form-input-suffix-icon";
     },
   },
   methods: {
@@ -62,6 +82,11 @@ export default {
     blur(event) {
       this.isActive = false;
       this.$emit("blur", { path: this.path, value: event.target.value });
+    },
+    clickIcon() {
+      if (!this.suffixIconDisabled) {
+        this.$emit("clickIcon");
+      }
     },
   },
 };

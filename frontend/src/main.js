@@ -4,9 +4,14 @@ import router from "./router";
 import pinia from "./plugins/pinia";
 import vuetify from "./plugins/vuetify";
 
-Vue.config.productionTip = false;
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faCheck, faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
 
-export const eventBus = new Vue();
+library.add(faCheck, faArrowRotateRight);
+Vue.component("font-awesome-icon", FontAwesomeIcon);
+
+Vue.config.productionTip = false;
 
 new Vue({
   router,

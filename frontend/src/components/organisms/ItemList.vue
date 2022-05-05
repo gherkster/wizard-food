@@ -64,7 +64,6 @@
 
 <script>
 import { uuid } from "vue-uuid";
-import { isDecimal, isRequired } from "@/scripts/validation";
 import ComboBox from "@/components/molecules/ComboBox";
 import InputButton from "@/components/molecules/InputButton";
 import TextField from "@/components/molecules/TextField";
@@ -74,14 +73,6 @@ export default {
   components: { TextField, InputButton, ComboBox },
   data: () => ({
     items: [],
-    rules: {
-      required(labelName) {
-        return (value) => isRequired(value, `${labelName} is required`);
-      },
-      isDecimal(labelName) {
-        return (value) => isDecimal(value, `${labelName} must be a number`);
-      },
-    },
   }),
   props: {
     path: {
