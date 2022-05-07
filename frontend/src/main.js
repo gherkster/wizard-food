@@ -6,9 +6,10 @@ import vuetify from "./plugins/vuetify";
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faCheck, faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faArrowRotateRight, faStar as fasStar, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faStar as farStar } from "@fortawesome/free-regular-svg-icons";
 
-library.add(faCheck, faArrowRotateRight);
+library.add(faCheck, faArrowRotateRight, fasStar, farStar, faXmark);
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 
 Vue.config.productionTip = false;

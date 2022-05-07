@@ -78,7 +78,7 @@ textarea {
 }
 
 .form-button {
-  padding: 12px 48px;
+  padding: 4px 24px;
   border-radius: 32px;
   border: solid transparent 3px;
   &__primary {
@@ -149,5 +149,13 @@ textarea {
   }
   &__active, &__active:hover {
     background: variables.$colour-primary-light-active;
+  }
+}
+
+.form-rating {
+  display: inline-flex;
+  > svg {
+    padding: 0 4px;
+    color: variables.$colour-primary;
   }
 }

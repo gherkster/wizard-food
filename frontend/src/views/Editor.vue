@@ -23,7 +23,7 @@
               <!-- TODO setup v-model -->
             </v-col>
             <v-col>
-              <v-rating length="5" size="40" hover v-model="recipeStore.header.rating" />
+              <rating :length="5" :value="recipeStore.header.rating" path="header.rating" @input="handleInput" />
             </v-col>
           </v-row>
           <v-row>
@@ -39,25 +39,95 @@
           </v-row>
         </div>
         <h2>Ingredients</h2>
-        <item-list
-          :value="recipeStore.ingredients"
-          :unit-items="['g', 'ml']"
-          :errors="errors.ingredients"
-          path="ingredients"
-          item-label="Ingredient"
-          has-amount
-          has-units
-          has-note
-          @input="handleInput"
-        />
+        <v-row v-for="(item, index) in recipeStore.ingredients" :key="item.uuid">
+          <!-- If item is a section name -->
+          <v-col cols="11" v-if="item.itemType === 'section'">
+            <text-field
+              label="Section name"
+              path="label"
+              :value="item.label"
+              :error="errors.ingredients[index] ? errors.ingredients[index].label : ''"
+              @input="handleIngredientInputAtIndex($event, index)"
+              @blur="handleIngredientBlurAtIndex($event, index)"
+            />
+          </v-col>
+          <!-- If item is an ingredient -->
+          <template v-else>
+            <v-col cols="2">
+              <text-field
+                label="Amount"
+                path="amount"
+                :value="item.amount"
+                :error="errors.ingredients[index] ? errors.ingredients[index].amount : ''"
+                @input="handleIngredientInputAtIndex($event, index)"
+                @blur="handleIngredientBlurAtIndex($event, index)"
+              />
+            </v-col>
+            <v-col cols="2">
+              <combo-box
+                label="Units"
+                path="unit"
+                :value="item.unit"
+                :items="['g', 'ml']"
+                :error="errors.ingredients[index] ? errors.ingredients[index].unit : ''"
+                @input="handleIngredientInputAtIndex($event, index)"
+                @blur="handleIngredientBlurAtIndex($event, index)"
+              />
+            </v-col>
+            <v-col cols="4">
+              <text-field
+                label="Ingredient"
+                path="label"
+                :value="item.label"
+                :error="errors.ingredients[index] ? errors.ingredients[index].label : ''"
+                @input="handleIngredientInputAtIndex($event, index)"
+                @blur="handleIngredientBlurAtIndex($event, index)"
+              />
+            </v-col>
+            <v-col cols="3">
+              <text-field label="Notes" path="note" :value="item.note" @input="handleIngredientInputAtIndex($event, index)" />
+            </v-col>
+          </template>
+          <v-col cols="1">
+            <icon fa-icon="fa-xmark" @click="removeIngredientAt(index)" />
+          </v-col>
+        </v-row>
+        <v-row justify="space-around">
+          <input-button label="Add Group" @click="addIngredientGroup" />
+          <input-button label="Add Ingredient" @click="addIngredient" />
+        </v-row>
         <h2>Instructions</h2>
-        <item-list
-          :value="recipeStore.instructions"
-          :errors="errors.instructions"
-          path="instructions"
-          item-label="Instruction"
-          @input="handleInput"
-        />
+        <v-row v-for="(item, index) in recipeStore.instructions" :key="item.uuid">
+          <!-- If item is a section name -->
+          <v-col cols="11" v-if="item.itemType === 'section'">
+            <text-field
+              label="Section name"
+              path="label"
+              :value="item.label"
+              :error="errors.instructions[index] ? errors.instructions[index].label : ''"
+              @input="handleInstructionInputAtIndex($event, index)"
+              @blur="handleInstructionBlurAtIndex($event, index)"
+            />
+          </v-col>
+          <!-- If item is an instruction -->
+          <v-col v-else cols="11">
+            <text-field
+              label="Instruction"
+              path="label"
+              :value="item.label"
+              :error="errors.instructions[index] ? errors.instructions[index].label : ''"
+              @input="handleInstructionInputAtIndex($event, index)"
+              @blur="handleInstructionBlurAtIndex($event, index)"
+            />
+          </v-col>
+          <v-col cols="1">
+            <icon fa-icon="fa-xmark" @click="removeInstructionAt(index)" />
+          </v-col>
+        </v-row>
+        <v-row justify="space-around">
+          <input-button label="Add Group" @click="addInstructionGroup" />
+          <input-button label="Add Ingredient" @click="addInstruction" />
+        </v-row>
         <!-- Metadata -->
         <h2>Metadata</h2>
         <v-row>
@@ -281,7 +351,6 @@
 
 <script>
 import axios from "axios";
-import ItemList from "@/components/organisms/ItemList";
 import { getFormInitialErrorState, slugPattern } from "@/scripts/validation";
 import { mapRecipeToApi } from "@/scripts/mapping";
 import { useRecipeStore } from "@/store/recipeStore";
@@ -289,14 +358,18 @@ import TextArea from "@/components/molecules/TextArea";
 import TextField from "@/components/molecules/TextField";
 import ComboBox from "@/components/molecules/ComboBox";
 import { object, string, number, array, ValidationError } from "yup";
-import { get, set } from "lodash";
+import { get, set, setWith } from "lodash";
 import { IntegerMessage, NumericMessage, PositiveMessage, RequiredMessage } from "@/constants/validationMessages";
 import ChipBox from "@/components/molecules/ChipBox";
 import { useAlertStore } from "@/store/alertStore";
+import Rating from "@/components/molecules/Rating";
+import Icon from "@/components/atoms/Icon";
+import InputButton from "@/components/molecules/InputButton";
+import { uuid } from "vue-uuid";
 
 export default {
   name: "Editor",
-  components: { ChipBox, TextArea, TextField, ItemList, ComboBox },
+  components: { Rating, ChipBox, TextArea, TextField, ComboBox, Icon, InputButton },
   setup() {
     const recipeStore = useRecipeStore();
     const alertStore = useAlertStore();
@@ -459,16 +532,80 @@ export default {
       this.recipeStore.setValueAt(event.path, event.value);
       await this.validateAt(event.path, true);
     },
+    async handleIngredientInputAtIndex(event, index) {
+      this.recipeStore.setValueAtIndex("ingredients", index, event.path, event.value);
+      await this.validateAt(`ingredients[${index}].${event.path}`);
+    },
+    async handleInstructionInputAtIndex(event, index) {
+      this.recipeStore.setValueAtIndex("instructions", index, event.path, event.value);
+      await this.validateAt(`instructions[${index}].${event.path}`);
+    },
     async handleBlur(event) {
       this.recipeStore.setValueAt(event.path, event.value);
       await this.validateAt(event.path);
+    },
+    async handleIngredientBlurAtIndex(event, index) {
+      this.recipeStore.setValueAtIndex("ingredients", index, event.path, event.value);
+      await this.validateAt(`ingredients[${index}].${event.path}`);
+    },
+    async handleInstructionBlurAtIndex(event, index) {
+      this.recipeStore.setValueAtIndex("instructions", index, event.path, event.value);
+      await this.validateAt(`instructions[${index}].${event.path}`);
+    },
+    addIngredientGroup() {
+      this.addItemGroup("ingredients");
+    },
+    addInstructionGroup() {
+      this.addItemGroup("instructions");
+    },
+    addIngredient() {
+      this.addItem("ingredients", { label: "", amount: "", unit: "", note: "" });
+    },
+    addInstruction() {
+      this.addItem("instructions", { label: "" });
+    },
+    addItemGroup(section) {
+      if (this.recipeStore[section]) {
+        this.recipeStore[section].push({
+          uuid: uuid.v1(),
+          itemType: "section",
+          label: "",
+        });
+      }
+    },
+    addItem(section, fields) {
+      if (this.recipeStore[section]) {
+        this.recipeStore[section].push({
+          uuid: uuid.v1(),
+          itemType: "item",
+          label: "",
+          ...fields,
+        });
+      }
+    },
+    removeIngredientAt(index) {
+      this.removeItemAt("ingredients", index);
+    },
+    removeInstructionAt(index) {
+      this.removeItemAt("instructions", index);
+    },
+    removeItemAt(section, index) {
+      if (this.recipeStore[section]) {
+        this.recipeStore[section].splice(index, 1);
+      }
+      if (this.errors[section][index]) {
+        this.errors[section].splice(index, 1);
+      }
     },
     async validateAt(field, skipApiValidation = false) {
       console.log("validating: ", field, "with value: ", get(this.recipeStore, field));
       await this.validationSchema
         .validateAt(field, this.recipeStore, { abortEarly: false, skipApiValidation: skipApiValidation })
         .then(() => {
-          set(this.errors, field, "");
+          // Set using setWith to ensure reactivity is maintained when updating array values
+          setWith(this.errors, field, "", (nsValue, key, nsObject) => {
+            return this.$set(nsObject, key, nsValue);
+          });
         })
         .catch((error) => {
           if (error instanceof ValidationError) {
@@ -481,7 +618,9 @@ export default {
             }
 
             validationErrors.forEach((e) => {
-              set(this.errors, e.path, e.message);
+              setWith(this.errors, e.path, e.message, (nsValue, key, nsObject) => {
+                return this.$set(nsObject, key, nsValue);
+              });
             });
           } else {
             console.log(error);
@@ -543,7 +682,7 @@ export default {
       return isValidSlug;
     },
     async createSlug() {
-      let chosenSlug = this.recipeStore.slug || this.createSlugFromTitle();
+      let chosenSlug = this.recipeStore.slug || this.createSlugFromTitle() || "recipe";
       await axios
         .get(process.env.VUE_APP_APIURL + "/api/recipes/slugs", {
           params: {

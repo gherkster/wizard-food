@@ -56,5 +56,10 @@ export const useRecipeStore = defineStore("recipe", {
         set(this, path, value);
       }
     },
+    setValueAtIndex(basePath, index, valuePath, setValue) {
+      if (get(this, [basePath, index])) {
+        set(this, [basePath, index, valuePath], setValue);
+      }
+    },
   },
 });
