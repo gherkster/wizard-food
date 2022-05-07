@@ -7,6 +7,7 @@
       "
       size="2xl"
       :key="star"
+      hover
       @mouseenter="handleMouseEnter(index)"
       @mouseleave="handleMouseLeave"
       @click="handleClick(star)"

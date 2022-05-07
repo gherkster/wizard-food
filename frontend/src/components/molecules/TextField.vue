@@ -7,7 +7,7 @@
         <label>
           <input ref="inputField" :value="value" :name="path" class="form-input-field" @input="input" @focus="focus" @blur="blur" />
         </label>
-        <font-awesome-icon v-if="suffixIcon" :icon="suffixIcon" :class="suffixIconClass" @click="clickIcon"></font-awesome-icon>
+        <icon v-if="suffixIcon" :fa-icon="suffixIcon" :class="suffixIconClass" @click="clickIcon" />
       </div>
       <div class="form-validation-message">
         <validation-message v-show="error">{{ error }}</validation-message>
@@ -19,10 +19,11 @@
 <script>
 import InputLabel from "@/components/atoms/InputLabel";
 import ValidationMessage from "@/components/atoms/ValidationMessage";
+import Icon from "@/components/atoms/Icon";
 
 export default {
   name: "TextField",
-  components: { InputLabel, ValidationMessage },
+  components: { Icon, InputLabel, ValidationMessage },
   props: {
     value: {
       type: String,

@@ -2,7 +2,7 @@
   <v-row>
     <v-spacer />
     <v-col cols="12" sm="12" md="10" lg="8">
-      <v-btn @click="goToRecipes">Go to recipes</v-btn>
+      <input-button label="Go to recipes" @click="goToRecipes" />
       <form>
         <div>
           <h2>New Recipe</h2>
@@ -89,7 +89,7 @@
             </v-col>
           </template>
           <v-col cols="1">
-            <icon fa-icon="fa-xmark" @click="removeIngredientAt(index)" />
+            <icon fa-icon="fa-xmark" hover @click="removeIngredientAt(index)" />
           </v-col>
         </v-row>
         <v-row justify="space-around">
@@ -121,7 +121,7 @@
             />
           </v-col>
           <v-col cols="1">
-            <icon fa-icon="fa-xmark" @click="removeInstructionAt(index)" />
+            <icon fa-icon="fa-xmark" hover @click="removeInstructionAt(index)" />
           </v-col>
         </v-row>
         <v-row justify="space-around">
@@ -342,7 +342,7 @@
             />
           </v-col>
         </v-row>
-        <v-btn @click="submit" :loading="isSubmitting">Submit</v-btn>
+        <input-button label="Submit" :loading="isSubmitting" @click="submit" />
       </form>
     </v-col>
     <v-spacer />
@@ -522,7 +522,7 @@ export default {
      */
     async handleTitleInput(event) {
       await this.handleInput(event);
-      this.createSlugFromTitle();
+      await this.createSlugFromTitle();
     },
     /**
      * A separate input handler for slug input.
@@ -659,12 +659,13 @@ export default {
     /**
      * Generate a slug based on the recipe title, replacing spaces with hyphens
      */
-    createSlugFromTitle() {
+    async createSlugFromTitle() {
       this.recipeStore.slug = this.recipeStore.header.title
         .toLowerCase()
         .trim()
         .replace(/[^\w ]+/g, "")
         .replace(/ +/g, "-");
+      await this.validateAt("slug", true);
     },
     async validateSlug(slug) {
       let isValidSlug;
@@ -682,7 +683,7 @@ export default {
       return isValidSlug;
     },
     async createSlug() {
-      let chosenSlug = this.recipeStore.slug || this.createSlugFromTitle() || "recipe";
+      let chosenSlug = this.recipeStore.slug || (await this.createSlugFromTitle()) || "recipe";
       await axios
         .get(process.env.VUE_APP_APIURL + "/api/recipes/slugs", {
           params: {
