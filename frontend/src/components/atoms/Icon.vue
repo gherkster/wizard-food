@@ -2,6 +2,8 @@
   <font-awesome-icon
     :icon="faIcon"
     :size="size"
+    :spin="spin"
+    :class="{ hoverable: hover }"
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
     @click="handleClick"
@@ -20,6 +22,16 @@ export default {
       type: String,
       required: false,
       default: "lg",
+    },
+    spin: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    hover: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   methods: {

@@ -78,9 +78,19 @@ textarea {
 }
 
 .form-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 4px 24px;
   border-radius: 32px;
   border: solid transparent 3px;
+  &-content {
+    visibility: visible;
+    &__hidden {
+      visibility: hidden;
+    }
+  }
   &__primary {
     color: white;
     background: variables.$colour-primary;
@@ -92,6 +102,9 @@ textarea {
   }
   &__disabled {
     background: variables.$colour-disabled;
+  }
+  > svg {
+    position: absolute;
   }
 }
 
@@ -158,4 +171,8 @@ textarea {
     padding: 0 4px;
     color: variables.$colour-primary;
   }
+}
+
+.hoverable {
+  cursor: pointer;
 }
