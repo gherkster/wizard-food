@@ -18,7 +18,7 @@
           </label>
         </div>
         <dropdown v-show="isActive" :items="items" @select="select" />
-        <v-icon class="form-combo-box-icon">mdi-chevron-down</v-icon><!-- TODO: Animate -->
+        <icon fa-icon="fa-chevron-down" class="form-combo-box-icon" /><!-- TODO: Animate -->
       </div>
       <div class="form-validation-message">
         <validation-message v-show="error">{{ error }}</validation-message>
@@ -32,10 +32,11 @@ import InputLabel from "@/components/atoms/InputLabel";
 import Dropdown from "@/components/atoms/Dropdown";
 import ValidationMessage from "@/components/atoms/ValidationMessage";
 import Chip from "@/components/atoms/Chip";
+import Icon from "@/components/atoms/Icon";
 
 export default {
   name: "ChipBox",
-  components: { Chip, InputLabel, ValidationMessage, Dropdown },
+  components: { Icon, Chip, InputLabel, ValidationMessage, Dropdown },
   props: {
     value: {
       type: Set,
