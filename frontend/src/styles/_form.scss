@@ -3,12 +3,14 @@
 label {
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   cursor: text;
 }
 input, textarea {
   position: relative;
+  border: none;
+  background: transparent;
   outline: none;
   overflow: hidden;
   width: 100%;
@@ -45,12 +47,6 @@ textarea {
     position: absolute;
     left: 8px;
   }
-  > label, textarea {
-    display: flex;
-    position: relative;
-    flex-direction: row;
-    width: 100%;
-  }
   &-suffix-icon {
     cursor: pointer;
     &__disabled {
@@ -78,9 +74,19 @@ textarea {
 }
 
 .form-button {
-  padding: 12px 48px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 24px;
   border-radius: 32px;
   border: solid transparent 3px;
+  &-content {
+    visibility: visible;
+    &__hidden {
+      visibility: hidden;
+    }
+  }
   &__primary {
     color: white;
     background: variables.$colour-primary;
@@ -92,6 +98,9 @@ textarea {
   }
   &__disabled {
     background: variables.$colour-disabled;
+  }
+  > svg {
+    position: absolute;
   }
 }
 
@@ -150,4 +159,16 @@ textarea {
   &__active, &__active:hover {
     background: variables.$colour-primary-light-active;
   }
+}
+
+.form-rating {
+  display: inline-flex;
+  > svg {
+    padding: 0 4px;
+    color: variables.$colour-primary;
+  }
+}
+
+.hoverable {
+  cursor: pointer;
 }

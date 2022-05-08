@@ -15,7 +15,8 @@
           />
         </label>
         <dropdown v-show="isActive" :items="items" @select="select" />
-        <v-icon class="form-combo-box-icon">mdi-chevron-down</v-icon><!-- TODO: Animate -->
+        <icon fa-icon="fa-chevron-down" class="form-combo-box-icon" />
+        <!-- TODO: Animate -->
       </div>
       <div class="form-validation-message">
         <validation-message v-show="error">{{ error }}</validation-message>
@@ -28,10 +29,11 @@
 import InputLabel from "@/components/atoms/InputLabel";
 import Dropdown from "@/components/atoms/Dropdown";
 import ValidationMessage from "@/components/atoms/ValidationMessage";
+import Icon from "@/components/atoms/Icon";
 
 export default {
   name: "ComboBox",
-  components: { InputLabel, ValidationMessage, Dropdown },
+  components: { Icon, InputLabel, ValidationMessage, Dropdown },
   props: {
     value: {
       type: String,
