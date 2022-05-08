@@ -3,12 +3,14 @@
 label {
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   cursor: text;
 }
 input, textarea {
   position: relative;
+  border: none;
+  background: transparent;
   outline: none;
   overflow: hidden;
   width: 100%;
@@ -44,12 +46,6 @@ textarea {
   &-prefix {
     position: absolute;
     left: 8px;
-  }
-  > label, textarea {
-    display: flex;
-    position: relative;
-    flex-direction: row;
-    width: 100%;
   }
   &-suffix-icon {
     cursor: pointer;
