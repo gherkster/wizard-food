@@ -1,7 +1,7 @@
 <template>
-  <v-alert :type="severity">
+  <div :class="alertClass">
     {{ message }}
-  </v-alert>
+  </div>
 </template>
 
 <script>
@@ -23,6 +23,11 @@ export default {
       type: Number,
       required: false,
       default: 4000,
+    },
+  },
+  computed: {
+    alertClass: function () {
+      return "alert--" + this.severity;
     },
   },
   mounted() {

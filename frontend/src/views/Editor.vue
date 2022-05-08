@@ -1,352 +1,346 @@
 <template>
-  <v-row>
-    <v-spacer />
-    <v-col cols="12" sm="12" md="10" lg="8">
-      <input-button label="Go to recipes" @click="goToRecipes" />
-      <form>
-        <div>
-          <h2>New Recipe</h2>
-          <!-- TODO: This should display the recipe name if the user is editing an existing recipe -->
-          <v-row>
-            <v-col>
-              <text-field
-                label="Recipe Title"
-                path="header.title"
-                :value="recipeStore.header.title"
-                :error="errors.header.title"
-                @input="handleTitleInput"
-                @blur="handleBlur"
-              />
-            </v-col>
-            <v-col>
-              <v-file-input accept="image/*" label="Recipe Banner" />
-              <!-- TODO setup v-model -->
-            </v-col>
-            <v-col>
-              <rating :length="5" :value="recipeStore.header.rating" path="header.rating" @input="handleInput" />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <text-area
-                label="Description"
-                path="header.description"
-                :value="recipeStore.header.description"
-                @input="handleInput"
-                @blur="handleBlur"
-              />
-            </v-col>
-          </v-row>
-        </div>
-        <h2>Ingredients</h2>
-        <v-row v-for="(item, index) in recipeStore.ingredients" :key="item.uuid">
-          <!-- If item is a section name -->
-          <v-col cols="11" v-if="item.itemType === 'section'">
+  <div class="container">
+    <input-button @click="goToRecipes">Go to recipes</input-button>
+    <form>
+      <div>
+        <h2>New Recipe</h2>
+        <!-- TODO: This should display the recipe name if the user is editing an existing recipe -->
+        <div class="row">
+          <div class="col-12">
             <text-field
-              label="Section name"
+              label="Recipe Title"
+              path="header.title"
+              :value="recipeStore.header.title"
+              :error="errors.header.title"
+              @input="handleTitleInput"
+              @blur="handleBlur"
+            />
+          </div>
+          <div class="col-6">
+            <v-file-input accept="image/*" label="Recipe Banner" />
+            <!-- TODO setup v-model -->
+          </div>
+          <div class="col-6">
+            <rating :length="5" :value="recipeStore.header.rating" path="header.rating" @input="handleInput" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <text-area
+              label="Description"
+              path="header.description"
+              :value="recipeStore.header.description"
+              @input="handleInput"
+              @blur="handleBlur"
+            />
+          </div>
+        </div>
+      </div>
+      <h2>Ingredients</h2>
+      <div class="row" v-for="(item, index) in recipeStore.ingredients" :key="item.uuid">
+        <!-- If item is a section name -->
+        <div class="col-11" v-if="item.itemType === 'section'">
+          <text-field
+            label="Section name"
+            path="label"
+            :value="item.label"
+            :error="errors.ingredients[index] ? errors.ingredients[index].label : ''"
+            @input="handleIngredientInputAtIndex($event, index)"
+            @blur="handleIngredientBlurAtIndex($event, index)"
+          />
+        </div>
+        <!-- If item is an ingredient -->
+        <template v-else>
+          <div class="col-2">
+            <text-field
+              label="Amount"
+              path="amount"
+              :value="item.amount"
+              :error="errors.ingredients[index] ? errors.ingredients[index].amount : ''"
+              @input="handleIngredientInputAtIndex($event, index)"
+              @blur="handleIngredientBlurAtIndex($event, index)"
+            />
+          </div>
+          <div class="col-2">
+            <combo-box
+              label="Units"
+              path="unit"
+              :value="item.unit"
+              :items="['g', 'ml']"
+              :error="errors.ingredients[index] ? errors.ingredients[index].unit : ''"
+              @input="handleIngredientInputAtIndex($event, index)"
+              @blur="handleIngredientBlurAtIndex($event, index)"
+            />
+          </div>
+          <div class="col-4">
+            <text-field
+              label="Ingredient"
               path="label"
               :value="item.label"
               :error="errors.ingredients[index] ? errors.ingredients[index].label : ''"
               @input="handleIngredientInputAtIndex($event, index)"
               @blur="handleIngredientBlurAtIndex($event, index)"
             />
-          </v-col>
-          <!-- If item is an ingredient -->
-          <template v-else>
-            <v-col cols="2">
-              <text-field
-                label="Amount"
-                path="amount"
-                :value="item.amount"
-                :error="errors.ingredients[index] ? errors.ingredients[index].amount : ''"
-                @input="handleIngredientInputAtIndex($event, index)"
-                @blur="handleIngredientBlurAtIndex($event, index)"
-              />
-            </v-col>
-            <v-col cols="2">
-              <combo-box
-                label="Units"
-                path="unit"
-                :value="item.unit"
-                :items="['g', 'ml']"
-                :error="errors.ingredients[index] ? errors.ingredients[index].unit : ''"
-                @input="handleIngredientInputAtIndex($event, index)"
-                @blur="handleIngredientBlurAtIndex($event, index)"
-              />
-            </v-col>
-            <v-col cols="4">
-              <text-field
-                label="Ingredient"
-                path="label"
-                :value="item.label"
-                :error="errors.ingredients[index] ? errors.ingredients[index].label : ''"
-                @input="handleIngredientInputAtIndex($event, index)"
-                @blur="handleIngredientBlurAtIndex($event, index)"
-              />
-            </v-col>
-            <v-col cols="3">
-              <text-field label="Notes" path="note" :value="item.note" @input="handleIngredientInputAtIndex($event, index)" />
-            </v-col>
-          </template>
-          <v-col cols="1">
-            <icon fa-icon="fa-xmark" hover @click="removeIngredientAt(index)" />
-          </v-col>
-        </v-row>
-        <v-row justify="space-around">
-          <input-button label="Add Group" @click="addIngredientGroup" />
-          <input-button label="Add Ingredient" @click="addIngredient" />
-        </v-row>
-        <h2>Instructions</h2>
-        <v-row v-for="(item, index) in recipeStore.instructions" :key="item.uuid">
-          <!-- If item is a section name -->
-          <v-col cols="11" v-if="item.itemType === 'section'">
-            <text-field
-              label="Section name"
-              path="label"
-              :value="item.label"
-              :error="errors.instructions[index] ? errors.instructions[index].label : ''"
-              @input="handleInstructionInputAtIndex($event, index)"
-              @blur="handleInstructionBlurAtIndex($event, index)"
-            />
-          </v-col>
-          <!-- If item is an instruction -->
-          <v-col v-else cols="11">
-            <text-field
-              label="Instruction"
-              path="label"
-              :value="item.label"
-              :error="errors.instructions[index] ? errors.instructions[index].label : ''"
-              @input="handleInstructionInputAtIndex($event, index)"
-              @blur="handleInstructionBlurAtIndex($event, index)"
-            />
-          </v-col>
-          <v-col cols="1">
-            <icon fa-icon="fa-xmark" hover @click="removeInstructionAt(index)" />
-          </v-col>
-        </v-row>
-        <v-row justify="space-around">
-          <input-button label="Add Group" @click="addInstructionGroup" />
-          <input-button label="Add Ingredient" @click="addInstruction" />
-        </v-row>
-        <!-- Metadata -->
-        <h2>Metadata</h2>
-        <v-row>
-          <v-col>
-            <text-field
-              label="Servings"
-              path="servings"
-              :value="recipeStore.servings"
-              :error="errors.servings"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-          </v-col>
-          <v-col>
-            <combo-box
-              label="Serving Type"
-              path="servingType"
-              :value="recipeStore.servingType"
-              :items="servingTypes"
-              :error="errors.servingType"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-          </v-col>
-          <v-col>
-            <combo-box
-              label="Category"
-              path="category"
-              :value="recipeStore.category"
-              :items="categories"
-              :error="errors.category"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-          </v-col>
-          <v-col>
-            <combo-box
-              label="Cuisine"
-              path="cuisine"
-              :value="recipeStore.cuisine"
-              :items="cuisines"
-              :error="errors.cuisine"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <p>Preparation time</p>
-            <text-field
-              label="Minutes"
-              path="preparationTime.minutes"
-              :value="recipeStore.preparationTime.minutes"
-              :error="errors.preparationTime.minutes"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-            <text-field
-              label="Hours"
-              path="preparationTime.hours"
-              :value="recipeStore.preparationTime.hours"
-              :error="errors.preparationTime.hours"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-            <text-field
-              label="Days"
-              path="preparationTime.days"
-              :value="recipeStore.preparationTime.days"
-              :error="errors.preparationTime.days"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-          </v-col>
-          <v-col>
-            <p>Cooking time</p>
-            <text-field
-              label="Minutes"
-              path="cookingTime.minutes"
-              :value="recipeStore.cookingTime.minutes"
-              :error="errors.cookingTime.minutes"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-            <text-field
-              label="Hours"
-              path="cookingTime.hours"
-              :value="recipeStore.cookingTime.hours"
-              :error="errors.cookingTime.hours"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-            <text-field
-              label="Days"
-              path="cookingTime.days"
-              :value="recipeStore.cookingTime.days"
-              :error="errors.cookingTime.days"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-          </v-col>
-          <v-col>
-            <p>Custom time</p>
-            <text-field
-              label="Minutes"
-              path="customTime.minutes"
-              :value="recipeStore.customTime.minutes"
-              :error="errors.customTime.minutes"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-            <text-field
-              label="Hours"
-              path="customTime.hours"
-              :value="recipeStore.customTime.hours"
-              :error="errors.customTime.hours"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-            <text-field
-              label="Days"
-              path="customTime.days"
-              :value="recipeStore.customTime.days"
-              :error="errors.customTime.days"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-            <combo-box
-              label="Type"
-              path="customTimeType"
-              :value="recipeStore.customTimeType"
-              :items="customTimeTypes"
-              :error="errors.customTimeType"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <chip-box label="Tags" path="tags" :value="new Set(recipeStore.tags)" :items="tags" @input="handleInput" @blur="handleBlur" />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <text-field
-              label="Slug"
-              path="slug"
-              prefix="/"
-              :value="recipeStore.slug"
-              :suffix-icon="!errors.slug ? 'fa-check' : 'fa-arrow-rotate-right'"
-              :suffix-icon-disabled="!errors.slug"
-              :error="errors.slug"
-              @input="handleSlugInput"
-              @blur="handleBlur"
-              @clickIcon="createSlug"
-            />
-          </v-col>
-        </v-row>
-        <!-- Nutrition -->
-        <h2>Nutrition</h2>
-        <v-row>
-          <v-col>
-            <text-field
-              label="Energy"
-              path="nutrition.energy"
-              :value="recipeStore.nutrition.energy"
-              :error="errors.nutrition.energy"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-          </v-col>
-          <v-col>
-            <text-field
-              label="Protein"
-              path="nutrition.protein"
-              :value="recipeStore.nutrition.protein"
-              :error="errors.nutrition.protein"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-          </v-col>
-          <v-col>
-            <text-field
-              label="Carbs"
-              path="nutrition.carbohydrates"
-              :value="recipeStore.nutrition.carbohydrates"
-              :error="errors.nutrition.carbohydrates"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-          </v-col>
-          <v-col>
-            <text-field
-              label="Fat"
-              path="nutrition.fat"
-              :value="recipeStore.nutrition.fat"
-              :error="errors.nutrition.fat"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-          </v-col>
-          <v-col>
-            <text-field
-              label="Sodium"
-              path="nutrition.sodium"
-              :value="recipeStore.nutrition.sodium"
-              :errors="errors.nutrition.sodium"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-          </v-col>
-        </v-row>
-        <input-button label="Submit" :loading="isSubmitting" @click="submit" />
-      </form>
-    </v-col>
-    <v-spacer />
-  </v-row>
+          </div>
+          <div class="col-3">
+            <text-field label="Notes" path="note" :value="item.note" @input="handleIngredientInputAtIndex($event, index)" />
+          </div>
+        </template>
+        <div class="col-1">
+          <icon fa-icon="fa-xmark" hover @click="removeIngredientAt(index)" />
+        </div>
+      </div>
+      <div class="row">
+        <input-button @click="addIngredientGroup">Add Section</input-button>
+        <input-button @click="addIngredient">Add Ingredient</input-button>
+      </div>
+      <h2>Instructions</h2>
+      <div class="row" v-for="(item, index) in recipeStore.instructions" :key="item.uuid">
+        <!-- If item is a section name -->
+        <div class="col-11" v-if="item.itemType === 'section'">
+          <text-field
+            label="Section name"
+            path="label"
+            :value="item.label"
+            :error="errors.instructions[index] ? errors.instructions[index].label : ''"
+            @input="handleInstructionInputAtIndex($event, index)"
+            @blur="handleInstructionBlurAtIndex($event, index)"
+          />
+        </div>
+        <!-- If item is an instruction -->
+        <div class="col-11" v-else>
+          <text-field
+            label="Instruction"
+            path="label"
+            :value="item.label"
+            :error="errors.instructions[index] ? errors.instructions[index].label : ''"
+            @input="handleInstructionInputAtIndex($event, index)"
+            @blur="handleInstructionBlurAtIndex($event, index)"
+          />
+        </div>
+        <div class="col-1">
+          <icon fa-icon="fa-xmark" hover @click="removeInstructionAt(index)" />
+        </div>
+      </div>
+      <div class="row">
+        <input-button @click="addInstructionGroup">Add Section</input-button>
+        <input-button @click="addInstruction">Add Instruction</input-button>
+      </div>
+      <!-- Metadata -->
+      <h2>Metadata</h2>
+      <div class="row">
+        <div class="col-3">
+          <text-field
+            label="Servings"
+            path="servings"
+            :value="recipeStore.servings"
+            :error="errors.servings"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+        </div>
+        <div class="col-3">
+          <combo-box
+            label="Serving Type"
+            path="servingType"
+            :value="recipeStore.servingType"
+            :items="servingTypes"
+            :error="errors.servingType"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+        </div>
+        <div class="col-3">
+          <combo-box
+            label="Category"
+            path="category"
+            :value="recipeStore.category"
+            :items="categories"
+            :error="errors.category"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+        </div>
+        <div class="col-3">
+          <combo-box
+            label="Cuisine"
+            path="cuisine"
+            :value="recipeStore.cuisine"
+            :items="cuisines"
+            :error="errors.cuisine"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4">
+          <p>Preparation time</p>
+          <text-field
+            label="Minutes"
+            path="preparationTime.minutes"
+            :value="recipeStore.preparationTime.minutes"
+            :error="errors.preparationTime.minutes"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+          <text-field
+            label="Hours"
+            path="preparationTime.hours"
+            :value="recipeStore.preparationTime.hours"
+            :error="errors.preparationTime.hours"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+          <text-field
+            label="Days"
+            path="preparationTime.days"
+            :value="recipeStore.preparationTime.days"
+            :error="errors.preparationTime.days"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+        </div>
+        <div class="col-4">
+          <p>Cooking time</p>
+          <text-field
+            label="Minutes"
+            path="cookingTime.minutes"
+            :value="recipeStore.cookingTime.minutes"
+            :error="errors.cookingTime.minutes"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+          <text-field
+            label="Hours"
+            path="cookingTime.hours"
+            :value="recipeStore.cookingTime.hours"
+            :error="errors.cookingTime.hours"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+          <text-field
+            label="Days"
+            path="cookingTime.days"
+            :value="recipeStore.cookingTime.days"
+            :error="errors.cookingTime.days"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+        </div>
+        <div class="col-4">
+          <p>Custom time</p>
+          <text-field
+            label="Minutes"
+            path="customTime.minutes"
+            :value="recipeStore.customTime.minutes"
+            :error="errors.customTime.minutes"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+          <text-field
+            label="Hours"
+            path="customTime.hours"
+            :value="recipeStore.customTime.hours"
+            :error="errors.customTime.hours"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+          <text-field
+            label="Days"
+            path="customTime.days"
+            :value="recipeStore.customTime.days"
+            :error="errors.customTime.days"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+          <combo-box
+            label="Type"
+            path="customTimeType"
+            :value="recipeStore.customTimeType"
+            :items="customTimeTypes"
+            :error="errors.customTimeType"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <chip-box label="Tags" path="tags" :value="new Set(recipeStore.tags)" :items="tags" @input="handleInput" @blur="handleBlur" />
+        </div>
+        <div class="col-6">
+          <text-field
+            label="Slug"
+            path="slug"
+            prefix="/"
+            :value="recipeStore.slug"
+            :suffix-icon="!errors.slug ? 'fa-check' : 'fa-arrow-rotate-right'"
+            :suffix-icon-disabled="!errors.slug"
+            :error="errors.slug"
+            @input="handleSlugInput"
+            @blur="handleBlur"
+            @clickIcon="createSlug"
+          />
+        </div>
+      </div>
+      <!-- Nutrition -->
+      <h2>Nutrition</h2>
+      <div class="row">
+        <div class="col">
+          <text-field
+            label="Energy"
+            path="nutrition.energy"
+            :value="recipeStore.nutrition.energy"
+            :error="errors.nutrition.energy"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+        </div>
+        <div class="col">
+          <text-field
+            label="Protein"
+            path="nutrition.protein"
+            :value="recipeStore.nutrition.protein"
+            :error="errors.nutrition.protein"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+        </div>
+        <div class="col">
+          <text-field
+            label="Carbs"
+            path="nutrition.carbohydrates"
+            :value="recipeStore.nutrition.carbohydrates"
+            :error="errors.nutrition.carbohydrates"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+        </div>
+        <div class="col">
+          <text-field
+            label="Fat"
+            path="nutrition.fat"
+            :value="recipeStore.nutrition.fat"
+            :error="errors.nutrition.fat"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+        </div>
+        <div class="col">
+          <text-field
+            label="Sodium"
+            path="nutrition.sodium"
+            :value="recipeStore.nutrition.sodium"
+            :errors="errors.nutrition.sodium"
+            @input="handleInput"
+            @blur="handleBlur"
+          />
+        </div>
+      </div>
+      <input-button :loading="isSubmitting" @click="submit">Submit</input-button>
+    </form>
+  </div>
 </template>
 
 <script>
