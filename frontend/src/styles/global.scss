@@ -2,6 +2,7 @@
 @use "variables";
 @use "form";
 @use "alerts";
+@use "layout";
 
 // TODO: Combine into single import
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap'); // Montserrat
@@ -32,13 +33,9 @@ small {
 li:not(:last-child) {
   margin-bottom: variables.$li-margin-bottom;
 }
-.container {
-  padding: 0 !important;
-}
 
-.row {
-  margin: 0 0 10px 0 !important;
-  border-radius: variables.$border-radius;
+img {
+  max-width: 100%;
 }
 
 .text-muted {

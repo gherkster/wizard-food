@@ -1,0 +1,25 @@
+@use "variables";
+@use "mixins";
+
+.container {
+  max-width: map-get(variables.$breakpoints, lg) * 1px;
+  margin: 0 auto;
+
+  &--fluid {
+    margin: 0;
+    max-width: 100%;
+  }
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+@each $breakpoint-name, $width in variables.$breakpoints {
+  @media screen and (min-width: $width * 1px) {
+    @include mixins.create-cols($breakpoint-name, variables.$grid-cols-count);
+  }
+}
+@include mixins.create-cols(null, variables.$grid-cols-count);

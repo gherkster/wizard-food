@@ -9,3 +9,13 @@
     font-size: #{$font-max}px;
   }
 }
+
+@mixin create-cols($breakpoint-name, $cols-count) {
+  $infix: if($breakpoint-name == null, '', "-#{$breakpoint-name}");
+
+  @for $i from 1 through $cols-count {
+    .col#{$infix}-#{$i} {
+      flex-basis: (100 / ($cols-count / $i)) * 1%;
+    }
+  }
+}
