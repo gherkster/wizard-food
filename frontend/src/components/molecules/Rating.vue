@@ -1,17 +1,19 @@
 <template>
-  <div class="form-input-container form-rating">
-    <icon
-      v-for="(star, index) in length"
-      :fa-icon="
-        index <= currentHighlightedIcon || (currentHighlightedIcon === -1 && index < value) ? 'fa-solid fa-star' : 'fa-regular fa-star'
-      "
-      size="2xl"
-      :key="star"
-      hover
-      @mouseenter="handleMouseEnter(index)"
-      @mouseleave="handleMouseLeave"
-      @click="handleClick(star)"
-    ></icon>
+  <div class="component responsive form-rating">
+    <div class="form-rating">
+      <icon
+        v-for="(star, index) in length"
+        :fa-icon="
+          index <= currentHighlightedIcon || (currentHighlightedIcon === -1 && index < value) ? 'fa-solid fa-star' : 'fa-regular fa-star'
+        "
+        size="2xl"
+        :key="star"
+        hover
+        @mouseenter="handleMouseEnter(index)"
+        @mouseleave="handleMouseLeave"
+        @click="handleClick(star)"
+      ></icon>
+    </div>
   </div>
 </template>
 

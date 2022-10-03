@@ -1,8 +1,8 @@
 <template>
-  <div class="form-container">
-    <div class="form-input-container">
+  <div class="component responsive">
+    <div>
+      <span class="form-input-label">{{ label }}</span>
       <div :class="formInputClass" @click.self="$refs.inputField.focus()">
-        <input-label :label="label" :is-active="isFieldActive" />
         <label class="form-combo-box">
           <input
             ref="inputField"
@@ -14,7 +14,7 @@
             @blur="blur"
           />
         </label>
-        <dropdown v-show="isActive" :items="items" @select="select" />
+        <dropdown v-if="isActive" :items="items" @select="select" />
         <icon fa-icon="fa-chevron-down" class="form-combo-box-icon" />
         <!-- TODO: Animate -->
       </div>
@@ -26,14 +26,13 @@
 </template>
 
 <script>
-import InputLabel from "@/components/atoms/InputLabel";
 import Dropdown from "@/components/atoms/Dropdown";
 import ValidationMessage from "@/components/atoms/ValidationMessage";
 import Icon from "@/components/atoms/Icon";
 
 export default {
   name: "ComboBox",
-  components: { Icon, InputLabel, ValidationMessage, Dropdown },
+  components: { Icon, ValidationMessage, Dropdown },
   props: {
     value: {
       type: String,

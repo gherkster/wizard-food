@@ -1,8 +1,8 @@
 <template>
-  <div class="form-container">
-    <div class="form-input-container">
+  <div class="component responsive">
+    <div>
+      <span class="form-input-label">{{ label }}</span>
       <div :class="formInputClass" @click.self="$refs.inputField.focus()">
-        <input-label :label="label" :is-active="isFieldActive" />
         <span v-if="prefix" class="form-input-prefix">{{ prefix }}</span>
         <label>
           <input ref="inputField" :value="value" :name="path" class="form-input-field" @input="input" @focus="focus" @blur="blur" />
@@ -17,13 +17,12 @@
 </template>
 
 <script>
-import InputLabel from "@/components/atoms/InputLabel";
 import ValidationMessage from "@/components/atoms/ValidationMessage";
 import Icon from "@/components/atoms/Icon";
 
 export default {
   name: "TextField",
-  components: { Icon, InputLabel, ValidationMessage },
+  components: { Icon, ValidationMessage },
   props: {
     value: {
       type: String,
@@ -62,9 +61,6 @@ export default {
     isActive: false,
   }),
   computed: {
-    isFieldActive: function () {
-      return this.isActive || !!this.value;
-    },
     formInputClass: function () {
       return this.error ? "form-input__error" : "form-input";
     },

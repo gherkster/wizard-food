@@ -40,12 +40,15 @@ $font-sizes: (
         h4: (font-size-min: 18, font-size-max: 24),
         h5: (font-size-min: 16, font-size-max: 20),
         h6: (font-size-min: 16, font-size-max: 20),
+        span: (font-size-min: 16, font-size-max: 16),
+        p: (font-size-min: 16, font-size-max: 16),
+        input: (font-size-min: 16, font-size-max: 16),
         small: (font-size-min: 12, font-size-max: 12)
 );
 
 // SPACING //
 $padding: 12px;
-$padding-input: 16px;
+$padding-input: 12px;
 $li-margin-bottom: 8px;
 
 // ROUNDING //

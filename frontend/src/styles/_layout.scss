@@ -15,6 +15,7 @@
   display: flex;
   flex-wrap: wrap;
   width: 100%;
+  //column-gap: 16px;
 }
 
 @each $breakpoint-name, $width in variables.$breakpoints {
