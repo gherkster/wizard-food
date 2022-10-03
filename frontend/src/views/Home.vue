@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import InputButton from "@/components/atoms/VButton";
+import InputButton from "@/components/atoms/VButton.vue";
 export default {
   name: "Home",
   components: { InputButton },

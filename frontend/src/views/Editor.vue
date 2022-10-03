@@ -379,28 +379,26 @@ import axios from "axios";
 import { getFormInitialErrorState, slugPattern } from "@/scripts/validation";
 import { mapRecipeToApi } from "@/scripts/mapping";
 import { useRecipeStore } from "@/store/recipeStore";
-import TextArea from "@/components/molecules/TextArea";
-import TextField from "@/components/molecules/TextField";
-import ComboBox from "@/components/molecules/ComboBox";
+import TextArea from "@/components/molecules/TextArea.vue";
+import TextField from "@/components/molecules/TextField.vue";
+import ComboBox from "@/components/molecules/ComboBox.vue";
 import { object, string, number, array, ValidationError } from "yup";
 import { get, set, setWith } from "lodash";
 import { IntegerMessage, NumericMessage, PositiveMessage, RequiredMessage } from "@/constants/validationMessages";
-import ChipBox from "@/components/molecules/ChipBox";
+import ChipBox from "@/components/molecules/ChipBox.vue";
 import { useAlertStore } from "@/store/alertStore";
-import Rating from "@/components/molecules/Rating";
-import Icon from "@/components/atoms/Icon";
+import Rating from "@/components/molecules/Rating.vue";
+import Icon from "@/components/atoms/Icon.vue";
 import { uuid } from "vue-uuid";
-import ExpansionPanel from "@/components/molecules/ExpansionPanel";
-import VSelect from "@/components/molecules/VSelect";
-import VRow from "@/components/atoms/VRow";
-import VColumn from "@/components/atoms/VColumn";
-import VButton from "@/components/atoms/VButton";
-import Stepper from "@/components/molecules/Stepper";
-import StepperContent from "@/components/molecules/StepperContent";
+import ExpansionPanel from "@/components/molecules/ExpansionPanel.vue";
+import VSelect from "@/components/molecules/VSelect.vue";
+import VRow from "@/components/atoms/VRow.vue";
+import VColumn from "@/components/atoms/VColumn.vue";
+import VButton from "@/components/atoms/VButton.vue";
 
 export default {
   name: "Editor",
-  components: { StepperContent, Stepper, VButton, VColumn, VRow, VSelect, ExpansionPanel, Rating, ChipBox, TextArea, TextField, ComboBox, Icon },
+  components: { VButton, VColumn, VRow, VSelect, ExpansionPanel, Rating, ChipBox, TextArea, TextField, ComboBox, Icon },
   setup() {
     const recipeStore = useRecipeStore();
     const alertStore = useAlertStore();
@@ -422,7 +420,7 @@ export default {
   }),
   async created() {
     await axios
-      .get(process.env.VUE_APP_APIURL + "/api/recipes/editor/dropdown-options")
+      .get(import.meta.env.VITE_APIURL + "/api/recipes/editor/dropdown-options")
       .then((response) => {
         this.categories = response.data.categories.map((c) => c.label);
         this.cuisines = response.data.cuisines.map((c) => c.label);
@@ -717,7 +715,7 @@ export default {
     async validateSlug(slug) {
       let isValidSlug;
       await axios
-        .get(process.env.VUE_APP_APIURL + "/api/recipes/slugs", {
+        .get(import.meta.env.VITE_APIURL + "/api/recipes/slugs", {
           params: {
             chosenSlug: slug,
           },
@@ -732,7 +730,7 @@ export default {
     async createSlug() {
       let chosenSlug = this.recipeStore.slug || (await this.createSlugFromTitle()) || "recipe";
       await axios
-        .get(process.env.VUE_APP_APIURL + "/api/recipes/slugs", {
+        .get(import.meta.env.VITE_APIURL + "/api/recipes/slugs", {
           params: {
             chosenSlug: chosenSlug,
           },
@@ -754,7 +752,7 @@ export default {
       this.isSubmitting = true;
       console.log(JSON.stringify(this.recipeStore));
       await axios
-        .post(process.env.VUE_APP_APIURL + "/api/recipes", mapRecipeToApi(this.recipeStore))
+        .post(import.meta.env.VITE_APIURL + "/api/recipes", mapRecipeToApi(this.recipeStore))
         .then(() => {
           this.alertStore.showSuccessAlert("Recipe created!");
         })

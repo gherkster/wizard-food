@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import AlertSection from "@/views/AlertSection";
+import AlertSection from "@/views/AlertSection.vue";
 export default {
   name: "App",
   components: { AlertSection },

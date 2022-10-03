@@ -1,12 +1,9 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 
-import Home from "@/views/Home";
-import Recipe from "@/views/Recipe";
-import Search from "@/views/Search";
-import Editor from "@/views/Editor";
-
-Vue.use(VueRouter);
+import Home from "@/views/Home.vue";
+import Recipe from "@/views/Recipe.vue";
+import Search from "@/views/Search.vue";
+import Editor from "@/views/Editor.vue";
 
 const routes = [
   {
@@ -27,9 +24,9 @@ const routes = [
   },
 ];
 
-const router = new VueRouter({
-  mode: "history",
-  base: process.env.BASE_URL,
+const router = createRouter({
+  history: createWebHistory(),
+  base: import.meta.env.BASE_URL,
   routes,
 });
 

@@ -110,9 +110,9 @@
 <script>
 import axios from "axios";
 import { capitalizeFirstChar, formatDuration } from "@/scripts/utility";
-import InputButton from "@/components/atoms/VButton";
-import Icon from "@/components/atoms/Icon";
-import Rating from "@/components/molecules/Rating";
+import InputButton from "@/components/atoms/VButton.vue";
+import Icon from "@/components/atoms/Icon.vue";
+import Rating from "@/components/molecules/Rating.vue";
 
 export default {
   name: "Recipe",
@@ -126,7 +126,7 @@ export default {
   }),
   async created() {
     await axios
-      .get(process.env.VUE_APP_APIURL + "/api/recipes/" + this.$route.params.slug)
+      .get(import.meta.env.VITE_APIURL + "/api/recipes/" + this.$route.params.slug)
       .then((response) => {
         this.recipe = response.data;
         this.ingredientMultiplier = this.recipe.servings;
