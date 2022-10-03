@@ -1,3 +1,5 @@
+@use "variables";
+
 @mixin responsive-text($font-min, $font-max, $screen-min, $screen-max) {
   font-size: #{$font-min}px;
 
@@ -15,6 +17,7 @@
 
   @for $i from 1 through $cols-count {
     .col#{$infix}-#{$i} {
+      display: flex;
       flex-basis: (100 / ($cols-count / $i)) * 1%;
     }
   }

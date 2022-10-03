@@ -1,8 +1,8 @@
 <template>
-  <div class="form-container">
-    <div class="form-input-container">
+  <div class="component responsive">
+    <div>
+      <span class="form-input-label">{{ label }}</span>
       <div :class="formInputClass" @click.self="$refs.chipsInput.focus()">
-        <input-label :label="label" :is-active="isFieldActive" />
         <div class="form-chip-container">
           <chip v-for="chip in value" :label="chip" :key="chip" @remove="deleteChip" />
           <label class="form-combo-box">
@@ -28,7 +28,6 @@
 </template>
 
 <script>
-import InputLabel from "@/components/atoms/InputLabel";
 import Dropdown from "@/components/atoms/Dropdown";
 import ValidationMessage from "@/components/atoms/ValidationMessage";
 import Chip from "@/components/atoms/Chip";
@@ -36,7 +35,7 @@ import Icon from "@/components/atoms/Icon";
 
 export default {
   name: "ChipBox",
-  components: { Icon, Chip, InputLabel, ValidationMessage, Dropdown },
+  components: { Icon, Chip, ValidationMessage, Dropdown },
   props: {
     value: {
       type: Set,

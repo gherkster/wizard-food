@@ -3,7 +3,7 @@
     :icon="faIcon"
     :size="size"
     :spin="spin"
-    :class="{ hoverable: hover }"
+    style="cursor: pointer"
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
     @click="handleClick"

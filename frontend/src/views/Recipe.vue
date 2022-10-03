@@ -109,10 +109,8 @@
 
 <script>
 import axios from "axios";
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
-import { capitalizeFirstChar } from "@/scripts/utility";
-import InputButton from "@/components/molecules/InputButton";
+import { capitalizeFirstChar, formatDuration } from "@/scripts/utility";
+import InputButton from "@/components/atoms/VButton";
 import Icon from "@/components/atoms/Icon";
 import Rating from "@/components/molecules/Rating";
 
@@ -178,16 +176,16 @@ export default {
       return Object.keys(this.recipe.nutrition).filter((key) => this.recipe.nutrition[key] > 0);
     },
     preparationDuration: function () {
-      return this.formatDuration(this.recipe.preparationTime);
+      return formatDuration(this.recipe.preparationTime);
     },
     cookingDuration: function () {
-      return this.formatDuration(this.recipe.cookingTime);
+      return formatDuration(this.recipe.cookingTime);
     },
     customDuration: function () {
-      return this.formatDuration(this.recipe.customTime);
+      return formatDuration(this.recipe.customTime);
     },
     totalDuration: function () {
-      return this.formatDuration(this.recipe.preparationTime, this.recipe.cookingTime, this.recipe.customTime);
+      return formatDuration(this.recipe.preparationTime, this.recipe.cookingTime, this.recipe.customTime);
     },
     numberOfDurations: function () {
       return [this.preparationDuration, this.cookingDuration, this.customDuration].filter((d) => d !== null).length;
@@ -199,30 +197,6 @@ export default {
     },
     capitalizeFirstCharacter(string) {
       return capitalizeFirstChar(string);
-    },
-    formatDuration() {
-      let durations = Array.prototype.slice.call(arguments);
-
-      let totalDays = 0;
-      let totalHours = 0;
-      let totalMinutes = 0;
-      durations.forEach((duration) => {
-        totalDays += duration.days;
-        totalHours += duration.hours;
-        totalMinutes += duration.minutes;
-      });
-
-      dayjs.extend(duration);
-      let dur = dayjs.duration(0);
-      dur = dur.add(totalDays, "day").add(totalHours, "hour").add(totalMinutes, "minute");
-
-      let formatStrings = [];
-      if (totalDays > 0) formatStrings.push("D [days]");
-      if (totalHours > 0) formatStrings.push("H [hrs]");
-      if (totalMinutes > 0) formatStrings.push("m [mins]");
-      if (formatStrings.length === 0) return null;
-
-      return dur.format(formatStrings.join(" "));
     },
   },
 };

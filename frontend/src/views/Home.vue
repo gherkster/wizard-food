@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import InputButton from "@/components/molecules/InputButton";
+import InputButton from "@/components/atoms/VButton";
 export default {
   name: "Home",
   components: { InputButton },

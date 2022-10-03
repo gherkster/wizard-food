@@ -1,33 +1,30 @@
 <template>
-  <div class="form-container">
-    <div class="form-input-container">
-      <div :class="formInputClass" @click.self="$refs.inputField.focus()">
-        <input-label :label="label" :is-active="isFieldActive" />
-        <textarea
-          ref="inputField"
-          :value="value"
-          :name="path"
-          :rows="rows"
-          class="form-input-field"
-          @input="input"
-          @focus="focus"
-          @blur="blur"
-        />
-      </div>
-      <div class="form-validation-message">
-        <validation-message>{{ errors[0] }}</validation-message>
-      </div>
+  <div class="component responsive">
+    <span class="form-input-label">{{ label }}</span>
+    <div :class="formInputClass" @click.self="$refs.inputField.focus()">
+      <textarea
+        ref="inputField"
+        :value="value"
+        :name="path"
+        :rows="rows"
+        class="form-input-field"
+        @input="input"
+        @focus="focus"
+        @blur="blur"
+      />
+    </div>
+    <div class="form-validation-message">
+      <validation-message>{{ errors[0] }}</validation-message>
     </div>
   </div>
 </template>
 
 <script>
-import InputLabel from "@/components/atoms/InputLabel";
 import ValidationMessage from "@/components/atoms/ValidationMessage";
 
 export default {
   name: "TextArea",
-  components: { InputLabel, ValidationMessage },
+  components: { ValidationMessage },
   props: {
     value: {
       type: String,
@@ -56,9 +53,6 @@ export default {
     isActive: false,
   }),
   computed: {
-    isFieldActive: function () {
-      return this.isActive || !!this.value;
-    },
     formInputClass: function () {
       return this.error ? "form-input__error" : "form-input";
     },

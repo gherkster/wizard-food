@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <input-button @click="goToRecipes">Go to recipes</input-button>
+    <v-button @click="goToRecipes">Go to recipes</v-button>
     <form>
       <div>
         <h2>New Recipe</h2>
@@ -8,7 +8,7 @@
         <div class="row">
           <div class="col-12">
             <text-field
-              label="Recipe Title"
+              label="Recipe Title *"
               path="header.title"
               :value="recipeStore.header.title"
               :error="errors.header.title"
@@ -35,7 +35,14 @@
           </div>
         </div>
       </div>
-      <h2>Ingredients</h2>
+      <v-row>
+        <v-column class="col-6">
+          <h2>Ingredients</h2>
+        </v-column>
+        <v-column class="col-6" right>
+          <v-select :items="['Section', 'Ingredient']" label="Add New" prefix-icon="fa-plus" @select="addIngredientEntry" />
+        </v-column>
+      </v-row>
       <div class="row" v-for="(item, index) in recipeStore.ingredients" :key="item.uuid">
         <!-- If item is a section name -->
         <div class="col-11" v-if="item.itemType === 'section'">
@@ -90,10 +97,18 @@
         </div>
       </div>
       <div class="row">
-        <input-button @click="addIngredientGroup">Add Section</input-button>
-        <input-button @click="addIngredient">Add Ingredient</input-button>
+        <div class="col-6">
+          <h2>Instructions</h2>
+        </div>
+        <v-column class="col-6" right>
+          <v-select
+            :items="['Section', 'Instruction']"
+            label="Add New"
+            prefix-icon="fa-plus"
+            @select="addInstructionEntry"
+          />
+        </v-column>
       </div>
-      <h2>Instructions</h2>
       <div class="row" v-for="(item, index) in recipeStore.instructions" :key="item.uuid">
         <!-- If item is a section name -->
         <div class="col-11" v-if="item.itemType === 'section'">
@@ -120,10 +135,6 @@
         <div class="col-1">
           <icon fa-icon="fa-xmark" hover @click="removeInstructionAt(index)" />
         </div>
-      </div>
-      <div class="row">
-        <input-button @click="addInstructionGroup">Add Section</input-button>
-        <input-button @click="addInstruction">Add Instruction</input-button>
       </div>
       <!-- Metadata -->
       <h2>Metadata</h2>
@@ -172,98 +183,119 @@
           />
         </div>
       </div>
-      <div class="row">
-        <div class="col-4">
-          <p>Preparation time</p>
-          <text-field
-            label="Minutes"
-            path="preparationTime.minutes"
-            :value="recipeStore.preparationTime.minutes"
-            :error="errors.preparationTime.minutes"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-          <text-field
-            label="Hours"
-            path="preparationTime.hours"
-            :value="recipeStore.preparationTime.hours"
-            :error="errors.preparationTime.hours"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-          <text-field
-            label="Days"
-            path="preparationTime.days"
-            :value="recipeStore.preparationTime.days"
-            :error="errors.preparationTime.days"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
+      <expansion-panel label="Preparation Time">
+        <div class="row">
+          <div class="col-4">
+            <text-field
+              label="Minutes"
+              path="preparationTime.minutes"
+              :value="recipeStore.preparationTime.minutes"
+              :error="errors.preparationTime.minutes"
+              @input="handleInput"
+              @blur="handleBlur"
+            />
+          </div>
+          <div class="col-4">
+            <text-field
+              label="Hours"
+              path="preparationTime.hours"
+              :value="recipeStore.preparationTime.hours"
+              :error="errors.preparationTime.hours"
+              @input="handleInput"
+              @blur="handleBlur"
+            />
+          </div>
+          <div class="col-4">
+            <text-field
+              label="Days"
+              path="preparationTime.days"
+              :value="recipeStore.preparationTime.days"
+              :error="errors.preparationTime.days"
+              @input="handleInput"
+              @blur="handleBlur"
+            />
+          </div>
         </div>
-        <div class="col-4">
-          <p>Cooking time</p>
-          <text-field
-            label="Minutes"
-            path="cookingTime.minutes"
-            :value="recipeStore.cookingTime.minutes"
-            :error="errors.cookingTime.minutes"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-          <text-field
-            label="Hours"
-            path="cookingTime.hours"
-            :value="recipeStore.cookingTime.hours"
-            :error="errors.cookingTime.hours"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-          <text-field
-            label="Days"
-            path="cookingTime.days"
-            :value="recipeStore.cookingTime.days"
-            :error="errors.cookingTime.days"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
+      </expansion-panel>
+      <expansion-panel label="Cooking Time">
+        <div class="row">
+          <div class="col-4">
+            <text-field
+              label="Minutes"
+              path="cookingTime.minutes"
+              :value="recipeStore.cookingTime.minutes"
+              :error="errors.cookingTime.minutes"
+              @input="handleInput"
+              @blur="handleBlur"
+            />
+          </div>
+          <div class="col-4">
+            <text-field
+              label="Hours"
+              path="cookingTime.hours"
+              :value="recipeStore.cookingTime.hours"
+              :error="errors.cookingTime.hours"
+              @input="handleInput"
+              @blur="handleBlur"
+            />
+          </div>
+          <div class="col-4">
+            <text-field
+              label="Days"
+              path="cookingTime.days"
+              :value="recipeStore.cookingTime.days"
+              :error="errors.cookingTime.days"
+              @input="handleInput"
+              @blur="handleBlur"
+            />
+          </div>
         </div>
-        <div class="col-4">
-          <p>Custom time</p>
-          <text-field
-            label="Minutes"
-            path="customTime.minutes"
-            :value="recipeStore.customTime.minutes"
-            :error="errors.customTime.minutes"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-          <text-field
-            label="Hours"
-            path="customTime.hours"
-            :value="recipeStore.customTime.hours"
-            :error="errors.customTime.hours"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-          <text-field
-            label="Days"
-            path="customTime.days"
-            :value="recipeStore.customTime.days"
-            :error="errors.customTime.days"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-          <combo-box
-            label="Type"
-            path="customTimeType"
-            :value="recipeStore.customTimeType"
-            :items="customTimeTypes"
-            :error="errors.customTimeType"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
+      </expansion-panel>
+      <expansion-panel label="Custom Time">
+        <div class="row">
+          <div class="col-3">
+            <text-field
+              label="Minutes"
+              path="customTime.minutes"
+              :value="recipeStore.customTime.minutes"
+              :error="errors.customTime.minutes"
+              @input="handleInput"
+              @blur="handleBlur"
+            />
+          </div>
+          <div class="col-3">
+            <text-field
+              label="Hours"
+              path="customTime.hours"
+              :value="recipeStore.customTime.hours"
+              :error="errors.customTime.hours"
+              @input="handleInput"
+              @blur="handleBlur"
+            />
+          </div>
+          <div class="col-3">
+            <text-field
+              label="Days"
+              path="customTime.days"
+              :value="recipeStore.customTime.days"
+              :error="errors.customTime.days"
+              @input="handleInput"
+              @blur="handleBlur"
+            />
+          </div>
+          <div class="col-3">
+            <combo-box
+              label="Type"
+              path="customTimeType"
+              :value="recipeStore.customTimeType"
+              :items="customTimeTypes"
+              :error="errors.customTimeType"
+              @input="handleInput"
+              @blur="handleBlur"
+            />
+          </div>
         </div>
-      </div>
+      </expansion-panel>
       <div class="row">
         <div class="col-6">
           <chip-box label="Tags" path="tags" :value="new Set(recipeStore.tags)" :items="tags" @input="handleInput" @blur="handleBlur" />
@@ -337,7 +369,7 @@
           />
         </div>
       </div>
-      <input-button :loading="isSubmitting" @click="submit">Submit</input-button>
+      <v-button :loading="isSubmitting" @click="submit">Create Recipe</v-button> <!-- TODO: Dynamic label depending on create/edit -->
     </form>
   </div>
 </template>
@@ -357,12 +389,18 @@ import ChipBox from "@/components/molecules/ChipBox";
 import { useAlertStore } from "@/store/alertStore";
 import Rating from "@/components/molecules/Rating";
 import Icon from "@/components/atoms/Icon";
-import InputButton from "@/components/molecules/InputButton";
 import { uuid } from "vue-uuid";
+import ExpansionPanel from "@/components/molecules/ExpansionPanel";
+import VSelect from "@/components/molecules/VSelect";
+import VRow from "@/components/atoms/VRow";
+import VColumn from "@/components/atoms/VColumn";
+import VButton from "@/components/atoms/VButton";
+import Stepper from "@/components/molecules/Stepper";
+import StepperContent from "@/components/molecules/StepperContent";
 
 export default {
   name: "Editor",
-  components: { Rating, ChipBox, TextArea, TextField, ComboBox, Icon, InputButton },
+  components: { StepperContent, Stepper, VButton, VColumn, VRow, VSelect, ExpansionPanel, Rating, ChipBox, TextArea, TextField, ComboBox, Icon },
   setup() {
     const recipeStore = useRecipeStore();
     const alertStore = useAlertStore();
@@ -471,7 +509,7 @@ export default {
         is: (ct) => ct.minutes || ct.hours || ct.days,
         then: (schema) => schema.label("Custom time type").trim().required(RequiredMessage),
       }),
-      slug: string() // TODO: Add api validation of slug with slugs endpoint
+      slug: string()
         .label("Slug")
         .required(RequiredMessage)
         .matches(
@@ -529,6 +567,10 @@ export default {
       this.recipeStore.setValueAtIndex("ingredients", index, event.path, event.value);
       await this.validateAt(`ingredients[${index}].${event.path}`);
     },
+    /**
+     * @param {EmittedValue} event
+     * @param index
+     */
     async handleInstructionInputAtIndex(event, index) {
       this.recipeStore.setValueAtIndex("instructions", index, event.path, event.value);
       await this.validateAt(`instructions[${index}].${event.path}`);
@@ -544,6 +586,18 @@ export default {
     async handleInstructionBlurAtIndex(event, index) {
       this.recipeStore.setValueAtIndex("instructions", index, event.path, event.value);
       await this.validateAt(`instructions[${index}].${event.path}`);
+    },
+    /**
+     * @param {EmittedValue} event
+     */
+    addIngredientEntry(event) {
+      event.value.toLowerCase().includes("section") ? this.addIngredientGroup() : this.addIngredient();
+    },
+    /**
+     * @param {EmittedValue} event
+     */
+    addInstructionEntry(event) {
+      event.value.toLowerCase().includes("section") ? this.addInstructionGroup() : this.addInstruction();
     },
     addIngredientGroup() {
       this.addItemGroup("ingredients");

@@ -1,5 +1,29 @@
 @use "variables";
 
+.component {
+  position: relative;
+  padding: 12px;
+}
+
+.responsive {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.inline {
+  display: inline-flex;
+  align-items: center;
+}
+
+.input {
+  display: flex;
+  position: relative;
+  align-items: center;
+  min-height: 42px;
+  padding: 12px 16px;
+}
+
 label {
   position: relative;
   display: flex;
@@ -8,7 +32,7 @@ label {
   cursor: text;
 }
 input, textarea {
-  position: relative;
+  //position: relative;
   border: none;
   background: transparent;
   outline: none;
@@ -22,11 +46,6 @@ textarea {
   resize: none;
 }
 
-.form-input-container {
-  position: relative;
-  margin-bottom: 12px;
-  padding: 12px 0;
-}
 .form-input {
   display: flex;
   position: relative;
@@ -35,6 +54,7 @@ textarea {
   background-color: variables.$colour-input;
   border-radius: variables.$border-radius;
   border: solid variables.$colour-bg-light 2px;
+  cursor: text;
   &__error {
     @extend .form-input;
     border: solid variables.$colour-error 2px;
@@ -48,8 +68,12 @@ textarea {
     left: 8px;
   }
   &-suffix-icon {
+    position: absolute;
+    right: 8px;
     cursor: pointer;
     &__disabled {
+      position: absolute;
+      right: 8px;
       cursor: auto;
       opacity: 0.5;
     }
@@ -58,6 +82,11 @@ textarea {
 .form-input-field {
   position: relative;
   min-width: 80px;
+}
+
+.form-input-label {
+  display: flex;
+  margin-bottom: 8px;
 }
 
 .form-combo-box {
@@ -73,61 +102,10 @@ textarea {
   }
 }
 
-.form-button {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 24px;
-  border-radius: 32px;
-  border: solid transparent 3px;
-  &-content {
-    visibility: visible;
-    &__hidden {
-      visibility: hidden;
-    }
-  }
-  &__primary {
-    color: white;
-    background: variables.$colour-primary;
-    transition: border-color 150ms ease;
-    &:hover {
-      opacity: 1;
-      border-color: variables.$colour-primary-active;
-    }
-  }
-  &__disabled {
-    background: variables.$colour-disabled;
-  }
-  > svg {
-    position: absolute;
-  }
-}
-
 .form-validation-message {
   position: relative;
   margin-top: 4px;
   padding-left: variables.$padding-input;
-}
-
-.form-dropdown-container {
-  background: variables.$colour-input;
-  z-index: 2;
-  position: absolute;
-  left: 0;
-  top: calc(100% + 8px);
-  width: 100%;
-  border: solid variables.$colour-bg-light 2px;
-  border-radius: variables.$border-radius;
-  box-shadow: 0 10px 20px -20px rgba(0,0,0,1);
-}
-.form-dropdown-item {
-  padding: 8px 8px;
-  color: black; // TODO: Dark theme
-  cursor: pointer;
-  &:hover {
-    background: variables.$colour-bg-light;
-  }
 }
 
 .form-chip-container {
@@ -169,6 +147,18 @@ textarea {
   }
 }
 
-.hoverable {
+.form-expansion-button {
   cursor: pointer;
+  width: 100%;
+  border: none;
+  outline: none;
+
+  &--active, &:hover {
+    @extend .form-expansion-button;
+    background-color: lime;
+  }
+}
+
+.form-expansion-content {
+  overflow: hidden;
 }
