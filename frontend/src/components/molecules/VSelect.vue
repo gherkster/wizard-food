@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import Dropdown from "@/components/atoms/Dropdown";
-import Icon from "@/components/atoms/Icon";
+import Dropdown from "@/components/atoms/Dropdown.vue";
+import Icon from "@/components/atoms/Icon.vue";
 export default {
   name: "VSelect",
   components: {

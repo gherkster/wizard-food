@@ -34,6 +34,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseReDoc();
+    app.UseCors(options => options
+        .WithOrigins("*")
+        .AllowAnyMethod()
+        .AllowAnyHeader());
+}
+else
+{
+    // TODO: Configure Prod CORS
 }
 
 app.UseHttpsRedirection();
@@ -56,8 +64,9 @@ app.UseEndpoints(endpoints =>
                 SourcePath = "../frontend", 
                 StartupTimeout = TimeSpan.FromSeconds(60)
             },
-            npmScript: System.Diagnostics.Debugger.IsAttached ? "serve" : null,
-            regex: "Compiled successfully",
+            npmScript: app.Environment.IsDevelopment() ? "dev" : null,
+            regex: "ready in .+ ms",
+            port: 8080,
             forceKill: true,
             wsl: false);
     }

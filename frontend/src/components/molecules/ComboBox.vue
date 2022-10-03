@@ -26,9 +26,9 @@
 </template>
 
 <script>
-import Dropdown from "@/components/atoms/Dropdown";
-import ValidationMessage from "@/components/atoms/ValidationMessage";
-import Icon from "@/components/atoms/Icon";
+import Dropdown from "@/components/atoms/Dropdown.vue";
+import ValidationMessage from "@/components/atoms/ValidationMessage.vue";
+import Icon from "@/components/atoms/Icon.vue";
 
 export default {
   name: "ComboBox",

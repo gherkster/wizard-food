@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import TimedAlert from "@/components/atoms/TimedAlert";
+import TimedAlert from "@/components/atoms/TimedAlert.vue";
 import { useAlertStore } from "@/store/alertStore";
 
 export default {

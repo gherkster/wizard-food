@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import ValidationMessage from "@/components/atoms/ValidationMessage";
+import ValidationMessage from "@/components/atoms/ValidationMessage.vue";
 
 export default {
   name: "TextArea",

@@ -17,8 +17,8 @@
 </template>
 
 <script>
-import ValidationMessage from "@/components/atoms/ValidationMessage";
-import Icon from "@/components/atoms/Icon";
+import ValidationMessage from "@/components/atoms/ValidationMessage.vue";
+import Icon from "@/components/atoms/Icon.vue";
 
 export default {
   name: "TextField",

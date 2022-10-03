@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import Icon from "@/components/atoms/Icon";
+import Icon from "@/components/atoms/Icon.vue";
 export default {
   name: "VButton",
   components: { Icon },
