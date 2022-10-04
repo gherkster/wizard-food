@@ -2,13 +2,14 @@
   <div class="component responsive">
     <div>
       <span class="form-input-label">{{ label }}</span>
-      <div :class="formInputClass" @click.self="$refs.inputField.focus()">
-        <span v-if="prefix" class="form-input-prefix">{{ prefix }}</span>
-        <label>
-          <input ref="inputField" :value="value" :name="path" class="form-input-field" @input="input" @focus="focus" @blur="blur" />
-        </label>
-        <icon v-if="suffixIcon" :fa-icon="suffixIcon" :class="suffixIconClass" @click="clickIcon" />
-      </div>
+<!--      <div :class="formInputClass" @click.self="$refs.inputField.focus()">-->
+<!--        <span v-if="prefix" class="form-input-prefix">{{ prefix }}</span>-->
+<!--        <label>-->
+<!--          <input ref="inputField" :value="value" :name="path" class="form-input-field" @input="input" @focus="focus" @blur="blur" />-->
+<!--        </label>-->
+<!--        <icon v-if="suffixIcon" :fa-icon="suffixIcon" :class="suffixIconClass" @click="clickIcon" />-->
+<!--      </div>-->
+      <n-input type="text" :value="value" :name="path" placeholder="" @input="input" @focus="focus" @blur="blur" />
       <div class="form-validation-message">
         <validation-message v-show="error">{{ error }}</validation-message>
       </div>
@@ -18,11 +19,11 @@
 
 <script>
 import ValidationMessage from "@/components/atoms/ValidationMessage.vue";
-import Icon from "@/components/atoms/Icon.vue";
+import { NInput } from "naive-ui";
 
 export default {
   name: "TextField",
-  components: { Icon, ValidationMessage },
+  components: { NInput, ValidationMessage },
   props: {
     value: {
       type: String,
@@ -57,9 +58,6 @@ export default {
       default: false,
     },
   },
-  data: () => ({
-    isActive: false,
-  }),
   computed: {
     formInputClass: function () {
       return this.error ? "form-input__error" : "form-input";
@@ -69,16 +67,17 @@ export default {
     },
   },
   methods: {
-    input(event) {
-      this.$emit("input", { path: this.path, value: event.target.value });
+    input(value) {
+      console.log("received event for: ", this.path, value);
+      this.$emit("input", { path: this.path, value: value });
     },
-    focus(event) {
-      this.isActive = true;
-      this.$emit("focus", { path: this.path, value: event.target.value });
+    focus() {
+      console.log("focused: ", this.path, this.value);
+      this.$emit("focus", { path: this.path, value: this.value });
     },
-    blur(event) {
-      this.isActive = false;
-      this.$emit("blur", { path: this.path, value: event.target.value });
+    blur() {
+      console.log("blurred: ", this.path, this.value);
+      this.$emit("blur", { path: this.path, value: this.value });
     },
     clickIcon() {
       if (!this.suffixIconDisabled) {

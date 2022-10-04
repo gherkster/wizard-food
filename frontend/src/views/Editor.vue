@@ -7,6 +7,22 @@
         <!-- TODO: This should display the recipe name if the user is editing an existing recipe -->
         <div class="row">
           <div class="col-12">
+            <n-steps>
+              <n-step title="Summary">
+
+              </n-step>
+              <n-step title="Ingredients & Instructions">
+
+              </n-step>
+              <n-step title="Nutrition">
+
+              </n-step>
+            </n-steps>
+          </div>
+          <div class="col-12">
+
+          </div>
+          <div class="col-6">
             <text-field
               label="Recipe Title *"
               path="header.title"
@@ -17,14 +33,14 @@
             />
           </div>
           <div class="col-6">
-            <!-- TODO file upload -->
-          </div>
-          <div class="col-6">
-            <rating :length="5" :value="recipeStore.header.rating" path="header.rating" @input="handleInput" />
+            <n-upload directory-dnd>
+              <n-upload-dragger />
+            </n-upload>
           </div>
         </div>
         <div class="row">
           <div class="col-12">
+            <!-- TODO: Add rich text controls -->
             <text-area
               label="Description"
               path="header.description"
@@ -376,6 +392,7 @@
 
 <script>
 import axios from "axios";
+import { NSteps, NStep, NUpload, NUploadDragger } from "naive-ui";
 import { getFormInitialErrorState, slugPattern } from "@/scripts/validation";
 import { mapRecipeToApi } from "@/scripts/mapping";
 import { useRecipeStore } from "@/store/recipeStore";
@@ -383,11 +400,10 @@ import TextArea from "@/components/molecules/TextArea.vue";
 import TextField from "@/components/molecules/TextField.vue";
 import ComboBox from "@/components/molecules/ComboBox.vue";
 import { object, string, number, array, ValidationError } from "yup";
-import { get, set, setWith } from "lodash";
+import { get, set } from "lodash";
 import { IntegerMessage, NumericMessage, PositiveMessage, RequiredMessage } from "@/constants/validationMessages";
 import ChipBox from "@/components/molecules/ChipBox.vue";
 import { useAlertStore } from "@/store/alertStore";
-import Rating from "@/components/molecules/Rating.vue";
 import Icon from "@/components/atoms/Icon.vue";
 import { uuid } from "vue-uuid";
 import ExpansionPanel from "@/components/molecules/ExpansionPanel.vue";
@@ -398,7 +414,22 @@ import VButton from "@/components/atoms/VButton.vue";
 
 export default {
   name: "Editor",
-  components: { VButton, VColumn, VRow, VSelect, ExpansionPanel, Rating, ChipBox, TextArea, TextField, ComboBox, Icon },
+  components: {
+    VButton,
+    VColumn,
+    VRow,
+    VSelect,
+    ExpansionPanel,
+    ChipBox,
+    TextArea,
+    TextField,
+    ComboBox,
+    Icon,
+    NSteps,
+    NStep,
+    NUpload,
+    NUploadDragger,
+  },
   setup() {
     const recipeStore = useRecipeStore();
     const alertStore = useAlertStore();
@@ -543,6 +574,7 @@ export default {
       this.$router.push("/");
     },
     async handleInput(event) {
+      console.log("handling input with event: ", event);
       this.recipeStore.setValueAt(event.path, event.value);
       await this.validateAt(event.path);
     },
@@ -550,6 +582,7 @@ export default {
      * Handle title input while also prefilling a potential URL slug
      */
     async handleTitleInput(event) {
+      console.log("title input occurred from event: ", event);
       await this.handleInput(event);
       await this.createSlugFromTitle();
     },
@@ -574,6 +607,7 @@ export default {
       await this.validateAt(`instructions[${index}].${event.path}`);
     },
     async handleBlur(event) {
+      console.log("handling blur at: ", event);
       this.recipeStore.setValueAt(event.path, event.value);
       await this.validateAt(event.path);
     },
@@ -648,9 +682,10 @@ export default {
         .validateAt(field, this.recipeStore, { abortEarly: false, skipApiValidation: skipApiValidation })
         .then(() => {
           // Set using setWith to ensure reactivity is maintained when updating array values
-          setWith(this.errors, field, "", (nsValue, key, nsObject) => {
-            return this.$set(nsObject, key, nsValue);
-          });
+          // setWith(this.errors, field, "", (nsValue, key, nsObject) => {
+          //   return this.$set(nsObject, key, nsValue);
+          // });
+          set(this.errors, field, "");
         })
         .catch((error) => {
           if (error instanceof ValidationError) {
@@ -663,9 +698,10 @@ export default {
             }
 
             validationErrors.forEach((e) => {
-              setWith(this.errors, e.path, e.message, (nsValue, key, nsObject) => {
-                return this.$set(nsObject, key, nsValue);
-              });
+              // setWith(this.errors, e.path, e.message, (nsValue, key, nsObject) => {
+              //   return this.$set(nsObject, key, nsValue);
+              // });
+              set(this.errors, e.path, e.message);
             });
           } else {
             console.log(error);
