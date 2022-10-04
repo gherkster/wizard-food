@@ -15,6 +15,7 @@
       <div class="row recipe__header">
         <div class="col-12">
           <h1>{{ recipe.title }}</h1>
+          <!-- TODO: Editable rating since it won't be part of recipe editor -->
           <rating path="" :value="recipe.rating" :length="5" />
           <p>{{ recipe.description }}</p>
         </div>
