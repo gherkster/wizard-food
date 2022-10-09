@@ -111,13 +111,11 @@
 <script>
 import axios from "axios";
 import { capitalizeFirstChar, formatDuration } from "@/scripts/utility";
-import InputButton from "@/components/atoms/VButton.vue";
-import Icon from "@/components/atoms/Icon.vue";
-import Rating from "@/components/molecules/Rating.vue";
+import Icon from "@/components/XIcon.vue";
 
 export default {
   name: "Recipe",
-  components: { Rating, Icon, InputButton },
+  components: { Icon },
   data: () => ({
     recipe: null,
     ingredientMultiplier: 1,
@@ -138,7 +136,7 @@ export default {
             currentIngredientSection = ing.label;
             return; // Don't add API sections to the ingredient/instruction arrays
           }
-          let currentSectionIndex = this.groupedIngredients.findIndex((gi) => gi.section === currentIngredientSection);
+          const currentSectionIndex = this.groupedIngredients.findIndex((gi) => gi.section === currentIngredientSection);
           if (currentSectionIndex > -1) {
             this.groupedIngredients[currentSectionIndex].ingredients.push(ing);
           } else {
@@ -156,7 +154,7 @@ export default {
             currentInstructionSection = ing.label;
             return; // Don't add API sections to the ingredient/instruction arrays
           }
-          let currentSectionIndex = this.groupedInstructions.findIndex((gi) => gi.section === currentInstructionSection);
+          const currentSectionIndex = this.groupedInstructions.findIndex((gi) => gi.section === currentInstructionSection);
           if (currentSectionIndex > -1) {
             this.groupedInstructions[currentSectionIndex].instructions.push(ing);
           } else {

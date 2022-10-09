@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: "VColumn",
+  name: "XColumn",
   props: {
     left: {
       type: Boolean,

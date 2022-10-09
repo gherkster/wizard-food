@@ -1,0 +1,8 @@
+// NaiveUI Overrides //
+
+.ghost {
+  opacity: 0.45;
+  > .n-form-item .n-input {
+    --n-border-hover: 1px solid gray !important;
+  }
+}

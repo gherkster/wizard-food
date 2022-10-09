@@ -21,8 +21,4 @@ library.add(faCheck, faArrowRotateRight, fasStar, farStar, faXmark, faSpinner, f
 
 const pinia = createPinia();
 
-createApp(App)
-  .use(router)
-  .use(pinia)
-  .component("font-awesome-icon", FontAwesomeIcon)
-  .mount("#app");
+createApp(App).use(router).use(pinia).component("font-awesome-icon", FontAwesomeIcon).mount("#app");
