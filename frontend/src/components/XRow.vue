@@ -6,6 +6,6 @@
 
 <script>
 export default {
-  name: "VRow",
+  name: "XRow",
 };
 </script>

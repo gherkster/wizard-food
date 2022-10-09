@@ -1,39 +1,84 @@
 export const slugPattern = /^[a-zA-Z\d](-?[a-zA-Z\d])*$/;
 
+const defaultStatus = {
+  message: "",
+  status: null,
+};
+
 export function getFormInitialErrorState() {
   return {
-    header: {
-      title: "",
+    title: {
+      ...defaultStatus,
     },
-    ingredients: [],
-    instructions: [],
-    servings: "",
-    servingType: "",
-    category: "",
-    cuisine: "",
+    ingredientGroups: [],
+    instructionGroups: [],
+    servings: {
+      ...defaultStatus,
+    },
+    servingType: {
+      ...defaultStatus,
+    },
+    category: {
+      ...defaultStatus,
+    },
+    cuisine: {
+      ...defaultStatus,
+    },
     preparationTime: {
-      minutes: "",
-      hours: "",
-      days: "",
+      minutes: {
+        ...defaultStatus,
+      },
+      hours: {
+        ...defaultStatus,
+      },
+      days: {
+        ...defaultStatus,
+      },
     },
     cookingTime: {
-      minutes: "",
-      hours: "",
-      days: "",
+      minutes: {
+        ...defaultStatus,
+      },
+      hours: {
+        ...defaultStatus,
+      },
+      days: {
+        ...defaultStatus,
+      },
     },
     customTime: {
-      minutes: "",
-      hours: "",
-      days: "",
+      minutes: {
+        ...defaultStatus,
+      },
+      hours: {
+        ...defaultStatus,
+      },
+      days: {
+        ...defaultStatus,
+      },
     },
-    customTimeType: "",
+    customTimeType: {
+      ...defaultStatus,
+    },
     nutrition: {
-      energy: "",
-      protein: "",
-      carbohydrates: "",
-      fat: "",
-      sodium: "",
+      energy: {
+        ...defaultStatus,
+      },
+      protein: {
+        ...defaultStatus,
+      },
+      carbohydrates: {
+        ...defaultStatus,
+      },
+      fat: {
+        ...defaultStatus,
+      },
+      sodium: {
+        ...defaultStatus,
+      },
     },
-    slug: "",
+    slug: {
+      ...defaultStatus,
+    },
   };
 }

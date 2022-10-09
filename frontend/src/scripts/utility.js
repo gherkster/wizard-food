@@ -7,7 +7,7 @@ export function capitalizeFirstChar(string) {
 }
 
 export function formatDuration() {
-  let durations = Array.prototype.slice.call(arguments);
+  const durations = Array.prototype.slice.call(arguments);
 
   let totalDays = 0;
   let totalHours = 0;
@@ -22,7 +22,7 @@ export function formatDuration() {
   let dur = dayjs.duration(0);
   dur = dur.add(totalDays, "day").add(totalHours, "hour").add(totalMinutes, "minute");
 
-  let formatStrings = [];
+  const formatStrings = [];
   if (totalDays > 0) formatStrings.push("D [days]");
   if (totalHours > 0) formatStrings.push("H [hrs]");
   if (totalMinutes > 0) formatStrings.push("m [mins]");

@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: "Icon",
+  name: "XIcon",
   props: {
     faIcon: {
       type: String,
@@ -24,11 +24,6 @@ export default {
       default: "lg",
     },
     spin: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    hover: {
       type: Boolean,
       required: false,
       default: false,
