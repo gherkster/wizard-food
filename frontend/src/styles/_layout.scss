@@ -1,13 +1,20 @@
 @use "variables";
 @use "mixins";
 
-.container {
+.page {
   max-width: map-get(variables.$breakpoints, lg) * 1px;
   margin: 0 auto;
 
   &--fluid {
     margin: 0;
     max-width: 100%;
+  }
+}
+
+.content {
+  margin: 0 6%;
+  > * {
+    margin-bottom: 24px;
   }
 }
 

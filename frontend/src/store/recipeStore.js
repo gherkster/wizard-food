@@ -23,12 +23,7 @@ export const useRecipeStore = defineStore("recipe", {
       hours: "",
       minutes: "",
     },
-    customTime: {
-      days: "",
-      hours: "",
-      minutes: "",
-    },
-    customTimeType: "",
+    customTimes: [],
     nutrition: {
       energy: "",
       protein: "",

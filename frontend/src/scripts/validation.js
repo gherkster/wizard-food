@@ -46,20 +46,7 @@ export function getFormInitialErrorState() {
         ...defaultStatus,
       },
     },
-    customTime: {
-      minutes: {
-        ...defaultStatus,
-      },
-      hours: {
-        ...defaultStatus,
-      },
-      days: {
-        ...defaultStatus,
-      },
-    },
-    customTimeType: {
-      ...defaultStatus,
-    },
+    customTimes: [],
     nutrition: {
       energy: {
         ...defaultStatus,

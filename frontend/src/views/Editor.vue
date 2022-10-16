@@ -1,20 +1,17 @@
 <template>
-  <div class="container">
+  <div class="page">
     <n-button @click="goToRecipes">Go to recipes</n-button>
-    <form>
-      <div>
-        <h2>New Recipe</h2>
-        <!-- TODO: This should display the recipe name if the user is editing an existing recipe -->
-        <!-- Stepper Header -->
-        <div class="row">
-          <div class="col-12">
-            <n-steps :current="currentStep">
-              <n-step title="Summary" />
-              <n-step title="Ingredients & Instructions" />
-              <n-step title="Metadata" />
-            </n-steps>
-          </div>
-        </div>
+    <div class="content">
+      <h2>New Recipe</h2>
+      <!-- TODO: This should display the recipe name if the user is editing an existing recipe -->
+      <!-- Stepper Header -->
+      <n-steps vertical :current="currentStep">
+        <n-step title="Summary" />
+        <n-step title="Ingredients & Instructions" />
+        <n-step title="Time (optional)" />
+        <n-step title="Metadata" />
+      </n-steps>
+      <div id="recipe-form">
         <!-- Stepper Step 1: Recipe Summary -->
         <template v-if="currentStep === 1">
           <n-form size="large">
@@ -23,7 +20,7 @@
                 <x-input path="title" :value="recipeStore.title" placeholder="" @input="handleTitleInput" @blur="handleBlur" />
               </n-form-item-gi>
               <n-form-item-gi label="Image" :span="6">
-                <x-upload path="imageSrc" :value="recipeStore.imageSrc" :span="6" />
+                <x-upload path="imageSrc" :value="recipeStore.imageSrc" />
               </n-form-item-gi>
               <!-- TODO: Add rich text controls -->
               <n-form-item-gi label="Description" :span="12">
@@ -38,9 +35,10 @@
           <template v-for="(ingredientGroup, groupIndex) in recipeStore.ingredientGroups" :key="ingredientGroup.uuid">
             <n-form>
               <n-grid :cols="24" :x-gap="12">
-                <n-form-item-gi :span="24" label="Section Title">
+                <n-form-item-gi :span="8" label="Section Title (optional)">
                   <x-input path="title" :value="ingredientGroup.title" @input="handleIngredientGroupTitleChange($event, groupIndex)" />
                 </n-form-item-gi>
+                <n-form-item-gi :span="16" />
                 <!-- eslint-disable-next-line vue/no-v-for-template-key-->
                 <template v-for="(ingredient, ingredientIndex) in ingredientGroup.ingredients" :key="ingredient.uuid">
                   <n-form-item-gi
@@ -78,7 +76,7 @@
                     />
                   </n-form-item-gi>
                   <n-form-item-gi
-                    :span="10"
+                    :span="8"
                     label="Ingredient"
                     required
                     :validation-status="errors.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.name?.status"
@@ -106,6 +104,7 @@
                       </n-space>
                     </n-button>
                   </n-form-item-gi>
+                  <n-form-item-gi :span="2" />
                 </template>
                 <!-- Ghost row to create new rows. These components are never used for real data. -->
                 <n-form-item-gi :span="3" label="Amount" class="ghost">
@@ -114,17 +113,17 @@
                 <n-form-item-gi :span="4" label="Units" class="ghost">
                   <x-input path="" value="" @focus="addIngredientToGroup(groupIndex)" />
                 </n-form-item-gi>
-                <n-form-item-gi :span="10" label="Ingredient" class="ghost">
+                <n-form-item-gi :span="8" label="Ingredient" class="ghost">
                   <x-input path="" value="" @focus="addIngredientToGroup(groupIndex)" />
                 </n-form-item-gi>
-                <n-form-item-gi :span="7" label="Notes" class="ghost">
+                <n-form-item-gi :span="6" label="Notes" class="ghost">
                   <x-input path="" value="" @focus="addIngredientToGroup(groupIndex)" />
                 </n-form-item-gi>
               </n-grid>
             </n-form>
           </template>
           <n-grid :cols="24" :x-gap="12">
-            <n-form-item-gi :span="24">
+            <n-form-item-gi :span="21">
               <n-button block style="height: 100px" @click="addIngredientGroup">New Ingredient Section</n-button>
             </n-form-item-gi>
           </n-grid>
@@ -132,13 +131,14 @@
           <template v-for="(instructionGroup, groupIndex) in recipeStore.instructionGroups" :key="instructionGroup.uuid">
             <n-form>
               <n-grid :cols="24" :x-gap="12">
-                <n-form-item-gi :span="24" label="Section Title">
+                <n-form-item-gi :span="8" label="Section Title (optional)">
                   <x-input path="title" :value="instructionGroup.title" @input="handleInstructionGroupTitleChange($event, groupIndex)" />
                 </n-form-item-gi>
+                <n-form-item-gi :span="16" />
                 <!-- eslint-disable-next-line vue/no-v-for-template-key-->
                 <template v-for="(instruction, instructionIndex) in instructionGroup.instructions" :key="instruction.uuid">
                   <n-form-item-gi
-                    :span="24"
+                    :span="21"
                     :validation-status="errors.instructionGroups[groupIndex]?.instructions[instructionIndex]?.label?.status"
                     :feedback="errors.instructionGroups[groupIndex]?.instructions[instructionIndex]?.label?.message"
                     :show-label="false"
@@ -147,20 +147,24 @@
                       <n-input-group-label>{{ instructionIndex + 1 + "." }}</n-input-group-label>
                       <x-input
                         path="label"
+                        type="textarea"
+                        :autosize="{ minRows: 1, maxRows: 3 }"
                         :value="instruction.label"
                         @input="handleInstructionInputAtIndex($event, groupIndex, instructionIndex)"
                         @blur="handleInstructionBlurAtIndex($event, groupIndex, instructionIndex)"
                       />
-                      <n-button @click="removeInstructionFromGroup(groupIndex, instructionIndex)">
-                        <n-space align="center">
-                          <x-icon fa-icon="fa-xmark" />
-                        </n-space>
-                      </n-button>
                     </n-input-group>
+                  </n-form-item-gi>
+                  <n-form-item-gi :span="1" :show-label="false">
+                    <n-button @click="removeInstructionFromGroup(groupIndex, instructionIndex)">
+                      <n-space align="center">
+                        <x-icon fa-icon="fa-xmark" />
+                      </n-space>
+                    </n-button>
                   </n-form-item-gi>
                 </template>
                 <!-- Ghost row to create new rows. These components are never used for real data. -->
-                <n-form-item-gi :span="24" :show-label="false" class="ghost">
+                <n-form-item-gi :span="21" :show-label="false" class="ghost">
                   <n-input-group>
                     <n-input-group-label>{{ recipeStore.instructionGroups[groupIndex].instructions.length + 1 + "." }}</n-input-group-label>
                     <x-input path="" value="" @focus="addInstructionToGroup(groupIndex)" />
@@ -170,14 +174,120 @@
             </n-form>
           </template>
           <n-grid :cols="24" :x-gap="12">
-            <n-form-item-gi :span="24">
+            <n-form-item-gi :span="21">
               <n-button block style="height: 100px" @click="addInstructionGroup">New Instruction Section</n-button>
             </n-form-item-gi>
           </n-grid>
         </template>
-        <!-- Stepper Step 3: Recipe Metadata -->
+        <!-- Stepper Step 3: Recipe Time -->
         <template v-else-if="currentStep === 3">
           <n-form>
+            <n-grid :cols="24" :x-gap="12">
+              <n-form-item-gi :span="14" label="Preparation Time">
+                <n-input-group>
+                  <x-input
+                    label="Minutes"
+                    path="preparationTime.minutes"
+                    :value="recipeStore.preparationTime.minutes"
+                    @input="handleInput"
+                    @blur="handleBlur"
+                  />
+                  <n-input-group-label>mins</n-input-group-label>
+                  <x-input
+                    label="Hours"
+                    path="preparationTime.hours"
+                    :value="recipeStore.preparationTime.hours"
+                    @input="handleInput"
+                    @blur="handleBlur"
+                  />
+                  <n-input-group-label>hours</n-input-group-label>
+                  <x-input
+                    label="Days"
+                    path="preparationTime.days"
+                    :value="recipeStore.preparationTime.days"
+                    @input="handleInput"
+                    @blur="handleBlur"
+                  />
+                  <n-input-group-label>days</n-input-group-label>
+                </n-input-group>
+              </n-form-item-gi>
+              <n-form-item-gi :span="14" label="Cooking Time">
+                <n-input-group>
+                  <x-input
+                    path="cookingTime.minutes"
+                    :value="recipeStore.cookingTime.minutes"
+                    @input="handleInput"
+                    @blur="handleBlur"
+                  />
+                  <n-input-group-label>mins</n-input-group-label>
+                  <x-input
+                    path="cookingTime.hours"
+                    :value="recipeStore.cookingTime.hours"
+                    @input="handleInput"
+                    @blur="handleBlur"
+                  />
+                  <n-input-group-label>hours</n-input-group-label>
+                  <x-input
+                    path="cookingTime.days"
+                    :value="recipeStore.cookingTime.days"
+                    @input="handleInput"
+                    @blur="handleBlur"
+                  />
+                  <n-input-group-label>days</n-input-group-label>
+                </n-input-group>
+              </n-form-item-gi>
+              <!-- eslint-disable-next-line vue/no-v-for-template-key-->
+              <template v-for="(customTime, index) in recipeStore.customTimes" :key="customTime.uuid">
+                <n-form-item-gi :span="14" label="Custom Time">
+                  <n-input-group>
+                    <x-input
+                      label="Minutes"
+                      path="minutes"
+                      :value="customTime.minutes"
+                      @input="handleCustomTimeInputAtIndex($event, index)"
+                      @blur="handleCustomTimeBlurAtIndex($event, index)"
+                    />
+                    <n-input-group-label>mins</n-input-group-label>
+                    <x-input
+                      label="Hours"
+                      path="hours"
+                      :value="customTime.hours"
+                      @input="handleCustomTimeInputAtIndex($event, index)"
+                      @blur="handleCustomTimeBlurAtIndex($event, index)"
+                    />
+                    <n-input-group-label>hours</n-input-group-label>
+                    <x-input
+                      label="Days"
+                      path="days"
+                      :value="customTime.days"
+                      @input="handleCustomTimeInputAtIndex($event, index)"
+                      @blur="handleCustomTimeBlurAtIndex($event, index)"
+                    />
+                    <n-input-group-label>days</n-input-group-label>
+                  </n-input-group>
+                </n-form-item-gi>
+                <n-form-item-gi :span="6" label="Label" :validation-status="errors.customTimes[index]?.label?.status" :feedback="errors.customTimes[index]?.label?.message">
+                  <x-select
+                    path="label"
+                    filterable
+                    tag
+                    :value="customTime.label"
+                    :options="customTimeTypes"
+                    @input="handleCustomTimeInputAtIndex($event, index)"
+                    @blur="handleCustomTimeBlurAtIndex($event, index)"
+                  />
+                </n-form-item-gi>
+              </template>
+              <n-form-item-gi :span="20">
+                <n-button block @click="addCustomTimeGroup">Add Custom Time</n-button>
+              </n-form-item-gi>
+            </n-grid>
+          </n-form>
+        </template>
+        <!-- Stepper Step 4: Recipe Metadata -->
+        <template v-else-if="currentStep === 4">
+          <n-form>
+            <!-- Servings / Category / Cuisines -->
             <n-grid :cols="12" :x-gap="12">
               <n-form-item-gi :span="3" label="Servings" required :validation-status="errors.servings.status" :feedback="errors.servings.message">
                 <x-input
@@ -222,7 +332,13 @@
                   @blur="handleBlur"
                 />
               </n-form-item-gi>
-              <n-form-item-gi :span="2" label="Energy" :validation-status="errors.nutrition.energy.status" :feedback="errors.nutrition.energy.message">
+              <n-form-item-gi :span="12" :show-feedback="false" :show-label="false">
+                <n-divider />
+              </n-form-item-gi>
+            </n-grid>
+            <!-- Nutrition -->
+            <n-grid :cols="5" :x-gap="12">
+              <n-form-item-gi label="Energy" :validation-status="errors.nutrition.energy.status" :feedback="errors.nutrition.energy.message">
                 <n-input-group>
                   <x-input
                     path="nutrition.energy"
@@ -233,7 +349,7 @@
                   <n-input-group-label>kj</n-input-group-label>
                 </n-input-group>
               </n-form-item-gi>
-              <n-form-item-gi :span="2" label="Protein" :validation-status="errors.nutrition.protein.status" :feedback="errors.nutrition.protein.message">
+              <n-form-item-gi label="Protein" :validation-status="errors.nutrition.protein.status" :feedback="errors.nutrition.protein.message">
                 <n-input-group>
                   <x-input
                     path="nutrition.protein"
@@ -244,7 +360,7 @@
                   <n-input-group-label>g</n-input-group-label>
                 </n-input-group>
               </n-form-item-gi>
-              <n-form-item-gi :span="2" label="Carbs" :validation-status="errors.nutrition.carbohydrates.status" :feedback="errors.nutrition.carbohydrates.message">
+              <n-form-item-gi label="Carbs" :validation-status="errors.nutrition.carbohydrates.status" :feedback="errors.nutrition.carbohydrates.message">
                 <n-input-group>
                   <x-input
                     path="nutrition.carbohydrates"
@@ -255,7 +371,7 @@
                   <n-input-group-label>g</n-input-group-label>
                 </n-input-group>
               </n-form-item-gi>
-              <n-form-item-gi :span="2" label="Fat" :validation-status="errors.nutrition.fat.status" :feedback="errors.nutrition.fat.message">
+              <n-form-item-gi label="Fat" :validation-status="errors.nutrition.fat.status" :feedback="errors.nutrition.fat.message">
                 <n-input-group>
                   <x-input
                     path="nutrition.fat"
@@ -266,7 +382,7 @@
                   <n-input-group-label>g</n-input-group-label>
                 </n-input-group>
               </n-form-item-gi>
-              <n-form-item-gi :span="2" label="Sodium" :validation-status="errors.nutrition.sodium.status" :feedback="errors.nutrition.sodium.message">
+              <n-form-item-gi label="Sodium" :validation-status="errors.nutrition.sodium.status" :feedback="errors.nutrition.sodium.message">
                 <n-input-group>
                   <x-input
                     path="nutrition.sodium"
@@ -277,101 +393,9 @@
                   <n-input-group-label>g</n-input-group-label>
                 </n-input-group>
               </n-form-item-gi>
-              <n-form-item-gi :span="12" :show-feedback="false" :show-label="false">
-                <n-divider />
-              </n-form-item-gi>
-              <n-form-item-gi :span="6" label="Preparation Time">
-                <n-input-group>
-                  <x-input
-                    label="Minutes"
-                    path="preparationTime.minutes"
-                    :value="recipeStore.preparationTime.minutes"
-                    @input="handleInput"
-                    @blur="handleBlur"
-                  />
-                  <n-input-group-label>mins</n-input-group-label>
-                  <x-input
-                    label="Hours"
-                    path="preparationTime.hours"
-                    :value="recipeStore.preparationTime.hours"
-                    @input="handleInput"
-                    @blur="handleBlur"
-                  />
-                  <n-input-group-label>hours</n-input-group-label>
-                  <x-input
-                    label="Days"
-                    path="preparationTime.days"
-                    :value="recipeStore.preparationTime.days"
-                    @input="handleInput"
-                    @blur="handleBlur"
-                  />
-                  <n-input-group-label>days</n-input-group-label>
-                </n-input-group>
-              </n-form-item-gi>
-              <n-form-item-gi :span="6" label="Cooking Time">
-                <n-input-group>
-                  <x-input
-                    path="cookingTime.minutes"
-                    :value="recipeStore.cookingTime.minutes"
-                    @input="handleInput"
-                    @blur="handleBlur"
-                  />
-                  <n-input-group-label>mins</n-input-group-label>
-                  <x-input
-                    path="cookingTime.hours"
-                    :value="recipeStore.cookingTime.hours"
-                    @input="handleInput"
-                    @blur="handleBlur"
-                  />
-                  <n-input-group-label>hours</n-input-group-label>
-                  <x-input
-                    path="cookingTime.days"
-                    :value="recipeStore.cookingTime.days"
-                    @input="handleInput"
-                    @blur="handleBlur"
-                  />
-                  <n-input-group-label>days</n-input-group-label>
-                </n-input-group>
-              </n-form-item-gi>
-              <n-form-item-gi :span="6" label="Custom Time">
-                <n-input-group>
-                  <x-input
-                    label="Minutes"
-                    path="customTime.minutes"
-                    :value="recipeStore.customTime.minutes"
-                    @input="handleInput"
-                    @blur="handleBlur"
-                  />
-                  <n-input-group-label>mins</n-input-group-label>
-                  <x-input
-                    label="Hours"
-                    path="customTime.hours"
-                    :value="recipeStore.customTime.hours"
-                    @input="handleInput"
-                    @blur="handleBlur"
-                  />
-                  <n-input-group-label>hours</n-input-group-label>
-                  <x-input
-                    label="Days"
-                    path="customTime.days"
-                    :value="recipeStore.customTime.days"
-                    @input="handleInput"
-                    @blur="handleBlur"
-                  />
-                  <n-input-group-label>days</n-input-group-label>
-                </n-input-group>
-              </n-form-item-gi>
-              <n-form-item-gi :span="6" label="Custom Time description" :validation-status="errors.customTimeType.status" :feedback="errors.customTimeType.message">
-                <x-select
-                  path="customTimeType"
-                  filterable
-                  tag
-                  :value="recipeStore.customTimeType"
-                  :options="customTimeTypes"
-                  @input="handleInput"
-                  @blur="handleBlur"
-                />
-              </n-form-item-gi>
+            </n-grid>
+            <!-- Tags / Slug -->
+            <n-grid :cols="12" :x-gap="12">
               <n-form-item-gi :span="12" :show-feedback="false" :show-label="false">
                 <n-divider />
               </n-form-item-gi>
@@ -402,15 +426,15 @@
             </n-grid>
           </n-form>
         </template>
-        <!-- Stepper Controls -->
-        <x-row>
-          <x-column class="col-12" right>
-            <n-button type="primary" size="large" ghost v-if="currentStep !== 1" @click="currentStep--">Previous</n-button>
-            <n-button type="primary" size="large" @click="currentStep++">Next</n-button>
-          </x-column>
-        </x-row>
       </div>
-    </form>
+      <!-- Stepper Controls -->
+      <x-row>
+        <x-column class="col-12" right>
+          <n-button type="primary" size="large" ghost v-if="currentStep !== 1" @click="currentStep--">Previous</n-button>
+          <n-button type="primary" size="large" @click="currentStep++">Next</n-button>
+        </x-column>
+      </x-row>
+    </div>
   </div>
 </template>
 
@@ -544,15 +568,17 @@ export default {
         hours: number().label("Hours").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
         days: number().label("Days").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
       }),
-      customTime: object().shape({
-        minutes: number().label("Minutes").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
-        hours: number().label("Hours").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
-        days: number().label("Days").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
-      }),
-      customTimeType: string().when("customTime", {
-        is: (ct) => ct.minutes || ct.hours || ct.days,
-        then: (schema) => schema.label("Custom time type").trim().required(RequiredMessage),
-      }),
+      customTimes: array().of(
+        object({
+          minutes: number().label("Minutes").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
+          hours: number().label("Hours").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
+          days: number().label("Days").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
+          label: string().when(["minutes", "hours", "days"], {
+            is: (minutes, hours, days) => minutes || hours || days,
+            then: (schema) => schema.label("Custom time type").trim().required(RequiredMessage),
+          }),
+        })
+      ),
       slug: string()
         .label("Slug")
         .required(RequiredMessage)
@@ -686,6 +712,25 @@ export default {
         this.errors.instructionGroups[groupIndex].instructions.splice(instructionIndex, 1);
       }
     },
+    async handleCustomTimeInputAtIndex(event, index) {
+      this.recipeStore.setValueAt(["customTimes", index, event.path], event.value);
+      await this.validateAt(`customTimes[${index}].${event.path}`);
+    },
+    async handleCustomTimeBlurAtIndex(event, index) {
+      await this.validateAt(`customTimes[${index}].${event.path}`);
+    },
+    addCustomTimeGroup() {
+      this.recipeStore.customTimes.push({
+        uuid: uuid.v1(),
+        days: "",
+        hours: "",
+        minutes: "",
+        label: "",
+      });
+    },
+    removeCustomTimeGroup(groupIndex) {
+      this.recipeStore.customTimes.splice(groupIndex, 1);
+    },
     async validateAt(field, skipApiValidation = false) {
       console.log("validating: ", field, "with value: ", get(this.recipeStore, field));
       await this.validationSchema
@@ -714,8 +759,10 @@ export default {
       // If one of the custom times is modified (minutes, hours, days), then validate the customTimeType.
       // This ensures the user sees the field is required as soon as one of the above fields is modified,
       // without needing to interact with the customTimeType field directly.
-      if (field.includes("customTime.")) {
-        await this.validateAt("customTimeType");
+      if (field.includes("customTimes") && !field.includes("label")) {
+        // e.g. Transform customTimes[0].minutes path into customTimes[0].label
+        const customTimeLabelWithSameIndex = field.substring(0, field.lastIndexOf("]") + 1) + ".label";
+        await this.validateAt(customTimeLabelWithSameIndex);
       }
     },
     async validateAll() {
