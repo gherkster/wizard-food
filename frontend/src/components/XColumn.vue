@@ -1,5 +1,5 @@
 <template>
-  <div :style="styleObject">
+  <div :class="'col-' + cols" :style="styleObject">
     <slot />
   </div>
 </template>
@@ -8,6 +8,11 @@
 export default {
   name: "XColumn",
   props: {
+    cols: {
+      type: Number,
+      required: false,
+      default: 12,
+    },
     left: {
       type: Boolean,
       required: false,

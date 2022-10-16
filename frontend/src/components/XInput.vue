@@ -1,5 +1,5 @@
 <template>
-  <n-input :type="type" :value="value" :name="path" placeholder="" @input="input" @focus="focus" @blur="blur" />
+  <n-input :type="type" :value="value" :name="path" :autosize="autosize" placeholder="" @input="input" @focus="focus" @blur="blur" />
 </template>
 
 <script>
@@ -22,6 +22,10 @@ export default {
     path: {
       type: String,
       required: true,
+    },
+    autosize: {
+      required: false,
+      default: null,
     },
   },
   methods: {

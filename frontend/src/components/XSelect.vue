@@ -5,6 +5,7 @@
     :filterable="filterable"
     :tag="tag"
     :multiple="multiple"
+    placeholder=""
     @update:value="handleUpdate"
     @blur="handleBlur"
   />
