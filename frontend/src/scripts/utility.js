@@ -23,9 +23,9 @@ export function formatDuration() {
   dur = dur.add(totalDays, "day").add(totalHours, "hour").add(totalMinutes, "minute");
 
   const formatStrings = [];
-  if (totalDays > 0) formatStrings.push("D [days]");
-  if (totalHours > 0) formatStrings.push("H [hrs]");
-  if (totalMinutes > 0) formatStrings.push("m [mins]");
+  if (totalDays > 0) formatStrings.push("D[d]");
+  if (totalHours > 0) formatStrings.push("H[h]");
+  if (totalMinutes > 0) formatStrings.push("m[m]");
   if (formatStrings.length === 0) return null;
 
   return dur.format(formatStrings.join(" "));

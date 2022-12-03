@@ -22,10 +22,6 @@
               <n-form-item-gi label="Image" :span="6">
                 <x-upload path="imageSrc" :value="recipeStore.imageSrc" />
               </n-form-item-gi>
-              <!-- TODO: Add rich text controls -->
-              <n-form-item-gi label="Description" :span="12">
-                <x-input path="description" type="textarea" :value="recipeStore.description" @input="handleInput" @blur="handleBlur" />
-              </n-form-item-gi>
             </n-grid>
           </n-form>
         </template>
@@ -287,30 +283,9 @@
         <!-- Stepper Step 4: Recipe Metadata -->
         <template v-else-if="currentStep === 4">
           <n-form>
-            <!-- Servings / Category / Cuisines -->
+            <!-- Servings / Category / Cuisines / Nutrition -->
             <n-grid :cols="12" :x-gap="12">
-              <n-form-item-gi :span="3" label="Servings" required :validation-status="errors.servings.status" :feedback="errors.servings.message">
-                <x-input
-                  label="Servings"
-                  path="servings"
-                  :value="recipeStore.servings"
-                  :error="errors.servings"
-                  @input="handleInput"
-                  @blur="handleBlur"
-                />
-              </n-form-item-gi>
-              <n-form-item-gi :span="3" label="Serving Type" required :validation-status="errors.servingType.status" :feedback="errors.servingType.message">
-                <x-select
-                  path="servingType"
-                  :value="recipeStore.servingType"
-                  filterable
-                  tag
-                  :options="servingTypes"
-                  @input="handleInput"
-                  @blur="handleBlur"
-                />
-              </n-form-item-gi>
-              <n-form-item-gi :span="3" label="Category" required :validation-status="errors.category.status" :feedback="errors.category.message">
+              <n-form-item-gi :span="4" label="Category" required :validation-status="errors.category.status" :feedback="errors.category.message">
                 <x-select
                   path="category"
                   filterable
@@ -321,7 +296,8 @@
                   @blur="handleBlur"
                 />
               </n-form-item-gi>
-              <n-form-item-gi :span="3" label="Cuisine" required :validation-status="errors.cuisine.status" :feedback="errors.cuisine.message">
+              <n-form-item-gi :span="8" />
+              <n-form-item-gi :span="4" label="Cuisine" required :validation-status="errors.cuisine.status" :feedback="errors.cuisine.message">
                 <x-select
                   path="cuisine"
                   filterable
@@ -332,13 +308,16 @@
                   @blur="handleBlur"
                 />
               </n-form-item-gi>
-              <n-form-item-gi :span="12" :show-feedback="false" :show-label="false">
-                <n-divider />
+              <n-form-item-gi :span="8" />
+              <n-form-item-gi :span="2" label="No. of servings">
+                <x-input
+                  path="servings"
+                  :value="recipeStore.servings"
+                  @input="handleInput"
+                  @blur="handleBlur"
+                />
               </n-form-item-gi>
-            </n-grid>
-            <!-- Nutrition -->
-            <n-grid :cols="5" :x-gap="12">
-              <n-form-item-gi label="Energy" :validation-status="errors.nutrition.energy.status" :feedback="errors.nutrition.energy.message">
+              <n-form-item-gi :span="2" label="Energy per serve">
                 <n-input-group>
                   <x-input
                     path="nutrition.energy"
@@ -349,56 +328,9 @@
                   <n-input-group-label>kj</n-input-group-label>
                 </n-input-group>
               </n-form-item-gi>
-              <n-form-item-gi label="Protein" :validation-status="errors.nutrition.protein.status" :feedback="errors.nutrition.protein.message">
-                <n-input-group>
-                  <x-input
-                    path="nutrition.protein"
-                    :value="recipeStore.nutrition.protein"
-                    @input="handleInput"
-                    @blur="handleBlur"
-                  />
-                  <n-input-group-label>g</n-input-group-label>
-                </n-input-group>
-              </n-form-item-gi>
-              <n-form-item-gi label="Carbs" :validation-status="errors.nutrition.carbohydrates.status" :feedback="errors.nutrition.carbohydrates.message">
-                <n-input-group>
-                  <x-input
-                    path="nutrition.carbohydrates"
-                    :value="recipeStore.nutrition.carbohydrates"
-                    @input="handleInput"
-                    @blur="handleBlur"
-                  />
-                  <n-input-group-label>g</n-input-group-label>
-                </n-input-group>
-              </n-form-item-gi>
-              <n-form-item-gi label="Fat" :validation-status="errors.nutrition.fat.status" :feedback="errors.nutrition.fat.message">
-                <n-input-group>
-                  <x-input
-                    path="nutrition.fat"
-                    :value="recipeStore.nutrition.fat"
-                    @input="handleInput"
-                    @blur="handleBlur"
-                  />
-                  <n-input-group-label>g</n-input-group-label>
-                </n-input-group>
-              </n-form-item-gi>
-              <n-form-item-gi label="Sodium" :validation-status="errors.nutrition.sodium.status" :feedback="errors.nutrition.sodium.message">
-                <n-input-group>
-                  <x-input
-                    path="nutrition.sodium"
-                    :value="recipeStore.nutrition.sodium"
-                    @input="handleInput"
-                    @blur="handleBlur"
-                  />
-                  <n-input-group-label>g</n-input-group-label>
-                </n-input-group>
-              </n-form-item-gi>
             </n-grid>
             <!-- Tags / Slug -->
             <n-grid :cols="12" :x-gap="12">
-              <n-form-item-gi :span="12" :show-feedback="false" :show-label="false">
-                <n-divider />
-              </n-form-item-gi>
               <n-form-item-gi :span="6" label="Tags">
                 <x-select
                   path="tags"
@@ -411,6 +343,7 @@
                   @blur="handleBlur"
                 />
               </n-form-item-gi>
+              <n-form-item-gi :span="6" />
               <n-form-item-gi :span="6" label="URL Slug" required :validation-status="errors.slug.status" :feedback="errors.slug.message">
                 <n-input-group>
                   <n-input-group-label>{{ recipeUrlPrefix }}</n-input-group-label>
@@ -469,7 +402,6 @@ export default {
     NSpace,
     NInputGroup,
     NInputGroupLabel,
-    NDivider,
   },
   setup() {
     const recipeStore = useRecipeStore();
@@ -483,7 +415,6 @@ export default {
     validationSchema: null,
     timeOptions: ["minutes", "hours", "days"],
     customTimeTypes: [],
-    servingTypes: [],
     categories: [],
     cuisines: [],
     tags: [],
@@ -499,13 +430,7 @@ export default {
         this.categories = response.data.categories.map((c) => ({ label: c.label, value: c.label }));
         this.cuisines = response.data.cuisines.map((c) => ({ label: c.label, value: c.label }));
         this.customTimeTypes = response.data.customTimeTypes.map((ct) => ({ label: ct.label, value: ct.label }));
-        this.servingTypes = response.data.servingTypes.map((st) => ({ label: st.label, value: st.label }));
         this.tags = response.data.tags.map((t) => ({ label: t.label, value: t.label }));
-
-        // Default to servings if it's a valid option
-        if (this.servingTypes.includes("servings")) {
-          this.recipeStore.servingType = "servings";
-        }
       })
       .catch((error) => console.log(error));
 
@@ -522,7 +447,6 @@ export default {
     this.validationSchema = object().shape({
       title: string().label("Title").trim().required(RequiredMessage),
       rating: number(),
-      description: string(),
       ingredientGroups: array().of(
         object({
           ingredients: array().of(
@@ -549,13 +473,6 @@ export default {
           ),
         })
       ),
-      servings: number()
-        .label("Servings")
-        .transform(emptyToUndefined)
-        .required(RequiredMessage)
-        .typeError(NumericMessage)
-        .min(0, PositiveMessage),
-      servingType: string().label("Serving type").trim().required(RequiredMessage),
       category: string().label("Category").trim().required(RequiredMessage),
       cuisine: string().label("Cuisine").trim().required(RequiredMessage),
       preparationTime: object().shape({
@@ -584,7 +501,7 @@ export default {
         .required(RequiredMessage)
         .matches(
           slugPattern,
-          "URL slug must be a unique combination of alphanumeric characters and hyphens, such as my-new-form or MyNewRecipe"
+          "URL slug must be a unique combination of alphanumeric characters and hyphens, such as my-new-recipe or MyNewRecipe"
         )
         .test(
           "is-slug-unique",
@@ -602,10 +519,6 @@ export default {
         ),
       nutrition: object().shape({
         energy: number().label("Energy").transform(emptyToUndefined).typeError(NumericMessage),
-        protein: number().label("Protein").transform(emptyToUndefined).typeError(NumericMessage),
-        carbohydrates: number().label("Carbs").transform(emptyToUndefined).typeError(NumericMessage),
-        fat: number().label("Fat").transform(emptyToUndefined).typeError(NumericMessage),
-        sodium: number().label("Sodium").transform(emptyToUndefined).typeError(NumericMessage),
       }),
       tags: array(),
     });

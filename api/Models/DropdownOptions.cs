@@ -10,10 +10,3 @@ public class DropdownOptions
     public List<DbServingType> ServingTypes { get; set; } = new();
     public List<DbTag> Tags { get; set; } = new();
 }
-
-
-
-
-
-
-
