@@ -1,5 +1,5 @@
 <template>
-  <div :class="'col-' + cols" :style="styleObject">
+  <div :class="Object.keys($attrs)">
     <slot />
   </div>
 </template>
@@ -8,11 +8,6 @@
 export default {
   name: "XColumn",
   props: {
-    cols: {
-      type: Number,
-      required: false,
-      default: 12,
-    },
     left: {
       type: Boolean,
       required: false,
@@ -27,13 +22,6 @@ export default {
       type: Boolean,
       required: false,
       default: false,
-    },
-  },
-  computed: {
-    styleObject() {
-      return {
-        "justify-content": this.middle ? "center" : this.right ? "right" : "left",
-      };
     },
   },
 };

@@ -1,0 +1,13 @@
+@use "mixins" as m;
+
+.recipe {
+  &__tags {
+    display: flex;
+    @include m.spacing("g", "xs");
+  }
+  &__duration {
+    display: flex;
+    flex-wrap: wrap;
+    @include m.spacing("g", "xs");
+  }
+}
