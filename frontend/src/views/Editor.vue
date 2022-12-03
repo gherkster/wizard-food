@@ -1,368 +1,408 @@
 <template>
-  <div class="container">
-    <input-button @click="goToRecipes">Go to recipes</input-button>
-    <form>
-      <div>
-        <h2>New Recipe</h2>
-        <!-- TODO: This should display the recipe name if the user is editing an existing recipe -->
-        <div class="row">
-          <div class="col-12">
-            <text-field
-              label="Recipe Title"
-              path="header.title"
-              :value="recipeStore.header.title"
-              :error="errors.header.title"
-              @input="handleTitleInput"
-              @blur="handleBlur"
-            />
-          </div>
-          <div class="col-6">
-            <!-- TODO file upload -->
-          </div>
-          <div class="col-6">
-            <rating :length="5" :value="recipeStore.header.rating" path="header.rating" @input="handleInput" />
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12">
-            <text-area
-              label="Description"
-              path="header.description"
-              :value="recipeStore.header.description"
-              @input="handleInput"
-              @blur="handleBlur"
-            />
-          </div>
-        </div>
-      </div>
-      <h2>Ingredients</h2>
-      <div class="row" v-for="(item, index) in recipeStore.ingredients" :key="item.uuid">
-        <!-- If item is a section name -->
-        <div class="col-11" v-if="item.itemType === 'section'">
-          <text-field
-            label="Section name"
-            path="label"
-            :value="item.label"
-            :error="errors.ingredients[index] ? errors.ingredients[index].label : ''"
-            @input="handleIngredientInputAtIndex($event, index)"
-            @blur="handleIngredientBlurAtIndex($event, index)"
-          />
-        </div>
-        <!-- If item is an ingredient -->
-        <template v-else>
-          <div class="col-2">
-            <text-field
-              label="Amount"
-              path="amount"
-              :value="item.amount"
-              :error="errors.ingredients[index] ? errors.ingredients[index].amount : ''"
-              @input="handleIngredientInputAtIndex($event, index)"
-              @blur="handleIngredientBlurAtIndex($event, index)"
-            />
-          </div>
-          <div class="col-2">
-            <combo-box
-              label="Units"
-              path="unit"
-              :value="item.unit"
-              :items="['g', 'ml']"
-              :error="errors.ingredients[index] ? errors.ingredients[index].unit : ''"
-              @input="handleIngredientInputAtIndex($event, index)"
-              @blur="handleIngredientBlurAtIndex($event, index)"
-            />
-          </div>
-          <div class="col-4">
-            <text-field
-              label="Ingredient"
-              path="label"
-              :value="item.label"
-              :error="errors.ingredients[index] ? errors.ingredients[index].label : ''"
-              @input="handleIngredientInputAtIndex($event, index)"
-              @blur="handleIngredientBlurAtIndex($event, index)"
-            />
-          </div>
-          <div class="col-3">
-            <text-field label="Notes" path="note" :value="item.note" @input="handleIngredientInputAtIndex($event, index)" />
-          </div>
+  <div class="page">
+    <n-button @click="goToRecipes">Go to recipes</n-button>
+    <div class="content">
+      <h2>New Recipe</h2>
+      <!-- TODO: This should display the recipe name if the user is editing an existing recipe -->
+      <!-- Stepper Header -->
+      <n-steps vertical :current="currentStep">
+        <n-step title="Summary" />
+        <n-step title="Ingredients & Instructions" />
+        <n-step title="Time (optional)" />
+        <n-step title="Metadata" />
+      </n-steps>
+      <div id="recipe-form">
+        <!-- Stepper Step 1: Recipe Summary -->
+        <template v-if="currentStep === 1">
+          <n-form size="large">
+            <n-grid :cols="12" :x-gap="12">
+              <n-form-item-gi label="Title" required :span="6" :validation-status="errors.title.status" :feedback="errors.title.message">
+                <x-input path="title" :value="recipeStore.title" placeholder="" @input="handleTitleInput" @blur="handleBlur" />
+              </n-form-item-gi>
+              <n-form-item-gi label="Image" :span="6">
+                <x-upload path="imageSrc" :value="recipeStore.imageSrc" />
+              </n-form-item-gi>
+            </n-grid>
+          </n-form>
         </template>
-        <div class="col-1">
-          <icon fa-icon="fa-xmark" hover @click="removeIngredientAt(index)" />
-        </div>
+        <!-- Stepper Step 2: Recipe Ingredients / Instructions -->
+        <template v-else-if="currentStep === 2">
+          <!-- eslint-disable-next-line vue/no-v-for-template-key-->
+          <template v-for="(ingredientGroup, groupIndex) in recipeStore.ingredientGroups" :key="ingredientGroup.uuid">
+            <n-form>
+              <n-grid :cols="24" :x-gap="12">
+                <n-form-item-gi :span="8" label="Section Title (optional)">
+                  <x-input path="title" :value="ingredientGroup.title" @input="handleIngredientGroupTitleChange($event, groupIndex)" />
+                </n-form-item-gi>
+                <n-form-item-gi :span="16" />
+                <!-- eslint-disable-next-line vue/no-v-for-template-key-->
+                <template v-for="(ingredient, ingredientIndex) in ingredientGroup.ingredients" :key="ingredient.uuid">
+                  <n-form-item-gi
+                    :span="3"
+                    label="Amount"
+                    required
+                    :validation-status="errors.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.amount?.status"
+                    :feedback="errors.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.amount?.message"
+                  >
+                    <x-input
+                      path="amount"
+                      :value="ingredient.amount"
+                      @input="handleIngredientInputAtIndex($event, groupIndex, ingredientIndex)"
+                      @blur="handleIngredientBlurAtIndex($event, groupIndex, ingredientIndex)"
+                    />
+                  </n-form-item-gi>
+                  <n-form-item-gi
+                    :span="4"
+                    label="Units"
+                    required
+                    :validation-status="errors.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.unit?.status"
+                    :feedback="errors.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.unit?.message"
+                  >
+                    <x-select
+                      path="unit"
+                      :value="ingredient.unit"
+                      filterable
+                      tag
+                      :options="[
+                        { label: 'g', value: 'g' },
+                        { label: 'mL', value: 'mL' },
+                      ]"
+                      @input="handleIngredientInputAtIndex($event, groupIndex, ingredientIndex)"
+                      @blur="handleIngredientInputAtIndex($event, groupIndex, ingredientIndex)"
+                    />
+                  </n-form-item-gi>
+                  <n-form-item-gi
+                    :span="8"
+                    label="Ingredient"
+                    required
+                    :validation-status="errors.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.name?.status"
+                    :feedback="errors.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.name?.message"
+                  >
+                    <x-input
+                      path="name"
+                      :value="ingredient.name"
+                      @input="handleIngredientInputAtIndex($event, groupIndex, ingredientIndex)"
+                      @blur="handleIngredientBlurAtIndex($event, groupIndex, ingredientIndex)"
+                    />
+                  </n-form-item-gi>
+                  <n-form-item-gi :span="6" label="Notes">
+                    <x-input
+                      path="note"
+                      :value="ingredient.note"
+                      @input="handleIngredientInputAtIndex($event, groupIndex, ingredientIndex)"
+                      @blur="handleIngredientBlurAtIndex($event, groupIndex, ingredientIndex)"
+                    />
+                  </n-form-item-gi>
+                  <n-form-item-gi :span="1">
+                    <n-button @click="removeIngredientFromGroup(groupIndex, ingredientIndex)">
+                      <n-space align="center">
+                        <x-icon fa-icon="fa-xmark" />
+                      </n-space>
+                    </n-button>
+                  </n-form-item-gi>
+                  <n-form-item-gi :span="2" />
+                </template>
+                <!-- Ghost row to create new rows. These components are never used for real data. -->
+                <n-form-item-gi :span="3" label="Amount" class="ghost">
+                  <x-input path="" value="" @focus="addIngredientToGroup(groupIndex)" />
+                </n-form-item-gi>
+                <n-form-item-gi :span="4" label="Units" class="ghost">
+                  <x-input path="" value="" @focus="addIngredientToGroup(groupIndex)" />
+                </n-form-item-gi>
+                <n-form-item-gi :span="8" label="Ingredient" class="ghost">
+                  <x-input path="" value="" @focus="addIngredientToGroup(groupIndex)" />
+                </n-form-item-gi>
+                <n-form-item-gi :span="6" label="Notes" class="ghost">
+                  <x-input path="" value="" @focus="addIngredientToGroup(groupIndex)" />
+                </n-form-item-gi>
+              </n-grid>
+            </n-form>
+          </template>
+          <n-grid :cols="24" :x-gap="12">
+            <n-form-item-gi :span="21">
+              <n-button block style="height: 100px" @click="addIngredientGroup">New Ingredient Section</n-button>
+            </n-form-item-gi>
+          </n-grid>
+          <!-- eslint-disable-next-line vue/no-v-for-template-key-->
+          <template v-for="(instructionGroup, groupIndex) in recipeStore.instructionGroups" :key="instructionGroup.uuid">
+            <n-form>
+              <n-grid :cols="24" :x-gap="12">
+                <n-form-item-gi :span="8" label="Section Title (optional)">
+                  <x-input path="title" :value="instructionGroup.title" @input="handleInstructionGroupTitleChange($event, groupIndex)" />
+                </n-form-item-gi>
+                <n-form-item-gi :span="16" />
+                <!-- eslint-disable-next-line vue/no-v-for-template-key-->
+                <template v-for="(instruction, instructionIndex) in instructionGroup.instructions" :key="instruction.uuid">
+                  <n-form-item-gi
+                    :span="21"
+                    :validation-status="errors.instructionGroups[groupIndex]?.instructions[instructionIndex]?.label?.status"
+                    :feedback="errors.instructionGroups[groupIndex]?.instructions[instructionIndex]?.label?.message"
+                    :show-label="false"
+                  >
+                    <n-input-group>
+                      <n-input-group-label>{{ instructionIndex + 1 + "." }}</n-input-group-label>
+                      <x-input
+                        path="label"
+                        type="textarea"
+                        :autosize="{ minRows: 1, maxRows: 3 }"
+                        :value="instruction.label"
+                        @input="handleInstructionInputAtIndex($event, groupIndex, instructionIndex)"
+                        @blur="handleInstructionBlurAtIndex($event, groupIndex, instructionIndex)"
+                      />
+                    </n-input-group>
+                  </n-form-item-gi>
+                  <n-form-item-gi :span="1" :show-label="false">
+                    <n-button @click="removeInstructionFromGroup(groupIndex, instructionIndex)">
+                      <n-space align="center">
+                        <x-icon fa-icon="fa-xmark" />
+                      </n-space>
+                    </n-button>
+                  </n-form-item-gi>
+                </template>
+                <!-- Ghost row to create new rows. These components are never used for real data. -->
+                <n-form-item-gi :span="21" :show-label="false" class="ghost">
+                  <n-input-group>
+                    <n-input-group-label>{{ recipeStore.instructionGroups[groupIndex].instructions.length + 1 + "." }}</n-input-group-label>
+                    <x-input path="" value="" @focus="addInstructionToGroup(groupIndex)" />
+                  </n-input-group>
+                </n-form-item-gi>
+              </n-grid>
+            </n-form>
+          </template>
+          <n-grid :cols="24" :x-gap="12">
+            <n-form-item-gi :span="21">
+              <n-button block style="height: 100px" @click="addInstructionGroup">New Instruction Section</n-button>
+            </n-form-item-gi>
+          </n-grid>
+        </template>
+        <!-- Stepper Step 3: Recipe Time -->
+        <template v-else-if="currentStep === 3">
+          <n-form>
+            <n-grid :cols="24" :x-gap="12">
+              <n-form-item-gi :span="14" label="Preparation Time">
+                <n-input-group>
+                  <x-input
+                    label="Minutes"
+                    path="preparationTime.minutes"
+                    :value="recipeStore.preparationTime.minutes"
+                    @input="handleInput"
+                    @blur="handleBlur"
+                  />
+                  <n-input-group-label>mins</n-input-group-label>
+                  <x-input
+                    label="Hours"
+                    path="preparationTime.hours"
+                    :value="recipeStore.preparationTime.hours"
+                    @input="handleInput"
+                    @blur="handleBlur"
+                  />
+                  <n-input-group-label>hours</n-input-group-label>
+                  <x-input
+                    label="Days"
+                    path="preparationTime.days"
+                    :value="recipeStore.preparationTime.days"
+                    @input="handleInput"
+                    @blur="handleBlur"
+                  />
+                  <n-input-group-label>days</n-input-group-label>
+                </n-input-group>
+              </n-form-item-gi>
+              <n-form-item-gi :span="14" label="Cooking Time">
+                <n-input-group>
+                  <x-input
+                    path="cookingTime.minutes"
+                    :value="recipeStore.cookingTime.minutes"
+                    @input="handleInput"
+                    @blur="handleBlur"
+                  />
+                  <n-input-group-label>mins</n-input-group-label>
+                  <x-input
+                    path="cookingTime.hours"
+                    :value="recipeStore.cookingTime.hours"
+                    @input="handleInput"
+                    @blur="handleBlur"
+                  />
+                  <n-input-group-label>hours</n-input-group-label>
+                  <x-input
+                    path="cookingTime.days"
+                    :value="recipeStore.cookingTime.days"
+                    @input="handleInput"
+                    @blur="handleBlur"
+                  />
+                  <n-input-group-label>days</n-input-group-label>
+                </n-input-group>
+              </n-form-item-gi>
+              <!-- eslint-disable-next-line vue/no-v-for-template-key-->
+              <template v-for="(customTime, index) in recipeStore.customTimes" :key="customTime.uuid">
+                <n-form-item-gi :span="14" label="Custom Time">
+                  <n-input-group>
+                    <x-input
+                      label="Minutes"
+                      path="minutes"
+                      :value="customTime.minutes"
+                      @input="handleCustomTimeInputAtIndex($event, index)"
+                      @blur="handleCustomTimeBlurAtIndex($event, index)"
+                    />
+                    <n-input-group-label>mins</n-input-group-label>
+                    <x-input
+                      label="Hours"
+                      path="hours"
+                      :value="customTime.hours"
+                      @input="handleCustomTimeInputAtIndex($event, index)"
+                      @blur="handleCustomTimeBlurAtIndex($event, index)"
+                    />
+                    <n-input-group-label>hours</n-input-group-label>
+                    <x-input
+                      label="Days"
+                      path="days"
+                      :value="customTime.days"
+                      @input="handleCustomTimeInputAtIndex($event, index)"
+                      @blur="handleCustomTimeBlurAtIndex($event, index)"
+                    />
+                    <n-input-group-label>days</n-input-group-label>
+                  </n-input-group>
+                </n-form-item-gi>
+                <n-form-item-gi :span="6" label="Label" :validation-status="errors.customTimes[index]?.label?.status" :feedback="errors.customTimes[index]?.label?.message">
+                  <x-select
+                    path="label"
+                    filterable
+                    tag
+                    :value="customTime.label"
+                    :options="customTimeTypes"
+                    @input="handleCustomTimeInputAtIndex($event, index)"
+                    @blur="handleCustomTimeBlurAtIndex($event, index)"
+                  />
+                </n-form-item-gi>
+              </template>
+              <n-form-item-gi :span="20">
+                <n-button block @click="addCustomTimeGroup">Add Custom Time</n-button>
+              </n-form-item-gi>
+            </n-grid>
+          </n-form>
+        </template>
+        <!-- Stepper Step 4: Recipe Metadata -->
+        <template v-else-if="currentStep === 4">
+          <n-form>
+            <!-- Servings / Category / Cuisines / Nutrition -->
+            <n-grid :cols="12" :x-gap="12">
+              <n-form-item-gi :span="4" label="Category" required :validation-status="errors.category.status" :feedback="errors.category.message">
+                <x-select
+                  path="category"
+                  filterable
+                  tag
+                  :value="recipeStore.category"
+                  :options="categories"
+                  @input="handleInput"
+                  @blur="handleBlur"
+                />
+              </n-form-item-gi>
+              <n-form-item-gi :span="8" />
+              <n-form-item-gi :span="4" label="Cuisine" required :validation-status="errors.cuisine.status" :feedback="errors.cuisine.message">
+                <x-select
+                  path="cuisine"
+                  filterable
+                  tag
+                  :value="recipeStore.cuisine"
+                  :options="cuisines"
+                  @input="handleInput"
+                  @blur="handleBlur"
+                />
+              </n-form-item-gi>
+              <n-form-item-gi :span="8" />
+              <n-form-item-gi :span="2" label="No. of servings">
+                <x-input
+                  path="servings"
+                  :value="recipeStore.servings"
+                  @input="handleInput"
+                  @blur="handleBlur"
+                />
+              </n-form-item-gi>
+              <n-form-item-gi :span="2" label="Energy per serve">
+                <n-input-group>
+                  <x-input
+                    path="nutrition.energy"
+                    :value="recipeStore.nutrition.energy"
+                    @input="handleInput"
+                    @blur="handleBlur"
+                  />
+                  <n-input-group-label>kj</n-input-group-label>
+                </n-input-group>
+              </n-form-item-gi>
+            </n-grid>
+            <!-- Tags / Slug -->
+            <n-grid :cols="12" :x-gap="12">
+              <n-form-item-gi :span="6" label="Tags">
+                <x-select
+                  path="tags"
+                  filterable
+                  tag
+                  multiple
+                  :value="recipeStore.tags"
+                  :options="tags"
+                  @input="handleInput"
+                  @blur="handleBlur"
+                />
+              </n-form-item-gi>
+              <n-form-item-gi :span="6" />
+              <n-form-item-gi :span="6" label="URL Slug" required :validation-status="errors.slug.status" :feedback="errors.slug.message">
+                <n-input-group>
+                  <n-input-group-label>{{ recipeUrlPrefix }}</n-input-group-label>
+                  <x-input
+                    path="slug"
+                    :value="recipeStore.slug"
+                    @input="handleSlugInput"
+                    @blur="handleBlur"
+                  />
+                  <n-button type="primary" ghost :loading="isSlugGenerating" @click="createSlug">Generate</n-button>
+                </n-input-group>
+              </n-form-item-gi>
+            </n-grid>
+          </n-form>
+        </template>
       </div>
-      <div class="row">
-        <input-button @click="addIngredientGroup">Add Section</input-button>
-        <input-button @click="addIngredient">Add Ingredient</input-button>
-      </div>
-      <h2>Instructions</h2>
-      <div class="row" v-for="(item, index) in recipeStore.instructions" :key="item.uuid">
-        <!-- If item is a section name -->
-        <div class="col-11" v-if="item.itemType === 'section'">
-          <text-field
-            label="Section name"
-            path="label"
-            :value="item.label"
-            :error="errors.instructions[index] ? errors.instructions[index].label : ''"
-            @input="handleInstructionInputAtIndex($event, index)"
-            @blur="handleInstructionBlurAtIndex($event, index)"
-          />
-        </div>
-        <!-- If item is an instruction -->
-        <div class="col-11" v-else>
-          <text-field
-            label="Instruction"
-            path="label"
-            :value="item.label"
-            :error="errors.instructions[index] ? errors.instructions[index].label : ''"
-            @input="handleInstructionInputAtIndex($event, index)"
-            @blur="handleInstructionBlurAtIndex($event, index)"
-          />
-        </div>
-        <div class="col-1">
-          <icon fa-icon="fa-xmark" hover @click="removeInstructionAt(index)" />
-        </div>
-      </div>
-      <div class="row">
-        <input-button @click="addInstructionGroup">Add Section</input-button>
-        <input-button @click="addInstruction">Add Instruction</input-button>
-      </div>
-      <!-- Metadata -->
-      <h2>Metadata</h2>
-      <div class="row">
-        <div class="col-3">
-          <text-field
-            label="Servings"
-            path="servings"
-            :value="recipeStore.servings"
-            :error="errors.servings"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-        </div>
-        <div class="col-3">
-          <combo-box
-            label="Serving Type"
-            path="servingType"
-            :value="recipeStore.servingType"
-            :items="servingTypes"
-            :error="errors.servingType"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-        </div>
-        <div class="col-3">
-          <combo-box
-            label="Category"
-            path="category"
-            :value="recipeStore.category"
-            :items="categories"
-            :error="errors.category"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-        </div>
-        <div class="col-3">
-          <combo-box
-            label="Cuisine"
-            path="cuisine"
-            :value="recipeStore.cuisine"
-            :items="cuisines"
-            :error="errors.cuisine"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-4">
-          <p>Preparation time</p>
-          <text-field
-            label="Minutes"
-            path="preparationTime.minutes"
-            :value="recipeStore.preparationTime.minutes"
-            :error="errors.preparationTime.minutes"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-          <text-field
-            label="Hours"
-            path="preparationTime.hours"
-            :value="recipeStore.preparationTime.hours"
-            :error="errors.preparationTime.hours"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-          <text-field
-            label="Days"
-            path="preparationTime.days"
-            :value="recipeStore.preparationTime.days"
-            :error="errors.preparationTime.days"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-        </div>
-        <div class="col-4">
-          <p>Cooking time</p>
-          <text-field
-            label="Minutes"
-            path="cookingTime.minutes"
-            :value="recipeStore.cookingTime.minutes"
-            :error="errors.cookingTime.minutes"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-          <text-field
-            label="Hours"
-            path="cookingTime.hours"
-            :value="recipeStore.cookingTime.hours"
-            :error="errors.cookingTime.hours"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-          <text-field
-            label="Days"
-            path="cookingTime.days"
-            :value="recipeStore.cookingTime.days"
-            :error="errors.cookingTime.days"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-        </div>
-        <div class="col-4">
-          <p>Custom time</p>
-          <text-field
-            label="Minutes"
-            path="customTime.minutes"
-            :value="recipeStore.customTime.minutes"
-            :error="errors.customTime.minutes"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-          <text-field
-            label="Hours"
-            path="customTime.hours"
-            :value="recipeStore.customTime.hours"
-            :error="errors.customTime.hours"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-          <text-field
-            label="Days"
-            path="customTime.days"
-            :value="recipeStore.customTime.days"
-            :error="errors.customTime.days"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-          <combo-box
-            label="Type"
-            path="customTimeType"
-            :value="recipeStore.customTimeType"
-            :items="customTimeTypes"
-            :error="errors.customTimeType"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-6">
-          <chip-box label="Tags" path="tags" :value="new Set(recipeStore.tags)" :items="tags" @input="handleInput" @blur="handleBlur" />
-        </div>
-        <div class="col-6">
-          <text-field
-            label="Slug"
-            path="slug"
-            prefix="/"
-            :value="recipeStore.slug"
-            :suffix-icon="!errors.slug ? 'fa-check' : 'fa-arrow-rotate-right'"
-            :suffix-icon-disabled="!errors.slug"
-            :error="errors.slug"
-            @input="handleSlugInput"
-            @blur="handleBlur"
-            @clickIcon="createSlug"
-          />
-        </div>
-      </div>
-      <!-- Nutrition -->
-      <h2>Nutrition</h2>
-      <div class="row">
-        <div class="col">
-          <text-field
-            label="Energy"
-            path="nutrition.energy"
-            :value="recipeStore.nutrition.energy"
-            :error="errors.nutrition.energy"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-        </div>
-        <div class="col">
-          <text-field
-            label="Protein"
-            path="nutrition.protein"
-            :value="recipeStore.nutrition.protein"
-            :error="errors.nutrition.protein"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-        </div>
-        <div class="col">
-          <text-field
-            label="Carbs"
-            path="nutrition.carbohydrates"
-            :value="recipeStore.nutrition.carbohydrates"
-            :error="errors.nutrition.carbohydrates"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-        </div>
-        <div class="col">
-          <text-field
-            label="Fat"
-            path="nutrition.fat"
-            :value="recipeStore.nutrition.fat"
-            :error="errors.nutrition.fat"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-        </div>
-        <div class="col">
-          <text-field
-            label="Sodium"
-            path="nutrition.sodium"
-            :value="recipeStore.nutrition.sodium"
-            :errors="errors.nutrition.sodium"
-            @input="handleInput"
-            @blur="handleBlur"
-          />
-        </div>
-      </div>
-      <input-button :loading="isSubmitting" @click="submit">Submit</input-button>
-    </form>
+      <!-- Stepper Controls -->
+      <x-row>
+        <x-column class="col-12" right>
+          <n-button type="primary" size="large" ghost v-if="currentStep !== 1" @click="currentStep--">Previous</n-button>
+          <n-button type="primary" size="large" @click="currentStep++">Next</n-button>
+        </x-column>
+      </x-row>
+    </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import { NButton, NDivider, NSteps, NStep, NForm, NGrid, NFormItemGi, NInputGroup, NInputGroupLabel, NSpace } from "naive-ui";
 import { getFormInitialErrorState, slugPattern } from "@/scripts/validation";
 import { mapRecipeToApi } from "@/scripts/mapping";
 import { useRecipeStore } from "@/store/recipeStore";
-import TextArea from "@/components/molecules/TextArea";
-import TextField from "@/components/molecules/TextField";
-import ComboBox from "@/components/molecules/ComboBox";
 import { object, string, number, array, ValidationError } from "yup";
-import { get, set, setWith } from "lodash";
+import { get, set } from "lodash";
 import { IntegerMessage, NumericMessage, PositiveMessage, RequiredMessage } from "@/constants/validationMessages";
-import ChipBox from "@/components/molecules/ChipBox";
 import { useAlertStore } from "@/store/alertStore";
-import Rating from "@/components/molecules/Rating";
-import Icon from "@/components/atoms/Icon";
-import InputButton from "@/components/molecules/InputButton";
 import { uuid } from "vue-uuid";
+import { XColumn, XIcon, XInput, XSelect, XRow, XUpload } from "@/components";
 
 export default {
   name: "Editor",
-  components: { Rating, ChipBox, TextArea, TextField, ComboBox, Icon, InputButton },
+  components: {
+    XIcon,
+    XUpload,
+    XColumn,
+    XRow,
+    NSteps,
+    NStep,
+    NForm,
+    NGrid,
+    XInput,
+    NFormItemGi,
+    NButton,
+    XSelect,
+    NSpace,
+    NInputGroup,
+    NInputGroupLabel,
+  },
   setup() {
     const recipeStore = useRecipeStore();
     const alertStore = useAlertStore();
@@ -375,27 +415,22 @@ export default {
     validationSchema: null,
     timeOptions: ["minutes", "hours", "days"],
     customTimeTypes: [],
-    servingTypes: [],
     categories: [],
     cuisines: [],
     tags: [],
+    currentStep: 1,
+    isSlugGenerating: false,
     isSubmitting: false,
     errors: getFormInitialErrorState(),
   }),
   async created() {
     await axios
-      .get(process.env.VUE_APP_APIURL + "/api/recipes/editor/dropdown-options")
+      .get(import.meta.env.VITE_APIURL + "/api/recipes/editor/dropdown-options")
       .then((response) => {
-        this.categories = response.data.categories.map((c) => c.label);
-        this.cuisines = response.data.cuisines.map((c) => c.label);
-        this.customTimeTypes = response.data.customTimeTypes.map((ct) => ct.label);
-        this.servingTypes = response.data.servingTypes.map((st) => st.label);
-        this.tags = response.data.tags.map((t) => t.label);
-
-        // Default to servings if it's a valid option
-        if (this.servingTypes.includes("servings")) {
-          this.recipeStore.servingType = "servings";
-        }
+        this.categories = response.data.categories.map((c) => ({ label: c.label, value: c.label }));
+        this.cuisines = response.data.cuisines.map((c) => ({ label: c.label, value: c.label }));
+        this.customTimeTypes = response.data.customTimeTypes.map((ct) => ({ label: ct.label, value: ct.label }));
+        this.tags = response.data.tags.map((t) => ({ label: t.label, value: t.label }));
       })
       .catch((error) => console.log(error));
 
@@ -410,46 +445,34 @@ export default {
 
     // Form validation schema
     this.validationSchema = object().shape({
-      header: object().shape({
-        title: string().label("Title").trim().required(RequiredMessage),
-        rating: number(),
-        description: string(),
-      }),
-      ingredients: array().of(
+      title: string().label("Title").trim().required(RequiredMessage),
+      rating: number(),
+      ingredientGroups: array().of(
         object({
-          amount: number()
-            .transform(emptyToUndefined)
-            .when("itemType", {
-              is: "item",
-              then: (schema) => schema.label("Amount").required(RequiredMessage).typeError(NumericMessage).min(0, PositiveMessage),
-            }),
-          unit: string().when("itemType", {
-            is: "item",
-            then: (schema) => schema.label("Unit").trim().required(RequiredMessage),
-          }),
-          label: string().when("itemType", {
-            is: "item",
-            then: (schema) => schema.label("Ingredient").trim().required(RequiredMessage),
-            otherwise: (schema) => schema.label("Section name").trim().required(RequiredMessage),
-          }),
+          ingredients: array().of(
+            object({
+              amount: number()
+                .transform(emptyToUndefined)
+                .label("Amount")
+                .required(RequiredMessage)
+                .typeError(NumericMessage)
+                .min(0, PositiveMessage),
+              unit: string().label("Unit").trim().required(RequiredMessage),
+              name: string().label("Ingredient").trim().required(RequiredMessage),
+              note: string(),
+            })
+          ),
         })
       ),
-      instructions: array().of(
-        object().shape({
-          label: string().when("itemType", {
-            is: "item",
-            then: (schema) => schema.label("Instruction").trim().required(RequiredMessage),
-            otherwise: (schema) => schema.label("Section name").trim().required(RequiredMessage),
-          }),
+      instructionGroups: array().of(
+        object({
+          instructions: array().of(
+            object({
+              label: string().label("Instruction").trim().required(RequiredMessage),
+            })
+          ),
         })
       ),
-      servings: number()
-        .label("Servings")
-        .transform(emptyToUndefined)
-        .required(RequiredMessage)
-        .typeError(NumericMessage)
-        .min(0, PositiveMessage),
-      servingType: string().label("Serving type").trim().required(RequiredMessage),
       category: string().label("Category").trim().required(RequiredMessage),
       cuisine: string().label("Cuisine").trim().required(RequiredMessage),
       preparationTime: object().shape({
@@ -462,21 +485,23 @@ export default {
         hours: number().label("Hours").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
         days: number().label("Days").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
       }),
-      customTime: object().shape({
-        minutes: number().label("Minutes").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
-        hours: number().label("Hours").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
-        days: number().label("Days").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
-      }),
-      customTimeType: string().when("customTime", {
-        is: (ct) => ct.minutes || ct.hours || ct.days,
-        then: (schema) => schema.label("Custom time type").trim().required(RequiredMessage),
-      }),
-      slug: string() // TODO: Add api validation of slug with slugs endpoint
+      customTimes: array().of(
+        object({
+          minutes: number().label("Minutes").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
+          hours: number().label("Hours").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
+          days: number().label("Days").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
+          label: string().when(["minutes", "hours", "days"], {
+            is: (minutes, hours, days) => minutes || hours || days,
+            then: (schema) => schema.label("Custom time type").trim().required(RequiredMessage),
+          }),
+        })
+      ),
+      slug: string()
         .label("Slug")
         .required(RequiredMessage)
         .matches(
           slugPattern,
-          "URL slug must be a unique combination of alphanumeric characters and hyphens, such as my-new-form or MyNewRecipe"
+          "URL slug must be a unique combination of alphanumeric characters and hyphens, such as my-new-recipe or MyNewRecipe"
         )
         .test(
           "is-slug-unique",
@@ -494,28 +519,36 @@ export default {
         ),
       nutrition: object().shape({
         energy: number().label("Energy").transform(emptyToUndefined).typeError(NumericMessage),
-        protein: number().label("Protein").transform(emptyToUndefined).typeError(NumericMessage),
-        carbohydrates: number().label("Carbs").transform(emptyToUndefined).typeError(NumericMessage),
-        fat: number().label("Fat").transform(emptyToUndefined).typeError(NumericMessage),
-        sodium: number().label("Sodium").transform(emptyToUndefined).typeError(NumericMessage),
       }),
       tags: array(),
     });
+  },
+  computed: {
+    recipeUrlPrefix() {
+      return window.location.host + "/recipes/";
+    },
   },
   methods: {
     goToRecipes() {
       this.$router.push("/");
     },
-    async handleInput(event) {
-      this.recipeStore.setValueAt(event.path, event.value);
+    /**
+     * Handle form input validation and store update
+     * @param value {string | boolean} The changed field value
+     * @param path {string} Dot separated store path of the changed field
+     * @returns {Promise<void>}
+     */
+    async handleInput({ path, value }) {
+      this.recipeStore.setValueAt(path, value);
+      await this.validateAt(path);
+    },
+    async handleBlur(event) {
       await this.validateAt(event.path);
     },
-    /**
-     * Handle title input while also prefilling a potential URL slug
-     */
-    async handleTitleInput(event) {
-      await this.handleInput(event);
-      await this.createSlugFromTitle();
+    async handleTitleInput({ path, value }) {
+      this.recipeStore.setValueAt(path, value);
+      await this.validateAt(path);
+      this.createSlugFromTitle();
     },
     /**
      * A separate input handler for slug input.
@@ -525,84 +558,102 @@ export default {
       this.recipeStore.setValueAt(event.path, event.value);
       await this.validateAt(event.path, true);
     },
-    async handleIngredientInputAtIndex(event, index) {
-      this.recipeStore.setValueAtIndex("ingredients", index, event.path, event.value);
-      await this.validateAt(`ingredients[${index}].${event.path}`);
+    async handleIngredientGroupTitleChange(event, groupIndex) {
+      this.recipeStore.setValueAt(["ingredientGroups", `${groupIndex}`, "title"], event.value);
     },
-    async handleInstructionInputAtIndex(event, index) {
-      this.recipeStore.setValueAtIndex("instructions", index, event.path, event.value);
-      await this.validateAt(`instructions[${index}].${event.path}`);
+    async handleIngredientInputAtIndex(event, groupIndex, ingredientIndex) {
+      this.recipeStore.setValueAt(["ingredientGroups", `${groupIndex}`, "ingredients", `${ingredientIndex}`, event.path], event.value);
+      await this.validateIngredient(event, groupIndex, ingredientIndex);
     },
-    async handleBlur(event) {
-      this.recipeStore.setValueAt(event.path, event.value);
-      await this.validateAt(event.path);
+    async handleInstructionGroupTitleChange(event, groupIndex) {
+      this.recipeStore.setValueAt(["instructionGroups", `${groupIndex}`, "title"], event.value);
     },
-    async handleIngredientBlurAtIndex(event, index) {
-      this.recipeStore.setValueAtIndex("ingredients", index, event.path, event.value);
-      await this.validateAt(`ingredients[${index}].${event.path}`);
+    async handleInstructionInputAtIndex(event, groupIndex, instructionIndex) {
+      this.recipeStore.setValueAt(["instructionGroups", `${groupIndex}`, "instructions", `${instructionIndex}`, event.path], event.value);
+      await this.validateInstruction(event, groupIndex, instructionIndex);
     },
-    async handleInstructionBlurAtIndex(event, index) {
-      this.recipeStore.setValueAtIndex("instructions", index, event.path, event.value);
-      await this.validateAt(`instructions[${index}].${event.path}`);
+    async handleIngredientBlurAtIndex(event, groupIndex, ingredientIndex) {
+      await this.validateIngredient(event, groupIndex, ingredientIndex);
+    },
+    async handleInstructionBlurAtIndex(event, groupIndex, instructionIndex) {
+      await this.validateInstruction(event, groupIndex, instructionIndex);
+    },
+    async validateIngredient(event, groupIndex, ingredientIndex) {
+      await this.validateAt(`ingredientGroups[${groupIndex}].ingredients[${ingredientIndex}].${event.path}`);
+    },
+    async validateInstruction(event, groupIndex, instructionIndex) {
+      await this.validateAt(`instructionGroups[${groupIndex}].instructions[${instructionIndex}].${event.path}`);
     },
     addIngredientGroup() {
-      this.addItemGroup("ingredients");
+      this.recipeStore.ingredientGroups.push({
+        uuid: uuid.v1(),
+        title: "",
+        ingredients: [],
+      });
+    },
+    addIngredientToGroup(groupIndex) {
+      this.recipeStore.ingredientGroups[groupIndex].ingredients.push({
+        uuid: uuid.v1(),
+        amount: "",
+        unit: "",
+        name: "",
+        note: "",
+      });
     },
     addInstructionGroup() {
-      this.addItemGroup("instructions");
+      this.recipeStore.instructionGroups.push({
+        uuid: uuid.v1(),
+        title: "",
+        instructions: [],
+      });
     },
-    addIngredient() {
-      this.addItem("ingredients", { label: "", amount: "", unit: "", note: "" });
+    addInstructionToGroup(groupIndex) {
+      this.recipeStore.instructionGroups[groupIndex].instructions.push({
+        uuid: uuid.v1(),
+        label: "",
+      });
     },
-    addInstruction() {
-      this.addItem("instructions", { label: "" });
-    },
-    addItemGroup(section) {
-      if (this.recipeStore[section]) {
-        this.recipeStore[section].push({
-          uuid: uuid.v1(),
-          itemType: "section",
-          label: "",
-        });
+    removeIngredientFromGroup(groupIndex, ingredientIndex) {
+      this.recipeStore.ingredientGroups[groupIndex].ingredients.splice(ingredientIndex, 1);
+      if (this.errors.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]) {
+        this.errors.ingredientGroups[groupIndex].ingredients.splice(ingredientIndex, 1);
       }
     },
-    addItem(section, fields) {
-      if (this.recipeStore[section]) {
-        this.recipeStore[section].push({
-          uuid: uuid.v1(),
-          itemType: "item",
-          label: "",
-          ...fields,
-        });
+    removeInstructionFromGroup(groupIndex, instructionIndex) {
+      this.recipeStore.instructionGroups[groupIndex].instructions.splice(instructionIndex, 1);
+      if (this.errors.instructionGroups[groupIndex]?.instructions[instructionIndex]) {
+        this.errors.instructionGroups[groupIndex].instructions.splice(instructionIndex, 1);
       }
     },
-    removeIngredientAt(index) {
-      this.removeItemAt("ingredients", index);
+    async handleCustomTimeInputAtIndex(event, index) {
+      this.recipeStore.setValueAt(["customTimes", index, event.path], event.value);
+      await this.validateAt(`customTimes[${index}].${event.path}`);
     },
-    removeInstructionAt(index) {
-      this.removeItemAt("instructions", index);
+    async handleCustomTimeBlurAtIndex(event, index) {
+      await this.validateAt(`customTimes[${index}].${event.path}`);
     },
-    removeItemAt(section, index) {
-      if (this.recipeStore[section]) {
-        this.recipeStore[section].splice(index, 1);
-      }
-      if (this.errors[section][index]) {
-        this.errors[section].splice(index, 1);
-      }
+    addCustomTimeGroup() {
+      this.recipeStore.customTimes.push({
+        uuid: uuid.v1(),
+        days: "",
+        hours: "",
+        minutes: "",
+        label: "",
+      });
+    },
+    removeCustomTimeGroup(groupIndex) {
+      this.recipeStore.customTimes.splice(groupIndex, 1);
     },
     async validateAt(field, skipApiValidation = false) {
       console.log("validating: ", field, "with value: ", get(this.recipeStore, field));
       await this.validationSchema
         .validateAt(field, this.recipeStore, { abortEarly: false, skipApiValidation: skipApiValidation })
         .then(() => {
-          // Set using setWith to ensure reactivity is maintained when updating array values
-          setWith(this.errors, field, "", (nsValue, key, nsObject) => {
-            return this.$set(nsObject, key, nsValue);
-          });
+          set(this.errors, field, { message: "", status: null });
         })
         .catch((error) => {
           if (error instanceof ValidationError) {
-            let validationErrors = error.inner.map((e) => ({ path: e.params.path.toString(), message: e.message }));
+            const validationErrors = error.inner.map((e) => ({ path: e.params.path.toString(), message: e.message }));
 
             // If errors are an array clear them out first, as we are setting specific properties
             // within the array which would hang around otherwise
@@ -611,9 +662,7 @@ export default {
             }
 
             validationErrors.forEach((e) => {
-              setWith(this.errors, e.path, e.message, (nsValue, key, nsObject) => {
-                return this.$set(nsObject, key, nsValue);
-              });
+              set(this.errors, e.path, { message: e.message, status: "error" });
             });
           } else {
             console.log(error);
@@ -623,8 +672,10 @@ export default {
       // If one of the custom times is modified (minutes, hours, days), then validate the customTimeType.
       // This ensures the user sees the field is required as soon as one of the above fields is modified,
       // without needing to interact with the customTimeType field directly.
-      if (field.includes("customTime.")) {
-        await this.validateAt("customTimeType");
+      if (field.includes("customTimes") && !field.includes("label")) {
+        // e.g. Transform customTimes[0].minutes path into customTimes[0].label
+        const customTimeLabelWithSameIndex = field.substring(0, field.lastIndexOf("]") + 1) + ".label";
+        await this.validateAt(customTimeLabelWithSameIndex);
       }
     },
     async validateAll() {
@@ -635,7 +686,7 @@ export default {
         })
         .catch((error) => {
           if (error instanceof ValidationError) {
-            let validationErrors = error.inner.map((e) => ({ path: e.params.path.toString(), message: e.message }));
+            const validationErrors = error.inner.map((e) => ({ path: e.params.path.toString(), message: e.message }));
 
             // If errors are an array clear them out first, as we are setting specific properties
             // within the array which would hang around otherwise
@@ -644,7 +695,7 @@ export default {
             }
 
             validationErrors.forEach((e) => {
-              set(this.errors, e.path, e.message);
+              set(this.errors, e.path, { message: e.message, status: "error" });
             });
           }
         });
@@ -652,18 +703,17 @@ export default {
     /**
      * Generate a slug based on the recipe title, replacing spaces with hyphens
      */
-    async createSlugFromTitle() {
-      this.recipeStore.slug = this.recipeStore.header.title
+    createSlugFromTitle() {
+      this.recipeStore.slug = this.recipeStore.title
         .toLowerCase()
         .trim()
         .replace(/[^\w ]+/g, "")
         .replace(/ +/g, "-");
-      await this.validateAt("slug", true);
     },
     async validateSlug(slug) {
       let isValidSlug;
       await axios
-        .get(process.env.VUE_APP_APIURL + "/api/recipes/slugs", {
+        .get(import.meta.env.VITE_APIURL + "/api/recipes/slugs", {
           params: {
             chosenSlug: slug,
           },
@@ -676,9 +726,10 @@ export default {
       return isValidSlug;
     },
     async createSlug() {
-      let chosenSlug = this.recipeStore.slug || (await this.createSlugFromTitle()) || "recipe";
+      this.isSlugGenerating = true;
+      const chosenSlug = this.recipeStore.slug || this.createSlugFromTitle() || "recipe";
       await axios
-        .get(process.env.VUE_APP_APIURL + "/api/recipes/slugs", {
+        .get(import.meta.env.VITE_APIURL + "/api/recipes/slugs", {
           params: {
             chosenSlug: chosenSlug,
           },
@@ -689,7 +740,10 @@ export default {
             await this.validateAt("slug");
           }
         })
-        .catch((error) => console.log(error));
+        .catch((error) => console.log(error))
+        .finally(() => {
+          this.isSlugGenerating = false;
+        });
     },
     async submit() {
       await this.validateAll();
@@ -700,7 +754,7 @@ export default {
       this.isSubmitting = true;
       console.log(JSON.stringify(this.recipeStore));
       await axios
-        .post(process.env.VUE_APP_APIURL + "/api/recipes", mapRecipeToApi(this.recipeStore))
+        .post(import.meta.env.VITE_APIURL + "/api/recipes", mapRecipeToApi(this.recipeStore))
         .then(() => {
           this.alertStore.showSuccessAlert("Recipe created!");
         })
@@ -713,5 +767,3 @@ export default {
   },
 };
 </script>
-
-<style scoped></style>

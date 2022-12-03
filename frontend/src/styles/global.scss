@@ -1,8 +1,6 @@
-@use "mixins" as mixins;
-@use "variables";
-@use "form";
-@use "alerts";
-@use "layout";
+@use "mixins" as m;
+@use "variables" as v;
+@use "index";
 
 // TODO: Combine into single import
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap'); // Montserrat
@@ -10,28 +8,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital@0;1&display=swap'); // Work Sans
 
 #app { // TODO: Target html element when vuetify is removed
-  background: variables.$colour-bg;
+  background: v.$colour-bg;
 }
 
-@each $key, $value in variables.$font-sizes {
+@each $key, $value in v.$font-sizes {
   #{$key} {
-    @include mixins.responsive-text(map-get($value, font-size-min), map-get($value, font-size-max), variables.$breakpoint-min, variables.$breakpoint-max)
+    @include m.responsive-text(map-get($value, font-size-min), map-get($value, font-size-max), v.$breakpoint-min, v.$breakpoint-max)
   }
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: variables.$font-family-headers;
+  font-family: v.$font-family-headers;
+  margin: 0;
 }
 
-p, span, small {
-  font-family: variables.$font-family-paragraph;
+p, span, small, input {
+  font-family: v.$font-family-paragraph;
 }
 small {
   line-height: 0;
 }
 
 li:not(:last-child) {
-  margin-bottom: variables.$li-margin-bottom;
+  margin-bottom: v.$li-margin-bottom;
 }
 
 img {
@@ -40,5 +39,5 @@ img {
 
 .text-muted {
   font-style: italic;
-  color: variables.$colour-font-muted;
+  color: v.$colour-font-muted;
 }

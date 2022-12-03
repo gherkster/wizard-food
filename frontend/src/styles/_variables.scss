@@ -17,11 +17,11 @@ $colour-input: white;
 
 // BREAKPOINTS //
 $breakpoints: (
-        xs: 320,
-        sm: 480,
-        md: 768,
-        lg: 992,
-        xl: 1200,
+  xs: 320,
+  sm: 480,
+  md: 768,
+  lg: 992,
+  xl: 1200,
 ) !default;
 $breakpoint-min: map-get($breakpoints, "xs");
 $breakpoint-max: map-get($breakpoints, "xl");
@@ -34,18 +34,71 @@ $font-family-paragraph: "Inter", "Helvetica", sans-serif;
 $font-family-paragraph-alt: "Work Sans", "Helvetica", sans-serif;
 
 $font-sizes: (
-        h1: (font-size-min: 30, font-size-max: 48),
-        h2: (font-size-min: 24, font-size-max: 32),
-        h3: (font-size-min: 20, font-size-max: 28),
-        h4: (font-size-min: 18, font-size-max: 24),
-        h5: (font-size-min: 16, font-size-max: 20),
-        h6: (font-size-min: 16, font-size-max: 20),
-        small: (font-size-min: 12, font-size-max: 12)
+  h1: (font-size-min: 30, font-size-max: 48),
+  h2: (font-size-min: 24, font-size-max: 32),
+  h3: (font-size-min: 20, font-size-max: 28),
+  h4: (font-size-min: 18, font-size-max: 24),
+  h5: (font-size-min: 16, font-size-max: 20),
+  h6: (font-size-min: 16, font-size-max: 20),
+  span: (font-size-min: 16, font-size-max: 16),
+  p: (font-size-min: 16, font-size-max: 16),
+  input: (font-size-min: 16, font-size-max: 16),
+  small: (font-size-min: 12, font-size-max: 12)
 );
 
 // SPACING //
-$padding: 12px;
-$padding-input: 16px;
+$spacing-large: (
+  xs: 56px,
+  md: 72px,
+  xl: 96px
+);
+
+$spacing-medium: (
+  xs: 32px,
+  md: 40px,
+  xl: 48px
+);
+
+$spacing-small: (
+  xs: 24px,
+  md: 28px,
+  xl: 32px
+);
+
+$spacing-xsmall: (
+  xs: 12px,
+  md: 14px,
+  xl: 16px
+);
+
+$spacing: (
+  "lg": $spacing-large,
+  "md": $spacing-medium,
+  "sm": $spacing-small,
+  "xs": $spacing-xsmall
+);
+
+$space-map: (
+  "p": "padding",
+  "pl": "padding-left",
+  "pr": "padding-right",
+  "pb": "padding-bottom",
+  "pt": "padding-top",
+  "px": ("padding-left", "padding-right"),
+  "py": ("padding-top", "padding-bottom"),
+  "m": "margin",
+  "ml": "margin-left",
+  "mr": "margin-right",
+  "mb": "margin-bottom",
+  "mt": "margin-top",
+  "mx": ("margin-left", "margin-right"),
+  "my": ("margin-top", "margin-bottom"),
+  "g": "gap",
+  "gx": "column-gap",
+  "gy": "row-gap"
+);
+
+$cols-horizontal-gap: 32px;
 $li-margin-bottom: 8px;
 
 // ROUNDING //

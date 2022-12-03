@@ -3,7 +3,7 @@
     :icon="faIcon"
     :size="size"
     :spin="spin"
-    :class="{ hoverable: hover }"
+    style="cursor: pointer"
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
     @click="handleClick"
@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: "Icon",
+  name: "XIcon",
   props: {
     faIcon: {
       type: String,
@@ -24,11 +24,6 @@ export default {
       default: "lg",
     },
     spin: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    hover: {
       type: Boolean,
       required: false,
       default: false,

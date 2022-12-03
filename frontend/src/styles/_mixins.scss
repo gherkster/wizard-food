@@ -1,3 +1,5 @@
+@use "variables" as v;
+
 @mixin responsive-text($font-min, $font-max, $screen-min, $screen-max) {
   font-size: #{$font-min}px;
 
@@ -10,12 +12,43 @@
   }
 }
 
-@mixin create-cols($breakpoint-name, $cols-count) {
+@mixin create-cols($breakpoint-name, $max-cols) {
   $infix: if($breakpoint-name == null, '', "-#{$breakpoint-name}");
 
-  @for $i from 1 through $cols-count {
+  @for $i from 1 through $max-cols {
     .col#{$infix}-#{$i} {
-      flex-basis: (100 / ($cols-count / $i)) * 1%;
+      display: flex;
+      // Reduce each column flex-basis (width) by a percentage of the column-gap
+      // to provide spacing between columns while not inadvertently wrapping around to the next row
+      flex-basis: calc((100% - ((#{$max-cols} / #{$i}) - 1) * #{v.$cols-horizontal-gap}) / (#{$max-cols} / #{$i}));
+      flex-direction: column;
+    }
+  }
+}
+
+@mixin spacing($type: "p", $size: "md") {
+  $size-map: map-get($map: v.$spacing, $key: $size);
+
+  $prop: map-get($map: v.$space-map, $key: $type);
+  @each $p in $prop {
+    @each $bp, $size in $size-map {
+      @include breakpoint($bp) {
+        #{$p}: $size;
+      }
+    }
+  }
+}
+
+@mixin breakpoint($bp: "md", $type: "min") {
+  @if $type == "min" {
+    $something: map-get(v.$breakpoints, $bp);
+    @media (min-width: map-get(v.$breakpoints, $bp) * 1px) {
+      @content;
+    }
+  }
+  @else {
+    @media (max-width: map-get(v.$breakpoints, $bp)) {
+      @content;
     }
   }
 }
