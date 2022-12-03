@@ -3,13 +3,12 @@ import { get, set } from "lodash";
 
 export const useRecipeStore = defineStore("recipe", {
   state: () => ({
-    header: {
-      title: "",
-      rating: 0,
-      description: "",
-    },
-    ingredients: [],
-    instructions: [],
+    title: "",
+    rating: 0,
+    description: "",
+    imageSrc: "",
+    ingredientGroups: [],
+    instructionGroups: [],
     category: "",
     cuisine: "",
     servings: "",
@@ -24,12 +23,7 @@ export const useRecipeStore = defineStore("recipe", {
       hours: "",
       minutes: "",
     },
-    customTime: {
-      days: "",
-      hours: "",
-      minutes: "",
-    },
-    customTimeType: "",
+    customTimes: [],
     nutrition: {
       energy: "",
       protein: "",
@@ -54,11 +48,6 @@ export const useRecipeStore = defineStore("recipe", {
         set(this, path, { ...value });
       } else {
         set(this, path, value);
-      }
-    },
-    setValueAtIndex(basePath, index, valuePath, setValue) {
-      if (get(this, [basePath, index])) {
-        set(this, [basePath, index, valuePath], setValue);
       }
     },
   },

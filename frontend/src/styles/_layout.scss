@@ -1,8 +1,8 @@
-@use "variables";
-@use "mixins";
+@use "variables" as v;
+@use "mixins" as m;
 
-.container {
-  max-width: map-get(variables.$breakpoints, lg) * 1px;
+.page {
+  max-width: map-get(v.$breakpoints, xl) * 1px;
   margin: 0 auto;
 
   &--fluid {
@@ -11,15 +11,21 @@
   }
 }
 
+.content {
+  margin: 0 6%;
+}
+
 .row {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
+  column-gap: v.$cols-horizontal-gap;
+  @include m.spacing("mb", "xs");
 }
 
-@each $breakpoint-name, $width in variables.$breakpoints {
+@each $breakpoint-name, $width in v.$breakpoints {
   @media screen and (min-width: $width * 1px) {
-    @include mixins.create-cols($breakpoint-name, variables.$grid-cols-count);
+    @include m.create-cols($breakpoint-name, v.$grid-cols-count);
   }
 }
-@include mixins.create-cols(null, variables.$grid-cols-count);
+@include m.create-cols(null, v.$grid-cols-count);

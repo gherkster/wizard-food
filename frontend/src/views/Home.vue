@@ -1,17 +1,17 @@
 <template>
   <div>
     <p>Recipe List</p>
-    <input-button @click="goToEditor">Go to editor</input-button>
-    <input-button @click="goToSearch">Go to search</input-button>
-    <input-button @click="goToTestRecipe">Go to recipe</input-button>
+    <n-button @click="goToEditor">Go to editor</n-button>
+    <n-button @click="goToSearch">Go to search</n-button>
+    <n-button @click="goToTestRecipe">Go to recipe</n-button>
   </div>
 </template>
 
 <script>
-import InputButton from "@/components/molecules/InputButton";
+import { NButton } from "naive-ui";
 export default {
   name: "Home",
-  components: { InputButton },
+  components: { NButton },
   methods: {
     goToEditor() {
       this.$router.push("/editor");
