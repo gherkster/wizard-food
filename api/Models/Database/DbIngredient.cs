@@ -2,13 +2,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace API.Models.Database;
 
-public record DbIngredient(Enums.ListItemType ItemType, string Unit, decimal Amount, string Label, string Note)
+public record DbIngredient(string Unit, decimal Amount, string Name, string Note)
 {
     [Key]
-    public int Id { get; private set; }
-    public Enums.ListItemType ItemType { get; set; } = ItemType;
+    public int Id { get; init; }
     public decimal Amount { get; set; } = Amount;
     public string Unit { get; set; } = Unit;
-    public string Label { get; set; } = Label;
+    public string Name { get; set; } = Name;
     public string Note { get; set; } = Note;
 }
