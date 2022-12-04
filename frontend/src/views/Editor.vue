@@ -1,6 +1,5 @@
 <template>
   <div class="page">
-    <n-button @click="goToRecipes">Go to recipes</n-button>
     <div class="content">
       <h2>New Recipe</h2>
       <!-- TODO: This should display the recipe name if the user is editing an existing recipe -->

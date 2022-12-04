@@ -11,45 +11,47 @@ public static class MappingExtensions
         var recipe = new Recipe()
         {
             Title = dbRecipe.Title,
-            Description = dbRecipe.Description,
-            Ingredients = dbRecipe.Ingredients.Select(ing => 
-                new Ingredient(ing.ItemType, ing.Label) { Amount = ing.Amount, Unit = ing.Unit, Note = ing.Note }).ToList(),
-            Instructions = dbRecipe.Instructions.Select(ins => 
-                new Instruction(ins.ItemType, ins.Label)).ToList(),
-            
+            Note = dbRecipe.Note,
+            IngredientGroups = dbRecipe.IngredientGroups
+                .Select(ig => new IngredientGroup(ig.Name) { Ingredients = ig.Ingredients
+                    .Select(i => new Ingredient(i.Amount, i.Unit, i.Name) 
+                    {
+                        Note = i.Note
+                    }).ToList()
+                }).ToList(),
+            InstructionGroups = dbRecipe.InstructionGroups
+                .Select(ig => new InstructionGroup(ig.Name) { Instructions = ig.Instructions
+                    .Select(i => new Instruction(i.Label))
+                    .ToList()})
+                .ToList(),
+
             Category = dbRecipe.Category.Label,
             Cuisine = dbRecipe.Cuisine.Label,
             Servings = dbRecipe.Servings,
-            ServingType = dbRecipe.ServingType.Label,
             Rating = dbRecipe.Rating,
             
-            PreparationTime = new RecipeDuration()
+            PreparationDuration = new RecipeDuration("Preparation")
             {
                 Minutes = dbRecipe.PreparationTime.Minutes,
                 Hours = dbRecipe.PreparationTime.Hours,
-                Days = dbRecipe.PreparationTime.Days
+                Days = dbRecipe.PreparationTime.Hours
             },
-            CookingTime = new RecipeDuration()
+            CookingDuration = new RecipeDuration("Cooking")
             {
                 Minutes = dbRecipe.CookingTime.Minutes,
                 Hours = dbRecipe.CookingTime.Hours,
-                Days = dbRecipe.CookingTime.Days
+                Days = dbRecipe.CookingTime.Hours
             },
-            CustomTime = new RecipeDuration()
+            CustomDurations = dbRecipe.CustomTimes.Select(ct => new RecipeDuration(ct.CustomTimeLabel.Label)
             {
-                Minutes = dbRecipe.CustomTime.Minutes,
-                Hours = dbRecipe.CustomTime.Hours,
-                Days = dbRecipe.CustomTime.Days
-            },
-            CustomTimeType = dbRecipe.CustomTimeLabel?.Label ?? string.Empty,
-            
+                Minutes = ct.CookingTime.Minutes,
+                Hours = ct.CookingTime.Hours,
+                Days = ct.CookingTime.Days
+            }).ToList(),
+
             Nutrition = new Nutrition()
             {
                 Energy = dbRecipe.Energy,
-                Carbohydrates = dbRecipe.Carbohydrates,
-                Protein = dbRecipe.Protein,
-                Fat = dbRecipe.Fat,
-                Sodium = dbRecipe.Sodium
             },
             
             Tags = dbRecipe.Tags.Select(t => t.Label).ToList(),
@@ -64,29 +66,34 @@ public static class MappingExtensions
         var dbRecipe = new DbRecipe()
         {
             Title = recipe.Title,
-            Description = recipe.Description,
-            Ingredients = recipe.Ingredients.Select(ing => 
-                new DbIngredient(ing.ItemType, ing.Unit, ing.Amount, ing.Label, ing.Note)).ToList(),
-            Instructions = recipe.Instructions.Select(ins => 
-                new DbInstruction(ins.ItemType, ins.Label)).ToList(),
-            
+            Note = recipe.Note,
+            IngredientGroups = recipe.IngredientGroups
+                .Select(ig => new DbIngredientGroup(ig.Name) 
+                {
+                    Ingredients = ig.Ingredients
+                        .Select(i => new DbIngredient(i.Unit, i.Amount, i.Name, i.Note))
+                        .ToList()
+                }).ToList(),
+            InstructionGroups = recipe.InstructionGroups.Select(ig => new DbInstructionGroup(ig.Name)
+            {
+                Instructions = ig.Instructions
+                    .Select(i => new DbInstruction(i.Label))
+                    .ToList()
+            }).ToList(),
+
             Category = new DbCategory(Label: recipe.Category),
             Cuisine = new DbCuisine(Label: recipe.Cuisine),
             Servings = recipe.Servings,
-            ServingType = new DbServingType(Label: recipe.ServingType),
             Rating = recipe.Rating,
             
-            PreparationTime = new TimeSpan(recipe.PreparationTime.Days, recipe.PreparationTime.Hours, recipe.PreparationTime.Minutes, 0),
-            CookingTime = new TimeSpan(recipe.CookingTime.Days, recipe.CookingTime.Hours, recipe.CookingTime.Minutes, 0),
-            CustomTime = new TimeSpan(recipe.CustomTime.Days, recipe.CustomTime.Hours, recipe.CustomTime.Minutes, 0),
-            CustomTimeLabel = new DbCustomTimeLabel(recipe.CustomTimeType),
-            
+            PreparationTime = new TimeSpan(recipe.PreparationDuration.Days, recipe.PreparationDuration.Hours, recipe.PreparationDuration.Minutes, 0),
+            CookingTime = new TimeSpan(recipe.CookingDuration.Days, recipe.CookingDuration.Hours, recipe.CookingDuration.Minutes, 0),
+            CustomTimes = recipe.CustomDurations
+                .Select(cd => new DbCustomTime(new TimeSpan(cd.Days, cd.Hours, cd.Minutes, 0)) { CustomTimeLabel = new DbCustomTimeLabel(cd.Name)})
+                .ToList(),
+
             Energy = recipe.Nutrition.Energy,
-            Carbohydrates = recipe.Nutrition.Carbohydrates,
-            Protein = recipe.Nutrition.Protein,
-            Fat = recipe.Nutrition.Fat,
-            Sodium = recipe.Nutrition.Sodium,
-            
+
             Tags = recipe.Tags.Select(t => new DbTag(t)).ToList(),
             Slug = recipe.Slug
         };

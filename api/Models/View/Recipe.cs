@@ -3,21 +3,20 @@ namespace API.Models.View;
 public class Recipe
 {
     public string Title { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
+    public string Note { get; set; } = string.Empty;
 
-    public List<Ingredient> Ingredients { get; set; } = new();
-    public List<Instruction> Instructions { get; set; } = new();
+    public List<IngredientGroup> IngredientGroups { get; set; } = new();
+    public List<InstructionGroup> InstructionGroups { get; set; } = new();
 
     public string Category { get; set; } = string.Empty;
     public string Cuisine { get; set; } = string.Empty;
     public decimal Rating { get; set; } = decimal.Zero;
     
     public decimal Servings { get; set; }
-    public string ServingType { get; set; } = string.Empty;
 
-    public RecipeDuration PreparationTime { get; set; } = new();
-    public RecipeDuration CookingTime { get; set; } = new();
-    public RecipeDuration CustomTime { get; set; } = new();
+    public RecipeDuration PreparationDuration { get; set; } = new("Preparation");
+    public RecipeDuration CookingDuration { get; set; } = new("Cooking");
+    public List<RecipeDuration> CustomDurations { get; set; } = new();
     
     public string CustomTimeType { get; set; } = string.Empty;
     
