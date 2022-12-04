@@ -1,0 +1,12 @@
+@use "mixins" as m;
+
+.nav-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-bottom: 1px lightgray solid;
+  &__search {
+    @include m.spacing("my", "xs");
+    max-width: 400px;
+  }
+}

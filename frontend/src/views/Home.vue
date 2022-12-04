@@ -1,9 +1,6 @@
 <template>
   <div>
-    <p>Recipe List</p>
-    <n-button @click="goToEditor">Go to editor</n-button>
-    <n-button @click="goToSearch">Go to search</n-button>
-    <n-button @click="goToTestRecipe">Go to recipe</n-button>
+    <p>Home</p>
   </div>
 </template>
 

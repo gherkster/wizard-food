@@ -4,22 +4,32 @@ import Home from "@/views/Home.vue";
 import Recipe from "@/views/Recipe.vue";
 import Search from "@/views/Search.vue";
 import Editor from "@/views/Editor.vue";
+import RecipeList from "@/views/RecipeList.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
+    name: "home",
     component: Home,
   },
   {
-    path: "/recipes",
+    path: "/search",
+    name: "search",
     component: Search,
   },
   {
+    path: "/recipes",
+    name: "recipes",
+    component: RecipeList,
+  },
+  {
     path: "/recipes/:slug",
+    name: "recipe",
     component: Recipe,
   },
   {
     path: "/editor",
+    name: "editor",
     component: Editor,
   },
 ];
