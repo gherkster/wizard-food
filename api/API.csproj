@@ -18,13 +18,8 @@
         <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="6.2.3" />
         <PackageReference Include="VueCliMiddleware" Version="6.0.0" />
     </ItemGroup>
-
     <ItemGroup>
-      <None Remove="Persistence\sqlite.db" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Persistence" />
+      <Content Include="Persistence\sqlite.db" />
     </ItemGroup>
 
 </Project>
