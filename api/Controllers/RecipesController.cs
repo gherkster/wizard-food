@@ -34,14 +34,14 @@ public class RecipesController
     public async Task<ActionResult<Recipe>> GetRecipe(string slug)
     {
         var recipe = await _db.Recipes.Where(r => r.Slug == slug)
-            .Include(r => r.Ingredients)
-            .Include(r => r.Instructions)
-            .Include(r => r.Category)
-            .Include(r => r.Cuisine)
-            .Include(r => r.CustomTimeLabel)
-            .Include(r => r.ServingType)
-            .Include(r => r.Tags)
+            //.Include(r => r.Ingredients)
+            // .Include(r => r.Instructions)
+            // .Include(r => r.Category)
+            // .Include(r => r.Cuisine)
+            // .Include(r => r.CustomTimeLabel)
+            // .Include(r => r.Tags)
             .AsNoTracking()
+            .Select(r => r.AsViewModel())
             .FirstOrDefaultAsync();
         
         if (recipe == null)
@@ -49,30 +49,32 @@ public class RecipesController
             return new NotFoundResult();
         }
         
-        return recipe.AsViewModel();
+        return recipe;
     }
 
     [HttpPost]
     public async Task<ActionResult> CreateRecipe(Recipe recipe)
     {
-        var dbRecipe = recipe.AsDatabaseModel();
+        var newDbRecipe = recipe.AsDatabaseModel();
 
         // Prevent duplicate keys from being inserted by replacing all provided dropdown options
         // in the recipe with the matching database entity if it exists
         var dbOptions = await _db.GetDropdownOptionsAsync();
         
-        dbRecipe.Category = dbOptions.Categories.FirstOrDefault(c => c == dbRecipe.Category) ?? dbRecipe.Category;
-        dbRecipe.Cuisine = dbOptions.Cuisines.FirstOrDefault(c => c == dbRecipe.Cuisine) ?? dbRecipe.Cuisine;
-        dbRecipe.CustomTimeLabel = dbOptions.CustomTimeTypes.FirstOrDefault(ctl => ctl == dbRecipe.CustomTimeLabel) ??
-                                   dbRecipe.CustomTimeLabel;
-        dbRecipe.ServingType = dbOptions.ServingTypes.FirstOrDefault(st => st == dbRecipe.ServingType) ??
-                               dbRecipe.ServingType;
-        dbRecipe.Tags = dbRecipe.Tags.Select(recipeTag => dbOptions.Tags.FirstOrDefault(dbTag => dbTag == recipeTag) ?? recipeTag).ToList();
+        newDbRecipe.Category = dbOptions.Categories.FirstOrDefault(c => c == newDbRecipe.Category) ?? newDbRecipe.Category;
+        newDbRecipe.Cuisine = dbOptions.Cuisines.FirstOrDefault(c => c == newDbRecipe.Cuisine) ?? newDbRecipe.Cuisine;
 
-        await _db.Recipes.AddAsync(dbRecipe);
+        foreach (var customTime in newDbRecipe.CustomTimes)
+        {
+            customTime.CustomTimeLabel =
+                dbOptions.CustomTimeTypes.FirstOrDefault(ctt => ctt == customTime.CustomTimeLabel) ?? customTime.CustomTimeLabel;
+        }
+        newDbRecipe.Tags = newDbRecipe.Tags.Select(recipeTag => dbOptions.Tags.FirstOrDefault(dbTag => dbTag == recipeTag) ?? recipeTag).ToList();
+
+        await _db.Recipes.AddAsync(newDbRecipe);
         await _db.SaveChangesAsync();
         
-        return new CreatedResult(dbRecipe.Id.ToString(), recipe);
+        return new CreatedResult(newDbRecipe.Id.ToString(), recipe);
     }
 
     [HttpPut("{id:guid}")]

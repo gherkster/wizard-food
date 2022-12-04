@@ -24,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="Persistence\sqlite.db" />
+      <Folder Include="Persistence" />
     </ItemGroup>
 
 </Project>
