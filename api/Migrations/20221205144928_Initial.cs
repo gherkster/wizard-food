@@ -15,33 +15,39 @@ namespace API.Migrations
                 name: "Categories",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     Label = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Categories", x => x.Label);
+                    table.PrimaryKey("PK_Categories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Cuisines",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     Label = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Cuisines", x => x.Label);
+                    table.PrimaryKey("PK_Cuisines", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "CustomTimeLabels",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     Label = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CustomTimeLabels", x => x.Label);
+                    table.PrimaryKey("PK_CustomTimeLabels", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,8 +73,8 @@ namespace API.Migrations
                     Note = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
                     PreparationTime = table.Column<TimeSpan>(type: "TEXT", nullable: false),
                     CookingTime = table.Column<TimeSpan>(type: "TEXT", nullable: false),
-                    CategoryLabel = table.Column<string>(type: "TEXT", nullable: true, collation: "NOCASE"),
-                    CuisineLabel = table.Column<string>(type: "TEXT", nullable: true, collation: "NOCASE"),
+                    CategoryId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CuisineId = table.Column<int>(type: "INTEGER", nullable: false),
                     Servings = table.Column<decimal>(type: "TEXT", nullable: false),
                     Energy = table.Column<decimal>(type: "TEXT", nullable: true),
                     Rating = table.Column<decimal>(type: "TEXT", nullable: false),
@@ -78,15 +84,17 @@ namespace API.Migrations
                 {
                     table.PrimaryKey("PK_Recipes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Recipes_Categories_CategoryLabel",
-                        column: x => x.CategoryLabel,
+                        name: "FK_Recipes_Categories_CategoryId",
+                        column: x => x.CategoryId,
                         principalTable: "Categories",
-                        principalColumn: "Label");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Recipes_Cuisines_CuisineLabel",
-                        column: x => x.CuisineLabel,
+                        name: "FK_Recipes_Cuisines_CuisineId",
+                        column: x => x.CuisineId,
                         principalTable: "Cuisines",
-                        principalColumn: "Label");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -95,23 +103,25 @@ namespace API.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    CustomTimeLabelLabel = table.Column<string>(type: "TEXT", nullable: true, collation: "NOCASE"),
                     CookingTime = table.Column<TimeSpan>(type: "TEXT", nullable: false),
-                    DbRecipeId = table.Column<int>(type: "INTEGER", nullable: true)
+                    RecipeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CustomTimeLabelId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CustomTimes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CustomTimes_CustomTimeLabels_CustomTimeLabelLabel",
-                        column: x => x.CustomTimeLabelLabel,
+                        name: "FK_CustomTimes_CustomTimeLabels_CustomTimeLabelId",
+                        column: x => x.CustomTimeLabelId,
                         principalTable: "CustomTimeLabels",
-                        principalColumn: "Label");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CustomTimes_Recipes_DbRecipeId",
-                        column: x => x.DbRecipeId,
+                        name: "FK_CustomTimes_Recipes_RecipeId",
+                        column: x => x.RecipeId,
                         principalTable: "Recipes",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -186,16 +196,17 @@ namespace API.Migrations
                     Unit = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
                     Name = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
                     Note = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
-                    DbIngredientGroupId = table.Column<int>(type: "INTEGER", nullable: true)
+                    IngredientGroupId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DbIngredient", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DbIngredient_DbIngredientGroup_DbIngredientGroupId",
-                        column: x => x.DbIngredientGroupId,
+                        name: "FK_DbIngredient_DbIngredientGroup_IngredientGroupId",
+                        column: x => x.IngredientGroupId,
                         principalTable: "DbIngredientGroup",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -205,42 +216,51 @@ namespace API.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Label = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
-                    DbInstructionGroupId = table.Column<int>(type: "INTEGER", nullable: true)
+                    InstructionGroupId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DbInstruction", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DbInstruction_DbInstructionGroup_DbInstructionGroupId",
-                        column: x => x.DbInstructionGroupId,
+                        name: "FK_DbInstruction_DbInstructionGroup_InstructionGroupId",
+                        column: x => x.InstructionGroupId,
                         principalTable: "DbInstructionGroup",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_Label",
                 table: "Categories",
-                column: "Label");
+                column: "Label",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cuisines_Label",
                 table: "Cuisines",
-                column: "Label");
+                column: "Label",
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CustomTimes_CustomTimeLabelLabel",
+                name: "IX_CustomTimeLabels_Label",
+                table: "CustomTimeLabels",
+                column: "Label",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CustomTimes_CustomTimeLabelId",
                 table: "CustomTimes",
-                column: "CustomTimeLabelLabel");
+                column: "CustomTimeLabelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CustomTimes_DbRecipeId",
+                name: "IX_CustomTimes_RecipeId",
                 table: "CustomTimes",
-                column: "DbRecipeId");
+                column: "RecipeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DbIngredient_DbIngredientGroupId",
+                name: "IX_DbIngredient_IngredientGroupId",
                 table: "DbIngredient",
-                column: "DbIngredientGroupId");
+                column: "IngredientGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DbIngredient_Name",
@@ -253,9 +273,9 @@ namespace API.Migrations
                 column: "DbRecipeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DbInstruction_DbInstructionGroupId",
+                name: "IX_DbInstruction_InstructionGroupId",
                 table: "DbInstruction",
-                column: "DbInstructionGroupId");
+                column: "InstructionGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DbInstructionGroup_DbRecipeId",
@@ -268,14 +288,14 @@ namespace API.Migrations
                 column: "TagsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Recipes_CategoryLabel",
+                name: "IX_Recipes_CategoryId",
                 table: "Recipes",
-                column: "CategoryLabel");
+                column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Recipes_CuisineLabel",
+                name: "IX_Recipes_CuisineId",
                 table: "Recipes",
-                column: "CuisineLabel");
+                column: "CuisineId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Recipes_Slug",

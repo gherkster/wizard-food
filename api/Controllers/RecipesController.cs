@@ -56,22 +56,40 @@ public class RecipesController
     public async Task<ActionResult> CreateRecipe(Recipe recipe)
     {
         var newDbRecipe = recipe.AsDatabaseModel();
-
-        // Prevent duplicate keys from being inserted by replacing all provided dropdown options
-        // in the recipe with the matching database entity if it exists
+        
+        /*
+         * We need to prevent duplicate entries from being added.
+         * For example if the user already created a recipe with the Chinese category,
+         * adding a new recipe which also has a category of Chinese would by default attempt to add a second Chinese Category entry.
+         *
+         * To avoid this issue, we set all linked database fields EXCEPT SLUG to the existing database field, if one exists.
+         * This is matched by comparing the string value of the database field, rather than the whole record.
+         * 
+         * We need to do this because new values use the CLR default value for the ID, which is 0 for this database schema,
+         * while the existing database values will already have an ID value set and would therefore not match when comparing records.
+         *
+         * The reason we do not match to an existing slug value, is that it is the only field that we need a consistent unique value per recipe,
+         * otherwise link routing won't work.
+         */
+        
         var dbOptions = await _db.GetDropdownOptionsAsync();
         
-        newDbRecipe.Category = dbOptions.Categories.FirstOrDefault(c => c == newDbRecipe.Category) ?? newDbRecipe.Category;
-        newDbRecipe.Cuisine = dbOptions.Cuisines.FirstOrDefault(c => c == newDbRecipe.Cuisine) ?? newDbRecipe.Cuisine;
-
+        newDbRecipe.Category = dbOptions.Categories.FirstOrDefault(c => c.Label == newDbRecipe.Category.Label) ?? newDbRecipe.Category;
+        newDbRecipe.Cuisine = dbOptions.Cuisines.FirstOrDefault(c => c.Label == newDbRecipe.Cuisine.Label) ?? newDbRecipe.Cuisine;
+        
         foreach (var customTime in newDbRecipe.CustomTimes)
         {
             customTime.CustomTimeLabel =
-                dbOptions.CustomTimeTypes.FirstOrDefault(ctt => ctt == customTime.CustomTimeLabel) ?? customTime.CustomTimeLabel;
+                dbOptions.CustomTimeTypes.FirstOrDefault(ctt => ctt.Label == customTime.CustomTimeLabel.Label) ?? customTime.CustomTimeLabel;
         }
-        newDbRecipe.Tags = newDbRecipe.Tags.Select(recipeTag => dbOptions.Tags.FirstOrDefault(dbTag => dbTag == recipeTag) ?? recipeTag).ToList();
+        newDbRecipe.Tags = newDbRecipe.Tags.Select(recipeTag => dbOptions.Tags.FirstOrDefault(dbTag => dbTag.Label == recipeTag.Label) ?? recipeTag).ToList();
 
-        await _db.Recipes.AddAsync(newDbRecipe);
+        // Values which already exist in the database have been resolved above, and therefore have the database Key value set (Id). 
+        // Because this is not the CLR default value, TrackGraph will treat the state as already Set, and hence an unchanged value and will not attempt to insert a new copy
+        //
+        // Note that this is why certain tables like Category have an ID column where traditionally they could just use the value as the Primary Key.
+        // If the Primary Key was the string value, the above logic would not work and any non-empty string would be considered a new value that should be inserted into the DB.
+        _db.ChangeTracker.TrackGraph(newDbRecipe, node => node.Entry.State = !node.Entry.IsKeySet ? EntityState.Added : EntityState.Unchanged);
         await _db.SaveChangesAsync();
         
         return new CreatedResult(newDbRecipe.Id.ToString(), recipe);

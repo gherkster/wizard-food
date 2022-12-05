@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20221204124735_Initial")]
+    [Migration("20221205144928_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -24,26 +24,38 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.Database.DbCategory", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Label")
+                        .IsRequired()
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
-                    b.HasKey("Label");
+                    b.HasKey("Id");
 
-                    b.HasIndex("Label");
+                    b.HasIndex("Label")
+                        .IsUnique();
 
                     b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("API.Models.Database.DbCuisine", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Label")
+                        .IsRequired()
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
-                    b.HasKey("Label");
+                    b.HasKey("Id");
 
-                    b.HasIndex("Label");
+                    b.HasIndex("Label")
+                        .IsUnique();
 
                     b.ToTable("Cuisines");
                 });
@@ -57,29 +69,36 @@ namespace API.Migrations
                     b.Property<TimeSpan>("CookingTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CustomTimeLabelLabel")
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
+                    b.Property<int>("CustomTimeLabelId")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<int?>("DbRecipeId")
+                    b.Property<int>("RecipeId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomTimeLabelLabel");
+                    b.HasIndex("CustomTimeLabelId");
 
-                    b.HasIndex("DbRecipeId");
+                    b.HasIndex("RecipeId");
 
                     b.ToTable("CustomTimes");
                 });
 
             modelBuilder.Entity("API.Models.Database.DbCustomTimeLabel", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Label")
+                        .IsRequired()
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
-                    b.HasKey("Label");
+                    b.HasKey("Id");
+
+                    b.HasIndex("Label")
+                        .IsUnique();
 
                     b.ToTable("CustomTimeLabels");
                 });
@@ -93,7 +112,7 @@ namespace API.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("DbIngredientGroupId")
+                    b.Property<int>("IngredientGroupId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -113,7 +132,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DbIngredientGroupId");
+                    b.HasIndex("IngredientGroupId");
 
                     b.HasIndex("Name");
 
@@ -147,7 +166,7 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("DbInstructionGroupId")
+                    b.Property<int>("InstructionGroupId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Label")
@@ -157,7 +176,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DbInstructionGroupId");
+                    b.HasIndex("InstructionGroupId");
 
                     b.ToTable("DbInstruction");
                 });
@@ -189,16 +208,14 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("CategoryLabel")
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<TimeSpan>("CookingTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CuisineLabel")
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
+                    b.Property<int>("CuisineId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<decimal?>("Energy")
                         .HasColumnType("TEXT");
@@ -229,9 +246,9 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryLabel");
+                    b.HasIndex("CategoryId");
 
-                    b.HasIndex("CuisineLabel");
+                    b.HasIndex("CuisineId");
 
                     b.HasIndex("Slug")
                         .IsUnique();
@@ -279,20 +296,30 @@ namespace API.Migrations
                 {
                     b.HasOne("API.Models.Database.DbCustomTimeLabel", "CustomTimeLabel")
                         .WithMany("DbCustomTimes")
-                        .HasForeignKey("CustomTimeLabelLabel");
+                        .HasForeignKey("CustomTimeLabelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("API.Models.Database.DbRecipe", null)
+                    b.HasOne("API.Models.Database.DbRecipe", "Recipe")
                         .WithMany("CustomTimes")
-                        .HasForeignKey("DbRecipeId");
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("CustomTimeLabel");
+
+                    b.Navigation("Recipe");
                 });
 
             modelBuilder.Entity("API.Models.Database.DbIngredient", b =>
                 {
-                    b.HasOne("API.Models.Database.DbIngredientGroup", null)
+                    b.HasOne("API.Models.Database.DbIngredientGroup", "IngredientGroup")
                         .WithMany("Ingredients")
-                        .HasForeignKey("DbIngredientGroupId");
+                        .HasForeignKey("IngredientGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("IngredientGroup");
                 });
 
             modelBuilder.Entity("API.Models.Database.DbIngredientGroup", b =>
@@ -304,9 +331,13 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.Database.DbInstruction", b =>
                 {
-                    b.HasOne("API.Models.Database.DbInstructionGroup", null)
+                    b.HasOne("API.Models.Database.DbInstructionGroup", "InstructionGroup")
                         .WithMany("Instructions")
-                        .HasForeignKey("DbInstructionGroupId");
+                        .HasForeignKey("InstructionGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("InstructionGroup");
                 });
 
             modelBuilder.Entity("API.Models.Database.DbInstructionGroup", b =>
@@ -319,12 +350,16 @@ namespace API.Migrations
             modelBuilder.Entity("API.Models.Database.DbRecipe", b =>
                 {
                     b.HasOne("API.Models.Database.DbCategory", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryLabel");
+                        .WithMany("Recipes")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("API.Models.Database.DbCuisine", "Cuisine")
-                        .WithMany()
-                        .HasForeignKey("CuisineLabel");
+                        .WithMany("Recipes")
+                        .HasForeignKey("CuisineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
 
@@ -344,6 +379,16 @@ namespace API.Migrations
                         .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("API.Models.Database.DbCategory", b =>
+                {
+                    b.Navigation("Recipes");
+                });
+
+            modelBuilder.Entity("API.Models.Database.DbCuisine", b =>
+                {
+                    b.Navigation("Recipes");
                 });
 
             modelBuilder.Entity("API.Models.Database.DbCustomTimeLabel", b =>
