@@ -1,10 +1,10 @@
-using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace API.Models.Database;
 
 public record DbInstructionGroup(string Name)
 {
-    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; init; }
 
     public string Name { get; set; } = Name;

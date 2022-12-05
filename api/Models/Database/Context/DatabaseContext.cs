@@ -5,6 +5,17 @@ namespace API.Models.Database.Context;
 
 public class DatabaseContext : DbContext
 {
+    private readonly SqliteConnection _dbConnection;
+    
+    public DatabaseContext()
+    {
+        // Set database collation to case-insensitive string comparison
+        // Override the default string comparison method to include all Unicode characters
+        // https://github.com/dotnet/efcore/issues/11414#issuecomment-376272297
+        _dbConnection = new SqliteConnection($"Data Source=Persistence/sqlite.db");
+        _dbConnection.CreateCollation("NOCASE", (x, y) => string.Compare(x, y, ignoreCase:true));
+    }
+    
     public DbSet<DbRecipe> Recipes => Set<DbRecipe>();
     public DbSet<DbCategory> Categories => Set<DbCategory>();
     public DbSet<DbCuisine> Cuisines => Set<DbCuisine>();
@@ -14,18 +25,16 @@ public class DatabaseContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        options.UseSqlite($"Data Source=Persistence/sqlite.db");
-        options.EnableSensitiveDataLogging(); // TODO: Remove for production
+        options.UseSqlite(_dbConnection);
+        
+        #if DEBUG
+        options.EnableSensitiveDataLogging();
+        options.LogTo(Console.WriteLine);
+        #endif
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        // Set database collation to case-insensitive string comparison
-        // Override the default string comparison method to include all Unicode characters
-        // https://github.com/dotnet/efcore/issues/11414#issuecomment-376272297
-        var dbConnection = (SqliteConnection)Database.GetDbConnection();
-        dbConnection.CreateCollation("NOCASE", (x, y) => string.Compare(x, y, ignoreCase:true));
-        
         // Default string database columns to case-insensitive https://stackoverflow.com/a/70153872
         builder.UseCollation("NOCASE");
         foreach (var property in builder.Model.GetEntityTypes().SelectMany(t => t.GetProperties())
@@ -43,10 +52,16 @@ public class DatabaseContext : DbContext
             .IsUnique();
 
         builder.Entity<DbCategory>()
-            .HasIndex(r => r.Label);
-        
+            .HasIndex(r => r.Label)
+            .IsUnique();
+
         builder.Entity<DbCuisine>()
-            .HasIndex(r => r.Label);
+            .HasIndex(r => r.Label)
+            .IsUnique();
+
+        builder.Entity<DbCustomTimeLabel>()
+            .HasIndex(tl => tl.Label)
+            .IsUnique();
 
         builder.Entity<DbTag>()
             .HasIndex(t => t.Label)
