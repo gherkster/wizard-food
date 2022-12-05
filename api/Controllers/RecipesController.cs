@@ -26,7 +26,11 @@ public class RecipesController
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes()
     {
-        var recipes = await _db.Recipes.AsNoTracking().ToListAsync();
+        var recipes = await _db.Recipes
+            .IncludeAllRelatedEntities()
+            .AsNoTracking()
+            .ToListAsync();
+        
         return recipes.Select(r => r.AsViewModel()).ToList();
     }
 
@@ -34,12 +38,7 @@ public class RecipesController
     public async Task<ActionResult<Recipe>> GetRecipe(string slug)
     {
         var recipe = await _db.Recipes.Where(r => r.Slug == slug)
-            //.Include(r => r.Ingredients)
-            // .Include(r => r.Instructions)
-            // .Include(r => r.Category)
-            // .Include(r => r.Cuisine)
-            // .Include(r => r.CustomTimeLabel)
-            // .Include(r => r.Tags)
+            .IncludeAllRelatedEntities()
             .AsNoTracking()
             .Select(r => r.AsViewModel())
             .FirstOrDefaultAsync();
