@@ -28,10 +28,15 @@ const routes: Array<RouteRecordRaw> = [
     component: Recipe,
   },
   {
-    path: "/editor",
-    name: "editor",
+    path: "/recipes/:slug/edit",
     component: Editor,
   },
+  {
+    path: "/new",
+    name: "new-recipe",
+    component: Editor,
+  },
+  // TODO: 404 catch all handler
 ];
 
 const router = createRouter({
