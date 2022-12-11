@@ -6,16 +6,14 @@ export function capitalizeFirstChar(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-export function formatDuration() {
-  const durations = Array.prototype.slice.call(arguments);
-
+export function formatDurations(timespans) {
   let totalDays = 0;
   let totalHours = 0;
   let totalMinutes = 0;
-  durations.forEach((duration) => {
-    totalDays += duration.days;
-    totalHours += duration.hours;
-    totalMinutes += duration.minutes;
+  timespans.forEach((timespan) => {
+    totalDays += timespan.days;
+    totalHours += timespan.hours;
+    totalMinutes += timespan.minutes;
   });
 
   dayjs.extend(duration);
