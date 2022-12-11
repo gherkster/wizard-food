@@ -11,7 +11,7 @@ export default {
   components: { NInput },
   props: {
     value: {
-      type: String,
+      type: [String, Number],
       required: true,
     },
     type: {

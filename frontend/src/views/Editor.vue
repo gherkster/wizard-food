@@ -31,7 +31,7 @@
             <n-form>
               <n-grid :cols="24" :x-gap="12">
                 <n-form-item-gi :span="8" label="Section Title (optional)">
-                  <x-input path="title" :value="ingredientGroup.title" @input="handleIngredientGroupTitleChange($event, groupIndex)" />
+                  <x-input path="title" :value="ingredientGroup.name" @input="handleIngredientGroupTitleChange($event, groupIndex)" />
                 </n-form-item-gi>
                 <n-form-item-gi :span="16" />
                 <!-- eslint-disable-next-line vue/no-v-for-template-key-->
@@ -127,7 +127,7 @@
             <n-form>
               <n-grid :cols="24" :x-gap="12">
                 <n-form-item-gi :span="8" label="Section Title (optional)">
-                  <x-input path="title" :value="instructionGroup.title" @input="handleInstructionGroupTitleChange($event, groupIndex)" />
+                  <x-input path="title" :value="instructionGroup.name" @input="handleInstructionGroupTitleChange($event, groupIndex)" />
                 </n-form-item-gi>
                 <n-form-item-gi :span="16" />
                 <!-- eslint-disable-next-line vue/no-v-for-template-key-->
@@ -261,12 +261,12 @@
                     <n-input-group-label>days</n-input-group-label>
                   </n-input-group>
                 </n-form-item-gi>
-                <n-form-item-gi :span="6" label="Label" :validation-status="errors.customTimes[index]?.label?.status" :feedback="errors.customTimes[index]?.label?.message">
+                <n-form-item-gi :span="6" label="Label" :validation-status="errors.customTimes[index]?.name?.status" :feedback="errors.customTimes[index]?.name?.message">
                   <x-select
-                    path="label"
+                    path="name"
                     filterable
                     tag
-                    :value="customTime.label"
+                    :value="customTime.name"
                     :options="customTimeTypes"
                     @input="handleCustomTimeInputAtIndex($event, index)"
                     @blur="handleCustomTimeBlurAtIndex($event, index)"
@@ -308,24 +308,13 @@
                 />
               </n-form-item-gi>
               <n-form-item-gi :span="8" />
-              <n-form-item-gi :span="2" label="No. of servings">
+              <n-form-item-gi :span="2" label="No. of servings" :validation-status="errors.servings.status" :feedback="errors.servings.message">
                 <x-input
                   path="servings"
                   :value="recipeStore.servings"
                   @input="handleInput"
                   @blur="handleBlur"
                 />
-              </n-form-item-gi>
-              <n-form-item-gi :span="2" label="Energy per serve">
-                <n-input-group>
-                  <x-input
-                    path="nutrition.energy"
-                    :value="recipeStore.nutrition.energy"
-                    @input="handleInput"
-                    @blur="handleBlur"
-                  />
-                  <n-input-group-label>kj</n-input-group-label>
-                </n-input-group>
               </n-form-item-gi>
             </n-grid>
             <!-- Tags / Slug -->
@@ -372,9 +361,9 @@
 
 <script>
 import axios from "axios";
-import { NButton, NDivider, NSteps, NStep, NForm, NGrid, NFormItemGi, NInputGroup, NInputGroupLabel, NSpace } from "naive-ui";
+import { NButton, NSteps, NStep, NForm, NGrid, NFormItemGi, NInputGroup, NInputGroupLabel, NSpace } from "naive-ui";
 import { getFormInitialErrorState, slugPattern } from "@/scripts/validation";
-import { mapRecipeToApi } from "@/scripts/mapping";
+import { mapApiToRecipeStore, mapRecipeStoreToApi } from "@/scripts/mapping";
 import { useRecipeStore } from "@/store/recipeStore";
 import { object, string, number, array, ValidationError } from "yup";
 import { get, set } from "lodash";
@@ -422,8 +411,22 @@ export default {
     isSubmitting: false,
     errors: getFormInitialErrorState(),
   }),
-  async created() {
-    await axios
+  watch: {
+    $route(to) {
+      // Clear all pre-filled inputs if navigating away to create a new recipe, otherwise populate with the existing recipe input values
+      if (to.path === "/new") {
+        this.recipeStore.$reset();
+      } else if (this.$route.params.slug) {
+        this.populateInputsWithExistingRecipe();
+      }
+    },
+  },
+  created() {
+    if (this.$route.params.slug) {
+      this.populateInputsWithExistingRecipe();
+    }
+
+    axios
       .get(import.meta.env.VITE_APIURL + "/api/recipes/editor/dropdown-options")
       .then((response) => {
         this.categories = response.data.categories.map((c) => ({ label: c.label, value: c.label }));
@@ -455,7 +458,7 @@ export default {
                 .label("Amount")
                 .required(RequiredMessage)
                 .typeError(NumericMessage)
-                .min(0, PositiveMessage),
+                .positive(PositiveMessage),
               unit: string().label("Unit").trim().required(RequiredMessage),
               name: string().label("Ingredient").trim().required(RequiredMessage),
               note: string(),
@@ -489,12 +492,13 @@ export default {
           minutes: number().label("Minutes").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
           hours: number().label("Hours").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
           days: number().label("Days").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
-          label: string().when(["minutes", "hours", "days"], {
+          name: string().when(["minutes", "hours", "days"], {
             is: (minutes, hours, days) => minutes || hours || days,
             then: (schema) => schema.label("Custom time type").trim().required(RequiredMessage),
           }),
         })
       ),
+      servings: number().label("No. of servings").transform(emptyToUndefined).typeError(NumericMessage).positive(PositiveMessage),
       slug: string()
         .label("Slug")
         .required(RequiredMessage)
@@ -516,9 +520,6 @@ export default {
             }
           }
         ),
-      nutrition: object().shape({
-        energy: number().label("Energy").transform(emptyToUndefined).typeError(NumericMessage),
-      }),
       tags: array(),
     });
   },
@@ -528,8 +529,15 @@ export default {
     },
   },
   methods: {
-    goToRecipes() {
-      this.$router.push("/");
+    populateInputsWithExistingRecipe() {
+      axios
+        .get(import.meta.env.VITE_APIURL + "/api/recipes/" + this.$route.params.slug)
+        .then((response) => {
+          this.recipeStore.$patch({
+            ...mapApiToRecipeStore(response.data),
+          });
+        })
+        .catch((error) => console.log(error));
     },
     /**
      * Handle form input validation and store update
@@ -671,9 +679,9 @@ export default {
       // If one of the custom times is modified (minutes, hours, days), then validate the customTimeType.
       // This ensures the user sees the field is required as soon as one of the above fields is modified,
       // without needing to interact with the customTimeType field directly.
-      if (field.includes("customTimes") && !field.includes("label")) {
-        // e.g. Transform customTimes[0].minutes path into customTimes[0].label
-        const customTimeLabelWithSameIndex = field.substring(0, field.lastIndexOf("]") + 1) + ".label";
+      if (field.includes("customTimes") && !field.includes("name")) {
+        // e.g. Transform customTimes[0].minutes path into customTimes[0].name
+        const customTimeLabelWithSameIndex = field.substring(0, field.lastIndexOf("]") + 1) + ".name";
         await this.validateAt(customTimeLabelWithSameIndex);
       }
     },
@@ -718,7 +726,10 @@ export default {
           },
         })
         .then((response) => {
-          isValidSlug = response.data === slug;
+          // If the api suggests a different slug to the entered one then the entered one is invalid since it is already in use
+          // If we are currently editing a recipe and the entered slug is the same as the existing one
+          // (ie if the user triggers the field validation without changing the value) then the slug is also valid
+          isValidSlug = response.data === slug || slug === this.$route.params.slug;
         })
         .catch((error) => console.log(error));
 
@@ -753,7 +764,7 @@ export default {
       this.isSubmitting = true;
       console.log(JSON.stringify(this.recipeStore));
       await axios
-        .post(import.meta.env.VITE_APIURL + "/api/recipes", mapRecipeToApi(this.recipeStore))
+        .post(import.meta.env.VITE_APIURL + "/api/recipes", mapRecipeStoreToApi(this.recipeStore))
         .then(() => {
           this.alertStore.showSuccessAlert("Recipe created!");
         })

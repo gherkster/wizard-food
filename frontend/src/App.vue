@@ -51,6 +51,7 @@ export default {
               },
               { default: () => "Recipes" }
             ),
+          key: "recipes",
         },
         {
           label: () =>
@@ -58,11 +59,12 @@ export default {
               RouterLink,
               {
                 to: {
-                  name: "editor",
+                  name: "new-recipe",
                 },
               },
               { default: () => "New Recipe" }
             ),
+          key: "new-recipe",
         },
       ],
     };
