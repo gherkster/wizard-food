@@ -12,7 +12,7 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class RecipesController
+public class RecipesController : ControllerBase
 {
     private readonly DatabaseContext _db;
     private readonly ILogger<RecipesController> _logger;
@@ -24,13 +24,30 @@ public class RecipesController
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes()
+    public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes(string? query)
     {
-        var recipes = await _db.Recipes
-            .IncludeAllRelatedEntities()
-            .AsNoTracking()
-            .ToListAsync();
+        if (query is null)
+        {
+            var allRecipes = await _db.Recipes
+                .AsNoTracking()
+                .ToListAsync();
         
+            return allRecipes.Select(r => r.AsViewModel()).ToList();
+        }
+        
+        if (query.Length < 4)
+        {
+            return BadRequest("Enter at least 4 characters");
+        }
+        
+        var recipes = await _db.Recipes
+            .Where(r => r.Title.Contains(query)
+                        || r.IngredientGroups.Any(ig => ig.Ingredients.Any(i => i.Name.Contains(query)))
+                        || r.Category.Label == query
+                        || r.Cuisine.Label == query
+                        || r.Tags.Any(t => t.Label == query)
+            ).ToListAsync();
+
         return recipes.Select(r => r.AsViewModel()).ToList();
     }
 
@@ -45,7 +62,7 @@ public class RecipesController
         
         if (recipe == null)
         {
-            return new NotFoundResult();
+            return NotFound();
         }
         
         return recipe;
@@ -91,7 +108,7 @@ public class RecipesController
         _db.ChangeTracker.TrackGraph(newDbRecipe, node => node.Entry.State = !node.Entry.IsKeySet ? EntityState.Added : EntityState.Unchanged);
         await _db.SaveChangesAsync();
         
-        return new CreatedResult(newDbRecipe.Id.ToString(), recipe);
+        return Created(newDbRecipe.Id.ToString(), recipe);
     }
 
     [HttpPut("{id:guid}")]
@@ -100,13 +117,13 @@ public class RecipesController
         var dbRecipe = await _db.Recipes.FindAsync(id);
         if (dbRecipe is null)
         {
-            return new NotFoundResult();
+            return NotFound();
         }
         
         _db.Entry(dbRecipe).CurrentValues.SetValues(recipe.AsDatabaseModel());
         await _db.SaveChangesAsync();
         
-        return new OkResult();
+        return Ok();
     }
 
     [HttpDelete("{id:guid}")]
@@ -115,13 +132,13 @@ public class RecipesController
         var recipe = await _db.Recipes.FindAsync(id);
         if (recipe is null)
         {
-            return new NotFoundResult();
+            return NotFound();
         }
         
         _db.Recipes.Remove(recipe);
         await _db.SaveChangesAsync();
         
-        return new OkResult();
+        return Ok();
     }
 
     [HttpGet("slugs")]

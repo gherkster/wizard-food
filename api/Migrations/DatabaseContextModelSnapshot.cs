@@ -208,21 +208,18 @@ namespace API.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<TimeSpan>("CookingTime")
+                    b.Property<TimeSpan?>("CookingTime")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("CuisineId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<decimal?>("Energy")
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("Note")
                         .IsRequired()
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
-                    b.Property<TimeSpan>("PreparationTime")
+                    b.Property<TimeSpan?>("PreparationTime")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Rating")

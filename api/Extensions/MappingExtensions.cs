@@ -1,4 +1,3 @@
-using API.Models;
 using API.Models.Database;
 using API.Models.View;
 
@@ -30,18 +29,22 @@ public static class MappingExtensions
             Servings = dbRecipe.Servings,
             Rating = dbRecipe.Rating,
             
-            PreparationDuration = new RecipeDuration("Preparation")
-            {
-                Minutes = dbRecipe.PreparationTime.Minutes,
-                Hours = dbRecipe.PreparationTime.Hours,
-                Days = dbRecipe.PreparationTime.Hours
-            },
-            CookingDuration = new RecipeDuration("Cooking")
-            {
-                Minutes = dbRecipe.CookingTime.Minutes,
-                Hours = dbRecipe.CookingTime.Hours,
-                Days = dbRecipe.CookingTime.Hours
-            },
+            PreparationDuration = dbRecipe.PreparationTime != null 
+                ? new RecipeDuration("Preparation")
+                    {
+                        Minutes = dbRecipe.PreparationTime.Value.Minutes,
+                        Hours = dbRecipe.PreparationTime.Value.Hours,
+                        Days = dbRecipe.PreparationTime.Value.Days
+                    }
+                : null,
+            CookingDuration = dbRecipe.CookingTime != null 
+                ? new RecipeDuration("Cooking")
+                    {
+                        Minutes = dbRecipe.CookingTime.Value.Minutes,
+                        Hours = dbRecipe.CookingTime.Value.Hours,
+                        Days = dbRecipe.CookingTime.Value.Days
+                    }
+                : null,
             CustomDurations = dbRecipe.CustomTimes.Select(ct => new RecipeDuration(ct.CustomTimeLabel.Label)
             {
                 Minutes = ct.CookingTime.Minutes,
@@ -49,11 +52,6 @@ public static class MappingExtensions
                 Days = ct.CookingTime.Days
             }).ToList(),
 
-            Nutrition = new Nutrition()
-            {
-                Energy = dbRecipe.Energy,
-            },
-            
             Tags = dbRecipe.Tags.Select(t => t.Label).ToList(),
             Slug = dbRecipe.Slug
         };
@@ -86,14 +84,16 @@ public static class MappingExtensions
             Servings = recipe.Servings,
             Rating = recipe.Rating,
             
-            PreparationTime = new TimeSpan(recipe.PreparationDuration.Days, recipe.PreparationDuration.Hours, recipe.PreparationDuration.Minutes, 0),
-            CookingTime = new TimeSpan(recipe.CookingDuration.Days, recipe.CookingDuration.Hours, recipe.CookingDuration.Minutes, 0),
+            PreparationTime = recipe.PreparationDuration != null 
+                ? new TimeSpan(recipe.PreparationDuration.Days, recipe.PreparationDuration.Hours, recipe.PreparationDuration.Minutes, 0) 
+                : null,
+            CookingTime = recipe.CookingDuration != null 
+                ? new TimeSpan(recipe.CookingDuration.Days, recipe.CookingDuration.Hours, recipe.CookingDuration.Minutes, 0) 
+                : null,
             CustomTimes = recipe.CustomDurations
                 .Select(cd => new DbCustomTime(new TimeSpan(cd.Days, cd.Hours, cd.Minutes, 0)) { CustomTimeLabel = new DbCustomTimeLabel(cd.Name)})
                 .ToList(),
-
-            Energy = recipe.Nutrition.Energy,
-
+            
             Tags = recipe.Tags.Select(t => new DbTag(t)).ToList(),
             Slug = recipe.Slug
         };

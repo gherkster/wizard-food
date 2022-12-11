@@ -11,7 +11,9 @@
         </x-column>
         <x-column col-lg-7>
           <x-row>
-            <h1>{{ recipe.title }}</h1><!-- Rating inline with title? Could wrap underneath on mobile-->
+            <h1>{{ recipe.title }}</h1>
+            <n-button @click="goToEditRecipe">Edit</n-button>
+            <!-- Rating inline with title? Could wrap underneath on mobile-->
             <!-- kJ? -->
           </x-row>
           <x-row>
@@ -23,11 +25,7 @@
           </x-row>
           <x-row>
             <div class="recipe__duration">
-              <span v-if="preparationDuration">Preparation <strong>{{ preparationDuration }}</strong></span>
-              <span v-if="cookingDuration">Cooking <strong>{{ cookingDuration }}</strong></span>
-              <!-- TODO: Needs to be a list of custom durations -->
-              <span v-if="customDuration">{{ capitalizeFirstCharacter(recipe.customTimeType) }} <strong>{{ customDuration }}</strong></span>
-              <span v-if="totalDuration">Total <strong>{{ totalDuration }}</strong></span>
+              <span v-for="d in allDurations" :key="d.name">{{ d.name }} {{ d.duration }}</span>
             </div>
           </x-row>
         </x-column>
@@ -35,9 +33,9 @@
       <x-row>
         <x-column col-lg-5>
           <h3>Ingredients {{ recipe.servings }}</h3>
-          <div v-for="ingredientSection in this.groupedIngredients" :key="JSON.stringify(ingredientSection)" class="list-section">
-            <span v-if="ingredientSection.section">
-              <b>{{ ingredientSection.section }}</b>
+          <div v-for="ingredientSection in recipe.ingredientGroups" :key="JSON.stringify(ingredientSection)" class="list-section">
+            <span v-if="ingredientSection.name">
+              <b>{{ ingredientSection.name }}</b>
             </span>
             <ul>
               <li v-for="ingredient in ingredientSection.ingredients" :key="JSON.stringify(ingredient)">
@@ -51,9 +49,9 @@
         </x-column>
         <x-column col-lg-7>
           <h3>Instructions</h3>
-          <div v-for="instructionSection in this.groupedInstructions" :key="JSON.stringify(instructionSection)" class="list-section">
-            <span v-if="instructionSection.section">
-              <b>{{ instructionSection.section }}</b>
+          <div v-for="instructionSection in recipe.instructionGroups" :key="JSON.stringify(instructionSection)" class="list-section">
+            <span v-if="instructionSection.name">
+              <b>{{ instructionSection.name }}</b>
             </span>
             <ol>
               <li v-for="instruction in instructionSection.instructions" :key="JSON.stringify(instruction)">
@@ -63,19 +61,25 @@
           </div>
         </x-column>
       </x-row>
+      <x-row v-if="recipe.note">
+        <x-column>
+          <h3>Notes</h3>
+          <p>{{ recipe.note }}</p>
+        </x-column>
+      </x-row>
     </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import { NTag } from "naive-ui";
-import { capitalizeFirstChar, formatDuration } from "@/scripts/utility";
+import { NTag, NButton } from "naive-ui";
+import { capitalizeFirstChar, formatDurations } from "@/scripts/utility";
 import { XRow, XColumn } from "@/components";
 
 export default {
   name: "Recipe",
-  components: { XRow, XColumn, NTag },
+  components: { XRow, XColumn, NButton, NTag },
   data: () => ({
     recipe: null,
     ingredientMultiplier: 1,
@@ -89,41 +93,6 @@ export default {
       .then((response) => {
         this.recipe = response.data;
         this.ingredientMultiplier = this.recipe.servings;
-
-        let currentIngredientSection = "";
-        this.recipe.ingredients.forEach((ing) => {
-          if (ing.itemType === "Section") {
-            currentIngredientSection = ing.label;
-            return; // Don't add API sections to the ingredient/instruction arrays
-          }
-          const currentSectionIndex = this.groupedIngredients.findIndex((gi) => gi.section === currentIngredientSection);
-          if (currentSectionIndex > -1) {
-            this.groupedIngredients[currentSectionIndex].ingredients.push(ing);
-          } else {
-            this.groupedIngredients.push({
-              section: currentIngredientSection,
-              ingredients: [ing],
-            });
-          }
-        });
-
-        // TODO: Combine logic with above
-        let currentInstructionSection = "";
-        this.recipe.instructions.forEach((ing) => {
-          if (ing.itemType === "Section") {
-            currentInstructionSection = ing.label;
-            return; // Don't add API sections to the ingredient/instruction arrays
-          }
-          const currentSectionIndex = this.groupedInstructions.findIndex((gi) => gi.section === currentInstructionSection);
-          if (currentSectionIndex > -1) {
-            this.groupedInstructions[currentSectionIndex].instructions.push(ing);
-          } else {
-            this.groupedInstructions.push({
-              section: currentInstructionSection,
-              instructions: [ing],
-            });
-          }
-        });
       })
       .catch((error) => {
         console.log(error);
@@ -132,19 +101,48 @@ export default {
   },
   computed: {
     preparationDuration: function () {
-      return formatDuration(this.recipe.preparationTime);
+      if (this.recipe.preparationDuration) {
+        return {
+          name: this.recipe.preparationDuration.name,
+          duration: formatDurations([this.recipe.preparationDuration]),
+        };
+      }
+      return null;
     },
     cookingDuration: function () {
-      return formatDuration(this.recipe.cookingTime);
+      if (this.recipe.cookingDuration) {
+        return {
+          name: this.recipe.cookingDuration.name,
+          duration: formatDurations([this.recipe.cookingDuration]),
+        };
+      }
+      return null;
     },
-    customDuration: function () {
-      return formatDuration(this.recipe.customTime);
+    customDurations: function () {
+      const formattedDurations = [];
+      this.recipe.customDurations.forEach((duration) => {
+        const formattedDuration = formatDurations([duration]);
+        if (formattedDuration) {
+          formattedDurations.push({
+            name: duration.name,
+            duration: formattedDuration,
+          });
+        }
+      });
+      return formattedDurations;
+    },
+    allDurations: function () {
+      const durations = [];
+      if (this.preparationDuration) {
+        durations.push(this.preparationDuration);
+      }
+      if (this.cookingDuration) {
+        durations.push(this.cookingDuration);
+      }
+      return durations.concat(this.customDurations);
     },
     totalDuration: function () {
-      return formatDuration(this.recipe.preparationTime, this.recipe.cookingTime, this.recipe.customTime);
-    },
-    numberOfDurations: function () {
-      return [this.preparationDuration, this.cookingDuration, this.customDuration].filter((d) => d !== null).length;
+      return formatDurations(this.allDurations);
     },
   },
   methods: {
@@ -153,6 +151,9 @@ export default {
     },
     capitalizeFirstCharacter(string) {
       return capitalizeFirstChar(string);
+    },
+    goToEditRecipe() {
+      this.$router.push(`/recipes/${this.$route.params.slug}/edit`);
     },
   },
 };
