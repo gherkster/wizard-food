@@ -129,7 +129,7 @@ namespace API.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
+                    Name = table.Column<string>(type: "TEXT", nullable: true, collation: "NOCASE"),
                     DbRecipeId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
@@ -148,7 +148,7 @@ namespace API.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
+                    Name = table.Column<string>(type: "TEXT", nullable: true, collation: "NOCASE"),
                     DbRecipeId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>

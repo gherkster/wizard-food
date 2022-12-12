@@ -12,14 +12,14 @@ public static class MappingExtensions
             Title = dbRecipe.Title,
             Note = dbRecipe.Note,
             IngredientGroups = dbRecipe.IngredientGroups
-                .Select(ig => new IngredientGroup(ig.Name) { Ingredients = ig.Ingredients
+                .Select(ig => new IngredientGroup() { Name = ig.Name, Ingredients = ig.Ingredients
                     .Select(i => new Ingredient(i.Amount, i.Unit, i.Name) 
                     {
                         Note = i.Note
                     }).ToList()
                 }).ToList(),
             InstructionGroups = dbRecipe.InstructionGroups
-                .Select(ig => new InstructionGroup(ig.Name) { Instructions = ig.Instructions
+                .Select(ig => new InstructionGroup() { Name = ig.Name, Instructions = ig.Instructions
                     .Select(i => new Instruction(i.Label))
                     .ToList()})
                 .ToList(),
@@ -66,14 +66,16 @@ public static class MappingExtensions
             Title = recipe.Title,
             Note = recipe.Note,
             IngredientGroups = recipe.IngredientGroups
-                .Select(ig => new DbIngredientGroup(ig.Name) 
+                .Select(ig => new DbIngredientGroup() 
                 {
+                    Name = ig.Name,
                     Ingredients = ig.Ingredients
                         .Select(i => new DbIngredient(i.Unit, i.Amount, i.Name, i.Note))
                         .ToList()
                 }).ToList(),
-            InstructionGroups = recipe.InstructionGroups.Select(ig => new DbInstructionGroup(ig.Name)
+            InstructionGroups = recipe.InstructionGroups.Select(ig => new DbInstructionGroup()
             {
+                Name = ig.Name,
                 Instructions = ig.Instructions
                     .Select(i => new DbInstruction(i.Label))
                     .ToList()

@@ -2,12 +2,7 @@ namespace API.Models.View;
 
 public class IngredientGroup
 {
-    public IngredientGroup(string name)
-    {
-        Name = name;
-    }
-    
-    public string Name { get; }
+    public string? Name { get; set; }
     public List<Ingredient> Ingredients { get; set; } = new();
 }
 

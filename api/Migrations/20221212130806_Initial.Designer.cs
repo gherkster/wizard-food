@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20221211094751_Initial")]
+    [Migration("20221212130806_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -149,7 +149,6 @@ namespace API.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
@@ -191,7 +190,6 @@ namespace API.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
