@@ -5,6 +5,7 @@ export function mapRecipeStoreToApi(recipe) {
     preparationDuration:
       recipe.preparationTime.minutes > 0 || recipe.preparationTime.hours > 0 || recipe.preparationTime.days > 0
         ? {
+            name: "Preparation",
             minutes: recipe.preparationTime.minutes || 0,
             hours: recipe.preparationTime.hours || 0,
             days: recipe.preparationTime.days || 0,
@@ -13,6 +14,7 @@ export function mapRecipeStoreToApi(recipe) {
     cookingDuration:
       recipe.cookingTime.minutes > 0 || recipe.preparationTime.hours > 0 || recipe.preparationTime.days > 0
         ? {
+            name: "Cooking",
             minutes: recipe.cookingTime.minutes || 0,
             hours: recipe.cookingTime.hours || 0,
             days: recipe.cookingTime.days || 0,

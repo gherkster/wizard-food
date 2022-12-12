@@ -146,7 +146,6 @@ namespace API.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
@@ -188,7 +187,6 @@ namespace API.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 

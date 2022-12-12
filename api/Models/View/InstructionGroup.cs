@@ -2,12 +2,7 @@ namespace API.Models.View;
 
 public class InstructionGroup
 {
-    public InstructionGroup(string name)
-    {
-        Name = name;
-    }
-    
-    public string Name { get; }
+    public string? Name { get; set; }
     public List<Instruction> Instructions { get; set; } = new();
 }
 

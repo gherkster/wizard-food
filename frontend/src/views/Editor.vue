@@ -4,7 +4,7 @@
       <h2>New Recipe</h2>
       <!-- TODO: This should display the recipe name if the user is editing an existing recipe -->
       <!-- Stepper Header -->
-      <n-steps vertical :current="currentStep">
+      <n-steps vertical :current="currentStepIndex + 1">
         <n-step title="Summary" />
         <n-step title="Ingredients & Instructions" />
         <n-step title="Time (optional)" />
@@ -12,10 +12,10 @@
       </n-steps>
       <div id="recipe-form">
         <!-- Stepper Step 1: Recipe Summary -->
-        <template v-if="currentStep === 1">
+        <template v-if="currentStep === steps.summary">
           <n-form size="large">
             <n-grid :cols="12" :x-gap="12">
-              <n-form-item-gi label="Title" required :span="6" :validation-status="errors.title.status" :feedback="errors.title.message">
+              <n-form-item-gi label="Title" required :span="6" :validation-status="currentStepErrors?.title.status" :feedback="currentStepErrors?.title.message">
                 <x-input path="title" :value="recipeStore.title" placeholder="" @input="handleTitleInput" @blur="handleBlur" />
               </n-form-item-gi>
               <n-form-item-gi label="Image" :span="6">
@@ -25,7 +25,7 @@
           </n-form>
         </template>
         <!-- Stepper Step 2: Recipe Ingredients / Instructions -->
-        <template v-else-if="currentStep === 2">
+        <template v-else-if="currentStep === steps.ingredientsAndInstructions">
           <!-- eslint-disable-next-line vue/no-v-for-template-key-->
           <template v-for="(ingredientGroup, groupIndex) in recipeStore.ingredientGroups" :key="ingredientGroup.uuid">
             <n-form>
@@ -40,8 +40,8 @@
                     :span="3"
                     label="Amount"
                     required
-                    :validation-status="errors.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.amount?.status"
-                    :feedback="errors.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.amount?.message"
+                    :validation-status="currentStepErrors?.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.amount?.status"
+                    :feedback="currentStepErrors?.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.amount?.message"
                   >
                     <x-input
                       path="amount"
@@ -54,8 +54,8 @@
                     :span="4"
                     label="Units"
                     required
-                    :validation-status="errors.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.unit?.status"
-                    :feedback="errors.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.unit?.message"
+                    :validation-status="currentStepErrors?.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.unit?.status"
+                    :feedback="currentStepErrors?.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.unit?.message"
                   >
                     <x-select
                       path="unit"
@@ -74,8 +74,8 @@
                     :span="8"
                     label="Ingredient"
                     required
-                    :validation-status="errors.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.name?.status"
-                    :feedback="errors.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.name?.message"
+                    :validation-status="currentStepErrors?.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.name?.status"
+                    :feedback="currentStepErrors?.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.name?.message"
                   >
                     <x-input
                       path="name"
@@ -134,8 +134,8 @@
                 <template v-for="(instruction, instructionIndex) in instructionGroup.instructions" :key="instruction.uuid">
                   <n-form-item-gi
                     :span="21"
-                    :validation-status="errors.instructionGroups[groupIndex]?.instructions[instructionIndex]?.label?.status"
-                    :feedback="errors.instructionGroups[groupIndex]?.instructions[instructionIndex]?.label?.message"
+                    :validation-status="currentStepErrors?.instructionGroups[groupIndex]?.instructions[instructionIndex]?.label?.status"
+                    :feedback="currentStepErrors?.instructionGroups[groupIndex]?.instructions[instructionIndex]?.label?.message"
                     :show-label="false"
                   >
                     <n-input-group>
@@ -175,7 +175,7 @@
           </n-grid>
         </template>
         <!-- Stepper Step 3: Recipe Time -->
-        <template v-else-if="currentStep === 3">
+        <template v-else-if="currentStep === steps.time">
           <n-form>
             <n-grid :cols="24" :x-gap="12">
               <n-form-item-gi :span="14" label="Preparation Time">
@@ -261,7 +261,7 @@
                     <n-input-group-label>days</n-input-group-label>
                   </n-input-group>
                 </n-form-item-gi>
-                <n-form-item-gi :span="6" label="Label" :validation-status="errors.customTimes[index]?.name?.status" :feedback="errors.customTimes[index]?.name?.message">
+                <n-form-item-gi :span="6" label="Label" :validation-status="currentStepErrors?.customTimes[index]?.name?.status" :feedback="currentStepErrors?.customTimes[index]?.name?.message">
                   <x-select
                     path="name"
                     filterable
@@ -280,11 +280,11 @@
           </n-form>
         </template>
         <!-- Stepper Step 4: Recipe Metadata -->
-        <template v-else-if="currentStep === 4">
+        <template v-else-if="currentStep === steps.metadata">
           <n-form>
             <!-- Servings / Category / Cuisines / Nutrition -->
             <n-grid :cols="12" :x-gap="12">
-              <n-form-item-gi :span="4" label="Category" required :validation-status="errors.category.status" :feedback="errors.category.message">
+              <n-form-item-gi :span="4" label="Category" required :validation-status="currentStepErrors?.category.status" :feedback="currentStepErrors?.category.message">
                 <x-select
                   path="category"
                   filterable
@@ -296,7 +296,7 @@
                 />
               </n-form-item-gi>
               <n-form-item-gi :span="8" />
-              <n-form-item-gi :span="4" label="Cuisine" required :validation-status="errors.cuisine.status" :feedback="errors.cuisine.message">
+              <n-form-item-gi :span="4" label="Cuisine" required :validation-status="currentStepErrors?.cuisine.status" :feedback="currentStepErrors?.cuisine.message">
                 <x-select
                   path="cuisine"
                   filterable
@@ -308,7 +308,7 @@
                 />
               </n-form-item-gi>
               <n-form-item-gi :span="8" />
-              <n-form-item-gi :span="2" label="No. of servings" :validation-status="errors.servings.status" :feedback="errors.servings.message">
+              <n-form-item-gi :span="2" label="No. of servings" :validation-status="currentStepErrors?.servings.status" :feedback="currentStepErrors?.servings.message">
                 <x-input
                   path="servings"
                   :value="recipeStore.servings"
@@ -332,7 +332,7 @@
                 />
               </n-form-item-gi>
               <n-form-item-gi :span="6" />
-              <n-form-item-gi :span="6" label="URL Slug" required :validation-status="errors.slug.status" :feedback="errors.slug.message">
+              <n-form-item-gi :span="6" label="URL Slug" required :validation-status="currentStepErrors?.slug.status" :feedback="currentStepErrors?.slug.message">
                 <n-input-group>
                   <n-input-group-label>{{ recipeUrlPrefix }}</n-input-group-label>
                   <x-input
@@ -351,8 +351,8 @@
       <!-- Stepper Controls -->
       <x-row>
         <x-column class="col-12" right>
-          <n-button type="primary" size="large" ghost v-if="currentStep !== 1" @click="currentStep--">Previous</n-button>
-          <n-button type="primary" size="large" @click="currentStep++">Next</n-button>
+          <n-button type="primary" size="large" ghost v-if="currentStep !== steps.summary" @click="goToPreviousStep">Previous</n-button>
+          <n-button type="primary" size="large" :disabled="currentStepContainsErrors" @click="goToNextStep">Next</n-button>
         </x-column>
       </x-row>
     </div>
@@ -362,8 +362,9 @@
 <script>
 import axios from "axios";
 import { NButton, NSteps, NStep, NForm, NGrid, NFormItemGi, NInputGroup, NInputGroupLabel, NSpace } from "naive-ui";
-import { getFormInitialErrorState, slugPattern } from "@/scripts/validation";
+import { getFormInitialErrorState, defaultErrorState, slugPattern } from "@/scripts/validation";
 import { mapApiToRecipeStore, mapRecipeStoreToApi } from "@/scripts/mapping";
+import { recipeFormSteps } from "@/constants/enums";
 import { useRecipeStore } from "@/store/recipeStore";
 import { object, string, number, array, ValidationError } from "yup";
 import { get, set } from "lodash";
@@ -397,6 +398,7 @@ export default {
     return {
       recipeStore: recipeStore,
       alertStore: alertStore,
+      steps: recipeFormSteps,
     };
   },
   data: () => ({
@@ -406,7 +408,7 @@ export default {
     categories: [],
     cuisines: [],
     tags: [],
-    currentStep: 1,
+    currentStep: recipeFormSteps.summary,
     isSlugGenerating: false,
     isSubmitting: false,
     errors: getFormInitialErrorState(),
@@ -445,87 +447,105 @@ export default {
       return originalValue === "" ? undefined : currentValue;
     }
 
-    // Form validation schema
-    this.validationSchema = object().shape({
-      title: string().label("Title").trim().required(RequiredMessage),
-      rating: number(),
-      ingredientGroups: array().of(
-        object({
-          ingredients: array().of(
-            object({
-              amount: number()
-                .transform(emptyToUndefined)
-                .label("Amount")
-                .required(RequiredMessage)
-                .typeError(NumericMessage)
-                .positive(PositiveMessage),
-              unit: string().label("Unit").trim().required(RequiredMessage),
-              name: string().label("Ingredient").trim().required(RequiredMessage),
-              note: string(),
-            })
-          ),
-        })
-      ),
-      instructionGroups: array().of(
-        object({
-          instructions: array().of(
-            object({
-              label: string().label("Instruction").trim().required(RequiredMessage),
-            })
-          ),
-        })
-      ),
-      category: string().label("Category").trim().required(RequiredMessage),
-      cuisine: string().label("Cuisine").trim().required(RequiredMessage),
-      preparationTime: object().shape({
-        minutes: number().label("Minutes").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
-        hours: number().label("Hours").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
-        days: number().label("Days").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
+    this.validationSchema = {
+      [recipeFormSteps.summary]: object().shape({
+        title: string().label("Title").trim().required(RequiredMessage),
       }),
-      cookingTime: object().shape({
-        minutes: number().label("Minutes").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
-        hours: number().label("Hours").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
-        days: number().label("Days").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
+      [recipeFormSteps.ingredientsAndInstructions]: object().shape({
+        ingredientGroups: array().of(
+          object({
+            ingredients: array().of(
+              object({
+                amount: number()
+                  .transform(emptyToUndefined)
+                  .label("Amount")
+                  .required(RequiredMessage)
+                  .typeError(NumericMessage)
+                  .positive(PositiveMessage),
+                unit: string().label("Unit").trim().required(RequiredMessage),
+                name: string().label("Ingredient").trim().required(RequiredMessage),
+                note: string(),
+              })
+            ),
+          })
+        ),
+        instructionGroups: array().of(
+          object({
+            instructions: array().of(
+              object({
+                label: string().label("Instruction").trim().required(RequiredMessage),
+              })
+            ),
+          })
+        ),
       }),
-      customTimes: array().of(
-        object({
+      [recipeFormSteps.time]: object().shape({
+        preparationTime: object().shape({
           minutes: number().label("Minutes").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
           hours: number().label("Hours").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
           days: number().label("Days").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
-          name: string().when(["minutes", "hours", "days"], {
-            is: (minutes, hours, days) => minutes || hours || days,
-            then: (schema) => schema.label("Custom time type").trim().required(RequiredMessage),
-          }),
-        })
-      ),
-      servings: number().label("No. of servings").transform(emptyToUndefined).typeError(NumericMessage).positive(PositiveMessage),
-      slug: string()
-        .label("Slug")
-        .required(RequiredMessage)
-        .matches(
-          slugPattern,
-          "URL slug must be a unique combination of alphanumeric characters and hyphens, such as my-new-recipe or MyNewRecipe"
-        )
-        .test(
-          "is-slug-unique",
-          "Slug already exists. Enter a unique value or click the reload icon to generate one.",
-          async (value, testContext) => {
-            // Skip API validation of unique slug when user is still entering text.
-            // This ensures there is no latency/overuse of endpoint and text regex can run,
-            // while still validating when the blur event fires.
-            if (!testContext.options.skipApiValidation && value.trim()) {
-              return await this.validateSlug(value.trim());
-            } else {
-              return true;
-            }
-          }
+        }),
+        cookingTime: object().shape({
+          minutes: number().label("Minutes").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
+          hours: number().label("Hours").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
+          days: number().label("Days").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
+        }),
+        customTimes: array().of(
+          object({
+            minutes: number().label("Minutes").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
+            hours: number().label("Hours").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
+            days: number().label("Days").transform(emptyToUndefined).typeError(NumericMessage).integer(IntegerMessage),
+            name: string().when(["minutes", "hours", "days"], {
+              is: (minutes, hours, days) => minutes || hours || days,
+              then: (schema) => schema.label("Custom time type").trim().required(RequiredMessage),
+            }),
+          })
         ),
-      tags: array(),
-    });
+      }),
+      [recipeFormSteps.metadata]: object().shape({
+        category: string().label("Category").trim().required(RequiredMessage),
+        cuisine: string().label("Cuisine").trim().required(RequiredMessage),
+        servings: number().label("No. of servings").transform(emptyToUndefined).typeError(NumericMessage).positive(PositiveMessage),
+        slug: string()
+          .label("Slug")
+          .required(RequiredMessage)
+          .matches(
+            slugPattern,
+            "URL slug must be a unique combination of alphanumeric characters and hyphens, such as my-new-recipe or MyNewRecipe"
+          )
+          .test(
+            "is-slug-unique",
+            "Slug already exists. Enter a unique value or click the reload icon to generate one.",
+            async (value, testContext) => {
+              // Skip API validation of unique slug when user is still entering text.
+              // This ensures there is no latency/overuse of endpoint and text regex can run,
+              // while still validating when the blur event fires.
+              if (!testContext.options.skipApiValidation && value.trim()) {
+                return await this.validateSlug(value.trim());
+              } else {
+                return true;
+              }
+            }
+          ),
+        tags: array(),
+      }),
+    };
   },
   computed: {
     recipeUrlPrefix() {
       return window.location.host + "/recipes/";
+    },
+    currentStepIndex() {
+      return Object.keys(this.steps).indexOf(this.currentStep);
+    },
+    currentValidationSchema() {
+      return this.validationSchema[this.currentStep];
+    },
+    currentStepErrors() {
+      return this.errors[this.currentStep];
+    },
+    currentStepContainsErrors() {
+      return JSON.stringify(this.currentStepErrors).includes("error");
     },
   },
   methods: {
@@ -597,6 +617,9 @@ export default {
         title: "",
         ingredients: [],
       });
+      this.errors[recipeFormSteps.ingredientsAndInstructions].ingredientGroups.push({
+        ingredients: [],
+      });
     },
     addIngredientToGroup(groupIndex) {
       this.recipeStore.ingredientGroups[groupIndex].ingredients.push({
@@ -606,11 +629,20 @@ export default {
         name: "",
         note: "",
       });
+      this.errors[recipeFormSteps.ingredientsAndInstructions].ingredientGroups[groupIndex].ingredients.push({
+        amount: defaultErrorState,
+        unit: defaultErrorState,
+        name: defaultErrorState,
+        note: defaultErrorState,
+      });
     },
     addInstructionGroup() {
       this.recipeStore.instructionGroups.push({
         uuid: uuid.v1(),
         title: "",
+        instructions: [],
+      });
+      this.errors[recipeFormSteps.ingredientsAndInstructions].instructionGroups.push({
         instructions: [],
       });
     },
@@ -619,18 +651,17 @@ export default {
         uuid: uuid.v1(),
         label: "",
       });
+      this.errors[recipeFormSteps.ingredientsAndInstructions].instructionGroups[groupIndex].instructions.push({
+        label: defaultErrorState,
+      });
     },
     removeIngredientFromGroup(groupIndex, ingredientIndex) {
       this.recipeStore.ingredientGroups[groupIndex].ingredients.splice(ingredientIndex, 1);
-      if (this.errors.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]) {
-        this.errors.ingredientGroups[groupIndex].ingredients.splice(ingredientIndex, 1);
-      }
+      this.errors[recipeFormSteps.ingredientsAndInstructions].ingredientGroups[groupIndex].ingredients.splice(ingredientIndex, 1);
     },
     removeInstructionFromGroup(groupIndex, instructionIndex) {
       this.recipeStore.instructionGroups[groupIndex].instructions.splice(instructionIndex, 1);
-      if (this.errors.instructionGroups[groupIndex]?.instructions[instructionIndex]) {
-        this.errors.instructionGroups[groupIndex].instructions.splice(instructionIndex, 1);
-      }
+      this.errors[recipeFormSteps.ingredientsAndInstructions].instructionGroups[groupIndex].instructions.splice(instructionIndex, 1);
     },
     async handleCustomTimeInputAtIndex(event, index) {
       this.recipeStore.setValueAt(["customTimes", index, event.path], event.value);
@@ -652,11 +683,11 @@ export default {
       this.recipeStore.customTimes.splice(groupIndex, 1);
     },
     async validateAt(field, skipApiValidation = false) {
-      console.log("validating: ", field, "with value: ", get(this.recipeStore, field));
-      await this.validationSchema
+      console.log("validating: ", field, "with value: ", get(this.recipeStore, field), "in section", this.currentStep);
+      await this.currentValidationSchema
         .validateAt(field, this.recipeStore, { abortEarly: false, skipApiValidation: skipApiValidation })
         .then(() => {
-          set(this.errors, field, { message: "", status: null });
+          set(this.errors[this.currentStep], field, { message: "", status: null });
         })
         .catch((error) => {
           if (error instanceof ValidationError) {
@@ -664,12 +695,12 @@ export default {
 
             // If errors are an array clear them out first, as we are setting specific properties
             // within the array which would hang around otherwise
-            if (Array.isArray(get(this.errors, error.path))) {
-              set(this.errors, error.path, []);
+            if (Array.isArray(get(this.errors[this.currentStep], error.path))) {
+              set(this.errors[this.currentStep], error.path, []);
             }
 
             validationErrors.forEach((e) => {
-              set(this.errors, e.path, { message: e.message, status: "error" });
+              set(this.errors[this.currentStep], e.path, { message: e.message, status: "error" });
             });
           } else {
             console.log(error);
@@ -685,11 +716,11 @@ export default {
         await this.validateAt(customTimeLabelWithSameIndex);
       }
     },
-    async validateAll() {
-      await this.validationSchema
+    async validateCurrentSection() {
+      await this.currentValidationSchema
         .validate(this.recipeStore, { abortEarly: false })
         .then(() => {
-          this.errors = getFormInitialErrorState();
+          set(this.errors, this.currentStep, getFormInitialErrorState()[this.currentStep]);
         })
         .catch((error) => {
           if (error instanceof ValidationError) {
@@ -698,11 +729,11 @@ export default {
             // If errors are an array clear them out first, as we are setting specific properties
             // within the array which would hang around otherwise
             if (Array.isArray(get(this.errors, error.path))) {
-              set(this.errors, error.path, []);
+              set(this.errors[this.currentStep], error.path, []);
             }
 
             validationErrors.forEach((e) => {
-              set(this.errors, e.path, { message: e.message, status: "error" });
+              set(this.errors[this.currentStep], e.path, { message: e.message, status: "error" });
             });
           }
         });
@@ -747,7 +778,6 @@ export default {
         .then(async (response) => {
           if (response.data) {
             this.recipeStore.slug = response.data;
-            await this.validateAt("slug");
           }
         })
         .catch((error) => console.log(error))
@@ -756,23 +786,52 @@ export default {
         });
     },
     async submit() {
-      await this.validateAll();
-      if (this.errors) {
-        this.alertStore.showErrorAlert("The form is invalid. Please check your entered data");
-        return;
-      }
       this.isSubmitting = true;
       console.log(JSON.stringify(this.recipeStore));
       await axios
         .post(import.meta.env.VITE_APIURL + "/api/recipes", mapRecipeStoreToApi(this.recipeStore))
         .then(() => {
           this.alertStore.showSuccessAlert("Recipe created!");
+          this.$router.push(`/recipes/${this.recipeStore.slug}`);
         })
         .catch((error) => {
           this.alertStore.showErrorAlert("An error occurred while creating the form");
           console.log(error);
         })
         .finally(() => (this.isSubmitting = false));
+    },
+    async goToNextStep() {
+      await this.validateCurrentSection();
+      if (this.currentStepContainsErrors) {
+        return;
+      }
+      switch (this.currentStep) {
+        case recipeFormSteps.summary:
+          this.currentStep = recipeFormSteps.ingredientsAndInstructions;
+          break;
+        case recipeFormSteps.ingredientsAndInstructions:
+          this.currentStep = recipeFormSteps.time;
+          break;
+        case recipeFormSteps.time:
+          this.currentStep = recipeFormSteps.metadata;
+          break;
+        case recipeFormSteps.metadata:
+          await this.submit();
+          break;
+      }
+    },
+    goToPreviousStep() {
+      switch (this.currentStep) {
+        case recipeFormSteps.metadata:
+          this.currentStep = recipeFormSteps.time;
+          break;
+        case recipeFormSteps.time:
+          this.currentStep = recipeFormSteps.ingredientsAndInstructions;
+          break;
+        case recipeFormSteps.ingredientsAndInstructions:
+          this.currentStep = recipeFormSteps.summary;
+          break;
+      }
     },
   },
 };
