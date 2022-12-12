@@ -1,71 +1,61 @@
+import { recipeFormSteps } from "@/constants/enums";
+
 export const slugPattern = /^[a-zA-Z\d](-?[a-zA-Z\d])*$/;
 
-const defaultStatus = {
+export const defaultErrorState = {
   message: "",
   status: null,
 };
 
 export function getFormInitialErrorState() {
   return {
-    title: {
-      ...defaultStatus,
-    },
-    ingredientGroups: [],
-    instructionGroups: [],
-    servings: {
-      ...defaultStatus,
-    },
-    servingType: {
-      ...defaultStatus,
-    },
-    category: {
-      ...defaultStatus,
-    },
-    cuisine: {
-      ...defaultStatus,
-    },
-    preparationTime: {
-      minutes: {
-        ...defaultStatus,
-      },
-      hours: {
-        ...defaultStatus,
-      },
-      days: {
-        ...defaultStatus,
+    [recipeFormSteps.summary]: {
+      title: {
+        ...defaultErrorState,
       },
     },
-    cookingTime: {
-      minutes: {
-        ...defaultStatus,
-      },
-      hours: {
-        ...defaultStatus,
-      },
-      days: {
-        ...defaultStatus,
-      },
+    [recipeFormSteps.ingredientsAndInstructions]: {
+      ingredientGroups: [],
+      instructionGroups: [],
     },
-    customTimes: [],
-    nutrition: {
-      energy: {
-        ...defaultStatus,
+    [recipeFormSteps.time]: {
+      preparationTime: {
+        minutes: {
+          ...defaultErrorState,
+        },
+        hours: {
+          ...defaultErrorState,
+        },
+        days: {
+          ...defaultErrorState,
+        },
       },
-      protein: {
-        ...defaultStatus,
+      cookingTime: {
+        minutes: {
+          ...defaultErrorState,
+        },
+        hours: {
+          ...defaultErrorState,
+        },
+        days: {
+          ...defaultErrorState,
+        },
       },
-      carbohydrates: {
-        ...defaultStatus,
-      },
-      fat: {
-        ...defaultStatus,
-      },
-      sodium: {
-        ...defaultStatus,
-      },
+      customTimes: [],
     },
-    slug: {
-      ...defaultStatus,
+    [recipeFormSteps.metadata]: {
+      servings: {
+        ...defaultErrorState,
+      },
+      category: {
+        ...defaultErrorState,
+      },
+      cuisine: {
+        ...defaultErrorState,
+      },
+      slug: {
+        ...defaultErrorState,
+      },
     },
   };
 }
