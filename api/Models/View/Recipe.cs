@@ -2,6 +2,7 @@ namespace API.Models.View;
 
 public class Recipe
 {
+    public int Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Note { get; set; } = string.Empty;
 

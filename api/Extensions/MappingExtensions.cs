@@ -9,6 +9,7 @@ public static class MappingExtensions
     {
         var recipe = new Recipe()
         {
+            Id = dbRecipe.Id,
             Title = dbRecipe.Title,
             Note = dbRecipe.Note,
             IngredientGroups = dbRecipe.IngredientGroups
@@ -59,10 +60,11 @@ public static class MappingExtensions
         return recipe;
     }
 
-    public static DbRecipe AsDatabaseModel(this Recipe recipe)
+    public static DbRecipe AsDatabaseModel(this Recipe recipe, int id = int.MinValue)
     {
         var dbRecipe = new DbRecipe()
         {
+            Id = id,
             Title = recipe.Title,
             Note = recipe.Note,
             IngredientGroups = recipe.IngredientGroups

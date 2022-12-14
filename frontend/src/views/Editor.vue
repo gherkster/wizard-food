@@ -1,8 +1,10 @@
 <template>
   <div class="page">
-    <div class="content">
-      <h2>New Recipe</h2>
-      <!-- TODO: This should display the recipe name if the user is editing an existing recipe -->
+    <div class="content editor">
+      <div class="editor__header">
+        <h2>{{ isEditingExistingRecipe ? "Edit Recipe" : "New Recipe" }}</h2>
+        <n-button v-if="isEditingExistingRecipe" type="error" @click="confirmDelete">Delete Recipe</n-button>
+      </div>
       <!-- Stepper Header -->
       <n-steps vertical :current="currentStepIndex + 1">
         <n-step title="Summary" />
@@ -16,10 +18,20 @@
           <n-form size="large">
             <n-grid :cols="12" :x-gap="12">
               <n-form-item-gi label="Title" required :span="6" :validation-status="currentStepErrors?.title.status" :feedback="currentStepErrors?.title.message">
-                <x-input path="title" :value="recipeStore.title" placeholder="" @input="handleTitleInput" @blur="handleBlur" />
+                <x-input path="title" :value="recipeStore.title" @input="handleTitleInput" @blur="handleBlur" />
               </n-form-item-gi>
               <n-form-item-gi label="Image" :span="6">
                 <x-upload path="imageSrc" :value="recipeStore.imageSrc" />
+              </n-form-item-gi>
+              <n-form-item-gi label="Notes" :span="12">
+                <x-input
+                  path="note"
+                  type="textarea"
+                  :value="recipeStore.note"
+                  :autosize="{ minRows: 4, maxRows: 12 }"
+                  @input="handleInput"
+                  @blur="handleBlur"
+                />
               </n-form-item-gi>
             </n-grid>
           </n-form>
@@ -31,7 +43,7 @@
             <n-form>
               <n-grid :cols="24" :x-gap="12">
                 <n-form-item-gi :span="8" label="Section Title (optional)">
-                  <x-input path="title" :value="ingredientGroup.name" @input="handleIngredientGroupTitleChange($event, groupIndex)" />
+                  <x-input path="name" :value="ingredientGroup.name" @input="handleIngredientGroupTitleChange($event, groupIndex)" />
                 </n-form-item-gi>
                 <n-form-item-gi :span="16" />
                 <!-- eslint-disable-next-line vue/no-v-for-template-key-->
@@ -50,13 +62,7 @@
                       @blur="handleIngredientBlurAtIndex($event, groupIndex, ingredientIndex)"
                     />
                   </n-form-item-gi>
-                  <n-form-item-gi
-                    :span="4"
-                    label="Units"
-                    required
-                    :validation-status="currentStepErrors?.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.unit?.status"
-                    :feedback="currentStepErrors?.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.unit?.message"
-                  >
+                  <n-form-item-gi :span="4" label="Units">
                     <x-select
                       path="unit"
                       :value="ingredient.unit"
@@ -127,7 +133,7 @@
             <n-form>
               <n-grid :cols="24" :x-gap="12">
                 <n-form-item-gi :span="8" label="Section Title (optional)">
-                  <x-input path="title" :value="instructionGroup.name" @input="handleInstructionGroupTitleChange($event, groupIndex)" />
+                  <x-input path="label" :value="instructionGroup.label" @input="handleInstructionGroupTitleChange($event, groupIndex)" />
                 </n-form-item-gi>
                 <n-form-item-gi :span="16" />
                 <!-- eslint-disable-next-line vue/no-v-for-template-key-->
@@ -143,7 +149,7 @@
                       <x-input
                         path="label"
                         type="textarea"
-                        :autosize="{ minRows: 1, maxRows: 3 }"
+                        :autosize="{ minRows: 1, maxRows: 6 }"
                         :value="instruction.label"
                         @input="handleInstructionInputAtIndex($event, groupIndex, instructionIndex)"
                         @blur="handleInstructionBlurAtIndex($event, groupIndex, instructionIndex)"
@@ -350,10 +356,8 @@
       </div>
       <!-- Stepper Controls -->
       <x-row>
-        <x-column class="col-12" right>
-          <n-button type="primary" size="large" ghost v-if="currentStep !== steps.summary" @click="goToPreviousStep">Previous</n-button>
-          <n-button type="primary" size="large" :disabled="currentStepContainsErrors" @click="goToNextStep">Next</n-button>
-        </x-column>
+        <n-button type="primary" size="large" ghost v-if="currentStep !== steps.summary" @click="goToPreviousStep">Previous</n-button>
+        <n-button type="primary" size="large" :disabled="currentStepContainsErrors" @click="goToNextStep">{{ submitButtonLabel }}</n-button>
       </x-row>
     </div>
   </div>
@@ -361,7 +365,7 @@
 
 <script>
 import axios from "axios";
-import { NButton, NSteps, NStep, NForm, NGrid, NFormItemGi, NInputGroup, NInputGroupLabel, NSpace } from "naive-ui";
+import { NButton, NSteps, NStep, NForm, NGrid, NFormItemGi, NInputGroup, NInputGroupLabel, NSpace, useDialog } from "naive-ui";
 import { getFormInitialErrorState, defaultErrorState, slugPattern } from "@/scripts/validation";
 import { mapApiToRecipeStore, mapRecipeStoreToApi } from "@/scripts/mapping";
 import { recipeFormSteps } from "@/constants/enums";
@@ -371,14 +375,14 @@ import { get, set } from "lodash";
 import { IntegerMessage, NumericMessage, PositiveMessage, RequiredMessage } from "@/constants/validationMessages";
 import { useAlertStore } from "@/store/alertStore";
 import { uuid } from "vue-uuid";
-import { XColumn, XIcon, XInput, XSelect, XRow, XUpload } from "@/components";
+import { XIcon, XInput, XSelect, XRow, XUpload } from "@/components";
+import apis from "@/constants/apis";
 
 export default {
   name: "Editor",
   components: {
     XIcon,
     XUpload,
-    XColumn,
     XRow,
     NSteps,
     NStep,
@@ -395,10 +399,12 @@ export default {
   setup() {
     const recipeStore = useRecipeStore();
     const alertStore = useAlertStore();
+    const dialog = useDialog();
     return {
       recipeStore: recipeStore,
       alertStore: alertStore,
       steps: recipeFormSteps,
+      dialog: dialog,
     };
   },
   data: () => ({
@@ -411,10 +417,13 @@ export default {
     currentStep: recipeFormSteps.summary,
     isSlugGenerating: false,
     isSubmitting: false,
+    existingRecipeId: null,
     errors: getFormInitialErrorState(),
   }),
   watch: {
-    $route(to) {
+    $route(to, from) {
+      console.log("routed to", to, from);
+      this.currentStep = recipeFormSteps.summary;
       // Clear all pre-filled inputs if navigating away to create a new recipe, otherwise populate with the existing recipe input values
       if (to.path === "/new") {
         this.recipeStore.$reset();
@@ -429,7 +438,7 @@ export default {
     }
 
     axios
-      .get(import.meta.env.VITE_APIURL + "/api/recipes/editor/dropdown-options")
+      .get(apis.dropdownOptions)
       .then((response) => {
         this.categories = response.data.categories.map((c) => ({ label: c.label, value: c.label }));
         this.cuisines = response.data.cuisines.map((c) => ({ label: c.label, value: c.label }));
@@ -450,6 +459,7 @@ export default {
     this.validationSchema = {
       [recipeFormSteps.summary]: object().shape({
         title: string().label("Title").trim().required(RequiredMessage),
+        note: string(),
       }),
       [recipeFormSteps.ingredientsAndInstructions]: object().shape({
         ingredientGroups: array().of(
@@ -462,7 +472,7 @@ export default {
                   .required(RequiredMessage)
                   .typeError(NumericMessage)
                   .positive(PositiveMessage),
-                unit: string().label("Unit").trim().required(RequiredMessage),
+                unit: string(),
                 name: string().label("Ingredient").trim().required(RequiredMessage),
                 note: string(),
               })
@@ -535,6 +545,9 @@ export default {
     recipeUrlPrefix() {
       return window.location.host + "/recipes/";
     },
+    isEditingExistingRecipe() {
+      return !!this.$route.params.slug;
+    },
     currentStepIndex() {
       return Object.keys(this.steps).indexOf(this.currentStep);
     },
@@ -547,12 +560,23 @@ export default {
     currentStepContainsErrors() {
       return JSON.stringify(this.currentStepErrors).includes("error");
     },
+    isOnLastStep() {
+      return this.currentStep === recipeFormSteps.metadata;
+    },
+    submitButtonLabel() {
+      if (this.isOnLastStep) {
+        return this.isEditingExistingRecipe ? "Update Recipe" : "Create Recipe";
+      } else {
+        return "Next";
+      }
+    },
   },
   methods: {
     populateInputsWithExistingRecipe() {
       axios
-        .get(import.meta.env.VITE_APIURL + "/api/recipes/" + this.$route.params.slug)
+        .get(apis.recipes + this.$route.params.slug)
         .then((response) => {
+          this.existingRecipeId = response.data.id;
           this.recipeStore.$patch({
             ...mapApiToRecipeStore(response.data),
           });
@@ -586,14 +610,14 @@ export default {
       await this.validateAt(event.path, true);
     },
     async handleIngredientGroupTitleChange(event, groupIndex) {
-      this.recipeStore.setValueAt(["ingredientGroups", `${groupIndex}`, "title"], event.value);
+      this.recipeStore.setValueAt(["ingredientGroups", `${groupIndex}`, "name"], event.value);
     },
     async handleIngredientInputAtIndex(event, groupIndex, ingredientIndex) {
       this.recipeStore.setValueAt(["ingredientGroups", `${groupIndex}`, "ingredients", `${ingredientIndex}`, event.path], event.value);
       await this.validateIngredient(event, groupIndex, ingredientIndex);
     },
     async handleInstructionGroupTitleChange(event, groupIndex) {
-      this.recipeStore.setValueAt(["instructionGroups", `${groupIndex}`, "title"], event.value);
+      this.recipeStore.setValueAt(["instructionGroups", `${groupIndex}`, "label"], event.value);
     },
     async handleInstructionInputAtIndex(event, groupIndex, instructionIndex) {
       this.recipeStore.setValueAt(["instructionGroups", `${groupIndex}`, "instructions", `${instructionIndex}`, event.path], event.value);
@@ -612,16 +636,22 @@ export default {
       await this.validateAt(`instructionGroups[${groupIndex}].instructions[${instructionIndex}].${event.path}`);
     },
     addIngredientGroup() {
-      this.recipeStore.ingredientGroups.push({
-        uuid: uuid.v1(),
-        title: "",
+      this.errors[recipeFormSteps.ingredientsAndInstructions].ingredientGroups.push({
         ingredients: [],
       });
-      this.errors[recipeFormSteps.ingredientsAndInstructions].ingredientGroups.push({
+      this.recipeStore.ingredientGroups.push({
+        uuid: uuid.v1(),
+        name: "",
         ingredients: [],
       });
     },
     addIngredientToGroup(groupIndex) {
+      this.errors[recipeFormSteps.ingredientsAndInstructions].ingredientGroups[groupIndex].ingredients.push({
+        amount: defaultErrorState,
+        unit: defaultErrorState,
+        name: defaultErrorState,
+        note: defaultErrorState,
+      });
       this.recipeStore.ingredientGroups[groupIndex].ingredients.push({
         uuid: uuid.v1(),
         amount: "",
@@ -629,30 +659,24 @@ export default {
         name: "",
         note: "",
       });
-      this.errors[recipeFormSteps.ingredientsAndInstructions].ingredientGroups[groupIndex].ingredients.push({
-        amount: defaultErrorState,
-        unit: defaultErrorState,
-        name: defaultErrorState,
-        note: defaultErrorState,
-      });
     },
     addInstructionGroup() {
-      this.recipeStore.instructionGroups.push({
-        uuid: uuid.v1(),
-        title: "",
+      this.errors[recipeFormSteps.ingredientsAndInstructions].instructionGroups.push({
         instructions: [],
       });
-      this.errors[recipeFormSteps.ingredientsAndInstructions].instructionGroups.push({
+      this.recipeStore.instructionGroups.push({
+        uuid: uuid.v1(),
+        label: "",
         instructions: [],
       });
     },
     addInstructionToGroup(groupIndex) {
+      this.errors[recipeFormSteps.ingredientsAndInstructions].instructionGroups[groupIndex].instructions.push({
+        label: defaultErrorState,
+      });
       this.recipeStore.instructionGroups[groupIndex].instructions.push({
         uuid: uuid.v1(),
         label: "",
-      });
-      this.errors[recipeFormSteps.ingredientsAndInstructions].instructionGroups[groupIndex].instructions.push({
-        label: defaultErrorState,
       });
     },
     removeIngredientFromGroup(groupIndex, ingredientIndex) {
@@ -751,7 +775,7 @@ export default {
     async validateSlug(slug) {
       let isValidSlug;
       await axios
-        .get(import.meta.env.VITE_APIURL + "/api/recipes/slugs", {
+        .get(apis.recipeSlugs, {
           params: {
             chosenSlug: slug,
           },
@@ -770,7 +794,7 @@ export default {
       this.isSlugGenerating = true;
       const chosenSlug = this.recipeStore.slug || this.createSlugFromTitle() || "recipe";
       await axios
-        .get(import.meta.env.VITE_APIURL + "/api/recipes/slugs", {
+        .get(apis.recipeSlugs, {
           params: {
             chosenSlug: chosenSlug,
           },
@@ -788,17 +812,51 @@ export default {
     async submit() {
       this.isSubmitting = true;
       console.log(JSON.stringify(this.recipeStore));
-      await axios
-        .post(import.meta.env.VITE_APIURL + "/api/recipes", mapRecipeStoreToApi(this.recipeStore))
-        .then(() => {
-          this.alertStore.showSuccessAlert("Recipe created!");
-          this.$router.push(`/recipes/${this.recipeStore.slug}`);
-        })
-        .catch((error) => {
-          this.alertStore.showErrorAlert("An error occurred while creating the form");
-          console.log(error);
-        })
-        .finally(() => (this.isSubmitting = false));
+      if (this.isEditingExistingRecipe) {
+        await axios
+          .put(apis.recipes + this.existingRecipeId, mapRecipeStoreToApi(this.recipeStore))
+          .then(() => {
+            this.alertStore.showSuccessAlert("Recipe updated!");
+            this.$router.push(`/recipes/${this.recipeStore.slug}`);
+          })
+          .catch((error) => {
+            this.alertStore.showErrorAlert("An error occurred while updating the recipe");
+            console.log(error);
+          })
+          .finally(() => (this.isSubmitting = false));
+      } else {
+        await axios
+          .post(apis.recipes, mapRecipeStoreToApi(this.recipeStore))
+          .then(() => {
+            this.alertStore.showSuccessAlert("Recipe created!");
+            this.$router.push(`/recipes/${this.recipeStore.slug}`);
+          })
+          .catch((error) => {
+            this.alertStore.showErrorAlert("An error occurred while creating the recipe");
+            console.log(error);
+          })
+          .finally(() => (this.isSubmitting = false));
+      }
+    },
+    confirmDelete() {
+      this.dialog.warning({
+        title: "Permanently delete recipe?",
+        //content: "This will permanently delete the recipe.",
+        positiveText: "Delete",
+        negativeText: "No",
+        closable: false,
+        onPositiveClick: async () => await this.deleteRecipe(),
+      });
+    },
+    async deleteRecipe() {
+      await axios({
+        method: "delete",
+        url: apis.recipes + this.recipeStore.slug,
+      }).then(() => {
+        this.recipeStore.$reset();
+        this.alertStore.showSuccessAlert("Recipe deleted");
+      });
+      this.$router.replace("/recipes");
     },
     async goToNextStep() {
       await this.validateCurrentSection();

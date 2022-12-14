@@ -73,10 +73,12 @@ public class DatabaseContext : DbContext
 
     public async Task<DropdownOptions> GetDropdownOptionsAsync()
     {
-        var categoriesTask = Categories.AsNoTracking().ToListAsync();
-        var cuisinesTask = Cuisines.AsNoTracking().ToListAsync();
-        var customTimesLabelsTask = CustomTimeLabels.AsNoTracking().ToListAsync();
-        var tagsTask = Tags.AsNoTracking().ToListAsync();
+        // We don't disable change tracking on these queries since this is also used for verifying
+        // whether entities already exist during insert/update/delete scenarios
+        var categoriesTask = Categories.ToListAsync();
+        var cuisinesTask = Cuisines.ToListAsync();
+        var customTimesLabelsTask = CustomTimeLabels.ToListAsync();
+        var tagsTask = Tags.ToListAsync();
 
         await Task.WhenAll(categoriesTask, cuisinesTask, customTimesLabelsTask, tagsTask);
         
