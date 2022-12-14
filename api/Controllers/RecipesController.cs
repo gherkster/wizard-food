@@ -58,7 +58,7 @@ public class RecipesController : ControllerBase
             .IncludeAllRelatedEntities()
             .AsNoTracking()
             .Select(r => r.AsViewModel())
-            .FirstOrDefaultAsync();
+            .SingleOrDefaultAsync();
         
         if (recipe == null)
         {
@@ -87,7 +87,7 @@ public class RecipesController : ControllerBase
          * The reason we do not match to an existing slug value, is that it is the only field that we need a consistent unique value per recipe,
          * otherwise link routing won't work.
          */
-        
+
         var dbOptions = await _db.GetDropdownOptionsAsync();
         
         newDbRecipe.Category = dbOptions.Categories.FirstOrDefault(c => c.Label == newDbRecipe.Category.Label) ?? newDbRecipe.Category;
@@ -105,31 +105,92 @@ public class RecipesController : ControllerBase
         //
         // Note that this is why certain tables like Category have an ID column where traditionally they could just use the value as the Primary Key.
         // If the Primary Key was the string value, the above logic would not work and any non-empty string would be considered a new value that should be inserted into the DB.
-        _db.ChangeTracker.TrackGraph(newDbRecipe, node => node.Entry.State = !node.Entry.IsKeySet ? EntityState.Added : EntityState.Unchanged);
+        
+        await _db.Recipes.AddAsync(newDbRecipe);
         await _db.SaveChangesAsync();
         
         return Created(newDbRecipe.Id.ToString(), recipe);
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<ActionResult> UpdateRecipe(Guid id, Recipe recipe)
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult> UpdateRecipe(int id, Recipe recipe)
     {
-        var dbRecipe = await _db.Recipes.FindAsync(id);
+        var dbRecipe = await _db.Recipes.IncludeAllRelatedEntities().SingleOrDefaultAsync(r => r.Id == id);
         if (dbRecipe is null)
         {
             return NotFound();
         }
+
+        var updatedRecipe = recipe.AsDatabaseModel(id);
         
-        _db.Entry(dbRecipe).CurrentValues.SetValues(recipe.AsDatabaseModel());
+        if (dbRecipe.Category.Label != updatedRecipe.Category.Label)
+        {
+            dbRecipe.Category = updatedRecipe.Category;
+        }
+
+        if (dbRecipe.Cuisine.Label != updatedRecipe.Cuisine.Label)
+        {
+            dbRecipe.Cuisine = updatedRecipe.Cuisine;
+        }
+        
+        var newCustomTimes = updatedRecipe.CustomTimes
+            .ExceptBy(dbRecipe.CustomTimes.Select(ct => ct.CustomTimeLabel.Label), dbCt => dbCt.CustomTimeLabel.Label)
+            .ToList();
+        dbRecipe.CustomTimes.AddRange(newCustomTimes);
+
+        var existingCustomTimes = updatedRecipe.CustomTimes
+            .IntersectBy(dbRecipe.CustomTimes.Select(ct => ct.CustomTimeLabel.Label),
+                dbCt => dbCt.CustomTimeLabel.Label)
+            .ToList();
+        foreach (var customTime in existingCustomTimes)
+        {
+            dbRecipe.CustomTimes.First(ct => ct.CustomTimeLabel.Label == customTime.CustomTimeLabel.Label).CookingTime =
+                customTime.CookingTime;
+        }
+
+        var removedCustomTimes = dbRecipe.CustomTimes
+            .ExceptBy(updatedRecipe.CustomTimes.Select(ct => ct.CustomTimeLabel.Label), dbCt => dbCt.CustomTimeLabel.Label)
+            .ToList();
+        foreach (var customTime in removedCustomTimes)
+        {
+            dbRecipe.CustomTimes.Remove(customTime);
+        }
+
+        var newTags = updatedRecipe.Tags
+            .ExceptBy(dbRecipe.Tags.Select(dbt => dbt.Label), t => t.Label)
+            .ToList();
+        dbRecipe.Tags.AddRange(newTags);
+        
+        var removedTags = dbRecipe.Tags
+            .ExceptBy(updatedRecipe.Tags.Select(t => t.Label), dbt => dbt.Label)
+            .ToList();
+        foreach (var tag in removedTags)
+        {
+            dbRecipe.Tags.Remove(tag);
+        }
+        
+        dbRecipe.Title = updatedRecipe.Title;
+        dbRecipe.Note = updatedRecipe.Note;
+        dbRecipe.IngredientGroups = updatedRecipe.IngredientGroups;
+        dbRecipe.InstructionGroups = updatedRecipe.InstructionGroups;
+        dbRecipe.PreparationTime = updatedRecipe.PreparationTime;
+        dbRecipe.CookingTime = updatedRecipe.CookingTime;
+        dbRecipe.Servings = updatedRecipe.Servings;
+        dbRecipe.Rating = updatedRecipe.Rating;
+        dbRecipe.Slug = updatedRecipe.Slug;
+        
         await _db.SaveChangesAsync();
         
         return Ok();
     }
 
-    [HttpDelete("{id:guid}")]
-    public async Task<ActionResult> DeleteRecipe(Guid id)
+    [HttpDelete("{slug}")]
+    public async Task<ActionResult> DeleteRecipe(string slug)
     {
-        var recipe = await _db.Recipes.FindAsync(id);
+        var recipe = await _db.Recipes
+            .IncludeAllRelatedEntities()
+            .SingleOrDefaultAsync(r => r.Slug == slug);
+        
         if (recipe is null)
         {
             return NotFound();
