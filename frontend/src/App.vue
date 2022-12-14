@@ -5,7 +5,9 @@
       <n-menu mode="horizontal" :options="menuOptions" class="nav-header__menu" />
       <n-input :value="searchQuery" placeholder="Search" class="nav-header__search" @input="performSearch" />
     </div>
-    <router-view />
+    <n-dialog-provider>
+      <router-view />
+    </n-dialog-provider>
     <alert-section />
   </div>
 </template>
@@ -14,11 +16,11 @@
 import { h } from "vue";
 import { RouterLink } from "vue-router";
 import AlertSection from "@/views/AlertSection.vue";
-import { NInput, NMenu } from "naive-ui";
+import { NDialogProvider, NInput, NMenu } from "naive-ui";
 
 export default {
   name: "App",
-  components: { AlertSection, NInput, NMenu },
+  components: { AlertSection, NDialogProvider, NInput, NMenu },
   data() {
     return {
       searchQuery: "",
