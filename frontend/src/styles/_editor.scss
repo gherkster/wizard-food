@@ -1,0 +1,9 @@
+@use "mixins" as m;
+
+.editor {
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

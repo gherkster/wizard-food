@@ -41,7 +41,7 @@
               <li v-for="ingredient in ingredientSection.ingredients" :key="JSON.stringify(ingredient)">
                 <span>{{ adjustIngredientByMultiplier(ingredient.amount) }}</span>
                 <span>{{ ingredient.unit }}&nbsp;</span>
-                <span> {{ ingredient.label }}</span>
+                <span> {{ ingredient.name }}</span>
                 <span v-if="ingredient.note" class="text-muted">&nbsp;{{ ingredient.note }}</span>
               </li>
             </ul>
@@ -76,6 +76,7 @@ import axios from "axios";
 import { NTag, NButton } from "naive-ui";
 import { capitalizeFirstChar, formatDurations } from "@/scripts/utility";
 import { XRow, XColumn } from "@/components";
+import apis from "@/constants/apis";
 
 export default {
   name: "Recipe",
@@ -89,7 +90,7 @@ export default {
   }),
   async created() {
     await axios
-      .get(import.meta.env.VITE_APIURL + "/api/recipes/" + this.$route.params.slug)
+      .get(apis.recipes + this.$route.params.slug)
       .then((response) => {
         this.recipe = response.data;
         this.ingredientMultiplier = this.recipe.servings;

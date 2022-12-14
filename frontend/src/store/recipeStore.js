@@ -36,7 +36,7 @@ export const useRecipeStore = defineStore("recipe", {
 
       if (Array.isArray(valueAtPath)) {
         set(this, path, [...value]);
-      } else if (typeof valueAtPath === "object") {
+      } else if (typeof valueAtPath === "object" && valueAtPath !== null) {
         set(this, path, { ...value });
       } else {
         set(this, path, value);
