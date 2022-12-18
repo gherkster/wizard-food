@@ -1,10 +1,8 @@
 using System.Text.Json.Serialization;
 using API.Converters;
+using API.Extensions;
 using API.Models.Database.Context;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.SpaServices;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using VueCliMiddleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +19,8 @@ builder.Services
             opt.JsonSerializerOptions.Converters.Add(new JsonStringTrimConverter());
         });
 
+builder.Services.ConfigureAuthentication();
+
 builder.Services.AddSpaStaticFiles(opt => opt.RootPath = "../frontend/dist");
 
 builder.Services.AddEndpointsApiExplorer();
@@ -34,21 +34,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseReDoc();
-    app.UseCors(options => options
-        .WithOrigins("*")
-        .AllowAnyMethod()
-        .AllowAnyHeader());
 }
-else
-{
-    // TODO: Configure Prod CORS
-}
-
-app.UseHttpsRedirection();
 
 app.UseSpaStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>

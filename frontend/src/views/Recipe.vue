@@ -72,7 +72,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import { NTag, NButton } from "naive-ui";
 import { capitalizeFirstChar, formatDurations } from "@/scripts/utility";
 import { XRow, XColumn } from "@/components";
@@ -89,7 +88,7 @@ export default {
     isLoading: true,
   }),
   async created() {
-    await axios
+    await this.$axios
       .get(apis.recipes + this.$route.params.slug)
       .then((response) => {
         this.recipe = response.data;
