@@ -1,0 +1,7 @@
+@use "mixins" as m;
+
+.login {
+  @include m.breakpoint("md") {
+    max-width: 50%;
+  }
+}

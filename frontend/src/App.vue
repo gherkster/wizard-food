@@ -4,6 +4,7 @@
     <div class="nav-header">
       <n-menu mode="horizontal" :options="menuOptions" class="nav-header__menu" />
       <n-input :value="searchQuery" placeholder="Search" class="nav-header__search" @input="performSearch" />
+      <font-awesome-icon icon="fa-solid fa-user" size="xl" class="nav-header__login" @click="goToLogin" />
     </div>
     <n-dialog-provider>
       <router-view />
@@ -74,6 +75,9 @@ export default {
   methods: {
     performSearch(query) {
       this.searchQuery = query;
+    },
+    goToLogin() {
+      this.$router.push("/login");
     },
   },
 };

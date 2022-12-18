@@ -8,8 +8,6 @@
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
   name: "RecipeList",
   data() {
@@ -18,7 +16,8 @@ export default {
     };
   },
   created() {
-    axios.get(import.meta.env.VITE_APIURL + "/api/recipes")
+    this.$axios
+      .get(import.meta.env.VITE_APIURL + "/api/recipes")
       .then((response) => {
         this.recipes = response.data;
       })

@@ -5,6 +5,7 @@ import Recipe from "@/views/Recipe.vue";
 import Search from "@/views/Search.vue";
 import Editor from "@/views/Editor.vue";
 import RecipeList from "@/views/RecipeList.vue";
+import Login from "@/views/Login.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -36,11 +37,16 @@ const routes: Array<RouteRecordRaw> = [
     name: "new-recipe",
     component: Editor,
   },
+  {
+    path: "/login",
+    name: "login",
+    component: Login,
+  },
   // TODO: 404 catch all handler
 ];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.VITE_APIURL),
+  history: createWebHistory(),
   routes,
 });
 

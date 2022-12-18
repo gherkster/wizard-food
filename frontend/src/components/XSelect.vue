@@ -6,6 +6,7 @@
     :tag="tag"
     :multiple="multiple"
     placeholder=""
+    :clearable="clearable"
     @update:value="handleUpdate"
     @blur="handleBlur"
   />
@@ -42,6 +43,11 @@ export default {
       default: false,
     },
     multiple: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    clearable: {
       type: Boolean,
       required: false,
       default: false,
