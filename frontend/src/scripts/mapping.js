@@ -35,6 +35,7 @@ export function mapRecipeStoreToApi(recipe) {
 export function mapApiToRecipeStore(recipe) {
   return {
     ...recipe,
+    servings: recipe.servings > 0 ? recipe.servings : "",
     preparationTime:
       recipe.preparationDuration !== null
         ? {

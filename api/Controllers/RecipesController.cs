@@ -1,12 +1,10 @@
-using System.Collections.Generic;
-using System.Net;
 using API.Extensions;
 using API.Models;
 using API.Models.View;
 using API.Models.Database.Context;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace API.Controllers;
 
@@ -68,6 +66,7 @@ public class RecipesController : ControllerBase
         return recipe;
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult> CreateRecipe(Recipe recipe)
     {
@@ -112,6 +111,7 @@ public class RecipesController : ControllerBase
         return Created(newDbRecipe.Id.ToString(), recipe);
     }
 
+    [Authorize]
     [HttpPut("{id:int}")]
     public async Task<ActionResult> UpdateRecipe(int id, Recipe recipe)
     {
@@ -122,53 +122,53 @@ public class RecipesController : ControllerBase
         }
 
         var updatedRecipe = recipe.AsDatabaseModel(id);
-        
-        if (dbRecipe.Category.Label != updatedRecipe.Category.Label)
+        var uniqueLabels = await _db.GetDropdownOptionsAsync();
+
+        // Handle scenario when category is changed to an existing database label
+        if (dbRecipe.Category.Label.IsIn(uniqueLabels.Categories.Select(c => c.Label)))
+        {
+            dbRecipe.Category = uniqueLabels.Categories.First(c => c.Label == updatedRecipe.Category.Label);
+        }
+        // Otherwise handle new category
+        else if (dbRecipe.Category.Label != updatedRecipe.Category.Label)
         {
             dbRecipe.Category = updatedRecipe.Category;
         }
 
-        if (dbRecipe.Cuisine.Label != updatedRecipe.Cuisine.Label)
+        // Same as above, test for existing database values and new values
+        if (dbRecipe.Cuisine.Label.IsIn(uniqueLabels.Cuisines.Select(c => c.Label)))
+        {
+            dbRecipe.Cuisine = uniqueLabels.Cuisines.First(c => c.Label == updatedRecipe.Cuisine.Label);
+        }
+        else if (dbRecipe.Cuisine.Label != updatedRecipe.Cuisine.Label)
         {
             dbRecipe.Cuisine = updatedRecipe.Cuisine;
         }
-        
-        var newCustomTimes = updatedRecipe.CustomTimes
-            .ExceptBy(dbRecipe.CustomTimes.Select(ct => ct.CustomTimeLabel.Label), dbCt => dbCt.CustomTimeLabel.Label)
-            .ToList();
-        dbRecipe.CustomTimes.AddRange(newCustomTimes);
 
-        var existingCustomTimes = updatedRecipe.CustomTimes
-            .IntersectBy(dbRecipe.CustomTimes.Select(ct => ct.CustomTimeLabel.Label),
-                dbCt => dbCt.CustomTimeLabel.Label)
-            .ToList();
-        foreach (var customTime in existingCustomTimes)
+        // Clear out existing custom times and tags and add the updated values to the database,
+        // checking for already existing unique labels.
+        // While this is not as efficient as only updating the changed ones, it avoids issues with matching
+        // a custom time which has had its timespan and label changed, while having a negligible impact on performance.
+        dbRecipe.CustomTimes.Clear();
+        foreach (var customTime in updatedRecipe.CustomTimes)
         {
-            dbRecipe.CustomTimes.First(ct => ct.CustomTimeLabel.Label == customTime.CustomTimeLabel.Label).CookingTime =
-                customTime.CookingTime;
-        }
-
-        var removedCustomTimes = dbRecipe.CustomTimes
-            .ExceptBy(updatedRecipe.CustomTimes.Select(ct => ct.CustomTimeLabel.Label), dbCt => dbCt.CustomTimeLabel.Label)
-            .ToList();
-        foreach (var customTime in removedCustomTimes)
-        {
-            dbRecipe.CustomTimes.Remove(customTime);
-        }
-
-        var newTags = updatedRecipe.Tags
-            .ExceptBy(dbRecipe.Tags.Select(dbt => dbt.Label), t => t.Label)
-            .ToList();
-        dbRecipe.Tags.AddRange(newTags);
-        
-        var removedTags = dbRecipe.Tags
-            .ExceptBy(updatedRecipe.Tags.Select(t => t.Label), dbt => dbt.Label)
-            .ToList();
-        foreach (var tag in removedTags)
-        {
-            dbRecipe.Tags.Remove(tag);
+            var existingCustomTimeLabel =
+                uniqueLabels.CustomTimeTypes.FirstOrDefault(ct => ct.Label == customTime.CustomTimeLabel.Label);
+            if (existingCustomTimeLabel != null)
+            {
+                customTime.CustomTimeLabel = existingCustomTimeLabel;
+            }
+            
+            dbRecipe.CustomTimes.Add(customTime);
         }
         
+        dbRecipe.Tags.Clear();
+        foreach (var tag in updatedRecipe.Tags)
+        {
+            var existingTag = uniqueLabels.Tags.FirstOrDefault(t => t.Label == tag.Label);
+            dbRecipe.Tags.Add(existingTag ?? tag);
+        }
+
         dbRecipe.Title = updatedRecipe.Title;
         dbRecipe.Note = updatedRecipe.Note;
         dbRecipe.IngredientGroups = updatedRecipe.IngredientGroups;
@@ -184,6 +184,7 @@ public class RecipesController : ControllerBase
         return Ok();
     }
 
+    [Authorize]
     [HttpDelete("{slug}")]
     public async Task<ActionResult> DeleteRecipe(string slug)
     {
@@ -202,6 +203,7 @@ public class RecipesController : ControllerBase
         return Ok();
     }
 
+    [Authorize]
     [HttpGet("slugs")]
     public async Task<ActionResult<string>> GetAvailableSlug(string chosenSlug)
     {

@@ -9,4 +9,9 @@
     @include m.spacing("my", "xs");
     max-width: 400px;
   }
+  &__login {
+    margin-left: auto;
+    @include m.spacing("mr", "sm");
+    cursor: pointer;
+  }
 }

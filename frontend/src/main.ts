@@ -14,11 +14,22 @@ import {
   faPlus,
   faMinus,
   faChevronDown,
+  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { faStar as farStar } from "@fortawesome/free-regular-svg-icons";
+import axios from "./api/axios";
 
-library.add(faCheck, faArrowRotateRight, fasStar, farStar, faXmark, faSpinner, faPlus, faMinus, faChevronDown);
+library.add(faCheck, faArrowRotateRight, fasStar, farStar, faXmark, faSpinner, faPlus, faMinus, faChevronDown, faUser);
+
+const app = createApp(App);
+
+app.use(router);
 
 const pinia = createPinia();
+app.use(pinia);
 
-createApp(App).use(router).use(pinia).component("font-awesome-icon", FontAwesomeIcon).mount("#app");
+app.component("font-awesome-icon", FontAwesomeIcon);
+
+app.config.globalProperties.$axios = axios;
+
+app.mount("#app");
