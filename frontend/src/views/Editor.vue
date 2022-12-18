@@ -17,7 +17,13 @@
         <template v-if="currentStep === steps.summary">
           <n-form size="large">
             <n-grid :cols="12" :x-gap="12">
-              <n-form-item-gi label="Title" required :span="6" :validation-status="currentStepErrors?.title.status" :feedback="currentStepErrors?.title.message">
+              <n-form-item-gi
+                label="Title"
+                required
+                :span="6"
+                :validation-status="currentStepErrors?.title.status"
+                :feedback="currentStepErrors?.title.message"
+              >
                 <x-input path="title" :value="recipeStore.title" @input="handleTitleInput" @blur="handleBlur" />
               </n-form-item-gi>
               <n-form-item-gi label="Image" :span="6">
@@ -68,6 +74,7 @@
                       :value="ingredient.unit"
                       filterable
                       tag
+                      clearable
                       :options="[
                         { label: 'g', value: 'g' },
                         { label: 'mL', value: 'mL' },
@@ -214,26 +221,11 @@
               </n-form-item-gi>
               <n-form-item-gi :span="14" label="Cooking Time">
                 <n-input-group>
-                  <x-input
-                    path="cookingTime.minutes"
-                    :value="recipeStore.cookingTime.minutes"
-                    @input="handleInput"
-                    @blur="handleBlur"
-                  />
+                  <x-input path="cookingTime.minutes" :value="recipeStore.cookingTime.minutes" @input="handleInput" @blur="handleBlur" />
                   <n-input-group-label>mins</n-input-group-label>
-                  <x-input
-                    path="cookingTime.hours"
-                    :value="recipeStore.cookingTime.hours"
-                    @input="handleInput"
-                    @blur="handleBlur"
-                  />
+                  <x-input path="cookingTime.hours" :value="recipeStore.cookingTime.hours" @input="handleInput" @blur="handleBlur" />
                   <n-input-group-label>hours</n-input-group-label>
-                  <x-input
-                    path="cookingTime.days"
-                    :value="recipeStore.cookingTime.days"
-                    @input="handleInput"
-                    @blur="handleBlur"
-                  />
+                  <x-input path="cookingTime.days" :value="recipeStore.cookingTime.days" @input="handleInput" @blur="handleBlur" />
                   <n-input-group-label>days</n-input-group-label>
                 </n-input-group>
               </n-form-item-gi>
@@ -267,7 +259,12 @@
                     <n-input-group-label>days</n-input-group-label>
                   </n-input-group>
                 </n-form-item-gi>
-                <n-form-item-gi :span="6" label="Label" :validation-status="currentStepErrors?.customTimes[index]?.name?.status" :feedback="currentStepErrors?.customTimes[index]?.name?.message">
+                <n-form-item-gi
+                  :span="6"
+                  label="Label"
+                  :validation-status="currentStepErrors?.customTimes[index]?.name?.status"
+                  :feedback="currentStepErrors?.customTimes[index]?.name?.message"
+                >
                   <x-select
                     path="name"
                     filterable
@@ -290,7 +287,13 @@
           <n-form>
             <!-- Servings / Category / Cuisines / Nutrition -->
             <n-grid :cols="12" :x-gap="12">
-              <n-form-item-gi :span="4" label="Category" required :validation-status="currentStepErrors?.category.status" :feedback="currentStepErrors?.category.message">
+              <n-form-item-gi
+                :span="4"
+                label="Category"
+                required
+                :validation-status="currentStepErrors?.category.status"
+                :feedback="currentStepErrors?.category.message"
+              >
                 <x-select
                   path="category"
                   filterable
@@ -302,7 +305,13 @@
                 />
               </n-form-item-gi>
               <n-form-item-gi :span="8" />
-              <n-form-item-gi :span="4" label="Cuisine" required :validation-status="currentStepErrors?.cuisine.status" :feedback="currentStepErrors?.cuisine.message">
+              <n-form-item-gi
+                :span="4"
+                label="Cuisine"
+                required
+                :validation-status="currentStepErrors?.cuisine.status"
+                :feedback="currentStepErrors?.cuisine.message"
+              >
                 <x-select
                   path="cuisine"
                   filterable
@@ -314,13 +323,13 @@
                 />
               </n-form-item-gi>
               <n-form-item-gi :span="8" />
-              <n-form-item-gi :span="2" label="No. of servings" :validation-status="currentStepErrors?.servings.status" :feedback="currentStepErrors?.servings.message">
-                <x-input
-                  path="servings"
-                  :value="recipeStore.servings"
-                  @input="handleInput"
-                  @blur="handleBlur"
-                />
+              <n-form-item-gi
+                :span="2"
+                label="No. of servings"
+                :validation-status="currentStepErrors?.servings.status"
+                :feedback="currentStepErrors?.servings.message"
+              >
+                <x-input path="servings" :value="recipeStore.servings" @input="handleInput" @blur="handleBlur" />
               </n-form-item-gi>
             </n-grid>
             <!-- Tags / Slug -->
@@ -338,15 +347,16 @@
                 />
               </n-form-item-gi>
               <n-form-item-gi :span="6" />
-              <n-form-item-gi :span="6" label="URL Slug" required :validation-status="currentStepErrors?.slug.status" :feedback="currentStepErrors?.slug.message">
+              <n-form-item-gi
+                :span="6"
+                label="URL Slug"
+                required
+                :validation-status="currentStepErrors?.slug.status"
+                :feedback="currentStepErrors?.slug.message"
+              >
                 <n-input-group>
                   <n-input-group-label>{{ recipeUrlPrefix }}</n-input-group-label>
-                  <x-input
-                    path="slug"
-                    :value="recipeStore.slug"
-                    @input="handleSlugInput"
-                    @blur="handleBlur"
-                  />
+                  <x-input path="slug" :value="recipeStore.slug" @input="handleSlugInput" @blur="handleBlur" />
                   <n-button type="primary" ghost :loading="isSlugGenerating" @click="createSlug">Generate</n-button>
                 </n-input-group>
               </n-form-item-gi>
@@ -364,7 +374,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import { NButton, NSteps, NStep, NForm, NGrid, NFormItemGi, NInputGroup, NInputGroupLabel, NSpace, useDialog } from "naive-ui";
 import { getFormInitialErrorState, defaultErrorState, slugPattern } from "@/scripts/validation";
 import { mapApiToRecipeStore, mapRecipeStoreToApi } from "@/scripts/mapping";
@@ -437,7 +446,7 @@ export default {
       this.populateInputsWithExistingRecipe();
     }
 
-    axios
+    this.$axios
       .get(apis.dropdownOptions)
       .then((response) => {
         this.categories = response.data.categories.map((c) => ({ label: c.label, value: c.label }));
@@ -454,6 +463,9 @@ export default {
      */
     function emptyToUndefined(currentValue, originalValue) {
       return originalValue === "" ? undefined : currentValue;
+    }
+    function nullToUndefined(currentValue, originalValue) {
+      return originalValue === null ? undefined : currentValue;
     }
 
     this.validationSchema = {
@@ -472,7 +484,7 @@ export default {
                   .required(RequiredMessage)
                   .typeError(NumericMessage)
                   .positive(PositiveMessage),
-                unit: string(),
+                unit: string().transform(nullToUndefined),
                 name: string().label("Ingredient").trim().required(RequiredMessage),
                 note: string(),
               })
@@ -573,7 +585,7 @@ export default {
   },
   methods: {
     populateInputsWithExistingRecipe() {
-      axios
+      this.$axios
         .get(apis.recipes + this.$route.params.slug)
         .then((response) => {
           this.existingRecipeId = response.data.id;
@@ -774,7 +786,7 @@ export default {
     },
     async validateSlug(slug) {
       let isValidSlug;
-      await axios
+      await this.$axios
         .get(apis.recipeSlugs, {
           params: {
             chosenSlug: slug,
@@ -793,7 +805,7 @@ export default {
     async createSlug() {
       this.isSlugGenerating = true;
       const chosenSlug = this.recipeStore.slug || this.createSlugFromTitle() || "recipe";
-      await axios
+      await this.$axios
         .get(apis.recipeSlugs, {
           params: {
             chosenSlug: chosenSlug,
@@ -813,7 +825,7 @@ export default {
       this.isSubmitting = true;
       console.log(JSON.stringify(this.recipeStore));
       if (this.isEditingExistingRecipe) {
-        await axios
+        await this.$axios
           .put(apis.recipes + this.existingRecipeId, mapRecipeStoreToApi(this.recipeStore))
           .then(() => {
             this.alertStore.showSuccessAlert("Recipe updated!");
@@ -825,7 +837,7 @@ export default {
           })
           .finally(() => (this.isSubmitting = false));
       } else {
-        await axios
+        await this.$axios
           .post(apis.recipes, mapRecipeStoreToApi(this.recipeStore))
           .then(() => {
             this.alertStore.showSuccessAlert("Recipe created!");
@@ -849,14 +861,18 @@ export default {
       });
     },
     async deleteRecipe() {
-      await axios({
+      await this.$axios({
         method: "delete",
         url: apis.recipes + this.recipeStore.slug,
-      }).then(() => {
-        this.recipeStore.$reset();
-        this.alertStore.showSuccessAlert("Recipe deleted");
-      });
-      this.$router.replace("/recipes");
+      })
+        .then(() => {
+          this.recipeStore.$reset();
+          this.alertStore.showSuccessAlert("Recipe deleted");
+          this.$router.replace("/recipes");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     async goToNextStep() {
       await this.validateCurrentSection();

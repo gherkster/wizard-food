@@ -1,9 +1,10 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Models.Database.Context;
 
-public class DatabaseContext : DbContext
+public class DatabaseContext : IdentityDbContext
 {
     private readonly SqliteConnection _dbConnection;
     
@@ -31,6 +32,8 @@ public class DatabaseContext : DbContext
         options.EnableSensitiveDataLogging();
         options.LogTo(Console.WriteLine);
         #endif
+        
+        base.OnConfiguring(options);
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -69,6 +72,8 @@ public class DatabaseContext : DbContext
 
         builder.Entity<DbIngredient>()
             .HasIndex(i => i.Name);
+        
+        base.OnModelCreating(builder);
     }
 
     public async Task<DropdownOptions> GetDropdownOptionsAsync()
