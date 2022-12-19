@@ -12,7 +12,7 @@
         <x-column col-lg-7>
           <x-row>
             <h1>{{ recipe.title }}</h1>
-            <n-button @click="goToEditRecipe">Edit</n-button>
+            <n-button v-if="userStore.isAuthenticated" @click="goToEditRecipe">Edit</n-button>
             <!-- Rating inline with title? Could wrap underneath on mobile-->
             <!-- kJ? -->
           </x-row>
@@ -76,10 +76,17 @@ import { NTag, NButton } from "naive-ui";
 import { capitalizeFirstChar, formatDurations } from "@/scripts/utility";
 import { XRow, XColumn } from "@/components";
 import apis from "@/constants/apis";
+import { useUserStore } from "@/store/userStore";
 
 export default {
   name: "Recipe",
   components: { XRow, XColumn, NButton, NTag },
+  setup() {
+    const userStore = useUserStore();
+    return {
+      userStore,
+    };
+  },
   data: () => ({
     recipe: null,
     ingredientMultiplier: 1,
