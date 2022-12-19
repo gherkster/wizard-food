@@ -43,6 +43,8 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseAuthenticationHeader();
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
