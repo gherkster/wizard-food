@@ -2,7 +2,7 @@
   <div>
     <div>Recipe List</div>
     <div v-for="recipe in recipes" :key="recipe.slug">
-      <a :href="'/recipes/' + recipe.slug">{{ recipe.title }}</a>
+      <a @click="goToRecipe(recipe.slug)">{{ recipe.title }}</a>
     </div>
   </div>
 </template>
@@ -24,6 +24,11 @@ export default {
       .catch((error) => {
         console.log(error);
       });
+  },
+  methods: {
+    goToRecipe(slug) {
+      this.$router.push("/recipes/" + slug);
+    },
   },
 };
 </script>
