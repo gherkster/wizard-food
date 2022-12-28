@@ -12,6 +12,7 @@ public static class DatabaseExtensions
     {
         return recipes.Include(r => r.IngredientGroups)
             .ThenInclude(ig => ig.Ingredients)
+            .ThenInclude(i => i.Unit)
             .Include(r => r.InstructionGroups)
             .ThenInclude(ig => ig.Instructions)
             .Include(r => r.Category)

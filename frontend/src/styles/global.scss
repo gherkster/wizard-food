@@ -3,12 +3,15 @@
 @use "index";
 
 // TODO: Combine into single import
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap'); // Open Sans
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300&display=swap'); // Inter
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400&display=swap'); // Open Sans
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap'); // Inter
 @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital@0;1&display=swap'); // Work Sans
 
-#app { // TODO: Target html element when vuetify is removed
+html {
   background: v.$colour-bg;
+}
+body {
+  font-family: v.$font-family-paragraph;
 }
 
 @each $key, $value in v.$font-sizes {
@@ -22,15 +25,16 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
 
-p, span, small, input {
-  font-family: v.$font-family-paragraph;
-}
 small {
   line-height: 0;
 }
 
 li:not(:last-child) {
   margin-bottom: v.$li-margin-bottom;
+}
+
+ul, ol {
+  @include m.spacing("pl", "xs");
 }
 
 img {
