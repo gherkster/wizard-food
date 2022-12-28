@@ -23,6 +23,7 @@ public class DatabaseContext : IdentityDbContext
     public DbSet<DbCustomTime> CustomTimes => Set<DbCustomTime>();
     public DbSet<DbCustomTimeLabel> CustomTimeLabels => Set<DbCustomTimeLabel>();
     public DbSet<DbTag> Tags => Set<DbTag>();
+    public DbSet<DbUnit> Units => Set<DbUnit>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
@@ -70,6 +71,10 @@ public class DatabaseContext : IdentityDbContext
             .HasIndex(t => t.Label)
             .IsUnique();
 
+        builder.Entity<DbUnit>()
+            .HasIndex(u => u.Label)
+            .IsUnique();
+
         builder.Entity<DbIngredient>()
             .HasIndex(i => i.Name);
         
@@ -84,15 +89,17 @@ public class DatabaseContext : IdentityDbContext
         var cuisinesTask = Cuisines.ToListAsync();
         var customTimesLabelsTask = CustomTimeLabels.ToListAsync();
         var tagsTask = Tags.ToListAsync();
+        var unitsTask = Units.ToListAsync();
 
-        await Task.WhenAll(categoriesTask, cuisinesTask, customTimesLabelsTask, tagsTask);
+        await Task.WhenAll(categoriesTask, cuisinesTask, customTimesLabelsTask, tagsTask, unitsTask);
         
         var dropdownOptions = new DropdownOptions()
         {
             Categories = categoriesTask.Result.ToList(),
             Cuisines = cuisinesTask.Result.ToList(),
             CustomTimeTypes = customTimesLabelsTask.Result.ToList(),
-            Tags = tagsTask.Result.ToList()
+            Tags = tagsTask.Result.ToList(),
+            Units = unitsTask.Result.ToList()
         };
 
         return dropdownOptions;

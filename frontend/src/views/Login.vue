@@ -28,7 +28,6 @@ import { defaultErrorState } from "@/scripts/validation";
 import { RequiredMessage } from "@/constants/validationMessages";
 import { set } from "lodash";
 import { object, string, ValidationError } from "yup";
-import axios from "axios";
 import apis from "@/constants/apis";
 
 export default {

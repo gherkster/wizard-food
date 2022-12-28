@@ -39,7 +39,7 @@ export const useRecipeStore = defineStore("recipe", {
       } else if (typeof valueAtPath === "object" && valueAtPath !== null) {
         set(this, path, { ...value });
       } else {
-        set(this, path, value);
+        set(this, path, value ?? "");
       }
     },
   },

@@ -21,7 +21,9 @@ export default {
   components: { TimedAlert },
   setup() {
     const alertStore = useAlertStore();
-    return { alertStore };
+    return {
+      alertStore,
+    };
   },
   methods: {
     removeAlert(id) {

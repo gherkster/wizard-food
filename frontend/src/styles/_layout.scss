@@ -20,7 +20,7 @@
   flex-wrap: wrap;
   width: 100%;
   column-gap: v.$cols-horizontal-gap;
-  @include m.spacing("mb", "xs");
+  @include m.spacing("mb", "sm");
 }
 
 @each $breakpoint-name, $width in v.$breakpoints {
