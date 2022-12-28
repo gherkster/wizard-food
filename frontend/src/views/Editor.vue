@@ -57,7 +57,6 @@
                   <n-form-item-gi
                     :span="3"
                     label="Amount"
-                    required
                     :validation-status="currentStepErrors?.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.amount?.status"
                     :feedback="currentStepErrors?.ingredientGroups[groupIndex]?.ingredients[ingredientIndex]?.amount?.message"
                   >
@@ -75,10 +74,7 @@
                       filterable
                       tag
                       clearable
-                      :options="[
-                        { label: 'g', value: 'g' },
-                        { label: 'mL', value: 'mL' },
-                      ]"
+                      :options="units"
                       @input="handleIngredientInputAtIndex($event, groupIndex, ingredientIndex)"
                       @blur="handleIngredientInputAtIndex($event, groupIndex, ingredientIndex)"
                     />
@@ -423,29 +419,25 @@ export default {
     categories: [],
     cuisines: [],
     tags: [],
+    units: [],
     currentStep: recipeFormSteps.summary,
     isSlugGenerating: false,
     isSubmitting: false,
     existingRecipeId: null,
     errors: getFormInitialErrorState(),
   }),
-  watch: {
-    $route(to, from) {
-      console.log("routed to", to, from);
-      this.currentStep = recipeFormSteps.summary;
+  async beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.currentStep = recipeFormSteps.summary;
       // Clear all pre-filled inputs if navigating away to create a new recipe, otherwise populate with the existing recipe input values
       if (to.path === "/new") {
-        this.recipeStore.$reset();
-      } else if (this.$route.params.slug) {
-        this.populateInputsWithExistingRecipe();
+        vm.recipeStore.$reset();
+      } else if (to.params?.slug) {
+        vm.populateInputsWithExistingRecipe();
       }
-    },
+    });
   },
   created() {
-    if (this.$route.params.slug) {
-      this.populateInputsWithExistingRecipe();
-    }
-
     this.$axios
       .get(apis.dropdownOptions)
       .then((response) => {
@@ -453,6 +445,7 @@ export default {
         this.cuisines = response.data.cuisines.map((c) => ({ label: c.label, value: c.label }));
         this.customTimeTypes = response.data.customTimeTypes.map((ct) => ({ label: ct.label, value: ct.label }));
         this.tags = response.data.tags.map((t) => ({ label: t.label, value: t.label }));
+        this.units = response.data.units.map((u) => ({ label: u.label, value: u.label }));
       })
       .catch((error) => console.log(error));
 
@@ -478,12 +471,7 @@ export default {
           object({
             ingredients: array().of(
               object({
-                amount: number()
-                  .transform(emptyToUndefined)
-                  .label("Amount")
-                  .required(RequiredMessage)
-                  .typeError(NumericMessage)
-                  .positive(PositiveMessage),
+                amount: number().transform(emptyToUndefined).label("Amount").typeError(NumericMessage).positive(PositiveMessage),
                 unit: string().transform(nullToUndefined),
                 name: string().label("Ingredient").trim().required(RequiredMessage),
                 note: string(),

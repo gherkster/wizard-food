@@ -103,6 +103,19 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Units",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Label = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Units", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -336,8 +349,8 @@ namespace API.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Amount = table.Column<decimal>(type: "TEXT", nullable: false),
-                    Unit = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
+                    Amount = table.Column<decimal>(type: "TEXT", nullable: true),
+                    UnitId = table.Column<int>(type: "INTEGER", nullable: true),
                     Name = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
                     Note = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
                     IngredientGroupId = table.Column<int>(type: "INTEGER", nullable: false)
@@ -351,6 +364,11 @@ namespace API.Migrations
                         principalTable: "DbIngredientGroup",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DbIngredient_Units_UnitId",
+                        column: x => x.UnitId,
+                        principalTable: "Units",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -449,6 +467,11 @@ namespace API.Migrations
                 column: "Name");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DbIngredient_UnitId",
+                table: "DbIngredient",
+                column: "UnitId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DbIngredientGroup_DbRecipeId",
                 table: "DbIngredientGroup",
                 column: "DbRecipeId");
@@ -494,6 +517,12 @@ namespace API.Migrations
                 table: "Tags",
                 column: "Label",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Units_Label",
+                table: "Units",
+                column: "Label",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -537,6 +566,9 @@ namespace API.Migrations
 
             migrationBuilder.DropTable(
                 name: "DbIngredientGroup");
+
+            migrationBuilder.DropTable(
+                name: "Units");
 
             migrationBuilder.DropTable(
                 name: "DbInstructionGroup");

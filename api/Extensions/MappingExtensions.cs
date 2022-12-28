@@ -14,8 +14,10 @@ public static class MappingExtensions
             Note = dbRecipe.Note,
             IngredientGroups = dbRecipe.IngredientGroups
                 .Select(ig => new IngredientGroup() { Name = ig.Name, Ingredients = ig.Ingredients
-                    .Select(i => new Ingredient(i.Amount, i.Unit, i.Name) 
+                    .Select(i => new Ingredient(i.Name)
                     {
+                        Amount = i.Amount,
+                        Unit = i.Unit?.Label ?? string.Empty,
                         Note = i.Note
                     }).ToList()
                 }).ToList(),
@@ -53,7 +55,7 @@ public static class MappingExtensions
                 Days = ct.CookingTime.Days
             }).ToList(),
 
-            Tags = dbRecipe.Tags.Select(t => t.Label).ToList(),
+            Tags = dbRecipe.Tags.Select(t => t.Label).OrderBy(t => t).ToList(),
             Slug = dbRecipe.Slug
         };
 
@@ -72,7 +74,12 @@ public static class MappingExtensions
                 {
                     Name = ig.Name,
                     Ingredients = ig.Ingredients
-                        .Select(i => new DbIngredient(i.Unit, i.Amount, i.Name, i.Note))
+                        .Select(i => new DbIngredient(i.Name)
+                        {
+                            Amount = i.Amount,
+                            Unit = i.Unit != string.Empty ? new DbUnit(i.Unit) : null,
+                            Note = i.Note
+                        })
                         .ToList()
                 }).ToList(),
             InstructionGroups = recipe.InstructionGroups.Select(ig => new DbInstructionGroup()

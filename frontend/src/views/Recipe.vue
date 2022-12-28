@@ -14,7 +14,6 @@
             <h1>{{ recipe.title }}</h1>
             <n-button v-if="userStore.isAuthenticated" @click="goToEditRecipe">Edit</n-button>
             <!-- Rating inline with title? Could wrap underneath on mobile-->
-            <!-- kJ? -->
           </x-row>
           <x-row>
             <div class="recipe__tags">
@@ -25,23 +24,31 @@
           </x-row>
           <x-row>
             <div class="recipe__duration">
-              <span v-for="d in allDurations" :key="d.name">{{ d.name }} {{ d.duration }}</span>
+              <span v-if="totalDuration">{{ totalDuration }}</span>
+              <span v-for="d in allDurations" :key="d.name"
+                >{{ d.name }} <b>{{ d.duration }}</b></span
+              >
             </div>
           </x-row>
         </x-column>
       </x-row>
       <x-row>
         <x-column col-lg-5>
-          <h3>Ingredients {{ recipe.servings }}</h3>
+          <div class="recipe__ingredients">
+            <h3>Ingredients</h3>
+            <div class="recipe__multiplier">
+              <font-awesome-icon icon="minus" :class="{ disabled: ingredientMultiplier <= 1 }" @click="decreaseMultiplier" />
+              <span>{{ ingredientMultiplier }}</span>
+              <font-awesome-icon icon="plus" @click="increaseMultiplier" />
+            </div>
+          </div>
           <div v-for="ingredientSection in recipe.ingredientGroups" :key="JSON.stringify(ingredientSection)" class="list-section">
             <span v-if="ingredientSection.name">
               <b>{{ ingredientSection.name }}</b>
             </span>
             <ul>
               <li v-for="ingredient in ingredientSection.ingredients" :key="JSON.stringify(ingredient)">
-                <span>{{ adjustIngredientByMultiplier(ingredient.amount) }}</span>
-                <span>{{ ingredient.unit }}&nbsp;</span>
-                <span> {{ ingredient.name }}</span>
+                <span>{{ adjustIngredientByMultiplier(ingredient.amount) }} {{ ingredient.unit }} {{ ingredient.name }}</span>
                 <span v-if="ingredient.note" class="text-muted">&nbsp;{{ ingredient.note }}</span>
               </li>
             </ul>
@@ -99,7 +106,7 @@ export default {
       .get(apis.recipes + this.$route.params.slug)
       .then((response) => {
         this.recipe = response.data;
-        this.ingredientMultiplier = this.recipe.servings;
+        this.ingredientMultiplier = this.recipe.servings > 0 ? this.recipe.servings : 1;
       })
       .catch((error) => {
         console.log(error);
@@ -149,12 +156,21 @@ export default {
       return durations.concat(this.customDurations);
     },
     totalDuration: function () {
-      return formatDurations(this.allDurations);
+      return formatDurations(this.allDurations.map((ad) => ad.duration));
     },
   },
   methods: {
     adjustIngredientByMultiplier(amount) {
-      return amount * (this.ingredientMultiplier / this.recipe.servings);
+      const numberOfServings = this.recipe.servings > 0 ? this.recipe.servings : 1;
+      return amount * (this.ingredientMultiplier / numberOfServings);
+    },
+    increaseMultiplier() {
+      this.ingredientMultiplier++;
+    },
+    decreaseMultiplier() {
+      if (this.ingredientMultiplier > 1) {
+        this.ingredientMultiplier--;
+      }
     },
     capitalizeFirstCharacter(string) {
       return capitalizeFirstChar(string);
