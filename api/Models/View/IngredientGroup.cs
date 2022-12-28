@@ -8,15 +8,13 @@ public class IngredientGroup
 
 public class Ingredient
 {
-    public Ingredient(decimal amount, string unit, string name)
+    public Ingredient(string name)
     {
-        Amount = amount;
-        Unit = unit;
         Name = name;
     }
 
-    public decimal Amount { get; init; }
-    public string Unit { get; init; }
+    public decimal? Amount { get; init; } 
+    public string Unit { get; init; } = string.Empty;
     public string Name { get; }
     public string Note { get; init; } = string.Empty;
 }

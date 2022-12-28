@@ -106,7 +106,7 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("Amount")
+                    b.Property<decimal?>("Amount")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("IngredientGroupId")
@@ -122,16 +122,16 @@ namespace API.Migrations
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
-                    b.Property<string>("Unit")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
+                    b.Property<int?>("UnitId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("IngredientGroupId");
 
                     b.HasIndex("Name");
+
+                    b.HasIndex("UnitId");
 
                     b.ToTable("DbIngredient");
                 });
@@ -267,6 +267,25 @@ namespace API.Migrations
                         .IsUnique();
 
                     b.ToTable("Tags");
+                });
+
+            modelBuilder.Entity("API.Models.Database.DbUnit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Label")
+                        .IsUnique();
+
+                    b.ToTable("Units");
                 });
 
             modelBuilder.Entity("DbRecipeDbTag", b =>
@@ -532,7 +551,13 @@ namespace API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("API.Models.Database.DbUnit", "Unit")
+                        .WithMany()
+                        .HasForeignKey("UnitId");
+
                     b.Navigation("IngredientGroup");
+
+                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("API.Models.Database.DbIngredientGroup", b =>

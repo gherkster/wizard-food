@@ -1,5 +1,5 @@
 // COLOURS //
-$colour-bg: #F9F9F9;
+$colour-bg: #F5F5F5;
 $colour-bg-light: #e6e6e6;
 $colour-bg-grey-light: #fafafa;
 $colour-font-muted: #7d7d7d;
@@ -40,9 +40,7 @@ $font-sizes: (
   h4: (font-size-min: 18, font-size-max: 24),
   h5: (font-size-min: 16, font-size-max: 20),
   h6: (font-size-min: 16, font-size-max: 20),
-  span: (font-size-min: 16, font-size-max: 16),
-  p: (font-size-min: 16, font-size-max: 16),
-  input: (font-size-min: 16, font-size-max: 16),
+  body: (font-size-min: 16, font-size-max: 16),
   small: (font-size-min: 12, font-size-max: 12)
 );
 

@@ -91,6 +91,14 @@ public class RecipesController : ControllerBase
         
         newDbRecipe.Category = dbOptions.Categories.FirstOrDefault(c => c.Label == newDbRecipe.Category.Label) ?? newDbRecipe.Category;
         newDbRecipe.Cuisine = dbOptions.Cuisines.FirstOrDefault(c => c.Label == newDbRecipe.Cuisine.Label) ?? newDbRecipe.Cuisine;
+
+        foreach (var ingredientGroup in newDbRecipe.IngredientGroups)
+        {
+            foreach (var ingredient in ingredientGroup.Ingredients.Where(i => i.Unit != null))
+            {
+                ingredient.Unit = dbOptions.Units.FirstOrDefault(u => u.Label == ingredient.Unit!.Label) ?? ingredient.Unit;
+            }
+        }
         
         foreach (var customTime in newDbRecipe.CustomTimes)
         {
@@ -125,7 +133,7 @@ public class RecipesController : ControllerBase
         var uniqueLabels = await _db.GetDropdownOptionsAsync();
 
         // Handle scenario when category is changed to an existing database label
-        if (dbRecipe.Category.Label.IsIn(uniqueLabels.Categories.Select(c => c.Label)))
+        if (updatedRecipe.Category.Label.IsIn(uniqueLabels.Categories.Select(c => c.Label)))
         {
             dbRecipe.Category = uniqueLabels.Categories.First(c => c.Label == updatedRecipe.Category.Label);
         }
@@ -136,13 +144,21 @@ public class RecipesController : ControllerBase
         }
 
         // Same as above, test for existing database values and new values
-        if (dbRecipe.Cuisine.Label.IsIn(uniqueLabels.Cuisines.Select(c => c.Label)))
+        if (updatedRecipe.Cuisine.Label.IsIn(uniqueLabels.Cuisines.Select(c => c.Label)))
         {
             dbRecipe.Cuisine = uniqueLabels.Cuisines.First(c => c.Label == updatedRecipe.Cuisine.Label);
         }
         else if (dbRecipe.Cuisine.Label != updatedRecipe.Cuisine.Label)
         {
             dbRecipe.Cuisine = updatedRecipe.Cuisine;
+        }
+
+        foreach (var ingredientGroup in updatedRecipe.IngredientGroups)
+        {
+            foreach (var ingredient in ingredientGroup.Ingredients.Where(i => i.Unit != null))
+            {
+                ingredient.Unit = uniqueLabels.Units.FirstOrDefault(u => u.Label == ingredient.Unit!.Label) ?? ingredient.Unit;
+            }
         }
 
         // Clear out existing custom times and tags and add the updated values to the database,
