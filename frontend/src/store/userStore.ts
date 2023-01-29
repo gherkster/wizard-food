@@ -1,15 +1,16 @@
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { computed } from "vue";
+import { useStorage } from "@vueuse/core";
 
 export const useUserStore = defineStore("user", () => {
-  const wasAuthenticatedAtLastCheck = ref(false);
-  const lastUpdateTime = ref(new Date(0));
-  const milliSecondsSinceLastAuthCheck = ref(Number.MAX_VALUE);
+  const wasAuthenticatedAtLastCheck = useStorage("userStore-wasAuthenticatedAtLastCheck", false);
+  const lastUpdateTime = useStorage("userStore-lastUpdateTime", new Date(0));
+  const milliSecondsSinceLastAuthCheck = useStorage("userStore-milliSecondsSinceLastAuthCheck", Number.MAX_VALUE);
 
   setInterval(() => {
     // Recalculate the milliseconds since the last API call
     // which confirmed whether the user was authenticated or unauthenticated
-    return (milliSecondsSinceLastAuthCheck.value = Math.abs(new Date().getTime() - lastUpdateTime.value.getTime()));
+    milliSecondsSinceLastAuthCheck.value = Math.abs(new Date().getTime() - lastUpdateTime.value.getTime());
   }, 5000);
 
   function resetLastUpdateTime() {
