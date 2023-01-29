@@ -69,7 +69,7 @@ export default {
             { default: () => "New Recipe" }
           ),
         key: "new-recipe",
-      }
+      },
     };
   },
   computed: {
