@@ -2,7 +2,6 @@
 import axios from "axios";
 import router from "../router";
 import { useUserStore } from "@/store/userStore";
-import { App } from "vue";
 
 axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 axios.interceptors.response.use(
@@ -25,8 +24,6 @@ axios.interceptors.response.use(
   }
 );
 
-export default {
-  install: (app: App<Element>) => {
-    app.config.globalProperties.$axios = axios;
-  },
-};
+export function useAxios() {
+  return axios;
+}
