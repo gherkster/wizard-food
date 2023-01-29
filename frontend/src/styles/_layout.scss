@@ -20,12 +20,21 @@
   flex-wrap: wrap;
   width: 100%;
   column-gap: v.$cols-horizontal-gap;
-  @include m.spacing("mb", "sm");
+  @include m.spacing("mb", "xs");
 }
+
+// Hide any mobile-specific components on larger screen sizes
+@include m.breakpoint("md") {
+  .mobile {
+    display: none;
+  }
+}
+
+@include m.create-cols(null, v.$grid-cols-count);
 
 @each $breakpoint-name, $width in v.$breakpoints {
   @media screen and (min-width: $width * 1px) {
     @include m.create-cols($breakpoint-name, v.$grid-cols-count);
   }
 }
-@include m.create-cols(null, v.$grid-cols-count);
+

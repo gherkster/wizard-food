@@ -41,13 +41,12 @@
 
 @mixin breakpoint($bp: "md", $type: "min") {
   @if $type == "min" {
-    $something: map-get(v.$breakpoints, $bp);
     @media (min-width: map-get(v.$breakpoints, $bp) * 1px) {
       @content;
     }
   }
   @else {
-    @media (max-width: map-get(v.$breakpoints, $bp)) {
+    @media (max-width: map-get(v.$breakpoints, $bp) * 1px) {
       @content;
     }
   }
