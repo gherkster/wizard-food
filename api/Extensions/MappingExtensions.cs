@@ -62,7 +62,7 @@ public static class MappingExtensions
         return recipe;
     }
 
-    public static DbRecipe AsDatabaseModel(this Recipe recipe, int id = int.MinValue)
+    public static DbRecipe AsDatabaseModel(this Recipe recipe, int id = 0)
     {
         var dbRecipe = new DbRecipe()
         {
