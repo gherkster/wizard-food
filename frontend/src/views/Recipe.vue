@@ -34,37 +34,39 @@
       </x-row>
       <x-row>
         <x-column col-lg-5>
-          <div class="recipe__ingredients">
+          <div v-if="recipe.ingredientGroups.length > 0" class="recipe__ingredients">
             <h3>Ingredients</h3>
             <div class="recipe__multiplier">
               <font-awesome-icon icon="minus" :class="{ disabled: ingredientMultiplier <= 1 }" @click="decreaseMultiplier" />
               <span>{{ ingredientMultiplier }}</span>
               <font-awesome-icon icon="plus" @click="increaseMultiplier" />
             </div>
-          </div>
-          <div v-for="ingredientSection in recipe.ingredientGroups" :key="JSON.stringify(ingredientSection)" class="list-section">
-            <span v-if="ingredientSection.name">
-              <b>{{ ingredientSection.name }}</b>
-            </span>
-            <ul>
-              <li v-for="ingredient in ingredientSection.ingredients" :key="JSON.stringify(ingredient)">
-                <span>{{ adjustIngredientByMultiplier(ingredient.amount) }} {{ ingredient.unit }} {{ ingredient.name }}</span>
-                <span v-if="ingredient.note" class="text-muted">&nbsp;{{ ingredient.note }}</span>
-              </li>
-            </ul>
+            <div v-for="ingredientSection in recipe.ingredientGroups" :key="JSON.stringify(ingredientSection)" class="list-section">
+              <span v-if="ingredientSection.name">
+                <b>{{ ingredientSection.name }}</b>
+              </span>
+              <ul>
+                <li v-for="ingredient in ingredientSection.ingredients" :key="JSON.stringify(ingredient)">
+                  <span>{{ adjustIngredientByMultiplier(ingredient.amount) }} {{ ingredient.unit }} {{ ingredient.name }}</span>
+                  <span v-if="ingredient.note" class="text-muted">&nbsp;{{ ingredient.note }}</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </x-column>
         <x-column col-lg-7>
-          <h3>Instructions</h3>
-          <div v-for="instructionSection in recipe.instructionGroups" :key="JSON.stringify(instructionSection)" class="list-section">
-            <span v-if="instructionSection.name">
-              <b>{{ instructionSection.name }}</b>
-            </span>
-            <ol>
-              <li v-for="instruction in instructionSection.instructions" :key="JSON.stringify(instruction)">
-                <span>{{ instruction.label }}</span>
-              </li>
-            </ol>
+          <div v-if="recipe.instructionGroups.length > 0">
+            <h3>Instructions</h3>
+            <div v-for="instructionSection in recipe.instructionGroups" :key="JSON.stringify(instructionSection)" class="list-section">
+              <span v-if="instructionSection.name">
+                <b>{{ instructionSection.name }}</b>
+              </span>
+              <ol>
+                <li v-for="instruction in instructionSection.instructions" :key="JSON.stringify(instruction)">
+                  <span>{{ instruction.label }}</span>
+                </li>
+              </ol>
+            </div>
           </div>
         </x-column>
       </x-row>
@@ -84,14 +86,15 @@ import { capitalizeFirstChar, formatDurations } from "@/scripts/utility";
 import { XRow, XColumn } from "@/components";
 import apis from "@/constants/apis";
 import { useUserStore } from "@/store/userStore";
+import { useAxios } from "@/composables";
 
 export default {
   name: "Recipe",
   components: { XRow, XColumn, NButton, NTag },
   setup() {
-    const userStore = useUserStore();
     return {
-      userStore,
+      userStore: useUserStore(),
+      axios: useAxios(),
     };
   },
   data: () => ({
@@ -102,7 +105,7 @@ export default {
     isLoading: true,
   }),
   async created() {
-    await this.$axios
+    await this.axios
       .get(apis.recipes + this.$route.params.slug)
       .then((response) => {
         this.recipe = response.data;
