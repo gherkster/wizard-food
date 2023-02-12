@@ -58,6 +58,7 @@ app.UseEndpoints(endpoints =>
                 SourcePath = "../frontend", 
                 StartupTimeout = TimeSpan.FromSeconds(60)
             },
+            // The name of the script in package.json that launches the vue vite server
             npmScript: app.Environment.IsDevelopment() ? "dev" : null,
             regex: "ready in .+ ms",
             port: 8080,
