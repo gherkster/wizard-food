@@ -5,22 +5,26 @@
     :show-feedback="showError"
     :required="required"
     :feedback="validationMessage"
+    :size="size"
     :validation-status="validationStatus"
   >
     <n-input-group>
-      <n-input-group-label v-if="prefix">{{ prefix }}</n-input-group-label>
+      <n-input-group-label :size="size" v-if="prefix">{{ prefix }}</n-input-group-label>
       <n-input
         ref="input"
         :type="type"
         :value="value"
         :name="path"
         :autosize="autosize"
+        :size="size"
+        :input-props="inputProps"
         placeholder=""
         @input="input"
         @focus="focus"
         @blur="blur"
+        @keyup="$emit('keyup', $event)"
       />
-      <n-input-group-label v-if="suffix">{{ suffix }}</n-input-group-label>
+      <n-input-group-label v-if="suffix" :size="size">{{ suffix }}</n-input-group-label>
       <slot name="suffix" />
     </n-input-group>
   </n-form-item>
@@ -75,6 +79,20 @@ export default {
       required: false,
       default: "",
     },
+    size: {
+      type: String,
+      required: false,
+      default: "large",
+    },
+    inputMode: {
+      type: String,
+      required: false,
+      default: "text",
+      validator(val) {
+        // Disallow decimal mode because of poor user experience on form preventing jumping to next input, numeric can be used equivalently
+        return ["none", "text", "numeric", "tel", "search", "email", "url"].includes(val);
+      },
+    },
     showLabel: {
       type: Boolean,
       required: false,
@@ -92,6 +110,11 @@ export default {
     },
     validationStatus() {
       return this.errors.length > 0 ? "error" : "";
+    },
+    inputProps() {
+      return {
+        inputMode: this.inputMode,
+      };
     },
   },
   methods: {
