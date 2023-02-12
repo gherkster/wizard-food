@@ -2,9 +2,9 @@
   <x-row>
     <x-column col-3>
       <x-input
-        :label="label"
+        label="Minutes"
         path="minutes"
-        suffix="mins"
+        input-mode="numeric"
         :value="minutes"
         :errors="v$.minutes.$errors"
         @input="handleInput"
@@ -12,10 +12,26 @@
       />
     </x-column>
     <x-column col-3>
-      <x-input label="" path="hours" suffix="hours" :value="hours" :errors="v$.hours.$errors" @input="handleInput" @blur="handleBlur" />
+      <x-input
+        label="Hours"
+        path="hours"
+        input-mode="numeric"
+        :value="hours"
+        :errors="v$.hours.$errors"
+        @input="handleInput"
+        @blur="handleBlur"
+      />
     </x-column>
     <x-column col-3>
-      <x-input label="" path="days" suffix="days" :value="days" :errors="v$.days.$errors" @input="handleInput" @blur="handleBlur" />
+      <x-input
+        label="Days"
+        path="days"
+        input-mode="numeric"
+        :value="days"
+        :errors="v$.days.$errors"
+        @input="handleInput"
+        @blur="handleBlur"
+      />
     </x-column>
     <x-column col-3>
       <x-select
@@ -129,3 +145,13 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+@use "@/styles/_mixins" as m;
+.row {
+  @include m.spacing("gx", "xs");
+  > div {
+    flex: 1 1 0;
+  }
+}
+</style>

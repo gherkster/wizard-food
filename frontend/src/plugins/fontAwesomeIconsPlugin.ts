@@ -9,15 +9,34 @@ import {
   faXmark,
   faSpinner,
   faPlus,
+  faPen,
   faMinus,
+  faChevronLeft,
+  faChevronRight,
   faChevronDown,
+  faTrash,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { faStar as farStar } from "@fortawesome/free-regular-svg-icons";
 
 export default {
   install: (app: App<Element>) => {
-    library.add(faCheck, faArrowRotateRight, fasStar, farStar, faXmark, faSpinner, faPlus, faMinus, faChevronDown, faUser);
+    library.add(
+      faCheck,
+      faArrowRotateRight,
+      fasStar,
+      farStar,
+      faXmark,
+      faSpinner,
+      faPlus,
+      faPen,
+      faMinus,
+      faChevronLeft,
+      faChevronRight,
+      faChevronDown,
+      faTrash,
+      faUser
+    );
     app.component("font-awesome-icon", FontAwesomeIcon);
   },
 };

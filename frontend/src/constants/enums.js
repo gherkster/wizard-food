@@ -7,7 +7,8 @@ export const Severity = Object.freeze({
 
 export const recipeFormSteps = Object.freeze({
   summary: "summary",
-  ingredientsAndInstructions: "ingredientsAndInstructions",
+  ingredients: "ingredients",
+  instructions: "instructions",
   time: "time",
   metadata: "metadata",
 });
