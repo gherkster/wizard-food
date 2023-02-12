@@ -51,3 +51,15 @@
     }
   }
 }
+
+@mixin small-device-only() {
+  @media (min-width: map-get(v.$breakpoints, md) * 1px) {
+    display: none;
+  }
+}
+
+@mixin large-device-only() {
+  @media (max-width: map-get(v.$breakpoints, md) * 1px) {
+    display: none;
+  }
+}

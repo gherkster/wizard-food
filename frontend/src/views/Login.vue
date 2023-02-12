@@ -9,6 +9,7 @@
           :errors="v$.username.$errors"
           @input="handleUsernameInput"
           @blur="v$.username.$touch"
+          @keyup.enter="submitLogin"
         />
         <x-input
           label="Password"
@@ -17,6 +18,7 @@
           :errors="v$.password.$errors"
           @input="handlePasswordInput"
           @blur="v$.password.$touch"
+          @keyup.enter="submitLogin"
         />
         <n-button type="primary" block :disabled="v$.$errors.length > 0" @click="submitLogin">Login</n-button>
         <n-button type="secondary" block @click="submitLogout">Logout</n-button>

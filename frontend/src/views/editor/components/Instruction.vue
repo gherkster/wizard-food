@@ -1,16 +1,14 @@
 <template>
   <x-row class="list-item instruction">
-    <x-column col-11>
+    <x-column col-12 col-md-11>
       <x-input
         ref="label"
         path="label"
         label="Instruction"
         type="textarea"
         :prefix="prefix"
-        required
         :autosize="{ minRows: 1, maxRows: 6 }"
         :value="label"
-        :errors="v$.label.$errors"
         :show-label="showLabels"
         @input="handleInput"
         @blur="handleBlur"
@@ -22,9 +20,6 @@
 
 <script>
 import { XInput, XRow, XColumn } from "@/components";
-import { NFormItem } from "naive-ui";
-import { useVuelidate } from "@vuelidate/core";
-import { required } from "@vuelidate/validators";
 
 export default {
   name: "Instruction",
@@ -33,7 +28,6 @@ export default {
     XInput,
     XRow,
     XColumn,
-    NFormItem,
   },
   props: {
     prefix: {
@@ -50,31 +44,19 @@ export default {
       default: true,
     },
   },
-  setup() {
-    return {
-      v$: useVuelidate(),
-    };
-  },
-  validations() {
-    return {
-      label: {
-        required,
-      },
-    };
-  },
   methods: {
     handleInput(event) {
       this.$emit("input", event);
-      if (this.v$[event.path]) {
-        this.v$[event.path].$touch();
-      }
     },
     handleBlur(event) {
       this.$emit("blur", event);
-      if (this.v$[event.path]) {
-        this.v$[event.path].$touch();
-      }
     },
   },
 };
 </script>
+
+<style scoped lang="scss">
+.instruction {
+  margin: unset;
+}
+</style>

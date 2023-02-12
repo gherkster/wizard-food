@@ -1,4 +1,6 @@
 // NaiveUI Overrides //
+@use "mixins" as m;
+@use "variables" as v;
 
 .ghost {
   opacity: 0.45;
@@ -32,4 +34,12 @@
 
 .n-form-item .n-form-item-blank {
   position: unset;
+}
+
+.n-button {
+  min-width: v.$min-width-button;
+}
+
+.n-progress.n-progress--circle {
+  width: 100px;
 }
