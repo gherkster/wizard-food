@@ -16,9 +16,12 @@
       :multiple="multiple"
       placeholder=""
       :clearable="clearable"
+      :ignore-composition="false"
+      show-on-focus
       @focus="handleFocus"
       @update:value="handleUpdate"
       @blur="handleBlur"
+      @create="onSearch"
     />
   </n-form-item>
 </template>
@@ -88,6 +91,11 @@ export default {
       default: true,
     },
   },
+  data() {
+    return {
+      currentSearchTerm: "",
+    };
+  },
   computed: {
     validationMessage() {
       return this.errors.length > 0 ? this.errors[0].$message : null;
@@ -97,6 +105,24 @@ export default {
     },
   },
   methods: {
+    /**
+     * Set currentSearchTerm to the current text a user is entering before confirming a new tag
+     *
+     * This allows us to create a new tag with the currentSearchTerm value if the user clicks off the tag box,
+     * which is the expected behaviour of this input field.
+     *
+     * It also resolves mobile browsers not creating the tag and skipping the input
+     * when the "enter" button is clicked (renders as a next button)
+     * @param searchTerm
+     * @returns {{label, value}}
+     */
+    onSearch(searchTerm) {
+      this.currentSearchTerm = searchTerm;
+      return {
+        label: searchTerm,
+        value: searchTerm,
+      };
+    },
     handleFocus() {
       this.$emit("focus", {
         path: this.path,
@@ -110,13 +136,26 @@ export default {
       });
     },
     handleBlur() {
+      let emittedValue = this.value;
+      if (this.currentSearchTerm) {
+        if (this.multiple) {
+          // Mimic the native functionality by adding a new tag if it doesn't exist already
+          if (!this.value.includes(this.currentSearchTerm)) {
+            // If a multiple tag based select dropdown box create a new tag from the pending search term for better usability
+            emittedValue.push(this.currentSearchTerm);
+          }
+        } else {
+          // If a normal select dropdown box set the value of the field to the pending search term for better usability
+          emittedValue = this.currentSearchTerm;
+        }
+        this.currentSearchTerm = "";
+      }
       this.$emit("blur", {
         path: this.path,
-        value: this.value,
+        value: emittedValue,
       });
     },
     selectSelf() {
-      console.log(this.$refs.input);
       this.$refs.input.handleTriggerClick();
     },
   },
