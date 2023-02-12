@@ -3,37 +3,57 @@
     <div class="content editor">
       <x-row class="editor__header">
         <h2>{{ isEditingExistingRecipe ? "Edit Recipe" : "New Recipe" }}</h2>
-        <n-button v-if="isEditingExistingRecipe" class="editor__delete" type="error" @click="confirmDelete">Delete</n-button>
+        <x-button v-if="isEditingExistingRecipe" class="editor__delete" icon="fa-trash" type="error" @click="confirmDelete"
+          >Delete</x-button
+        >
         <div class="editor__controls">
-          <n-button type="primary" ghost v-if="currentStep !== steps.summary" @click="goToPreviousStep">Previous</n-button>
-          <n-button type="primary" :disabled="currentStepContainsErrors" @click="goToNextStep">{{
-            submitButtonLabel
-          }}</n-button>
+          <x-button v-if="currentStep !== steps.summary" type="primary" size="large" icon="fa-chevron-left" ghost @click="goToPreviousStep"
+            >Back</x-button
+          >
+          <x-button
+            type="primary"
+            size="large"
+            :icon="nextButtonIcon"
+            icon-position="end"
+            :disabled="currentStepContainsErrors"
+            @click="goToNextStep"
+            >{{ nextButtonLabel }}
+          </x-button>
         </div>
       </x-row>
       <x-row class="editor__body">
         <!-- Stepper Header -->
         <x-column col-12 col-lg-4>
-          <n-steps vertical :current="currentStepIndex + 1">
-            <n-step title="Summary" />
-            <n-step title="Ingredients & Instructions" />
-            <n-step title="Time (optional)" />
-            <n-step title="Metadata" />
-          </n-steps>
+          <div class="editor__progress">
+            <n-steps vertical :current="currentStepIndex + 1">
+              <n-step title="Summary" />
+              <n-step title="Ingredients" />
+              <n-step title="Instructions" />
+              <n-step title="Times" />
+              <n-step title="Metadata" />
+            </n-steps>
+          </div>
+          <div class="editor__progress mobile">
+            <n-progress type="circle" :percentage="currentProgressPercentage" :stroke-width="12">
+              <b>{{ currentProgressLabel }}</b>
+            </n-progress>
+            <div class="editor__progress-label">
+              <h3>{{ currentStepTitle }}</h3>
+              <span>Next: {{ nextStepTitle }}</span>
+            </div>
+          </div>
         </x-column>
         <x-column col-12 col-lg-8>
-          <!-- Stepper Step 1: Recipe Summary -->
-          <editor-summary v-if="currentStep === steps.summary" :ref="steps.summary" />
-          <!-- Stepper Step 2: Recipe Ingredients / Instructions -->
-          <editor-ingredients-and-instructions
-            v-else-if="currentStep === steps.ingredientsAndInstructions"
-            :ref="steps.ingredientsAndInstructions"
-            :units="units"
-          />
-          <!-- Stepper Step 3: Recipe Time -->
-          <editor-time v-else-if="currentStep === steps.time" :custom-time-types="customTimeTypes" :ref="steps.time" />
-          <!-- Stepper Step 4: Recipe Metadata -->
-          <editor-metadata
+          <!-- editor Step 1: Recipe Summary -->
+          <edit-intro v-if="currentStep === steps.summary" :ref="steps.summary" />
+          <!-- editor Step 2: Recipe Ingredients -->
+          <edit-ingredients v-else-if="currentStep === steps.ingredients" :ref="steps.ingredients" :units="units" />
+          <!-- editor Step 3: Recipe Ingredients -->
+          <edit-instructions v-else-if="currentStep === steps.instructions" :ref="steps.instructions" />
+          <!-- editor Step 4: Recipe Times -->
+          <edit-times v-else-if="currentStep === steps.time" :custom-time-types="customTimeTypes" :ref="steps.time" />
+          <!-- editor Step 5: Recipe Metadata -->
+          <edit-metadata
             v-else-if="currentStep === steps.metadata"
             :categories="categories"
             :cuisines="cuisines"
@@ -42,41 +62,50 @@
           />
         </x-column>
       </x-row>
-      <x-row class="mobile">
-        <n-button type="primary" ghost v-if="currentStep !== steps.summary" @click="goToPreviousStep">Previous</n-button>
-        <n-button type="primary" :disabled="currentStepContainsErrors" @click="goToNextStep">{{ submitButtonLabel }}</n-button>
+      <x-row class="editor__controls mobile">
+        <x-button v-if="currentStep !== steps.summary" type="primary" size="large" icon="fa-chevron-left" ghost @click="goToPreviousStep"
+          >Back</x-button
+        >
+        <x-button
+          type="primary"
+          size="large"
+          :icon="nextButtonIcon"
+          icon-position="end"
+          :disabled="currentStepContainsErrors"
+          @click="goToNextStep"
+          >{{ nextButtonLabel }}
+        </x-button>
       </x-row>
     </div>
   </div>
 </template>
 
 <script>
-import { NButton, NSteps, NStep, useDialog } from "naive-ui";
+import { NSteps, NStep, NProgress, useDialog } from "naive-ui";
 import { mapApiToRecipeStore, mapRecipeStoreToApi } from "@/scripts/mapping";
 import { recipeFormSteps } from "@/constants/enums";
 import { useRecipeStore } from "@/store/recipeStore";
 import { useVuelidate } from "@vuelidate/core";
 import { useAlertStore } from "@/store/alertStore";
-import { XRow, XColumn } from "@/components";
+import { XRow, XColumn, XButton } from "@/components";
+import { EditIntro, EditIngredients, EditInstructions, EditTimes, EditMetadata } from "@/views/editor/steps";
 import apis from "@/constants/apis";
-import EditorTime from "@/views/Editor/EditorTime.vue";
-import EditorSummary from "@/views/Editor/EditorSummary.vue";
-import EditorMetadata from "@/views/Editor/EditorMetadata.vue";
 import { useAxios } from "@/composables";
-import EditorIngredientsAndInstructions from "@/views/Editor/EditorIngredientsAndInstructions.vue";
 
 export default {
   name: "Editor",
   components: {
     XColumn,
-    EditorIngredientsAndInstructions,
-    EditorTime,
     XRow,
     NSteps,
     NStep,
-    NButton,
-    EditorSummary,
-    EditorMetadata,
+    NProgress,
+    XButton,
+    EditIntro,
+    EditIngredients,
+    EditInstructions,
+    EditTimes,
+    EditMetadata,
   },
   setup() {
     const recipeStore = useRecipeStore();
@@ -90,18 +119,18 @@ export default {
       axios,
       steps: recipeFormSteps,
       dialog,
-      v$: useVuelidate(),
+      v$: useVuelidate({ $lazy: true }),
     };
   },
   data: () => ({
-    timeOptions: ["minutes", "hours", "days"],
-    customTimeTypes: [],
-    categories: [],
-    cuisines: [],
-    tags: [],
-    units: [],
     currentStep: recipeFormSteps.summary,
-    isSlugGenerating: false,
+    stepTitles: {
+      [recipeFormSteps.summary]: "Summary",
+      [recipeFormSteps.ingredients]: "Ingredients",
+      [recipeFormSteps.instructions]: "Instructions",
+      [recipeFormSteps.time]: "Times",
+      [recipeFormSteps.metadata]: "Metadata",
+    },
     isSubmitting: false,
     existingRecipeId: null,
   }),
@@ -135,17 +164,56 @@ export default {
     currentStepIndex() {
       return Object.keys(this.steps).indexOf(this.currentStep);
     },
+    currentProgressPercentage() {
+      if (this.isSubmitting) {
+        return 100;
+      } else {
+        return this.currentStepIndex * 20;
+      }
+    },
+    currentProgressLabel() {
+      return `${this.currentStepIndex + 1} of ${Object.keys(recipeFormSteps).length}`;
+    },
     currentStepContainsErrors() {
       return this.v$.$errors.length > 0;
     },
-    isOnLastStep() {
-      return this.currentStep === recipeFormSteps.metadata;
+    currentStepTitle() {
+      return this.stepTitles[this.currentStep];
     },
-    submitButtonLabel() {
-      if (this.isOnLastStep) {
-        return this.isEditingExistingRecipe ? "Update Recipe" : "Create Recipe";
-      } else {
-        return "Next";
+    nextStepTitle() {
+      const stepProperties = Object.values(this.stepTitles);
+      if (this.currentStepIndex < stepProperties.length - 1) {
+        return stepProperties[this.currentStepIndex + 1];
+      }
+      return "";
+    },
+    nextButtonLabel() {
+      switch (this.currentStep) {
+        case recipeFormSteps.summary:
+          return "Add ingredients";
+        case recipeFormSteps.ingredients:
+          return "Add instructions";
+        case recipeFormSteps.instructions:
+          return "Add times";
+        case recipeFormSteps.time:
+          return "Add final details";
+        case recipeFormSteps.metadata:
+          return this.isEditingExistingRecipe ? "Update recipe" : "Create recipe";
+        default:
+          return "";
+      }
+    },
+    nextButtonIcon() {
+      switch (this.currentStep) {
+        case recipeFormSteps.summary:
+        case recipeFormSteps.ingredients:
+        case recipeFormSteps.instructions:
+        case recipeFormSteps.time:
+          return "fa-chevron-right";
+        case recipeFormSteps.metadata:
+          return this.isEditingExistingRecipe ? "fa-pen" : "fa-plus";
+        default:
+          return "";
       }
     },
   },
@@ -230,9 +298,12 @@ export default {
       }
       switch (this.currentStep) {
         case recipeFormSteps.summary:
-          this.currentStep = recipeFormSteps.ingredientsAndInstructions;
+          this.currentStep = recipeFormSteps.ingredients;
           break;
-        case recipeFormSteps.ingredientsAndInstructions:
+        case recipeFormSteps.ingredients:
+          this.currentStep = recipeFormSteps.instructions;
+          break;
+        case recipeFormSteps.instructions:
           this.currentStep = recipeFormSteps.time;
           break;
         case recipeFormSteps.time:
@@ -249,9 +320,12 @@ export default {
           this.currentStep = recipeFormSteps.time;
           break;
         case recipeFormSteps.time:
-          this.currentStep = recipeFormSteps.ingredientsAndInstructions;
+          this.currentStep = recipeFormSteps.instructions;
           break;
-        case recipeFormSteps.ingredientsAndInstructions:
+        case recipeFormSteps.instructions:
+          this.currentStep = recipeFormSteps.ingredients;
+          break;
+        case recipeFormSteps.ingredients:
           this.currentStep = recipeFormSteps.summary;
           break;
       }

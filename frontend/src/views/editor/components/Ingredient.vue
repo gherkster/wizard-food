@@ -5,6 +5,7 @@
         ref="amount"
         path="amount"
         label="Amount"
+        input-mode="numeric"
         :value="amount"
         :errors="v$.amount.$errors"
         :show-label="showLabels"
@@ -49,7 +50,6 @@
 
 <script>
 import { XInput, XSelect, XRow, XColumn } from "@/components";
-import { NFormItem } from "naive-ui";
 import { useVuelidate } from "@vuelidate/core";
 import { required, numeric, minValue } from "@vuelidate/validators";
 
@@ -61,7 +61,6 @@ export default {
     XColumn,
     XInput,
     XSelect,
-    NFormItem,
   },
   props: {
     amount: {

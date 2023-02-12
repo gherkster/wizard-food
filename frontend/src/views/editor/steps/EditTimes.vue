@@ -1,18 +1,18 @@
 <template>
-  <n-form>
+  <n-form size="large">
     <duration
       label="Preparation Time"
       :minutes="recipeStore.preparationTime.minutes"
       :hours="recipeStore.preparationTime.hours"
       :days="recipeStore.preparationTime.days"
-      @input="handleInput"
+      @input="onPreparationTimeInput"
     />
     <duration
       label="Cooking Time"
       :minutes="recipeStore.cookingTime.minutes"
       :hours="recipeStore.cookingTime.hours"
       :days="recipeStore.cookingTime.days"
-      @input="handleInput"
+      @input="onCookingTimeInput"
     />
     <duration
       v-for="(customTime, index) in recipeStore.customTimes"
@@ -25,8 +25,9 @@
       :custom-name="customTime.name"
       :custom-time-types="customTimeTypes"
       @input="handleCustomTimeInputAtIndex($event, index)"
+      @blur="handleCustomTimeInputAtIndex($event, index)"
     />
-    <n-button block @click="addCustomTimeGroup">Add Custom Time</n-button>
+    <n-button type="primary" block tertiary @click="addCustomTimeGroup">Add Custom Time</n-button>
   </n-form>
 </template>
 
@@ -35,10 +36,10 @@ import { useRecipeStore } from "@/store/recipeStore";
 import { useVuelidate } from "@vuelidate/core";
 import { NForm, NButton } from "naive-ui";
 import { uuid } from "vue-uuid";
-import Duration from "@/views/Editor/Duration.vue";
+import Duration from "@/views/editor/components/Duration.vue";
 
 export default {
-  name: "EditorTime",
+  name: "EditTimes",
   components: {
     Duration,
     NForm,
@@ -57,8 +58,11 @@ export default {
     };
   },
   methods: {
-    handleInput({ path, value }) {
-      this.recipeStore.setValueAt(path, value);
+    onPreparationTimeInput({ path, value }) {
+      this.recipeStore.setValueAt(["preparationTime", path], value);
+    },
+    onCookingTimeInput({ path, value }) {
+      this.recipeStore.setValueAt(["cookingTime", path], value);
     },
     async handleCustomTimeInputAtIndex(event, index) {
       this.recipeStore.setValueAt(["customTimes", index, event.path], event.value);
