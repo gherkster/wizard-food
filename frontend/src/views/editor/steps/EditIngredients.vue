@@ -1,6 +1,5 @@
 <template>
   <n-form size="large">
-    <h3>Ingredients</h3>
     <n-card
       v-for="(ingredientGroup, groupIndex) in recipeStore.ingredientGroups"
       segmented
@@ -25,7 +24,8 @@
         </n-button>
       </template>
       <ingredient
-        v-for="(ingredient, ingredientIndex) in ingredientGroup.ingredients" :key="ingredient.uuid"
+        v-for="(ingredient, ingredientIndex) in ingredientGroup.ingredients"
+        :key="ingredient.uuid"
         :amount="ingredient.amount"
         :unit="ingredient.unit"
         :name="ingredient.name"
@@ -33,11 +33,13 @@
         :unit-options="units"
         :ref="`ingredientGroups${groupIndex}`"
         @input="handleIngredientInputAtIndex($event, groupIndex, ingredientIndex)"
+        @blur="handleIngredientInputAtIndex($event, groupIndex, ingredientIndex)"
       >
         <template v-slot:end>
-          <n-button class="list-item__close" :bordered="false" @click="removeIngredientFromGroup(groupIndex, ingredientIndex)">
-            <x-icon fa-icon="fa-xmark" />
-          </n-button>
+          <!-- Force top label to be displayed on first row where other item labels are also displayed to keep aligned -->
+          <n-form-item :label="ingredientIndex === 0 ? ' ' : ''" class="list-item__end">
+            <x-icon class="list-item__close" fa-icon="fa-xmark" @click="removeIngredientFromGroup(groupIndex, ingredientIndex)" />
+          </n-form-item>
         </template>
       </ingredient>
       <!-- Ghost row to create new rows. These components are never used for real data. -->
@@ -85,96 +87,37 @@
         </x-column>
       </x-row>
       <x-row class="mobile">
-        <n-button type="primary" block tertiary @click="addIngredientToGroup(groupIndex, 'amount')">Add Ingredient</n-button>
+        <n-button type="primary" block tertiary class="editor__add-item" @click="addIngredientToGroup(groupIndex, 'amount')"
+          >Add ingredient</n-button
+        >
       </x-row>
     </n-card>
-    <n-button class="editor__add-section" type="primary" block tertiary @click="addIngredientGroup">New Ingredient Section</n-button>
-    <h3>Instructions</h3>
-    <n-card
-      v-for="(instructionGroup, groupIndex) in recipeStore.instructionGroups"
-      segmented
-      :key="instructionGroup.uuid"
-      @close="removeInstructionGroup(groupIndex)"
-    >
-      <template v-slot:header>
-        <x-row>
-          <x-column col-12 col-md-6>
-            <x-input
-              path="label"
-              label="Section Title (optional)"
-              :value="instructionGroup.label"
-              @input="handleInstructionGroupTitleChange($event, groupIndex)"
-            />
-          </x-column>
-        </x-row>
-      </template>
-      <template v-slot:header-extra>
-        <n-button :bordered="false" @click="removeInstructionGroup(groupIndex)">
-          <x-icon fa-icon="fa-xmark" />
-        </n-button>
-      </template>
-      <instruction
-        v-for="(instruction, instructionIndex) in instructionGroup.instructions"
-        :key="instruction.uuid"
-        :prefix="instructionIndex + 1 + '.'"
-        :label="instruction.label"
-        :ref="`instructionGroups${groupIndex}`"
-        @input="handleInstructionInputAtIndex($event, groupIndex, instructionIndex)"
-      >
-        <template v-slot:end>
-          <n-button class="list-item__close" :bordered="false" @click="removeInstructionFromGroup(groupIndex, instructionIndex)">
-            <n-space align="center">
-              <x-icon fa-icon="fa-xmark" />
-            </n-space>
-          </n-button>
-        </template>
-      </instruction>
-      <!-- Ghost row to create new rows. These components are never used for real data. -->
-      <x-row class="ghost">
-        <x-column col-11>
-          <x-input
-            label="Instruction"
-            path=""
-            value=""
-            :prefix="recipeStore.instructionGroups[groupIndex].instructions.length + 1 + '.'"
-            :show-label="instructionGroup.instructions.length === 0"
-            :show-error="false"
-            @focus="addInstructionToGroup(groupIndex, 'label')"
-          />
-        </x-column>
-      </x-row>
-      <x-row class="mobile">
-        <n-button type="primary" block tertiary @click="addInstructionToGroup(groupIndex, 'label')">Add Ingredient</n-button>
-      </x-row>
-    </n-card>
-    <n-button class="editor__add-section" type="primary" block tertiary @click="addInstructionGroup">New Instruction Section</n-button>
+    <n-button class="editor__add-section" type="primary" block tertiary @click="addIngredientGroup">Add ingredient section</n-button>
   </n-form>
 </template>
 
 <script>
 import { XInput, XIcon, XRow, XColumn, XSelect } from "@/components";
-import { NForm, NButton, NCard } from "naive-ui";
+import { NForm, NButton, NCard, NFormItem } from "naive-ui";
 import { useRecipeStore } from "@/store/recipeStore";
 import { recipeFormSteps } from "@/constants/enums";
-import { useVuelidate } from "@vuelidate/core";
 import { uuid } from "vue-uuid";
-import Ingredient from "@/views/Editor/Ingredient.vue";
-import Instruction from "@/views/Editor/Instruction.vue";
+import Ingredient from "@/views/editor/components/Ingredient.vue";
 import { nextTick } from "vue";
 
 export default {
-  name: "EditorIngredientsAndInstructions",
+  name: "EditIngredients",
   components: {
     XRow,
     XColumn,
     Ingredient,
-    Instruction,
     XInput,
     XSelect,
     XIcon,
     NForm,
     NButton,
     NCard,
+    NFormItem,
   },
   props: {
     units: {
@@ -184,12 +127,16 @@ export default {
   },
   setup() {
     const recipeStore = useRecipeStore();
-    const step = recipeFormSteps.ingredientsAndInstructions;
+    const step = recipeFormSteps.ingredients;
     return {
       recipeStore,
-      v$: useVuelidate(),
       step,
     };
+  },
+  mounted() {
+    if (this.recipeStore.ingredientGroups.length === 0) {
+      this.addIngredientGroup();
+    }
   },
   methods: {
     async handleIngredientGroupTitleChange(event, groupIndex) {
@@ -198,18 +145,14 @@ export default {
     async handleIngredientInputAtIndex(event, groupIndex, ingredientIndex) {
       this.recipeStore.setValueAt(["ingredientGroups", `${groupIndex}`, "ingredients", `${ingredientIndex}`, event.path], event.value);
     },
-    handleInstructionGroupTitleChange(event, groupIndex) {
-      this.recipeStore.setValueAt(["instructionGroups", `${groupIndex}`, "label"], event.value);
-    },
-    handleInstructionInputAtIndex(event, groupIndex, instructionIndex) {
-      this.recipeStore.setValueAt(["instructionGroups", `${groupIndex}`, "instructions", `${instructionIndex}`, event.path], event.value);
-    },
     addIngredientGroup() {
       this.recipeStore.ingredientGroups.push({
         uuid: uuid.v1(),
         name: "",
         ingredients: [],
       });
+      // Pre-populate a new group with an ingredient to indicate what the group is used for
+      this.addIngredientToGroup(this.recipeStore.ingredientGroups.length - 1, "amount");
     },
     async addIngredientToGroup(groupIndex, touchedField) {
       this.recipeStore.ingredientGroups[groupIndex].ingredients.push({
@@ -223,40 +166,18 @@ export default {
       const currentGroupIngredients = this.$refs[`ingredientGroups${groupIndex}`];
       currentGroupIngredients[currentGroupIngredients.length - 1].$refs[touchedField].selectSelf();
     },
-    addInstructionGroup() {
-      this.recipeStore.instructionGroups.push({
-        uuid: uuid.v1(),
-        label: "",
-        instructions: [],
-      });
-    },
-    async addInstructionToGroup(groupIndex, touchedField) {
-      this.recipeStore.instructionGroups[groupIndex].instructions.push({
-        uuid: uuid.v1(),
-        label: "",
-      });
-      await nextTick();
-      const currentGroupInstructions = this.$refs[`instructionGroups${groupIndex}`];
-      currentGroupInstructions[currentGroupInstructions.length - 1].$refs[touchedField].selectSelf();
-    },
     removeIngredientGroup(groupIndex) {
       this.recipeStore.ingredientGroups.splice(groupIndex, 1);
     },
     removeIngredientFromGroup(groupIndex, ingredientIndex) {
       this.recipeStore.ingredientGroups[groupIndex].ingredients.splice(ingredientIndex, 1);
     },
-    removeInstructionGroup(groupIndex) {
-      this.recipeStore.instructionGroups.splice(groupIndex, 1);
-    },
-    removeInstructionFromGroup(groupIndex, instructionIndex) {
-      this.recipeStore.instructionGroups[groupIndex].instructions.splice(instructionIndex, 1);
-    },
   },
 };
 </script>
 
 <style scoped lang="scss">
-@use "@/styles/mixins" as m;
+@use "@/styles/_mixins" as m;
 .n-form {
   display: flex;
   flex-direction: column;

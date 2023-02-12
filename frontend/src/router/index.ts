@@ -3,7 +3,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Home from "@/views/Home.vue";
 import Recipe from "@/views/Recipe.vue";
 import Search from "@/views/Search.vue";
-import Editor from "@/views/Editor.vue";
+import Editor from "@/views/editor/Editor.vue";
 import RecipeList from "@/views/RecipeList.vue";
 import Login from "@/views/Login.vue";
 

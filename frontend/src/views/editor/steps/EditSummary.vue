@@ -30,7 +30,7 @@ import { required } from "@vuelidate/validators";
 import { recipeFormSteps } from "@/constants/enums";
 
 export default {
-  name: "EditorSummary",
+  name: "EditSummary",
   components: {
     XInput,
     XUpload,
