@@ -1,6 +1,14 @@
 export function mapRecipeStoreToApi(recipe) {
+  const ingredientGroups = recipe.ingredientGroups;
+  for (const group of ingredientGroups) {
+    for (const ingredient of group.ingredients) {
+      ingredient.amount = ingredient.amount || null;
+      ingredient.units = ingredient.units || null;
+    }
+  }
   return {
     ...recipe,
+    ingredientGroups: ingredientGroups,
     servings: recipe.servings || 0,
     preparationDuration:
       recipe.preparationTime.minutes > 0 || recipe.preparationTime.hours > 0 || recipe.preparationTime.days > 0
@@ -33,8 +41,16 @@ export function mapRecipeStoreToApi(recipe) {
   };
 }
 export function mapApiToRecipeStore(recipe) {
+  const ingredientGroups = recipe.ingredientGroups;
+  for (const group of ingredientGroups) {
+    for (const ingredient of group.ingredients) {
+      ingredient.amount = ingredient.amount || "";
+      ingredient.units = ingredient.units || "";
+    }
+  }
   return {
     ...recipe,
+    ingredientGroups: ingredientGroups,
     servings: recipe.servings > 0 ? recipe.servings : "",
     preparationTime:
       recipe.preparationDuration !== null

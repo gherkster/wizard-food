@@ -5,7 +5,7 @@
         <x-input
           path="title"
           label="Title"
-          :value="recipeStore.title"
+          :value="recipeStore.recipe.title"
           :errors="v$.title.$errors"
           required
           @input="handleInput"
@@ -13,12 +13,12 @@
         />
       </x-column>
       <x-column col-12 col-md-6>
-        <x-upload label="Image" description="Upload image" path="imageSrc" :value="recipeStore.imageSrc" />
+        <x-upload label="Image" description="Upload image" path="imageSrc" :value="recipeStore.recipe.imageSrc" />
       </x-column>
     </x-row>
     <x-row>
       <x-column col-12>
-        <rich-text-editor :value="recipeStore.note" label="Notes" @input="handleInput({ path: 'note', value: $event })" />
+        <rich-text-editor :value="recipeStore.recipe.note" label="Notes" @input="handleInput({ path: 'note', value: $event })" />
       </x-column>
     </x-row>
   </n-form>
@@ -52,7 +52,7 @@ export default {
     };
     return {
       recipeStore,
-      v$: useVuelidate(validationRules, recipeStore),
+      v$: useVuelidate(validationRules, recipeStore.recipe),
       step,
     };
   },

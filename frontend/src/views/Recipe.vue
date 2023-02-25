@@ -35,11 +35,13 @@
       <x-row>
         <x-column col-lg-5>
           <div v-if="recipe.ingredientGroups.length > 0" class="recipe__ingredients">
-            <h3>Ingredients</h3>
-            <div class="recipe__multiplier">
-              <font-awesome-icon icon="minus" :class="{ disabled: ingredientMultiplier <= 1 }" @click="decreaseMultiplier" />
-              <span>{{ ingredientMultiplier }}</span>
-              <font-awesome-icon icon="plus" @click="increaseMultiplier" />
+            <div class="recipe__ingredients-title">
+              <h3>Ingredients</h3>
+              <div class="recipe__multiplier">
+                <font-awesome-icon icon="minus" :class="{ disabled: ingredientMultiplier <= 1 }" @click="decreaseMultiplier" />
+                <span>{{ ingredientMultiplier }}</span>
+                <font-awesome-icon icon="plus" @click="increaseMultiplier" />
+              </div>
             </div>
             <div v-for="ingredientSection in recipe.ingredientGroups" :key="JSON.stringify(ingredientSection)" class="list-section">
               <span v-if="ingredientSection.name">
@@ -73,7 +75,7 @@
       <x-row v-if="recipe.note">
         <x-column>
           <h3>Notes</h3>
-          <p>{{ recipe.note }}</p>
+          <div v-html="recipe.note" />
         </x-column>
       </x-row>
     </div>

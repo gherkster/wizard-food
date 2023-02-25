@@ -1,7 +1,7 @@
 <template>
   <n-form size="large">
     <n-card
-      v-for="(ingredientGroup, groupIndex) in recipeStore.ingredientGroups"
+      v-for="(ingredientGroup, groupIndex) in recipeStore.recipe.ingredientGroups"
       segmented
       :key="ingredientGroup.uuid"
       @close="removeIngredientGroup(groupIndex)"
@@ -134,7 +134,7 @@ export default {
     };
   },
   mounted() {
-    if (this.recipeStore.ingredientGroups.length === 0) {
+    if (this.recipeStore.recipe.ingredientGroups.length === 0) {
       this.addIngredientGroup();
     }
   },
@@ -146,16 +146,16 @@ export default {
       this.recipeStore.setValueAt(["ingredientGroups", `${groupIndex}`, "ingredients", `${ingredientIndex}`, event.path], event.value);
     },
     addIngredientGroup() {
-      this.recipeStore.ingredientGroups.push({
+      this.recipeStore.recipe.ingredientGroups.push({
         uuid: uuid.v1(),
         name: "",
         ingredients: [],
       });
       // Pre-populate a new group with an ingredient to indicate what the group is used for
-      this.addIngredientToGroup(this.recipeStore.ingredientGroups.length - 1, "amount");
+      this.addIngredientToGroup(this.recipeStore.recipe.ingredientGroups.length - 1, "amount");
     },
     async addIngredientToGroup(groupIndex, touchedField) {
-      this.recipeStore.ingredientGroups[groupIndex].ingredients.push({
+      this.recipeStore.recipe.ingredientGroups[groupIndex].ingredients.push({
         uuid: uuid.v1(),
         amount: "",
         unit: "",
@@ -167,10 +167,10 @@ export default {
       currentGroupIngredients[currentGroupIngredients.length - 1].$refs[touchedField].selectSelf();
     },
     removeIngredientGroup(groupIndex) {
-      this.recipeStore.ingredientGroups.splice(groupIndex, 1);
+      this.recipeStore.recipe.ingredientGroups.splice(groupIndex, 1);
     },
     removeIngredientFromGroup(groupIndex, ingredientIndex) {
-      this.recipeStore.ingredientGroups[groupIndex].ingredients.splice(ingredientIndex, 1);
+      this.recipeStore.recipe.ingredientGroups[groupIndex].ingredients.splice(ingredientIndex, 1);
     },
   },
 };

@@ -1,7 +1,7 @@
 <template>
   <n-form size="large">
     <n-card
-      v-for="(instructionGroup, groupIndex) in recipeStore.instructionGroups"
+      v-for="(instructionGroup, groupIndex) in recipeStore.recipe.instructionGroups"
       segmented
       :key="instructionGroup.uuid"
       @close="removeInstructionGroup(groupIndex)"
@@ -45,7 +45,7 @@
             label="Instruction"
             path=""
             value=""
-            :prefix="recipeStore.instructionGroups[groupIndex].instructions.length + 1 + '.'"
+            :prefix="recipeStore.recipe.instructionGroups[groupIndex].instructions.length + 1 + '.'"
             :show-label="instructionGroup.instructions.length === 0"
             :show-error="false"
             @focus="addInstructionToGroup(groupIndex, 'label')"
@@ -91,7 +91,7 @@ export default {
     };
   },
   mounted() {
-    if (this.recipeStore.instructionGroups.length === 0) {
+    if (this.recipeStore.recipe.instructionGroups.length === 0) {
       this.addInstructionGroup();
     }
   },
@@ -103,16 +103,16 @@ export default {
       this.recipeStore.setValueAt(["instructionGroups", `${groupIndex}`, "instructions", `${instructionIndex}`, event.path], event.value);
     },
     addInstructionGroup() {
-      this.recipeStore.instructionGroups.push({
+      this.recipeStore.recipe.instructionGroups.push({
         uuid: uuid.v1(),
         label: "",
         instructions: [],
       });
       // Pre-populate a new group with an instruction to indicate what the group is used for
-      this.addInstructionToGroup(this.recipeStore.instructionGroups.length - 1, "label");
+      this.addInstructionToGroup(this.recipeStore.recipe.instructionGroups.length - 1, "label");
     },
     async addInstructionToGroup(groupIndex, touchedField) {
-      this.recipeStore.instructionGroups[groupIndex].instructions.push({
+      this.recipeStore.recipe.instructionGroups[groupIndex].instructions.push({
         uuid: uuid.v1(),
         label: "",
       });
@@ -121,10 +121,10 @@ export default {
       currentGroupInstructions[currentGroupInstructions.length - 1].$refs[touchedField].selectSelf();
     },
     removeInstructionGroup(groupIndex) {
-      this.recipeStore.instructionGroups.splice(groupIndex, 1);
+      this.recipeStore.recipe.instructionGroups.splice(groupIndex, 1);
     },
     removeInstructionFromGroup(groupIndex, instructionIndex) {
-      this.recipeStore.instructionGroups[groupIndex].instructions.splice(instructionIndex, 1);
+      this.recipeStore.recipe.instructionGroups[groupIndex].instructions.splice(instructionIndex, 1);
     },
   },
 };

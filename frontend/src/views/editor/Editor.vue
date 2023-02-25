@@ -134,7 +134,7 @@ export default {
     isSubmitting: false,
     existingRecipeId: null,
   }),
-  async beforeRouteEnter(to, from, next) {
+  beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.currentStep = recipeFormSteps.summary;
       // Clear all pre-filled inputs if navigating away to create a new recipe, otherwise populate with the existing recipe input values
@@ -198,7 +198,7 @@ export default {
         case recipeFormSteps.time:
           return "Add final details";
         case recipeFormSteps.metadata:
-          return this.isEditingExistingRecipe ? "Update recipe" : "Create recipe";
+          return this.isEditingExistingRecipe ? "Save changes" : "Create recipe";
         default:
           return "";
       }
@@ -224,7 +224,9 @@ export default {
         .then((response) => {
           this.existingRecipeId = response.data.id;
           this.recipeStore.$patch({
-            ...mapApiToRecipeStore(response.data),
+            recipe: {
+              ...mapApiToRecipeStore(response.data),
+            },
           });
         })
         .catch((error) => console.log(error));
@@ -244,10 +246,10 @@ export default {
       this.isSubmitting = true;
       if (this.isEditingExistingRecipe) {
         await this.axios
-          .put(apis.recipes + this.existingRecipeId, mapRecipeStoreToApi(this.recipeStore))
+          .put(apis.recipes + this.existingRecipeId, mapRecipeStoreToApi(this.recipeStore.recipe))
           .then(() => {
             this.alertStore.showSuccessAlert("Recipe updated!");
-            this.$router.push(`/recipes/${this.recipeStore.slug}`);
+            this.$router.push(`/recipes/${this.recipeStore.recipe.slug}`);
           })
           .catch((error) => {
             this.alertStore.showErrorAlert("An error occurred while updating the recipe");
@@ -256,10 +258,10 @@ export default {
           .finally(() => (this.isSubmitting = false));
       } else {
         await this.axios
-          .post(apis.recipes, mapRecipeStoreToApi(this.recipeStore))
+          .post(apis.recipes, mapRecipeStoreToApi(this.recipeStore.recipe))
           .then(() => {
             this.alertStore.showSuccessAlert("Recipe created!");
-            this.$router.push(`/recipes/${this.recipeStore.slug}`);
+            this.$router.push(`/recipes/${this.recipeStore.recipe.slug}`);
           })
           .catch((error) => {
             this.alertStore.showErrorAlert("An error occurred while creating the recipe");
@@ -280,7 +282,7 @@ export default {
     async deleteRecipe() {
       await this.axios({
         method: "delete",
-        url: apis.recipes + this.recipeStore.slug,
+        url: apis.recipes + this.recipeStore.recipe.slug,
       })
         .then(() => {
           this.recipeStore.$reset();

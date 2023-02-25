@@ -18,7 +18,6 @@
           <font-awesome-icon icon="fa-link" size="lg" />
         </n-button>
       </div>
-      <n-divider vertical />
       <div class="rich-text-editor__control-group">
         <n-button :class="{ 'n-button--active': editor.isActive('heading') }" :bordered="false" @click="toggleHeading">
           <font-awesome-icon icon="fa-heading" size="lg" />
@@ -50,6 +49,7 @@ import { useEditor, EditorContent } from "@tiptap/vue-3";
 import { NButton } from "naive-ui";
 import StarterKit from "@tiptap/starter-kit";
 import EmptyInputWrapper from "@/components/EmptyInputWrapper.vue";
+import { watch } from "vue";
 
 const props = defineProps({
   value: {
@@ -71,6 +71,14 @@ const editor = useEditor({
   onUpdate: (e) => {
     emit("input", e.editor.getHTML());
   },
+});
+
+// Simulate reactivity on component props since it is not provided out of the box
+watch(props, () => {
+  const isContentSame = editor.value.getHTML() === props.value;
+  if (!isContentSame) {
+    editor.value.commands.setContent(props.value, false);
+  }
 });
 
 const toggleBold = () => editor.value.chain().focus().toggleBold().run();
