@@ -1,9 +1,11 @@
-@use "layout";
-@use "navigation";
-
-@use "alerts";
-@use "editor";
-@use "login";
-@use "recipe";
-
 @use "overrides";
+
+@use "layout";
+@use "components/navigation";
+
+@use "components/alerts";
+@use "views/editor";
+@use "views/login";
+@use "views/recipe";
+
+@use "views";
