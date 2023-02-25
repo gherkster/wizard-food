@@ -1,5 +1,5 @@
-@use "mixins" as m;
-@use "variables" as v;
+@use "src/styles/mixins" as m;
+@use "src/styles/variables" as v;
 
 .recipe {
   &__tags {
@@ -29,5 +29,8 @@
       cursor: not-allowed;
       color: v.$colour-disabled;
     }
+  }
+  ul, ol {
+    @include m.spacing("pl", "xs");
   }
 }

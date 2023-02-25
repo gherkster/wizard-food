@@ -1,5 +1,5 @@
-@use "mixins" as m;
-@use "variables" as v;
+@use "src/styles/mixins" as m;
+@use "src/styles/variables" as v;
 
 .editor {
   &__header {
