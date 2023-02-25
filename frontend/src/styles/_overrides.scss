@@ -1,6 +1,7 @@
-// NaiveUI Overrides //
 @use "mixins" as m;
 @use "variables" as v;
+
+// NaiveUI Overrides //
 
 .ghost {
   opacity: 0.45;
@@ -38,6 +39,11 @@
 
 .n-button {
   min-width: v.$min-width-button;
+}
+// Replicate :hover styles onto new --active class for manual hover control
+.n-button--active:not(.n-button--disabled) {
+  background-color: var(--n-color-hover);
+  color: var(--n-text-color-hover);
 }
 
 .n-progress.n-progress--circle {
