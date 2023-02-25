@@ -8,7 +8,7 @@
           filterable
           required
           tag
-          :value="recipeStore.category"
+          :value="recipeStore.recipe.category"
           :options="categories"
           :errors="v$.category.$errors"
           @input="handleInput"
@@ -22,7 +22,7 @@
           filterable
           required
           tag
-          :value="recipeStore.cuisine"
+          :value="recipeStore.recipe.cuisine"
           :options="cuisines"
           :errors="v$.cuisine.$errors"
           @input="handleInput"
@@ -36,7 +36,7 @@
           path="servings"
           label="No. of servings"
           input-mode="numeric"
-          :value="recipeStore.servings"
+          :value="recipeStore.recipe.servings"
           :errors="v$.servings.$errors"
           @input="handleInput"
           @blur="handleBlur"
@@ -51,7 +51,7 @@
           filterable
           tag
           multiple
-          :value="recipeStore.tags"
+          :value="recipeStore.recipe.tags"
           :options="tags"
           @input="handleInput"
           @blur="handleBlur"
@@ -65,7 +65,7 @@
           label="URL Slug"
           prefix="/recipes/"
           input-mode="url"
-          :value="recipeStore.slug"
+          :value="recipeStore.recipe.slug"
           :errors="v$.slug.$errors"
           @input="onSlugInput"
           @blur="onSlugBlur"
@@ -146,7 +146,7 @@ export default {
       recipeStore,
       axios,
       externalResults,
-      v$: useVuelidate(validationRules, recipeStore, { $externalResults: externalResults }),
+      v$: useVuelidate(validationRules, recipeStore.recipe, { $externalResults: externalResults }),
     };
   },
   data() {
@@ -157,7 +157,7 @@ export default {
   created() {
     // We know that if the user is editing an existing recipe that the slug is unique on component load
     if (!this.isEditingExistingRecipe) {
-      this.recipeStore.slug = this.createSlugFromTitle();
+      this.recipeStore.recipe.slug = this.createSlugFromTitle();
       this.validateSlugIsUnique();
     }
   },
@@ -193,13 +193,13 @@ export default {
     onSlugBlur({ path }) {
       this.handleBlur({ path });
       // Only validate uniqueness if the slug is already a valid string to cut down on API calls
-      if (this.recipeStore.slug) {
+      if (this.recipeStore.recipe.slug) {
         this.validateSlugIsUnique();
       }
     },
     async createSlug() {
       this.isSlugGenerating = true;
-      const chosenSlug = this.recipeStore.slug || this.createSlugFromTitle() || "recipe";
+      const chosenSlug = this.recipeStore.recipe.slug || this.createSlugFromTitle() || "recipe";
       await this.axios
         .get(apis.recipeSlugs, {
           params: {
@@ -208,7 +208,7 @@ export default {
         })
         .then(async (response) => {
           if (response.data) {
-            this.recipeStore.slug = response.data;
+            this.recipeStore.recipe.slug = response.data;
           }
         })
         .catch((error) => console.log(error))
@@ -220,7 +220,7 @@ export default {
      * Generate a slug based on the recipe title, replacing spaces with hyphens
      */
     createSlugFromTitle() {
-      return this.recipeStore.title
+      return this.recipeStore.recipe.title
         .toLowerCase()
         .trim()
         .replace(/[^\w ]+/g, "")
@@ -228,7 +228,7 @@ export default {
     },
     async validateSlugIsUnique() {
       const nonUniqueSlugErrorMessage = "Slug already exists. Enter a unique value or click the reload icon to generate one.";
-      if (!this.recipeStore.slug) {
+      if (!this.recipeStore.recipe.slug) {
         return;
       }
       let isValidSlug = false;
@@ -236,13 +236,13 @@ export default {
       try {
         const response = await this.axios.get(apis.recipeSlugs, {
           params: {
-            chosenSlug: this.recipeStore.slug,
+            chosenSlug: this.recipeStore.recipe.slug,
           },
         });
         // If the api suggests a different slug to the entered one then the entered one is invalid since it is already in use
         // If we are currently editing a recipe and the entered slug is the same as the existing one
         // (ie if the user triggers the field validation without changing the value) then the slug is also valid
-        isValidSlug = response.data === this.recipeStore.slug || this.recipeStore.slug === this.$route.params.slug;
+        isValidSlug = response.data === this.recipeStore.recipe.slug || this.recipeStore.recipe.slug === this.$route.params.slug;
         console.log(isValidSlug); // TODO: Remove
         if (isValidSlug) {
           this.v$.$clearExternalResults();

@@ -2,20 +2,20 @@
   <n-form size="large">
     <duration
       label="Preparation Time"
-      :minutes="recipeStore.preparationTime.minutes"
-      :hours="recipeStore.preparationTime.hours"
-      :days="recipeStore.preparationTime.days"
+      :minutes="recipeStore.recipe.preparationTime.minutes"
+      :hours="recipeStore.recipe.preparationTime.hours"
+      :days="recipeStore.recipe.preparationTime.days"
       @input="onPreparationTimeInput"
     />
     <duration
       label="Cooking Time"
-      :minutes="recipeStore.cookingTime.minutes"
-      :hours="recipeStore.cookingTime.hours"
-      :days="recipeStore.cookingTime.days"
+      :minutes="recipeStore.recipe.cookingTime.minutes"
+      :hours="recipeStore.recipe.cookingTime.hours"
+      :days="recipeStore.recipe.cookingTime.days"
       @input="onCookingTimeInput"
     />
     <duration
-      v-for="(customTime, index) in recipeStore.customTimes"
+      v-for="(customTime, index) in recipeStore.recipe.customTimes"
       :key="customTime.uuid"
       label="Custom Time"
       :minutes="customTime.minutes"
@@ -68,7 +68,7 @@ export default {
       this.recipeStore.setValueAt(["customTimes", index, event.path], event.value);
     },
     addCustomTimeGroup() {
-      this.recipeStore.customTimes.push({
+      this.recipeStore.recipe.customTimes.push({
         uuid: uuid.v1(),
         days: "",
         hours: "",
@@ -77,7 +77,7 @@ export default {
       });
     },
     removeCustomTimeGroup(groupIndex) {
-      this.recipeStore.customTimes.splice(groupIndex, 1);
+      this.recipeStore.recipe.customTimes.splice(groupIndex, 1);
     },
   },
 };
