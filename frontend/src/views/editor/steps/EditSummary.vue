@@ -1,28 +1,31 @@
 <template>
   <n-form size="large">
-    <x-input
-      path="title"
-      label="Title"
-      :value="recipeStore.title"
-      :errors="v$.title.$errors"
-      required
-      @input="handleTitleInput"
-      @blur="v$.title.$touch()"
-    />
-    <x-upload path="imageSrc" :value="recipeStore.imageSrc" />
-    <x-input
-      path="note"
-      label="Notes"
-      type="textarea"
-      :value="recipeStore.note"
-      :autosize="{ minRows: 4, maxRows: 12 }"
-      @input="handleInput"
-    />
+    <x-row>
+      <x-column col-12 col-md-6>
+        <x-input
+          path="title"
+          label="Title"
+          :value="recipeStore.title"
+          :errors="v$.title.$errors"
+          required
+          @input="handleInput"
+          @blur="v$.title.$touch()"
+        />
+      </x-column>
+      <x-column col-12 col-md-6>
+        <x-upload label="Image" description="Upload image" path="imageSrc" :value="recipeStore.imageSrc" />
+      </x-column>
+    </x-row>
+    <x-row>
+      <x-column col-12>
+        <rich-text-editor :value="recipeStore.note" label="Notes" @input="handleInput({ path: 'note', value: $event })" />
+      </x-column>
+    </x-row>
   </n-form>
 </template>
 
 <script>
-import { XInput, XUpload } from "@/components";
+import { XRow, XColumn, XInput, XUpload, RichTextEditor } from "@/components";
 import { NForm } from "naive-ui";
 import { useVuelidate } from "@vuelidate/core";
 import { useRecipeStore } from "@/store/recipeStore";
@@ -32,6 +35,9 @@ import { recipeFormSteps } from "@/constants/enums";
 export default {
   name: "EditSummary",
   components: {
+    RichTextEditor,
+    XRow,
+    XColumn,
     XInput,
     XUpload,
     NForm,
@@ -54,9 +60,6 @@ export default {
     handleInput({ path, value }) {
       this.recipeStore.setValueAt(path, value);
       this.validateAt(path);
-    },
-    handleTitleInput({ path, value }) {
-      this.handleInput({ path, value });
     },
     validateAt(path) {
       if (this.v$[path]) {

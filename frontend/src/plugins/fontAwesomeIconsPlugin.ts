@@ -16,6 +16,10 @@ import {
   faChevronDown,
   faTrash,
   faUser,
+  faBold,
+  faItalic,
+  faStrikethrough,
+  faLink, faHeading, faP, faListUl, faListOl, faRotateLeft, faRotateRight, faImage, faCloudArrowUp
 } from "@fortawesome/free-solid-svg-icons";
 import { faStar as farStar } from "@fortawesome/free-regular-svg-icons";
 
@@ -35,7 +39,19 @@ export default {
       faChevronRight,
       faChevronDown,
       faTrash,
-      faUser
+      faUser,
+      faBold,
+      faItalic,
+      faStrikethrough,
+      faLink,
+      faHeading,
+      faP,
+      faListUl,
+      faListOl,
+      faRotateLeft,
+      faRotateRight,
+      faImage,
+      faCloudArrowUp
     );
     app.component("font-awesome-icon", FontAwesomeIcon);
   },
