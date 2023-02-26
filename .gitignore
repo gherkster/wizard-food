@@ -1,6 +1,5 @@
 .DS_Store
 node_modules
-frontend/dist
 bin
 obj
 
@@ -25,3 +24,6 @@ pnpm-debug.log*
 
 # Database
 api/Persistence/*
+
+# Static assets
+wwwroot
