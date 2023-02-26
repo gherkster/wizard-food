@@ -1,0 +1,43 @@
+@use "variables" as v;
+@use "mixins" as m;
+
+.page {
+  max-width: map-get(v.$breakpoints, xl) * 1px;
+  margin: 0 auto;
+
+  &--fluid {
+    margin: 0;
+    max-width: 100%;
+  }
+}
+
+.content {
+  padding: 4% 4% 0 4%;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  column-gap: v.$cols-horizontal-gap;
+  @include m.spacing("mb", "xs");
+  &.wide-gap {
+    column-gap: v.$cols-horizontal-gap-wide;
+  }
+}
+
+// Hide any mobile-specific components on larger screen sizes
+@include m.breakpoint("md") {
+  .mobile {
+    display: none;
+  }
+}
+
+@include m.create-cols(null, v.$grid-cols-count);
+
+@each $breakpoint-name, $width in v.$breakpoints {
+  @media screen and (min-width: $width * 1px) {
+    @include m.create-cols($breakpoint-name, v.$grid-cols-count);
+  }
+}
+

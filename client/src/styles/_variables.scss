@@ -1,0 +1,107 @@
+// COLOURS //
+$colour-bg: #F5F5F5;
+$colour-bg-light: #e6e6e6;
+$colour-bg-grey-light: #fafafa;
+$colour-font-muted: #7d7d7d;
+
+$colour-primary: #4B749B;
+$colour-primary-active: #5faae3;
+
+$colour-primary-light: #E3ECF3;
+$colour-primary-light-highlight: #cee0ed;
+$colour-primary-light-active: #b0d1e8;
+
+$colour-disabled: #999;
+$colour-error: #ff0000;
+$colour-input: white;
+
+// BREAKPOINTS //
+$breakpoints: (
+  xs: 320,
+  sm: 480,
+  md: 768,
+  lg: 992,
+  xl: 1400,
+) !default;
+$breakpoint-min: map-get($breakpoints, "xs");
+$breakpoint-max: map-get($breakpoints, "xl");
+
+$grid-cols-count: 12;
+
+// TYPOGRAPHY //
+$font-family-headers: "Open Sans", "Helvetica", sans-serif;
+$font-family-paragraph: "Inter", "Helvetica", sans-serif;
+$font-family-paragraph-alt: "Work Sans", "Helvetica", sans-serif;
+
+$font-sizes: (
+  h1: (font-size-min: 30, font-size-max: 48),
+  h2: (font-size-min: 24, font-size-max: 32),
+  h3: (font-size-min: 20, font-size-max: 26),
+  h4: (font-size-min: 16, font-size-max: 20),
+  h5: (font-size-min: 16, font-size-max: 20),
+  h6: (font-size-min: 16, font-size-max: 20),
+  body: (font-size-min: 16, font-size-max: 16),
+  small: (font-size-min: 12, font-size-max: 12)
+);
+
+// SPACING //
+$spacing-large: (
+  xs: 56px,
+  md: 72px,
+  xl: 96px
+);
+
+$spacing-medium: (
+  xs: 32px,
+  md: 40px,
+  xl: 48px
+);
+
+$spacing-small: (
+  xs: 24px,
+  md: 28px,
+  xl: 32px
+);
+
+$spacing-xsmall: (
+  xs: 12px,
+  md: 14px,
+  xl: 16px
+);
+
+$spacing: (
+  "lg": $spacing-large,
+  "md": $spacing-medium,
+  "sm": $spacing-small,
+  "xs": $spacing-xsmall
+);
+
+$space-map: (
+  "p": "padding",
+  "pl": "padding-left",
+  "pr": "padding-right",
+  "pb": "padding-bottom",
+  "pt": "padding-top",
+  "px": ("padding-left", "padding-right"),
+  "py": ("padding-top", "padding-bottom"),
+  "m": "margin",
+  "ml": "margin-left",
+  "mr": "margin-right",
+  "mb": "margin-bottom",
+  "mt": "margin-top",
+  "mx": ("margin-left", "margin-right"),
+  "my": ("margin-top", "margin-bottom"),
+  "g": "gap",
+  "gx": "column-gap",
+  "gy": "row-gap"
+);
+
+$cols-horizontal-gap: 24px;
+$cols-horizontal-gap-wide: 80px;
+$li-margin-bottom: 16px;
+
+// BORDERS //
+$border-radius: 10px;
+
+// SIZING
+$min-width-button: 84px;
