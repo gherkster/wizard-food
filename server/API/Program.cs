@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using API.Converters;
 using API.Extensions;
 using API.Models.Database.Context;
+using CompressedStaticFiles;
 using Microsoft.AspNetCore.SpaServices;
 using VueCliMiddleware;
 
@@ -21,10 +22,6 @@ builder.Services
 
 builder.Services.ConfigureAuthentication();
 
-builder.Services.AddDirectoryBrowser();
-
-builder.Services.AddSpaStaticFiles(opt => opt.RootPath = "wwwroot");
-
 if (builder.Environment.IsDevelopment())
 {
     // Allow cross origin requests on localhost
@@ -39,6 +36,8 @@ if (builder.Environment.IsDevelopment())
     });
     
 }
+
+builder.Services.AddCompressedStaticFiles();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -57,8 +56,10 @@ if (app.Environment.IsDevelopment())
 // Rewrite /index.html to /
 app.UseDefaultFiles();
 
-// Serve SPA files in /wwwroot
-app.UseSpaStaticFiles();
+app.UseCompressedStaticFiles(new StaticFileOptions()
+{
+    RequestPath = new PathString("")
+});
 
 app.UseRouting();
 
