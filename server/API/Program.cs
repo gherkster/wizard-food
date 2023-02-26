@@ -25,6 +25,21 @@ builder.Services.AddDirectoryBrowser();
 
 builder.Services.AddSpaStaticFiles(opt => opt.RootPath = "wwwroot");
 
+if (builder.Environment.IsDevelopment())
+{
+    // Allow cross origin requests on localhost
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(policy =>
+        {
+            policy.SetIsOriginAllowed(origin => new Uri(origin).IsLoopback);
+            policy.AllowAnyHeader();
+            policy.AllowAnyMethod();
+        });
+    });
+    
+}
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -36,6 +51,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseReDoc();
+    app.UseCors();
 }
 
 // Rewrite /index.html to /
@@ -77,7 +93,7 @@ if (app.Environment.IsDevelopment())
             pattern: "{*path}",
             options: new SpaOptions()
             {
-                SourcePath = "../frontend", 
+                SourcePath = "../../client", 
                 StartupTimeout = TimeSpan.FromSeconds(60)
             },
             // The name of the script in package.json that launches the vue vite server

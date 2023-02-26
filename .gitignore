@@ -23,7 +23,7 @@ pnpm-debug.log*
 *.sw?
 
 # Database
-api/Persistence/*
+**/Persistence/*
 
 # Static assets
 wwwroot
