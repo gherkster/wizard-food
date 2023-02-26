@@ -1,0 +1,50 @@
+@use "mixins" as m;
+@use "variables" as v;
+
+// NaiveUI Overrides //
+
+.ghost {
+  opacity: 0.45;
+  .n-form-item {
+    .n-input {
+      // Disable styling for input green hover states, red error states etc so that ghost components don't appear to be real input components
+      // --n-border-hover is still the same so that the hover effect is still displayed to indicate the input can be clicked on
+      $defaultGray: 1px solid rgb(224, 224, 230);
+      --n-border-focus: $defaultGray !important;
+      --n-border-error: $defaultGray !important;
+      --n-border-focus-error: $defaultGray !important;
+      --n-border-hover-error: $defaultGray !important;
+      --n-box-shadow-focus-error: 0 !important;
+      &__state-border {
+        transition: none !important;
+      }
+    }
+  }
+}
+
+.n-card-header {
+  .n-card-header__extra {
+    align-self: start;
+  }
+}
+
+.n-form-item {
+  display: block;
+}
+
+.n-form-item .n-form-item-blank {
+  position: unset;
+}
+
+.n-button {
+  min-width: v.$min-width-button;
+}
+// Replicate :hover styles onto new --active class for manual hover control
+.n-button--active:not(.n-button--disabled) {
+  background-color: var(--n-color-hover);
+  color: var(--n-text-color-hover);
+}
+
+.n-progress.n-progress--circle {
+  width: 100px;
+}
