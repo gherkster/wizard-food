@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
-import Home from "@/views/Home.vue";
-import Recipe from "@/views/Recipe.vue";
-import Search from "@/views/Search.vue";
-import Editor from "@/views/editor/Editor.vue";
-import RecipeList from "@/views/RecipeList.vue";
-import Login from "@/views/Login.vue";
+const Home = () => import("@/views/Home.vue");
+const Recipe = () => import("@/views/Recipe.vue");
+const Search = () => import("@/views/Search.vue");
+const Editor = () => import("@/views/editor/Editor.vue");
+const RecipeList = () => import("@/views/RecipeList.vue");
+const Login = () => import("@/views/Login.vue");
 
 const routes: Array<RouteRecordRaw> = [
   {
