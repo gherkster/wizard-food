@@ -29,6 +29,11 @@ small {
   line-height: 0;
 }
 
+p {
+  margin-top: v.$paragraph-margin-top;
+  margin-bottom: v.$paragraph-margin-bottom;
+}
+
 li:not(:last-child) {
   margin-bottom: v.$li-margin-bottom;
 }
