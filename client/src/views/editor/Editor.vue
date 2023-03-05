@@ -6,6 +6,7 @@
         <x-button v-if="isEditingExistingRecipe" class="editor__delete" icon="fa-trash" type="error" @click="confirmDelete"
           >Delete</x-button
         >
+        <x-button @click="createTestRecipe">Create test recipe</x-button>
         <div class="editor__controls">
           <x-button v-if="currentStep !== steps.summary" type="primary" size="large" icon="fa-chevron-left" ghost @click="goToPreviousStep"
             >Back</x-button
@@ -331,6 +332,65 @@ export default {
           this.currentStep = recipeFormSteps.summary;
           break;
       }
+    },
+    async createTestRecipe() {
+      const recipe = {
+        id: 1,
+        title: "test recipe",
+        note: "<p><strong>1. test</strong> - Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p><p><strong>2. test - </strong>Duis turpis lorem, blandit in ante ac, feugiat dictum.&nbsp;</p><p><strong>3. test</strong> - Nulla ornare mauris viverra nisi ultrices iaculis. Maecenas egestas ultricies elit.</p>",
+        ingredientGroups: [
+          {
+            name: "",
+            ingredients: [
+              { amount: 1.0, unit: "", name: "bread rolls", note: "" },
+              { amount: 3.0, unit: "tbsp", name: "green cabbage", note: "" },
+              { amount: 1.0, unit: "tbsp", name: "chicken mince", note: "" },
+              { amount: 6.0, unit: "", name: "green onion stems", note: "cut into the length of the rolls" },
+              { amount: 6.0, unit: "slices", name: "test", note: "" },
+              { amount: 3.0, unit: "slices", name: "roast pork", note: "" },
+              { amount: 1.0, unit: "", name: "cucumbers", note: "finely sliced" },
+              { amount: 3.0, unit: "", name: "chillies", note: "finely sliced" },
+            ],
+          },
+          {
+            name: "Pickled pickles",
+            ingredients: [
+              { amount: 3.0, unit: "", name: "carrots", note: 'peeled, cut into 2-3mm / 1/10" batons' },
+              { amount: 200.0, unit: "ml", name: "hot water", note: "" },
+              { amount: 50.0, unit: "g", name: "sugar", note: "" },
+              { amount: 4.0, unit: "tsp", name: "salt", note: "" },
+              { amount: 100.0, unit: "ml", name: "rice vinegar", note: "" },
+            ],
+          },
+        ],
+        instructionGroups: [
+          {
+            name: "",
+            instructions: [
+              { label: "Split rolls down the centre" },
+              { label: "Spread around pate." },
+              { label: "Stuff in ham, cucumber slices and green onion." },
+              { label: "Add carrots and coriander." },
+              { label: "Sprinkle with fresh chilli" },
+              { label: "Close sandwich and eat" },
+            ],
+          },
+          {
+            name: "Pickled pickles",
+            instructions: [{ label: "Dissolve salt and sugar" }, { label: "Add carrot" }, { label: "Drain and use per recipe." }],
+          },
+        ],
+        category: "sandwich",
+        cuisine: "vietnamese",
+        rating: 0.0,
+        servings: 4.0,
+        preparationDuration: { name: "Preparation", minutes: 30, hours: 0, days: 0 },
+        cookingDuration: null,
+        customDurations: [{ name: "pickling", minutes: 0, hours: 1, days: 0 }],
+        tags: ["easy", "lunch", "quick"],
+        slug: Math.floor(Math.random() * 1000).toString(),
+      };
+      await this.axios.post(apis.recipes, recipe);
     },
   },
 };

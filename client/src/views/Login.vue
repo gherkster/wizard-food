@@ -21,7 +21,7 @@
           @keyup.enter="submitLogin"
         />
         <n-button type="primary" block :disabled="v$.$errors.length > 0" @click="submitLogin">Login</n-button>
-        <n-button type="secondary" block @click="submitLogout">Logout</n-button>
+        <n-button block @click="submitLogout">Logout</n-button>
       </n-form>
     </div>
   </div>
@@ -88,6 +88,7 @@ export default {
         data: this.formData,
       })
         .then((response) => {
+          console.log(response);
           this.alertStore.showSuccessAlert("Logged in successfully.");
         })
         .catch((error) => {

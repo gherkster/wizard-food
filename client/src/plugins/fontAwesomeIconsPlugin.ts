@@ -19,7 +19,16 @@ import {
   faBold,
   faItalic,
   faStrikethrough,
-  faLink, faHeading, faP, faListUl, faListOl, faRotateLeft, faRotateRight, faImage, faCloudArrowUp
+  faLink,
+  faHeading,
+  faP,
+  faListUl,
+  faListOl,
+  faRotateLeft,
+  faRotateRight,
+  faImage,
+  faCloudArrowUp,
+  faClock,
 } from "@fortawesome/free-solid-svg-icons";
 import { faStar as farStar } from "@fortawesome/free-regular-svg-icons";
 
@@ -51,7 +60,8 @@ export default {
       faRotateLeft,
       faRotateRight,
       faImage,
-      faCloudArrowUp
+      faCloudArrowUp,
+      faClock
     );
     app.component("font-awesome-icon", FontAwesomeIcon);
   },

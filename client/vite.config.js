@@ -26,6 +26,8 @@ export default defineConfig({
   },
   server: {
     host: true,
+    port: 3000,
+    strictPort: true,
     hmr: {
       protocol: "ws",
       port: 52123,

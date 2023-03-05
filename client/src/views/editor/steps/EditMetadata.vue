@@ -252,7 +252,6 @@ export default {
           const errors = {
             slug: [nonUniqueSlugErrorMessage],
           };
-          console.log(this.externalResults);
           Object.assign(this.externalResults, errors);
         }
       } catch (error) {

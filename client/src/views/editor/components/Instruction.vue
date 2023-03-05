@@ -2,7 +2,7 @@
   <x-row class="list-item instruction">
     <x-column col-12 col-md-11>
       <x-input
-        ref="label"
+        ref="name"
         path="label"
         label="Instruction"
         type="textarea"
