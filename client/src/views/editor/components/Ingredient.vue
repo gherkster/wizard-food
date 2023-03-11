@@ -51,7 +51,8 @@
 <script>
 import { XInput, XSelect, XRow, XColumn } from "@/components";
 import { useVuelidate } from "@vuelidate/core";
-import { required, numeric, minValue } from "@vuelidate/validators";
+import { required, numeric, or, helpers } from "@vuelidate/validators";
+import { fraction } from "@/scripts/validation";
 
 export default {
   name: "Ingredient",
@@ -97,8 +98,7 @@ export default {
   validations() {
     return {
       amount: {
-        numeric,
-        minValue: minValue(0),
+        numericFraction: helpers.withMessage("Value must be a number or fraction", or(numeric, fraction)),
       },
       name: {
         required,

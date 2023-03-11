@@ -1,3 +1,4 @@
+using API.Models.Core;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -73,6 +74,13 @@ public class DatabaseContext : IdentityDbContext
 
         builder.Entity<DbIngredient>()
             .HasIndex(i => i.Name);
+
+        builder.Entity<DbIngredient>()
+            .Property(i => i.Amount)
+            .HasConversion(
+                // Null values are never passed to entity converters https://github.com/dotnet/efcore/issues/13850
+                a => a.ToString(),
+                a => Fraction.Parse(a!));
         
         base.OnModelCreating(builder);
     }

@@ -1,29 +1,28 @@
 <template>
   <div class="recipe-preview">
-    <n-image :src="imageSrc" lazy preview-disabled @click="onClick" />
+    <n-image height="140" object-fit="cover" width="999" :src="imageSrc" lazy preview-disabled @click="onClick" />
     <div class="recipe-preview__body" @click="onClick">
-      <b>{{ title }}</b>
-      <p v-if="description">{{ description }}</p>
+      <span>
+        <b>{{ title }}</b>
+      </span>
     </div>
     <n-divider />
     <div class="recipe-preview__footer">
-      <div class="recipe-preview__duration">
-        <x-icon fa-icon="fa-clock" />
+      <div class="recipe-preview__duration text-muted">
+        <font-awesome-icon icon="fa-regular fa-clock" />
         <span>{{ totalDuration }}</span>
       </div>
-      <n-rate :value="rating" size="small" />
+      <n-rate :value="rating" readonly size="small" />
     </div>
   </div>
 </template>
 
 <script>
 import { NImage, NDivider, NRate } from "naive-ui";
-import { XIcon } from "@/components";
 
 export default {
   name: "RecipePreview",
   components: {
-    XIcon,
     NImage,
     NDivider,
     NRate,
@@ -34,11 +33,6 @@ export default {
       required: true,
     },
     imageSrc: {
-      type: String,
-      required: false,
-      default: "",
-    },
-    description: {
       type: String,
       required: false,
       default: "",
@@ -69,11 +63,17 @@ export default {
   display: flex;
   flex-direction: column;
   &__body {
-    p {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      line-height: v.$line-height;
-      max-height: v.$line-height * 2;
+    span {
+      display: inline-flex;
+      @include m.spacing("my", "xs");
+      height: v.$line-height * 2;
+      b {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+        line-height: v.$line-height;
+      }
     }
   }
   &__duration {

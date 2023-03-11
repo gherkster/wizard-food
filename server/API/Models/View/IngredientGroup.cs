@@ -1,3 +1,5 @@
+using API.Models.Core;
+
 namespace API.Models.View;
 
 public class IngredientGroup
@@ -13,7 +15,7 @@ public class Ingredient
         Name = name;
     }
 
-    public decimal? Amount { get; init; } 
+    public Fraction? Amount { get; init; } 
     public string Unit { get; init; } = string.Empty;
     public string Name { get; }
     public string Note { get; init; } = string.Empty;

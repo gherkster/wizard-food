@@ -106,7 +106,7 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal?>("Amount")
+                    b.Property<string>("Amount")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("IngredientGroupId")

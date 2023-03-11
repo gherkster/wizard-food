@@ -3,44 +3,46 @@
     <label v-if="props.label" class="n-form-item-label n-form-item-label--right-mark">
       <span class="n-form-item-label__text">{{ props.label }}</span>
     </label>
-    <div class="rich-text-editor__controls">
-      <div class="rich-text-editor__control-group">
-        <n-button :class="{ 'n-button--active': editor.isActive('bold') }" :bordered="false" @click="toggleBold">
-          <font-awesome-icon icon="fa-bold" size="lg" />
-        </n-button>
-        <n-button :class="{ 'n-button--active': editor.isActive('italic') }" :bordered="false" @click="toggleItalic">
-          <font-awesome-icon icon="fa-italic" size="lg" />
-        </n-button>
-        <n-button :class="{ 'n-button--active': editor.isActive('strike') }" :bordered="false" @click="toggleStrikethrough">
-          <font-awesome-icon icon="fa-strikethrough" size="lg" />
-        </n-button>
-        <n-button :class="{ 'n-button--active': editor.isActive('link') }" :bordered="false" @click="toggleLink">
-          <font-awesome-icon icon="fa-link" size="lg" />
-        </n-button>
+    <div class="rich-text-editor__wrapper">
+      <div class="rich-text-editor__controls">
+        <div class="rich-text-editor__control-group">
+          <n-button :class="{ 'n-button--active': editor.isActive('bold') }" :bordered="false" @click="toggleBold">
+            <font-awesome-icon icon="fa-bold" size="lg" />
+          </n-button>
+          <n-button :class="{ 'n-button--active': editor.isActive('italic') }" :bordered="false" @click="toggleItalic">
+            <font-awesome-icon icon="fa-italic" size="lg" />
+          </n-button>
+          <n-button :class="{ 'n-button--active': editor.isActive('strike') }" :bordered="false" @click="toggleStrikethrough">
+            <font-awesome-icon icon="fa-strikethrough" size="lg" />
+          </n-button>
+          <n-button :class="{ 'n-button--active': editor.isActive('link') }" :bordered="false" @click="toggleLink">
+            <font-awesome-icon icon="fa-link" size="lg" />
+          </n-button>
+        </div>
+        <div class="rich-text-editor__control-group">
+          <n-button :class="{ 'n-button--active': editor.isActive('heading') }" :bordered="false" @click="toggleHeading">
+            <font-awesome-icon icon="fa-heading" size="lg" />
+          </n-button>
+          <n-button :class="{ 'n-button--active': editor.isActive('bulletList') }" :bordered="false" @click="toggleBulletList">
+            <font-awesome-icon icon="fa-list-ul" size="lg" />
+          </n-button>
+          <n-button :class="{ 'n-button--active': editor.isActive('orderedList') }" :bordered="false" @click="toggleNumericList">
+            <font-awesome-icon icon="fa-list-ol" size="lg" />
+          </n-button>
+        </div>
+        <div class="rich-text-editor__control-group">
+          <n-button :bordered="false" @click="undo" :disabled="!editor.can().chain().focus().undo().run()">
+            <font-awesome-icon icon="fa-rotate-left" size="lg" />
+          </n-button>
+          <n-button :bordered="false" @click="redo" :disabled="!editor.can().chain().focus().redo().run()">
+            <font-awesome-icon icon="fa-rotate-right" size="lg" />
+          </n-button>
+        </div>
       </div>
-      <div class="rich-text-editor__control-group">
-        <n-button :class="{ 'n-button--active': editor.isActive('heading') }" :bordered="false" @click="toggleHeading">
-          <font-awesome-icon icon="fa-heading" size="lg" />
-        </n-button>
-        <n-button :class="{ 'n-button--active': editor.isActive('bulletList') }" :bordered="false" @click="toggleBulletList">
-          <font-awesome-icon icon="fa-list-ul" size="lg" />
-        </n-button>
-        <n-button :class="{ 'n-button--active': editor.isActive('orderedList') }" :bordered="false" @click="toggleNumericList">
-          <font-awesome-icon icon="fa-list-ol" size="lg" />
-        </n-button>
-      </div>
-      <div class="rich-text-editor__control-group">
-        <n-button :bordered="false" @click="undo" :disabled="!editor.can().chain().focus().undo().run()">
-          <font-awesome-icon icon="fa-rotate-left" size="lg" />
-        </n-button>
-        <n-button :bordered="false" @click="redo" :disabled="!editor.can().chain().focus().redo().run()">
-          <font-awesome-icon icon="fa-rotate-right" size="lg" />
-        </n-button>
-      </div>
+      <empty-input-wrapper @focus="editor.chain().focus('end').run()">
+        <editor-content :editor="editor" class="rich-text-editor__content" />
+      </empty-input-wrapper>
     </div>
-    <empty-input-wrapper @focus="editor.chain().focus('end').run()">
-      <editor-content :editor="editor" class="rich-text-editor__content" />
-    </empty-input-wrapper>
   </div>
 </template>
 
@@ -109,17 +111,26 @@ function toggleLink() {
 @use "../styles/mixins" as m;
 @use "../styles/variables" as v;
 
-.rich-text-editor__controls {
-  display: flex;
-  flex-wrap: wrap;
-  background-color: v.$colour-bg-grey-light;
-  @include m.spacing("gx", "xs");
-  padding: 4px;
-}
-.rich-text-editor__control-group {
-  display: flex;
-  .n-button {
-    min-width: unset;
+.rich-text-editor {
+  &__wrapper {
+    overflow: hidden;
+    border-radius: v.$border-radius;
+  }
+  &__controls {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: v.$colour-bg-grey-light;
+    @include m.spacing("gx", "xs");
+    padding: 4px;
+  }
+  &__control-group {
+    display: flex;
+    .n-button {
+      min-width: unset;
+    }
+  }
+  &__content {
+    min-height: 15vh;
   }
 }
 </style>

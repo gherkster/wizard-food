@@ -92,6 +92,7 @@ import { XRow, XColumn, XButton } from "@/components";
 import { EditIntro, EditIngredients, EditInstructions, EditTimes, EditMetadata } from "@/views/editor/steps";
 import apis from "@/constants/apis";
 import { useAxios } from "@/composables";
+import { useUserStore } from "@/store/userStore";
 
 export default {
   name: "Editor",
@@ -136,15 +137,22 @@ export default {
     existingRecipeId: null,
   }),
   beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      vm.currentStep = recipeFormSteps.summary;
-      // Clear all pre-filled inputs if navigating away to create a new recipe, otherwise populate with the existing recipe input values
-      if (to.path === "/new") {
-        vm.recipeStore.$reset();
-      } else if (to.params?.slug) {
-        vm.populateInputsWithExistingRecipe();
-      }
-    });
+    const store = useUserStore();
+    if (!store.isAuthenticated) {
+      // Redirect to home page if user tries to load editor while unauthenticated
+      next({ name: "home" });
+    } else {
+      next((vm) => {
+        vm.currentStep = recipeFormSteps.summary;
+        // Clear all pre-filled inputs if navigating away to create a new recipe,
+        // otherwise populate with the existing recipe input values
+        if (to.path === "/new") {
+          vm.recipeStore.$reset();
+        } else if (to.params?.slug) {
+          vm.populateInputsWithExistingRecipe();
+        }
+      });
+    }
   },
   created() {
     this.axios
@@ -342,24 +350,24 @@ export default {
           {
             name: "",
             ingredients: [
-              { amount: 1.0, unit: "", name: "bread rolls", note: "" },
-              { amount: 3.0, unit: "tbsp", name: "green cabbage", note: "" },
-              { amount: 1.0, unit: "tbsp", name: "chicken mince", note: "" },
-              { amount: 6.0, unit: "", name: "green onion stems", note: "cut into the length of the rolls" },
-              { amount: 6.0, unit: "slices", name: "test", note: "" },
-              { amount: 3.0, unit: "slices", name: "roast pork", note: "" },
-              { amount: 1.0, unit: "", name: "cucumbers", note: "finely sliced" },
-              { amount: 3.0, unit: "", name: "chillies", note: "finely sliced" },
+              { amount: { numerator: 1, denominator: 1 }, unit: "", name: "bread rolls", note: "" },
+              { amount: { numerator: 3, denominator: 2 }, unit: "tbsp", name: "green cabbage", note: "" },
+              { amount: { numerator: 1, denominator: 3 }, unit: "tbsp", name: "chicken mince", note: "" },
+              { amount: { numerator: 6, denominator: 1 }, unit: "", name: "green onion stems", note: "cut into the length of the rolls" },
+              { amount: { numerator: 5, denominator: 2 }, unit: "slices", name: "test", note: "" },
+              { amount: { numerator: 3, denominator: 5 }, unit: "slices", name: "roast pork", note: "" },
+              { amount: { numerator: 1, denominator: 1 }, unit: "", name: "cucumbers", note: "finely sliced" },
+              { amount: { numerator: 1, denominator: 1 }, unit: "", name: "chillies", note: "finely sliced" },
             ],
           },
           {
             name: "Pickled pickles",
             ingredients: [
-              { amount: 3.0, unit: "", name: "carrots", note: 'peeled, cut into 2-3mm / 1/10" batons' },
-              { amount: 200.0, unit: "ml", name: "hot water", note: "" },
-              { amount: 50.0, unit: "g", name: "sugar", note: "" },
-              { amount: 4.0, unit: "tsp", name: "salt", note: "" },
-              { amount: 100.0, unit: "ml", name: "rice vinegar", note: "" },
+              { amount: { numerator: 1, denominator: 1 }, unit: "", name: "carrots", note: 'peeled, cut into 2-3mm / 1/10" batons' },
+              { amount: { numerator: 200, denominator: 1 }, unit: "ml", name: "hot water", note: "" },
+              { amount: { numerator: 50, denominator: 1 }, unit: "g", name: "sugar", note: "" },
+              { amount: { numerator: 4, denominator: 1 }, unit: "tsp", name: "salt", note: "" },
+              { amount: { numerator: 100, denominator: 1 }, unit: "ml", name: "rice vinegar", note: "" },
             ],
           },
         ],

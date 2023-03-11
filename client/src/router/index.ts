@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
 const Home = () => import("@/views/Home.vue");
-const Recipe = () => import("@/views/Recipe.vue");
+const Recipe = () => import("@/views/recipe/Recipe.vue");
 const Search = () => import("@/views/Search.vue");
 const Editor = () => import("@/views/editor/Editor.vue");
 const RecipeList = () => import("@/views/RecipeList.vue");
@@ -38,7 +38,7 @@ const routes: Array<RouteRecordRaw> = [
     component: Editor,
   },
   {
-    path: "/login",
+    path: "/admin",
     name: "login",
     component: Login,
   },

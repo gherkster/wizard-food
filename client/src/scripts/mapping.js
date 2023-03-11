@@ -1,8 +1,18 @@
+import Fraction from "fraction.js";
+
 export function mapRecipeStoreToApi(recipe) {
   const ingredientGroups = recipe.ingredientGroups;
   for (const group of ingredientGroups) {
     for (const ingredient of group.ingredients) {
-      ingredient.amount = ingredient.amount || null;
+      if (!ingredient.amount) {
+        ingredient.amount = null;
+      } else {
+        const fraction = new Fraction(ingredient.amount);
+        ingredient.amount = {
+          Numerator: fraction.n,
+          Denominator: fraction.d,
+        };
+      }
       ingredient.units = ingredient.units || null;
     }
   }
@@ -44,7 +54,9 @@ export function mapApiToRecipeStore(recipe) {
   const ingredientGroups = recipe.ingredientGroups;
   for (const group of ingredientGroups) {
     for (const ingredient of group.ingredients) {
-      ingredient.amount = ingredient.amount || "";
+      if (ingredient.amount) {
+        ingredient.amount = new Fraction(ingredient.amount.numerator, ingredient.amount.denominator).toFraction(true);
+      }
       ingredient.units = ingredient.units || "";
     }
   }

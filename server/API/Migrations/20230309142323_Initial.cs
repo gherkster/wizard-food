@@ -336,7 +336,7 @@ namespace API.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Amount = table.Column<decimal>(type: "TEXT", nullable: true),
+                    Amount = table.Column<string>(type: "TEXT", nullable: true),
                     Unit = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
                     Name = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
                     Note = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
