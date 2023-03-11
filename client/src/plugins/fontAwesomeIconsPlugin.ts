@@ -28,9 +28,8 @@ import {
   faRotateRight,
   faImage,
   faCloudArrowUp,
-  faClock,
 } from "@fortawesome/free-solid-svg-icons";
-import { faStar as farStar } from "@fortawesome/free-regular-svg-icons";
+import { faStar as farStar, faClock } from "@fortawesome/free-regular-svg-icons";
 
 export default {
   install: (app: App<Element>) => {

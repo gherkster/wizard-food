@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230226120111_Initial")]
+    [Migration("20230309142323_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -109,7 +109,7 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal?>("Amount")
+                    b.Property<string>("Amount")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("IngredientGroupId")

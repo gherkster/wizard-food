@@ -3,7 +3,6 @@
     <div class="n-input-wrapper">
       <div class="n-input__textarea n-scrollbar __scrollbar" role="none">
         <slot class="n-input__textarea-el" />
-        <div class="n-input__textarea-mirror" style="min-height: 113.5px; max-height: 305.5px"></div>
       </div>
       <div
         class="n-scrollbar-rail n-scrollbar-rail--vertical n-scrollbar-rail--disabled"
@@ -21,3 +20,12 @@ export default {
   name: "EmptyInputWrapper",
 };
 </script>
+
+<style lang="scss" scoped>
+@use "../styles/variables" as v;
+
+.n-input {
+  background-color: v.$colour-input-bg;
+  padding: 0 12px;
+}
+</style>

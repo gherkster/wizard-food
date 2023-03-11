@@ -40,9 +40,9 @@ li:not(:last-child) {
 
 img {
   max-width: 100%;
+  border-radius: v.$border-radius !important;
 }
 
 .text-muted {
-  font-style: italic;
   color: v.$colour-font-muted;
 }

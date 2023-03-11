@@ -23,6 +23,7 @@ export default defineConfig({
   },
   build: {
     outDir: "../server/API/wwwroot",
+    emptyOutDir: true,
   },
   server: {
     host: true,

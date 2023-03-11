@@ -109,12 +109,12 @@ export default {
         instructions: [],
       });
       // Pre-populate a new group with an instruction to indicate what the group is used for
-      this.addInstructionToGroup(this.recipeStore.recipe.instructionGroups.length - 1, "name");
+      this.addInstructionToGroup(this.recipeStore.recipe.instructionGroups.length - 1, "label");
     },
     async addInstructionToGroup(groupIndex, touchedField) {
       this.recipeStore.recipe.instructionGroups[groupIndex].instructions.push({
         uuid: uuid.v1(),
-        name: "",
+        label: "",
       });
       await nextTick();
       const currentGroupInstructions = this.$refs[`instructionGroups${groupIndex}`];

@@ -6,7 +6,6 @@
         <x-column v-for="recipe in recipes" col-6 col-md-4 col-lg-3 :key="recipe.slug">
           <recipe-preview
             :title="recipe.title"
-            description="This is a really long description which should be cut off by now"
             total-duration="4h 30m"
             image-src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
             @click="goToRecipe(recipe.slug)"
