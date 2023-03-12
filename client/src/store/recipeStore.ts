@@ -1,11 +1,13 @@
 import { defineStore } from "pinia";
 import { get, set, PropertyPath, cloneDeep } from "lodash";
 import { ref } from "vue";
+import { Recipe } from "@/types/recipe";
 
 export const useRecipeStore = defineStore(
   "recipe",
   () => {
-    const initialState = {
+    const initialState: Recipe = {
+      id: 0,
       title: "",
       rating: 0,
       note: "",
@@ -13,18 +15,20 @@ export const useRecipeStore = defineStore(
       instructionGroups: [],
       category: "",
       cuisine: "",
-      servings: "",
-      preparationTime: {
-        days: "",
-        hours: "",
-        minutes: "",
+      servings: 0,
+      preparationDuration: {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        name: "Preparation",
       },
-      cookingTime: {
-        days: "",
-        hours: "",
-        minutes: "",
+      cookingDuration: {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        name: "Cooking",
       },
-      customTimes: [],
+      customDurations: [],
       tags: [],
       slug: "",
     };

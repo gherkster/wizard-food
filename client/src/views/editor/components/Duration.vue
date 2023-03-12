@@ -5,10 +5,10 @@
         label="Minutes"
         path="minutes"
         input-mode="numeric"
-        :value="minutes"
-        :errors="v$.minutes.$errors"
-        @input="handleInput"
-        @blur="handleBlur"
+        :value="props.duration.minutes || ''"
+        :errors="v$.duration.minutes.$errors"
+        @input="onMinuteInput"
+        @blur="v$.duration.minutes.$touch()"
       />
     </x-column>
     <x-column col-3>
@@ -16,10 +16,10 @@
         label="Hours"
         path="hours"
         input-mode="numeric"
-        :value="hours"
-        :errors="v$.hours.$errors"
-        @input="handleInput"
-        @blur="handleBlur"
+        :value="props.duration.hours || ''"
+        :errors="v$.duration.hours.$errors"
+        @input="onHourInput"
+        @blur="v$.duration.hours.$touch()"
       />
     </x-column>
     <x-column col-3>
@@ -27,10 +27,10 @@
         label="Days"
         path="days"
         input-mode="numeric"
-        :value="days"
-        :errors="v$.days.$errors"
-        @input="handleInput"
-        @blur="handleBlur"
+        :value="props.duration.days || ''"
+        :errors="v$.duration.days.$errors"
+        @input="onDayInput"
+        @blur="v$.duration.days.$touch()"
       />
     </x-column>
     <x-column col-3>
@@ -40,110 +40,87 @@
         label="Label"
         filterable
         tag
-        :value="customName"
+        :value="props.duration.name"
         :options="customTimeTypes"
-        :errors="v$.customName.$errors"
-        @input="handleInput"
-        @blur="handleBlur"
+        :errors="v$.duration.name.$errors"
+        @input="onLabelInput"
+        @blur="v$.duration.name.$touch()"
       />
     </x-column>
   </x-row>
 </template>
 
-<script>
+<script setup lang="ts">
 import { XColumn, XInput, XRow, XSelect } from "@/components";
 import { integer, minValue, required } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { computed } from "vue";
+import { RecipeDuration } from "@/types/recipe";
+import { ValueLabelPair } from "@/types/form";
 
-export default {
-  name: "Duration",
-  inheritAttrs: false,
-  components: {
-    XColumn,
-    XInput,
-    XRow,
-    XSelect,
-  },
-  setup(props) {
-    const validationRules = computed(() => {
-      const timeValidation = {
-        integer,
-        minValue: minValue(0),
-      };
+const props = defineProps<{
+  duration: RecipeDuration;
+  custom: boolean;
+  customTimeTypes: Array<ValueLabelPair>;
+}>();
 
-      const rules = {
-        minutes: timeValidation,
-        hours: timeValidation,
-        days: timeValidation,
-        customName: {},
-      };
+const validationRules = computed(() => {
+  const timeValidation = {
+    integer,
+    minValue: minValue(0),
+  };
 
-      // Make the custom name field required if the user enters any time component values
-      if (props.custom && (props.minutes || props.hours || props.days)) {
-        rules.customName = {
-          required,
-        };
-      }
+  const rules = {
+    duration: {
+      minutes: timeValidation,
+      hours: timeValidation,
+      days: timeValidation,
+      name: {},
+    },
+  };
 
-      return rules;
-    });
-
-    return {
-      v$: useVuelidate(validationRules, props),
+  // Make the custom name field required if the user enters any time component values
+  if (props.custom && (props.duration.minutes || props.duration.hours || props.duration.days)) {
+    rules.duration.name = {
+      required,
     };
-  },
-  props: {
-    minutes: {
-      type: String,
-      required: true,
-    },
-    hours: {
-      type: String,
-      required: true,
-    },
-    days: {
-      type: String,
-      required: true,
-    },
-    label: {
-      type: String,
-      required: true,
-    },
-    custom: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    customName: {
-      type: String,
-      required: false,
-      default: "",
-    },
-    customTimeTypes: {
-      type: Array,
-      required: false,
-      default: () => [],
-    },
-  },
-  methods: {
-    handleInput(event) {
-      this.$emit("input", event);
-      if (this.v$[event.path]) {
-        this.v$[event.path].$touch();
-      }
-    },
-    handleBlur(event) {
-      this.$emit("blur", event);
-      if (this.v$[event.path]) {
-        this.v$[event.path].$touch();
-      }
-      if (this.v$.customName) {
-        this.v$.customName.$touch();
-      }
-    },
-  },
-};
+  }
+
+  return rules;
+});
+
+const v$ = useVuelidate(validationRules, props);
+
+const emit = defineEmits<{
+  (e: "input", value: RecipeDuration): void;
+}>();
+function onMinuteInput(value: number) {
+  emit("input", {
+    ...props.duration,
+    minutes: value,
+  });
+}
+
+function onHourInput(value: number) {
+  emit("input", {
+    ...props.duration,
+    hours: value,
+  });
+}
+
+function onDayInput(value: number) {
+  emit("input", {
+    ...props.duration,
+    days: value,
+  });
+}
+
+function onLabelInput(value: string) {
+  emit("input", {
+    ...props.duration,
+    name: value,
+  });
+}
 </script>
 
 <style scoped lang="scss">

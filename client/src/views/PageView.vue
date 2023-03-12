@@ -4,24 +4,16 @@
   </Suspense>
 </template>
 
-<script>
+<script setup lang="ts">
 import { useLoadingBar } from "naive-ui";
 
-export default {
-  name: "PageView",
-  setup() {
-    const loadingBar = useLoadingBar();
-    return {
-      loadingBar,
-    };
-  },
-  methods: {
-    startLoadingBar() {
-      this.loadingBar.start();
-    },
-    stopLoadingBar() {
-      this.loadingBar.finish();
-    },
-  },
-};
+const loadingBar = useLoadingBar();
+
+function startLoadingBar() {
+  loadingBar.start();
+}
+
+function stopLoadingBar() {
+  loadingBar.finish();
+}
 </script>

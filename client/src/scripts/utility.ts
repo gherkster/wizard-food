@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
-import { RecipeDuration } from "@/types/api";
+import { RecipeDuration } from "@/types/recipe";
 
 export function capitalizeFirstChar(string: string) {
   if (string === null || string === "") return "";

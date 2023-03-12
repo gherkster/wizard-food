@@ -26,138 +26,95 @@
   </n-form-item>
 </template>
 
-<script>
+<script setup lang="ts">
 import { NFormItem, NSelect } from "naive-ui";
+import { ValueLabelPair } from "@/types/form";
+import { computed, ref } from "vue";
+import { ErrorObject } from "@vuelidate/core";
 
-export default {
-  name: "XSelect",
-  inheritAttrs: false,
-  components: { NFormItem, NSelect },
-  props: {
-    value: {
-      type: [String, Array],
-      required: true,
-    },
-    path: {
-      type: String,
-      required: true,
-    },
-    label: {
-      type: String,
-      required: true,
-    },
-    options: {
-      type: Array,
-      required: true,
-    },
-    errors: {
-      type: Array,
-      required: false,
-      default: () => [],
-    },
-    filterable: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    tag: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    multiple: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    clearable: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    required: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    showLabel: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
-    showError: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
-  },
-  data() {
-    return {
-      currentSearchTerm: "",
-    };
-  },
-  computed: {
-    validationMessage() {
-      return this.errors.length > 0 ? this.errors[0].$message : null;
-    },
-    validationStatus() {
-      return this.errors.length > 0 ? "error" : "";
-    },
-  },
-  methods: {
-    /**
-     * Set currentSearchTerm to the current text a user is entering before confirming a new tag
-     *
-     * This allows us to create a new tag with the currentSearchTerm value if the user clicks off the tag box,
-     * which is the expected behaviour of this input field.
-     *
-     * It also resolves mobile browsers not creating the tag and skipping the input
-     * when the "enter" button is clicked (renders as a next button)
-     * @param searchTerm
-     * @returns {{label, value}}
-     */
-    onSearch(searchTerm) {
-      this.currentSearchTerm = searchTerm;
-      return {
-        label: searchTerm,
-        value: searchTerm,
-      };
-    },
-    handleFocus() {
-      this.$emit("focus", {
-        path: this.path,
-        value: this.value,
-      });
-    },
-    handleUpdate(value) {
-      this.$emit("input", {
-        path: this.path,
-        value: value,
-      });
-    },
-    handleBlur() {
-      let emittedValue = this.value;
-      if (this.currentSearchTerm) {
-        if (this.multiple) {
-          // Mimic the native functionality by adding a new tag if it doesn't exist already
-          if (!this.value.includes(this.currentSearchTerm)) {
-            // If a multiple tag based select dropdown box create a new tag from the pending search term for better usability
-            emittedValue.push(this.currentSearchTerm);
-          }
-        } else {
-          // If a normal select dropdown box set the value of the field to the pending search term for better usability
-          emittedValue = this.currentSearchTerm;
-        }
-        this.currentSearchTerm = "";
+const props = withDefaults(
+  defineProps<{
+    value: string | Array<string>;
+    label: string;
+    options: Array<ValueLabelPair>;
+    errors?: Array<ErrorObject>;
+    filterable?: boolean;
+    tag?: boolean;
+    multiple?: boolean;
+    clearable?: boolean;
+    required?: boolean;
+    showLabel?: boolean;
+    showError?: boolean;
+  }>(),
+  {
+    showLabel: true,
+    showError: true,
+  }
+);
+
+const currentSearchTerm = ref("");
+
+const validationMessage = computed(() => {
+  return props.errors && props.errors.length > 0 ? props.errors[0].$message : null;
+});
+
+const validationStatus = computed(() => {
+  return props.errors && props.errors.length > 0 ? "error" : "";
+});
+
+/**
+ * Set currentSearchTerm to the current text a user is entering before confirming a new tag
+ *
+ * This allows us to create a new tag with the currentSearchTerm value if the user clicks off the tag box,
+ * which is the expected behaviour of this input field.
+ *
+ * It also resolves mobile browsers not creating the tag and skipping the input
+ * when the "enter" button is clicked (renders as a next button)
+ * @param searchTerm
+ * @returns {{label, value}}
+ */
+function onSearch(searchTerm: string) {
+  currentSearchTerm.value = searchTerm;
+  return {
+    label: searchTerm,
+    value: searchTerm,
+  };
+}
+
+const emit = defineEmits<{
+  (e: "focus"): void;
+  (e: "input", value: string | Array<string>): void;
+  (e: "blur", value: string | Array<string>): void;
+}>();
+
+function handleFocus() {
+  emit("focus");
+}
+function handleUpdate(value: string | Array<string>) {
+  emit("input", value);
+}
+
+function handleBlur() {
+  let emittedValue = props.value;
+  if (currentSearchTerm.value) {
+    if (props.multiple) {
+      // Mimic the native functionality by adding a new tag if it doesn't exist already
+      if (!props.value.includes(currentSearchTerm.value) && Array.isArray(emittedValue)) {
+        // If a multiple tag based select dropdown box create a new tag from the pending search term for better usability
+        emittedValue.push(currentSearchTerm.value);
       }
-      this.$emit("blur", {
-        path: this.path,
-        value: emittedValue,
-      });
-    },
-    selectSelf() {
-      this.$refs.input.handleTriggerClick();
-    },
-  },
+    } else {
+      // If a normal select dropdown box set the value of the field to the pending search term for better usability
+      emittedValue = currentSearchTerm.value;
+    }
+    currentSearchTerm.value = "";
+  }
+  emit("blur", emittedValue);
+}
+</script>
+
+<script lang="ts">
+export default {
+  inheritAttrs: false,
 };
 </script>

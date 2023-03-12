@@ -26,21 +26,11 @@ export default {
       required: true,
       type: String,
     },
-    displayDuration: {
-      type: Number,
-      required: false,
-      default: 4000,
-    },
   },
   computed: {
     alertClass: function () {
       return "alert--" + this.severity;
     },
-  },
-  mounted() {
-    setTimeout(() => {
-      this.$emit("expired");
-    }, this.displayDuration);
   },
 };
 </script>

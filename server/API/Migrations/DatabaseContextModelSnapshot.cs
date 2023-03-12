@@ -206,7 +206,7 @@ namespace API.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<TimeSpan?>("CookingTime")
+                    b.Property<TimeSpan>("CookingTime")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("CuisineId")
@@ -217,7 +217,7 @@ namespace API.Migrations
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
-                    b.Property<TimeSpan?>("PreparationTime")
+                    b.Property<TimeSpan>("PreparationTime")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Rating")

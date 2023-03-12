@@ -12,8 +12,8 @@ public record DbRecipe
     public virtual List<DbIngredientGroup> IngredientGroups { get; set; } = new();
     public virtual List<DbInstructionGroup> InstructionGroups { get; set; } = new();
     
-    public TimeSpan? PreparationTime { get; set; }
-    public TimeSpan? CookingTime { get; set; }
+    public TimeSpan PreparationTime { get; set; }
+    public TimeSpan CookingTime { get; set; }
     public virtual List<DbCustomTime> CustomTimes { get; set; } = new();
 
     public virtual DbCategory Category { get; set; } = new(string.Empty);

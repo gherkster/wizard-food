@@ -16,44 +16,30 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import apis from "@/constants/apis";
 import { useAxios } from "@/composables";
-import { RecipePreview, XRow, XColumn } from "@/components";
+import { XRow, XColumn } from "@/components";
+import RecipePreview from "./RecipePreview.vue";
+import { ref } from "vue";
+import { Recipe } from "@/types/recipe";
+import { useRouter } from "vue-router";
 
-export default {
-  name: "RecipeList",
-  components: { RecipePreview, XRow, XColumn },
-  setup() {
-    return {
-      axios: useAxios(),
-    };
-  },
-  data() {
-    return {
-      recipes: [],
-    };
-  },
-  created() {
-    this.axios
-      .get(apis.recipes)
-      .then((response) => {
-        this.recipes = response.data;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  },
-  methods: {
-    goToRecipe(slug) {
-      this.$router.push("/recipes/" + slug);
-    },
-  },
-};
+const axios = useAxios();
+const router = useRouter();
+
+const recipes = ref<Array<Recipe>>([]);
+
+const { data } = await axios.get<Array<Recipe>>(apis.recipes);
+recipes.value = data;
+
+function goToRecipe(slug: string) {
+  router.push("/recipes/" + slug);
+}
 </script>
 
 <style lang="scss" scoped>
-@use "../styles/mixins" as m;
+@use "../../styles/mixins" as m;
 .recipe-list {
   display: flex;
   @include m.spacing("gy", "lg");

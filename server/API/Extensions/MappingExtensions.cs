@@ -32,22 +32,18 @@ public static class MappingExtensions
             Servings = dbRecipe.Servings,
             Rating = dbRecipe.Rating,
             
-            PreparationDuration = dbRecipe.PreparationTime != null 
-                ? new RecipeDuration("Preparation")
-                    {
-                        Minutes = dbRecipe.PreparationTime.Value.Minutes,
-                        Hours = dbRecipe.PreparationTime.Value.Hours,
-                        Days = dbRecipe.PreparationTime.Value.Days
-                    }
-                : null,
-            CookingDuration = dbRecipe.CookingTime != null 
-                ? new RecipeDuration("Cooking")
-                    {
-                        Minutes = dbRecipe.CookingTime.Value.Minutes,
-                        Hours = dbRecipe.CookingTime.Value.Hours,
-                        Days = dbRecipe.CookingTime.Value.Days
-                    }
-                : null,
+            PreparationDuration = new RecipeDuration("Preparation")
+            {
+                Minutes = dbRecipe.PreparationTime.Minutes,
+                Hours = dbRecipe.PreparationTime.Hours,
+                Days = dbRecipe.PreparationTime.Days
+            },
+            CookingDuration = new RecipeDuration("Cooking")
+            {
+                Minutes = dbRecipe.CookingTime.Minutes,
+                Hours = dbRecipe.CookingTime.Hours,
+                Days = dbRecipe.CookingTime.Days
+            },
             CustomDurations = dbRecipe.CustomTimes.Select(ct => new RecipeDuration(ct.CustomTimeLabel.Label)
             {
                 Minutes = ct.CookingTime.Minutes,
@@ -95,12 +91,8 @@ public static class MappingExtensions
             Servings = recipe.Servings,
             Rating = recipe.Rating,
             
-            PreparationTime = recipe.PreparationDuration != null 
-                ? new TimeSpan(recipe.PreparationDuration.Days, recipe.PreparationDuration.Hours, recipe.PreparationDuration.Minutes, 0) 
-                : null,
-            CookingTime = recipe.CookingDuration != null 
-                ? new TimeSpan(recipe.CookingDuration.Days, recipe.CookingDuration.Hours, recipe.CookingDuration.Minutes, 0) 
-                : null,
+            PreparationTime = new TimeSpan(recipe.PreparationDuration.Days, recipe.PreparationDuration.Hours, recipe.PreparationDuration.Minutes, 0),
+            CookingTime = new TimeSpan(recipe.CookingDuration.Days, recipe.CookingDuration.Hours, recipe.CookingDuration.Minutes, 0),
             CustomTimes = recipe.CustomDurations
                 .Select(cd => new DbCustomTime(new TimeSpan(cd.Days, cd.Hours, cd.Minutes, 0)) { CustomTimeLabel = new DbCustomTimeLabel(cd.Name)})
                 .ToList(),
@@ -110,5 +102,19 @@ public static class MappingExtensions
         };
 
         return dbRecipe;
+    }
+
+    public static DropdownOptions AsViewModel(this DbDropdownOptions dbOptions)
+    {
+        var dropdownOptions = new DropdownOptions()
+        {
+            Categories = dbOptions.Categories.Select(c => c.Label).ToList(),
+            Cuisines = dbOptions.Cuisines.Select(c => c.Label).ToList(),
+            Tags = dbOptions.Tags.Select(t => t.Label).ToList(),
+            CustomTimeTypes = dbOptions.CustomTimeTypes.Select(ctt => ctt.Label).ToList(),
+            Units = dbOptions.Units
+        };
+
+        return dropdownOptions;
     }
 }

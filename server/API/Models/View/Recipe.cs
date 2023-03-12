@@ -15,8 +15,8 @@ public class Recipe
     
     public decimal Servings { get; set; }
 
-    public RecipeDuration? PreparationDuration { get; set; }
-    public RecipeDuration? CookingDuration { get; set; }
+    public RecipeDuration PreparationDuration { get; set; } = new("Preparation");
+    public RecipeDuration CookingDuration { get; set; } = new("Cooking");
     public List<RecipeDuration> CustomDurations { get; set; } = new();
     
     public List<string> Tags { get; set; } = new();

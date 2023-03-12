@@ -85,7 +85,7 @@ public class DatabaseContext : IdentityDbContext
         base.OnModelCreating(builder);
     }
 
-    public async Task<DropdownOptions> GetDropdownOptionsAsync()
+    public async Task<DbDropdownOptions> GetDropdownOptionsAsync()
     {
         // We don't disable change tracking on these queries since this is also used for verifying
         // whether entities already exist during insert/update/delete scenarios
@@ -100,7 +100,7 @@ public class DatabaseContext : IdentityDbContext
             .Select(i => i.Unit)
             .Distinct();
         
-        var dropdownOptions = new DropdownOptions()
+        var dropdownOptions = new DbDropdownOptions()
         {
             Categories = categoriesTask.Result.ToList(),
             Cuisines = cuisinesTask.Result.ToList(),

@@ -97,7 +97,7 @@ import { useAxios } from "@/composables";
 import Fraction from "fraction.js";
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { Recipe, RecipeDuration, IngredientFraction } from "@/types/api";
+import { Recipe, RecipeDuration, IngredientFraction } from "@/types/recipe";
 
 const userStore = useUserStore();
 const axios = useAxios();
