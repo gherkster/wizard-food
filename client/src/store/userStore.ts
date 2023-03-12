@@ -30,6 +30,7 @@ export const useUserStore = defineStore(
     return {
       isAuthenticated,
       wasAuthenticatedAtLastCheck,
+      milliSecondsSinceLastAuthCheck,
       lastUpdateTime,
       resetLastUpdateTime,
     };
@@ -37,6 +38,10 @@ export const useUserStore = defineStore(
   {
     persist: {
       debug: true,
+      afterRestore: (context) => {
+        // Ensure that Date type is rehydrated as a Date, not a string
+        context.store.lastUpdateTime = new Date(context.store.lastUpdateTime);
+      },
     },
   }
 );

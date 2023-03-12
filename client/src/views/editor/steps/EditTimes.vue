@@ -2,83 +2,60 @@
   <n-form size="large">
     <duration
       label="Preparation Time"
-      :minutes="recipeStore.recipe.preparationTime.minutes"
-      :hours="recipeStore.recipe.preparationTime.hours"
-      :days="recipeStore.recipe.preparationTime.days"
+      :duration="recipeStore.recipe.preparationDuration"
       @input="onPreparationTimeInput"
     />
     <duration
       label="Cooking Time"
-      :minutes="recipeStore.recipe.cookingTime.minutes"
-      :hours="recipeStore.recipe.cookingTime.hours"
-      :days="recipeStore.recipe.cookingTime.days"
+      :duration="recipeStore.recipe.cookingDuration"
       @input="onCookingTimeInput"
     />
     <duration
-      v-for="(customTime, index) in recipeStore.recipe.customTimes"
+      v-for="(customTime, index) in recipeStore.recipe.customDurations"
       :key="customTime.uuid"
       label="Custom Time"
-      :minutes="customTime.minutes"
-      :hours="customTime.hours"
-      :days="customTime.days"
+      :duration="customTime"
       custom
-      :custom-name="customTime.name"
       :custom-time-types="customTimeTypes"
       @input="handleCustomTimeInputAtIndex($event, index)"
-      @blur="handleCustomTimeInputAtIndex($event, index)"
     />
     <n-button type="primary" block tertiary @click="addCustomTimeGroup">Add Custom Time</n-button>
   </n-form>
 </template>
 
-<script>
+<script setup lang="ts">
 import { useRecipeStore } from "@/store/recipeStore";
 import { useVuelidate } from "@vuelidate/core";
 import { NForm, NButton } from "naive-ui";
-import { uuid } from "vue-uuid";
 import Duration from "@/views/editor/components/Duration.vue";
+import { ValueLabelPair } from "@/types/form";
+import { RecipeDuration } from "@/types/recipe";
 
-export default {
-  name: "EditTimes",
-  components: {
-    Duration,
-    NForm,
-    NButton,
-  },
-  props: {
-    customTimeTypes: {
-      type: Array,
-      required: true,
-    },
-  },
-  setup() {
-    return {
-      recipeStore: useRecipeStore(),
-      v$: useVuelidate(),
-    };
-  },
-  methods: {
-    onPreparationTimeInput({ path, value }) {
-      this.recipeStore.setValueAt(["preparationTime", path], value);
-    },
-    onCookingTimeInput({ path, value }) {
-      this.recipeStore.setValueAt(["cookingTime", path], value);
-    },
-    async handleCustomTimeInputAtIndex(event, index) {
-      this.recipeStore.setValueAt(["customTimes", index, event.path], event.value);
-    },
-    addCustomTimeGroup() {
-      this.recipeStore.recipe.customTimes.push({
-        uuid: uuid.v1(),
-        days: "",
-        hours: "",
-        minutes: "",
-        label: "",
-      });
-    },
-    removeCustomTimeGroup(groupIndex) {
-      this.recipeStore.recipe.customTimes.splice(groupIndex, 1);
-    },
-  },
-};
+const props = defineProps<{
+  customTimeTypes: Array<ValueLabelPair>;
+}>();
+
+const recipeStore = useRecipeStore();
+const v$ = useVuelidate();
+
+function onPreparationTimeInput(value: RecipeDuration) {
+  recipeStore.recipe.preparationDuration = value;
+}
+
+function onCookingTimeInput(value: RecipeDuration) {
+  recipeStore.recipe.cookingDuration = value;
+}
+
+function handleCustomTimeInputAtIndex(value: RecipeDuration, index: number) {
+  recipeStore.recipe.customDurations[index] = value;
+}
+
+function addCustomTimeGroup() {
+  recipeStore.recipe.customDurations.push({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    name: "",
+  });
+}
 </script>

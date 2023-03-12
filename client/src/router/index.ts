@@ -1,11 +1,12 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import { useUserStore } from "@/store";
 
-const Home = () => import("@/views/Home.vue");
+const Home = () => import("@/views/home/Home.vue");
 const Recipe = () => import("@/views/recipe/Recipe.vue");
-const Search = () => import("@/views/Search.vue");
+const Search = () => import("@/views/search/Search.vue");
 const Editor = () => import("@/views/editor/Editor.vue");
-const RecipeList = () => import("@/views/RecipeList.vue");
-const Login = () => import("@/views/Login.vue");
+const RecipeList = () => import("@/views/recipe-list/RecipeList.vue");
+const Login = () => import("@/views/login/Login.vue");
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -31,11 +32,17 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/recipes/:slug/edit",
     component: Editor,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/new",
     name: "new-recipe",
     component: Editor,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/admin",
@@ -48,6 +55,18 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeResolve((to) => {
+  const userStore = useUserStore();
+  if (to.meta.requiresAuth && !userStore.isAuthenticated) {
+    return {
+      path: "/admin",
+      query: {
+        redirect: to.fullPath,
+      },
+    };
+  }
 });
 
 export default router;

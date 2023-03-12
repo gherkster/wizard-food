@@ -15,8 +15,8 @@
 </template>
 
 <script>
-import AlertSection from "@/views/AlertSection.vue";
-import AppHeader from "@/views/AppHeader.vue";
+import AlertSection from "@/views/AlertListener.vue";
+import AppHeader from "@/views/nav/AppHeader.vue";
 import { NDialogProvider, NConfigProvider, NThemeEditor, NLoadingBarProvider } from "naive-ui";
 import overrides from "@/theme/overrides";
 import PageView from "@/views/PageView.vue";

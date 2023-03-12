@@ -1,6 +1,6 @@
 <template>
   <div class="recipe-preview">
-    <n-image height="140" object-fit="cover" width="999" :src="imageSrc" lazy preview-disabled @click="onClick" />
+    <n-image height="140" object-fit="cover" width="999" :src="props.imageSrc" lazy preview-disabled @click="onClick" />
     <div class="recipe-preview__body" @click="onClick">
       <span>
         <b>{{ title }}</b>
@@ -10,55 +10,34 @@
     <div class="recipe-preview__footer">
       <div class="recipe-preview__duration text-muted">
         <font-awesome-icon icon="fa-regular fa-clock" />
-        <span>{{ totalDuration }}</span>
+        <span>{{ props.totalDuration }}</span>
       </div>
-      <n-rate :value="rating" readonly size="small" />
+      <n-rate :value="props.rating" readonly size="small" />
     </div>
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import { NImage, NDivider, NRate } from "naive-ui";
 
-export default {
-  name: "RecipePreview",
-  components: {
-    NImage,
-    NDivider,
-    NRate,
-  },
-  props: {
-    title: {
-      type: String,
-      required: true,
-    },
-    imageSrc: {
-      type: String,
-      required: false,
-      default: "",
-    },
-    totalDuration: {
-      type: String,
-      required: false,
-      default: "",
-    },
-    rating: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
-  },
-  methods: {
-    onClick() {
-      this.$emit("click");
-    },
-  },
-};
+const props = defineProps<{
+  title: string;
+  imageSrc?: string;
+  totalDuration: string;
+  rating: number;
+}>();
+
+const emit = defineEmits<{
+  (e: "input"): void;
+}>();
+function onClick() {
+  emit("input");
+}
 </script>
 
 <style lang="scss" scoped>
-@use "../styles/mixins" as m;
-@use "../styles/variables" as v;
+@use "../../styles/mixins" as m;
+@use "../../styles/variables" as v;
 .recipe-preview {
   display: flex;
   flex-direction: column;

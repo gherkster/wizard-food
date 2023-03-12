@@ -227,5 +227,9 @@ public class RecipesController : ControllerBase
     }
 
     [HttpGet("editor/dropdown-options")]
-    public async Task<ActionResult<DropdownOptions>> GetDropdownOptions() => await _db.GetDropdownOptionsAsync();
+    public async Task<ActionResult<DropdownOptions>> GetDropdownOptions()
+    {
+        var dbOptions = await _db.GetDropdownOptionsAsync();
+        return dbOptions.AsViewModel();
+    }
 }

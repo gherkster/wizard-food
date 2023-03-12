@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230309142323_Initial")]
+    [Migration("20230312054442_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -209,7 +209,7 @@ namespace API.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<TimeSpan?>("CookingTime")
+                    b.Property<TimeSpan>("CookingTime")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("CuisineId")
@@ -220,7 +220,7 @@ namespace API.Migrations
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
-                    b.Property<TimeSpan?>("PreparationTime")
+                    b.Property<TimeSpan>("PreparationTime")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Rating")

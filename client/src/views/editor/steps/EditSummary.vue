@@ -8,7 +8,7 @@
           :value="recipeStore.recipe.title"
           :errors="v$.title.$errors"
           required
-          @input="handleInput"
+          @input="onTitleInput"
           @blur="v$.title.$touch()"
         />
       </x-column>
@@ -18,56 +18,37 @@
     </x-row>
     <x-row>
       <x-column col-12>
-        <rich-text-editor :value="recipeStore.recipe.note" label="Notes" @input="handleInput({ path: 'note', value: $event })" />
+        <rich-text-editor :value="recipeStore.recipe.note" label="Notes" @input="onNoteInput" />
       </x-column>
     </x-row>
   </n-form>
 </template>
 
-<script>
+<script setup lang="ts">
 import { XRow, XColumn, XInput, XUpload, RichTextEditor } from "@/components";
 import { NForm } from "naive-ui";
 import { storeToRefs } from "pinia";
 import { useVuelidate } from "@vuelidate/core";
 import { useRecipeStore } from "@/store/recipeStore";
 import { required } from "@vuelidate/validators";
-import { recipeFormSteps } from "@/constants/enums";
 
-export default {
-  name: "EditSummary",
-  components: {
-    RichTextEditor,
-    XRow,
-    XColumn,
-    XInput,
-    XUpload,
-    NForm,
-  },
-  setup() {
-    const recipeStore = useRecipeStore();
-    const { recipe } = storeToRefs(recipeStore);
-    const step = recipeFormSteps.summary;
-    const validationRules = {
-      title: {
-        required,
-      },
-    };
-    return {
-      recipeStore,
-      v$: useVuelidate(validationRules, recipe),
-      step,
-    };
-  },
-  methods: {
-    handleInput({ path, value }) {
-      this.recipeStore.setValueAt(path, value);
-      this.validateAt(path);
-    },
-    validateAt(path) {
-      if (this.v$[path]) {
-        this.v$[path].$touch();
-      }
-    },
+const recipeStore = useRecipeStore();
+const { recipe } = storeToRefs(recipeStore);
+const validationRules = {
+  title: {
+    required,
   },
 };
+
+const v$ = useVuelidate(validationRules, recipe);
+
+function onTitleInput(value: string) {
+  recipeStore.recipe.title = value;
+  v$.value.title.$touch();
+}
+
+function onNoteInput(value: string) {
+  recipeStore.recipe.note = value;
+}
+
 </script>

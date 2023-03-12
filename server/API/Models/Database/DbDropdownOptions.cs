@@ -1,8 +1,6 @@
-using API.Models.Database;
+namespace API.Models.Database;
 
-namespace API.Models;
-
-public class DropdownOptions
+public class DbDropdownOptions
 {
     public List<DbCategory> Categories { get; set; } = new();
     public List<DbCuisine> Cuisines { get; set; } = new();

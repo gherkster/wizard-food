@@ -15,12 +15,12 @@ export interface Recipe {
   slug: string;
 }
 
-interface IngredientGroup {
+export interface IngredientGroup {
   name: string | null;
   ingredients: Array<Ingredient>;
 }
 
-interface Ingredient {
+export interface Ingredient {
   amount: IngredientFraction | null;
   unit: string;
   name: string;
@@ -32,12 +32,12 @@ export interface IngredientFraction {
   denominator: number;
 }
 
-interface InstructionGroup {
+export interface InstructionGroup {
   name: string | null;
   instructions: Array<Instruction>;
 }
 
-interface Instruction {
+export interface Instruction {
   label: string;
 }
 
@@ -46,4 +46,12 @@ export interface RecipeDuration {
   hours: number;
   days: number;
   name: string;
+}
+
+export interface DropdownOptions {
+  categories: Array<string>;
+  cuisines: Array<string>;
+  customTimeTypes: Array<string>;
+  tags: Array<string>;
+  units: Array<string>;
 }
