@@ -3,6 +3,7 @@ using System;
 using API.Models.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20230313100049_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,27 +101,6 @@ namespace API.Migrations
                         .IsUnique();
 
                     b.ToTable("CustomTimeLabels");
-                });
-
-            modelBuilder.Entity("API.Models.Database.DbImageMeta", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("AspectRatioX")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AspectRatioY")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("API.Models.Database.DbIngredient", b =>
@@ -230,11 +212,11 @@ namespace API.Migrations
                     b.Property<TimeSpan>("CookingTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("CoverImageId")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("CuisineId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<Guid?>("ImageId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Note")
                         .IsRequired()
@@ -263,8 +245,6 @@ namespace API.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("CoverImageId");
 
                     b.HasIndex("CuisineId");
 
@@ -594,10 +574,6 @@ namespace API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Models.Database.DbImageMeta", "CoverImage")
-                        .WithMany("Recipes")
-                        .HasForeignKey("CoverImageId");
-
                     b.HasOne("API.Models.Database.DbCuisine", "Cuisine")
                         .WithMany("Recipes")
                         .HasForeignKey("CuisineId")
@@ -605,8 +581,6 @@ namespace API.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
-
-                    b.Navigation("CoverImage");
 
                     b.Navigation("Cuisine");
                 });
@@ -690,11 +664,6 @@ namespace API.Migrations
             modelBuilder.Entity("API.Models.Database.DbCustomTimeLabel", b =>
                 {
                     b.Navigation("DbCustomTimes");
-                });
-
-            modelBuilder.Entity("API.Models.Database.DbImageMeta", b =>
-                {
-                    b.Navigation("Recipes");
                 });
 
             modelBuilder.Entity("API.Models.Database.DbIngredientGroup", b =>

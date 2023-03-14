@@ -11,6 +11,7 @@ public static class MappingExtensions
         {
             Id = dbRecipe.Id,
             Title = dbRecipe.Title,
+            CoverImage = dbRecipe.CoverImage?.AsViewModel(),
             Note = dbRecipe.Note,
             IngredientGroups = dbRecipe.IngredientGroups
                 .Select(ig => new IngredientGroup() { Name = ig.Name, Ingredients = ig.Ingredients
@@ -64,6 +65,7 @@ public static class MappingExtensions
         {
             Id = id,
             Title = recipe.Title,
+            CoverImage = recipe.CoverImage?.AsDatabaseModel(),
             Note = recipe.Note,
             IngredientGroups = recipe.IngredientGroups
                 .Select(ig => new DbIngredientGroup() 
@@ -116,5 +118,31 @@ public static class MappingExtensions
         };
 
         return dropdownOptions;
+    }
+
+    public static ImageMeta AsViewModel(this DbImageMeta dbImageMeta)
+    {
+        var imageMeta = new ImageMeta()
+        {
+            Id = dbImageMeta.Id,
+            DisplayName = dbImageMeta.DisplayName,
+            AspectRatioX = dbImageMeta.AspectRatioX,
+            AspectRatioY = dbImageMeta.AspectRatioY
+        };
+        
+        return imageMeta;
+    }
+
+    public static DbImageMeta AsDatabaseModel(this ImageMeta imageMeta)
+    {
+        var dbImageMeta = new DbImageMeta()
+        {
+            Id = imageMeta.Id,
+            DisplayName = imageMeta.DisplayName,
+            AspectRatioX = imageMeta.AspectRatioX,
+            AspectRatioY = imageMeta.AspectRatioY
+        };
+
+        return dbImageMeta;
     }
 }

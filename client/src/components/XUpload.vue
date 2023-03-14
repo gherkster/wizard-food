@@ -1,6 +1,6 @@
 <template>
   <n-form-item :label="label">
-    <n-upload directory-dnd @change="handleUpload">
+    <n-upload :max="1" directory-dnd @change="onFileSelect">
       <n-upload-dragger>
         <x-icon fa-icon="fa-cloud-arrow-up" size="2x" />
         <p>{{ description }}</p>
@@ -9,44 +9,27 @@
   </n-form-item>
 </template>
 
-<script>
-import { NUpload, NUploadDragger, NFormItem } from "naive-ui";
+<script setup lang="ts">
+import { NUpload, NUploadDragger, NFormItem, UploadFileInfo } from "naive-ui";
 import { XIcon } from "@/components";
 
+const props = defineProps<{
+  value: string;
+  type: string;
+  description: string;
+}>();
+
+const emit = defineEmits<{
+  (e: "change", value: Array<File>): void;
+}>();
+function onFileSelect(data: { fileList: Array<UploadFileInfo> }) {
+  const files = data.fileList.filter((f) => !!f.file).map((f) => f.file as File);
+  emit("change", files);
+}
+</script>
+
+<script lang="ts">
 export default {
-  name: "XUpload",
   inheritAttrs: false,
-  components: {
-    NFormItem,
-    NUpload,
-    NUploadDragger,
-    XIcon,
-  },
-  props: {
-    value: {
-      type: String,
-      required: true,
-    },
-    label: {
-      type: String,
-      required: false,
-      default: "",
-    },
-    description: {
-      type: String,
-      required: false,
-      default: "Upload here",
-    },
-    path: {
-      type: String,
-      required: true,
-    },
-  },
-  methods: {
-    handleUpload(data) {
-      // TODO: Implement emit uploaded image details
-      console.log(data);
-    },
-  },
 };
 </script>

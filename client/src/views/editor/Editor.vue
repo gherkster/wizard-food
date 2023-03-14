@@ -92,7 +92,8 @@ import apis from "@/constants/apis";
 import { useAxios } from "@/composables";
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { DropdownOptions, Recipe } from "@/types/recipe";
+import { DropdownOptions, ImageMeta, Recipe } from "@/types/recipe";
+import { useUploadStore } from "@/store/uploadStore";
 
 const recipeStore = useRecipeStore();
 const alertStore = useAlertStore();
@@ -217,8 +218,30 @@ function populateInputsWithExistingRecipe() {
     .catch((error) => console.log(error));
 }
 
+const uploadStore = useUploadStore();
 async function submit() {
   isSubmitting.value = true;
+
+  if (uploadStore.recipeImage) {
+    const formData = new FormData();
+    formData.append("file", uploadStore.recipeImage);
+    try {
+      const response = await axios.post<ImageMeta>(apis.uploadImage, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (response.data) {
+        recipeStore.recipe.coverImage = response.data;
+        uploadStore.recipeImage = undefined;
+      }
+    } catch (error) {
+      console.log(error);
+      alertStore.showErrorAlert("Failed to upload recipe image");
+      return;
+    }
+  }
+
   if (isEditingExistingRecipe.value) {
     await axios
       .put(apis.recipes + existingRecipeId.value, recipeStore.recipe)

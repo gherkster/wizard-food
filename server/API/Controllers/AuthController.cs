@@ -43,7 +43,7 @@ public class AuthController : ControllerBase
         var options = new AuthenticationProperties()
         {
             AllowRefresh = true,
-            ExpiresUtc = DateTimeOffset.Now.AddMinutes(30),
+            ExpiresUtc = DateTimeOffset.Now.Add(Constants.SessionTimeout),
         };
 
         await _signInManager.SignInAsync(user, options);

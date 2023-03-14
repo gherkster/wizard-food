@@ -215,6 +215,7 @@ namespace API.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Title = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
+                    ImageId = table.Column<Guid>(type: "TEXT", nullable: true),
                     Note = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
                     PreparationTime = table.Column<TimeSpan>(type: "TEXT", nullable: false),
                     CookingTime = table.Column<TimeSpan>(type: "TEXT", nullable: false),

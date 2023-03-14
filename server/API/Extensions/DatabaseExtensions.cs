@@ -10,7 +10,9 @@ public static class DatabaseExtensions
     /// </summary>
     public static IQueryable<DbRecipe> IncludeAllRelatedEntities(this IQueryable<DbRecipe> recipes)
     {
-        return recipes.Include(r => r.IngredientGroups)
+        return recipes
+            .Include(i => i.CoverImage)
+            .Include(r => r.IngredientGroups)
             .ThenInclude(ig => ig.Ingredients)
             .Include(r => r.InstructionGroups)
             .ThenInclude(ig => ig.Instructions)

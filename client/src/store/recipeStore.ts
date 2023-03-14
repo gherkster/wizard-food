@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { get, set, PropertyPath, cloneDeep } from "lodash";
+import { cloneDeep } from "lodash-es";
 import { ref } from "vue";
 import { Recipe } from "@/types/recipe";
 
@@ -9,6 +9,7 @@ export const useRecipeStore = defineStore(
     const initialState: Recipe = {
       id: 0,
       title: "",
+      coverImage: undefined,
       rating: 0,
       note: "",
       ingredientGroups: [],
@@ -32,19 +33,7 @@ export const useRecipeStore = defineStore(
       tags: [],
       slug: "",
     };
-    const recipe = ref(cloneDeep(initialState));
-
-    function setValueAt(path: PropertyPath, value: any) {
-      const valueAtPath = get(recipe.value, path);
-
-      if (Array.isArray(valueAtPath)) {
-        set(recipe.value, path, [...value]);
-      } else if (typeof valueAtPath === "object" && valueAtPath !== null) {
-        set(recipe.value, path, { ...value });
-      } else {
-        set(recipe.value, path, value ?? "");
-      }
-    }
+    const recipe = ref<Recipe>(cloneDeep(initialState));
 
     function $reset() {
       recipe.value = cloneDeep(initialState);
@@ -52,7 +41,6 @@ export const useRecipeStore = defineStore(
 
     return {
       recipe,
-      setValueAt,
       $reset,
     };
   },

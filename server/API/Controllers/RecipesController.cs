@@ -20,6 +20,23 @@ public class RecipesController : ControllerBase
         _db = dbContext;
         _logger = logger;
     }
+    
+    [HttpGet("{slug}")]
+    public async Task<ActionResult<Recipe>> GetRecipe(string slug)
+    {
+        var recipe = await _db.Recipes.Where(r => r.Slug == slug)
+            .IncludeAllRelatedEntities()
+            .AsNoTracking()
+            .Select(r => r.AsViewModel())
+            .SingleOrDefaultAsync();
+        
+        if (recipe == null)
+        {
+            return NotFound();
+        }
+        
+        return recipe;
+    }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes(string? query)
@@ -49,28 +66,18 @@ public class RecipesController : ControllerBase
         return recipes.Select(r => r.AsViewModel()).ToList();
     }
 
-    [HttpGet("{slug}")]
-    public async Task<ActionResult<Recipe>> GetRecipe(string slug)
-    {
-        var recipe = await _db.Recipes.Where(r => r.Slug == slug)
-            .IncludeAllRelatedEntities()
-            .AsNoTracking()
-            .Select(r => r.AsViewModel())
-            .SingleOrDefaultAsync();
-        
-        if (recipe == null)
-        {
-            return NotFound();
-        }
-        
-        return recipe;
-    }
-
     [Authorize]
     [HttpPost]
     public async Task<ActionResult> CreateRecipe(Recipe recipe)
     {
         var newDbRecipe = recipe.AsDatabaseModel();
+        
+        if (newDbRecipe.CoverImage != null)
+        {
+            // If the ID of an image is provided then link it to an existing image metadata record,
+            // since the image will be uploaded and a record created in the image table by now
+            newDbRecipe.CoverImage = await _db.Images.FirstOrDefaultAsync(i => i.Id == newDbRecipe.CoverImage.Id );
+        }
         
         /*
          * We need to prevent duplicate entries from being added.
@@ -170,6 +177,19 @@ public class RecipesController : ControllerBase
         }
 
         dbRecipe.Title = updatedRecipe.Title;
+
+        if (updatedRecipe.CoverImage != null)
+        {
+            // If the ID of an image is provided then link it to an existing image metadata record,
+            // since the image will be uploaded and a record created in the image table by now
+            dbRecipe.CoverImage = await _db.Images.FirstOrDefaultAsync(i => i.Id == updatedRecipe.CoverImage.Id );
+        }
+        else
+        {
+            // Set the image to null in case there was an image previously attached which has now been removed
+            dbRecipe.CoverImage = null;
+        }
+
         dbRecipe.Note = updatedRecipe.Note;
         dbRecipe.IngredientGroups = updatedRecipe.IngredientGroups;
         dbRecipe.InstructionGroups = updatedRecipe.InstructionGroups;

@@ -25,6 +25,7 @@ public class DatabaseContext : IdentityDbContext
     public DbSet<DbCustomTimeLabel> CustomTimeLabels => Set<DbCustomTimeLabel>();
     public DbSet<DbTag> Tags => Set<DbTag>();
     public DbSet<DbIngredient> Ingredients => Set<DbIngredient>();
+    public DbSet<DbImageMeta> Images => Set<DbImageMeta>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {

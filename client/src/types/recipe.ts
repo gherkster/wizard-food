@@ -1,6 +1,7 @@
 export interface Recipe {
   id: number;
   title: string;
+  coverImage?: ImageMeta;
   note: string;
   ingredientGroups: Array<IngredientGroup>;
   instructionGroups: Array<InstructionGroup>;
@@ -54,4 +55,11 @@ export interface DropdownOptions {
   customTimeTypes: Array<string>;
   tags: Array<string>;
   units: Array<string>;
+}
+
+export interface ImageMeta {
+  id: string;
+  displayName: string;
+  aspectRatioX: number;
+  aspectRatioY: number;
 }

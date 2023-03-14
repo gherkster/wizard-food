@@ -4,9 +4,7 @@
       <x-row class="wide-gap">
         <x-column col-12 col-lg-5>
           <x-row>
-            <img
-              src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
-            />
+            <blurrable-image :image="recipe.coverImage" />
           </x-row>
         </x-column>
         <x-column col-12 col-lg-7>
@@ -90,7 +88,7 @@
 <script setup lang="ts">
 import { NTag, NButton } from "naive-ui";
 import { formatDuration } from "@/scripts/utility";
-import { XRow, XColumn } from "@/components";
+import { XRow, XColumn, BlurrableImage } from "@/components";
 import apis from "@/constants/apis";
 import { useUserStore } from "@/store/userStore";
 import { useAxios } from "@/composables";
@@ -106,7 +104,7 @@ const router = useRouter();
 
 const { data } = await axios.get<Recipe>(apis.recipes + route.params.slug);
 
-const recipe = ref(data);
+const recipe = ref<Recipe>(data);
 const ingredientMultiplier = ref(recipe.value.servings > 0 ? recipe.value.servings : 1);
 
 const allDurations = computed<Array<{ duration: RecipeDuration; label: string }>>(() => {

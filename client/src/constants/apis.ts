@@ -6,6 +6,7 @@ const apis = {
   dropdownOptions: baseUrl + "/api/recipes/editor/dropdown-options",
   login: baseUrl + "/api/auth/login",
   logout: baseUrl + "/api/auth/logout",
+  uploadImage: baseUrl + "/api/media/image",
 };
 
 export default apis;
