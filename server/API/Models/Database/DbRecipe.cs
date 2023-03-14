@@ -7,6 +7,7 @@ public record DbRecipe
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; init; }
     public string Title { get; set; } = string.Empty;
+    public DbImageMeta? CoverImage { get; set; }
     public string Note { get; set; } = string.Empty;
 
     public virtual List<DbIngredientGroup> IngredientGroups { get; set; } = new();

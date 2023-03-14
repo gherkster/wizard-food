@@ -6,6 +6,7 @@ obj
 # Local env files
 .env.local
 .env.*.local
+chunk-sizes.html
 
 # Log files
 npm-debug.log*
@@ -27,3 +28,4 @@ pnpm-debug.log*
 
 # Static assets
 wwwroot
+media

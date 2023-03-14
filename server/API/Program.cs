@@ -2,7 +2,9 @@ using System.Text.Json.Serialization;
 using API.Converters;
 using API.Extensions;
 using API.Models.Database.Context;
+using API.Services;
 using CompressedStaticFiles;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,8 @@ builder.Services
         });
 
 builder.Services.ConfigureAuthentication();
+builder.Services.AddSingleton<IMediaLibrary, MediaLibrary>();
+builder.Services.AddSingleton<IImageProcessor, ImageProcessor>();
 
 builder.Services.AddCompressedStaticFiles();
 
@@ -38,10 +42,8 @@ if (app.Environment.IsDevelopment())
 // Rewrite /index.html to /
 app.UseDefaultFiles();
 
-app.UseCompressedStaticFiles(new StaticFileOptions()
-{
-    RequestPath = new PathString("")
-});
+app.UseCompressedStaticFiles(new StaticFileOptions());
+app.ServeMediaLibrary();
 
 app.UseRouting();
 
@@ -49,6 +51,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseAuthenticationHeader();
+
+// app.UseOptimizedImages(); TODO: Remove?
 
 // Since we don't want the above behaviour for API routes, we don't map a fallback and only map controller endpoints here
 app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/api"), api =>

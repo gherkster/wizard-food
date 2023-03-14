@@ -22,7 +22,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use "../styles/variables" as v;
+@use "../../../styles/variables" as v;
 
 .n-input {
   background-color: v.$colour-input-bg;

@@ -50,7 +50,7 @@
 import { useEditor, EditorContent } from "@tiptap/vue-3";
 import { NButton } from "naive-ui";
 import StarterKit from "@tiptap/starter-kit";
-import EmptyInputWrapper from "@/components/EmptyInputWrapper.vue";
+import EmptyInputWrapper from "@/views/editor/components/EmptyInputWrapper.vue";
 import { watch } from "vue";
 
 const props = defineProps({
@@ -108,8 +108,8 @@ function toggleLink() {
 </style>
 
 <style lang="scss" scoped>
-@use "../styles/mixins" as m;
-@use "../styles/variables" as v;
+@use "../../../styles/mixins" as m;
+@use "../../../styles/variables" as v;
 
 .rich-text-editor {
   &__wrapper {
