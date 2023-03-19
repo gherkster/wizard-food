@@ -36,6 +36,7 @@ import { required } from "@vuelidate/validators";
 import { useAxios } from "@/composables";
 import { useAlertStore } from "@/store/alertStore";
 import { reactive } from "vue";
+import { useUserStore } from "@/store";
 
 const rules = {
   username: {
@@ -61,17 +62,17 @@ async function handleUsernameInput(value: string) {
 async function handlePasswordInput(value: string) {
   data.password = value;
 }
+
+const userStore = useUserStore();
 async function submitLogin() {
   const isFormValid = await v$.value.$validate();
   if (!isFormValid) {
     return;
   }
-  axios({
-    method: "post",
-    url: apis.login,
-    data: data,
-  })
+  await axios
+    .post(apis.login, data)
     .then(() => {
+      userStore.setUserToLoggedIn();
       alertStore.showSuccessAlert("Logged in successfully.");
     })
     .catch((error) => {

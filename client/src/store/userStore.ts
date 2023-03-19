@@ -8,11 +8,23 @@ export const useUserStore = defineStore(
     const lastUpdateTime = ref(new Date(0));
     const milliSecondsSinceLastAuthCheck = ref(Number.MAX_VALUE);
 
-    setInterval(() => {
-      // Recalculate the milliseconds since the last API call
-      // which confirmed whether the user was authenticated or unauthenticated
-      milliSecondsSinceLastAuthCheck.value = Math.abs(new Date().getTime() - lastUpdateTime.value.getTime());
-    }, 5000);
+    let authCheckerIntervalId: NodeJS.Timer;
+    function setUserToLoggedIn() {
+      if (authCheckerIntervalId) {
+        clearInterval(authCheckerIntervalId);
+      }
+
+      // Only start checking whether the user is authenticated so that unauthenticated users (vast majority) are not checking needlessly
+      authCheckerIntervalId = setInterval(() => {
+        // Recalculate the milliseconds since the last API call
+        // which confirmed whether the user was authenticated or unauthenticated
+        milliSecondsSinceLastAuthCheck.value = Math.abs(new Date().getTime() - lastUpdateTime.value.getTime());
+        // Stop checking once the user has timed out since this won't change until logging back in again
+        if (!isAuthenticated.value) {
+          clearInterval(authCheckerIntervalId);
+        }
+      }, 5000);
+    }
 
     function resetLastUpdateTime() {
       lastUpdateTime.value = new Date();
@@ -33,6 +45,7 @@ export const useUserStore = defineStore(
       milliSecondsSinceLastAuthCheck,
       lastUpdateTime,
       resetLastUpdateTime,
+      setUserToLoggedIn,
     };
   },
   {
