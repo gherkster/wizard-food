@@ -90,6 +90,20 @@ namespace RecipeManager.WebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Images",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    DisplayName = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
+                    AspectRatioX = table.Column<int>(type: "INTEGER", nullable: false),
+                    AspectRatioY = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Images", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tags",
                 columns: table => new
                 {
@@ -212,10 +226,9 @@ namespace RecipeManager.WebAPI.Migrations
                 name: "Recipes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
-                    ImageId = table.Column<Guid>(type: "TEXT", nullable: true),
+                    CoverImageId = table.Column<Guid>(type: "TEXT", nullable: true),
                     Note = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
                     PreparationTime = table.Column<TimeSpan>(type: "TEXT", nullable: false),
                     CookingTime = table.Column<TimeSpan>(type: "TEXT", nullable: false),
@@ -240,6 +253,11 @@ namespace RecipeManager.WebAPI.Migrations
                         principalTable: "Cuisines",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Recipes_Images_CoverImageId",
+                        column: x => x.CoverImageId,
+                        principalTable: "Images",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -249,7 +267,7 @@ namespace RecipeManager.WebAPI.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     CookingTime = table.Column<TimeSpan>(type: "TEXT", nullable: false),
-                    RecipeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    RecipeId = table.Column<Guid>(type: "TEXT", nullable: false),
                     CustomTimeLabelId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -276,7 +294,7 @@ namespace RecipeManager.WebAPI.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: true, collation: "NOCASE"),
-                    DbRecipeId = table.Column<int>(type: "INTEGER", nullable: true)
+                    DbRecipeId = table.Column<Guid>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -295,7 +313,7 @@ namespace RecipeManager.WebAPI.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: true, collation: "NOCASE"),
-                    DbRecipeId = table.Column<int>(type: "INTEGER", nullable: true)
+                    DbRecipeId = table.Column<Guid>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -311,7 +329,7 @@ namespace RecipeManager.WebAPI.Migrations
                 name: "DbRecipeDbTag",
                 columns: table => new
                 {
-                    RecipesId = table.Column<int>(type: "INTEGER", nullable: false),
+                    RecipesId = table.Column<Guid>(type: "TEXT", nullable: false),
                     TagsId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -475,6 +493,11 @@ namespace RecipeManager.WebAPI.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Recipes_CoverImageId",
+                table: "Recipes",
+                column: "CoverImageId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Recipes_CuisineId",
                 table: "Recipes",
                 column: "CuisineId");
@@ -553,6 +576,9 @@ namespace RecipeManager.WebAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "Cuisines");
+
+            migrationBuilder.DropTable(
+                name: "Images");
         }
     }
 }
