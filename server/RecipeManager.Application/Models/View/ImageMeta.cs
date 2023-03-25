@@ -1,4 +1,4 @@
-namespace RecipeManager.WebAPI.Models.View;
+namespace RecipeManager.Application.Models.View;
 
 public class ImageMeta
 {

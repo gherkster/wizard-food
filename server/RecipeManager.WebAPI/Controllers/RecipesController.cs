@@ -1,10 +1,9 @@
 using RecipeManager.WebAPI.Extensions;
-using RecipeManager.WebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RecipeManager.WebAPI.Models.Database.Context;
-using RecipeManager.WebAPI.Models.View;
+using RecipeManager.Application.Models.View;
+using RecipeManager.WebAPI.Context;
 
 namespace RecipeManager.WebAPI.Controllers;
 
@@ -119,8 +118,8 @@ public class RecipesController : ControllerBase
     }
 
     [Authorize]
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult> UpdateRecipe(int id, Recipe recipe)
+    [HttpPut("{id:Guid}")]
+    public async Task<ActionResult> UpdateRecipe(Guid id, Recipe recipe)
     {
         var dbRecipe = await _db.Recipes.IncludeAllRelatedEntities().SingleOrDefaultAsync(r => r.Id == id);
         if (dbRecipe is null)

@@ -1,10 +1,10 @@
 using System.Text.Json.Serialization;
 using RecipeManager.WebAPI.Converters;
 using RecipeManager.WebAPI.Extensions;
-using RecipeManager.WebAPI.Models.Database.Context;
-using RecipeManager.WebAPI.Services;
 using CompressedStaticFiles;
-using Microsoft.Extensions.FileProviders;
+using RecipeManager.Application.Services;
+using RecipeManager.WebAPI.Context;
+using RecipeManager.WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,8 +21,10 @@ builder.Services
         });
 
 builder.Services.ConfigureAuthentication();
+
 builder.Services.AddSingleton<IMediaLibrary, MediaLibrary>();
 builder.Services.AddSingleton<IImageProcessor, ImageProcessor>();
+builder.Services.AddSingleton<IPersistenceProvider, FilesystemPersistenceProvider>();
 
 builder.Services.AddCompressedStaticFiles();
 
@@ -51,8 +53,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseAuthenticationHeader();
-
-// app.UseOptimizedImages(); TODO: Remove?
 
 // Since we don't want the above behaviour for RecipeManager.WebAPI routes, we don't map a fallback and only map controller endpoints here
 app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/api"), api =>

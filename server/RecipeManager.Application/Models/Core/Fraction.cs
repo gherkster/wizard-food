@@ -1,4 +1,4 @@
-namespace RecipeManager.WebAPI.Models.Core;
+namespace RecipeManager.Application.Models.Core;
 
 public readonly record struct Fraction(int Numerator, int Denominator)
 {

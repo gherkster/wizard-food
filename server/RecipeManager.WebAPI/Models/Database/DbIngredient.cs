@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using RecipeManager.WebAPI.Models.Core;
+using RecipeManager.Application.Models.Core;
 
 namespace RecipeManager.WebAPI.Models.Database;
 

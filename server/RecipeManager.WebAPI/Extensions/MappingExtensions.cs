@@ -1,5 +1,5 @@
+using RecipeManager.Application.Models.View;
 using RecipeManager.WebAPI.Models.Database;
-using RecipeManager.WebAPI.Models.View;
 
 namespace RecipeManager.WebAPI.Extensions;
 
@@ -59,11 +59,11 @@ public static class MappingExtensions
         return recipe;
     }
 
-    public static DbRecipe AsDatabaseModel(this Recipe recipe, int id = 0)
+    public static DbRecipe AsDatabaseModel(this Recipe recipe, Guid? id = null)
     {
         var dbRecipe = new DbRecipe()
         {
-            Id = id,
+            Id = id ?? Guid.NewGuid(),
             Title = recipe.Title,
             CoverImage = recipe.CoverImage?.AsDatabaseModel(),
             Note = recipe.Note,

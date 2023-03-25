@@ -1,8 +1,8 @@
-namespace RecipeManager.WebAPI.Models.View;
+namespace RecipeManager.Application.Models.View;
 
 public class Recipe
 {
-    public int Id { get; set; }
+    public Guid? Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public ImageMeta? CoverImage { get; set; }
     public string Note { get; set; } = string.Empty;
