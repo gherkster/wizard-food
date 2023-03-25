@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using RecipeManager.WebAPI.Models.Core;
+using RecipeManager.Application.Models.Core;
+using RecipeManager.WebAPI.Models.Database;
 
-namespace RecipeManager.WebAPI.Models.Database.Context;
+namespace RecipeManager.WebAPI.Context;
 
 public class DatabaseContext : IdentityDbContext
 {

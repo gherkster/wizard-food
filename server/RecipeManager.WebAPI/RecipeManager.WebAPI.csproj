@@ -9,7 +9,6 @@
 
     <ItemGroup>
         <PackageReference Include="CompressedStaticFiles" Version="2.1.0" />
-        <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="12.3.0" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.12" />
         <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0-preview.2.22153.1">
@@ -24,6 +23,9 @@
       <Content Include="Persistence\sqlite.db" CopyToPublishDirectory="PreserveNewest" LinkBase="Persistence\" />
       <None Include="wwwroot\**" CopyToOutputDirectory="Always" LinkBase="wwwroot\" />
       <None Include="media\**" CopyToOutputDirectory="PreserveNewest" LinkBase="media\" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\RecipeManager.Application\RecipeManager.Application.csproj" />
     </ItemGroup>
     <Target Name="CreateMediaFolder" AfterTargets="AfterPublish">
         <MakeDir Directories="$(PublishUrl)media" Condition="!Exists('$(PublishUrl)media')" />

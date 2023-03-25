@@ -1,6 +1,6 @@
-using RecipeManager.WebAPI.Models.Core;
+using RecipeManager.Application.Models.Core;
 
-namespace RecipeManager.WebAPI.Models.View;
+namespace RecipeManager.Application.Models.View;
 
 public class IngredientGroup
 {

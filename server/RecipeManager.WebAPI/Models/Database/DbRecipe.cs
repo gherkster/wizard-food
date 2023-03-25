@@ -5,7 +5,7 @@ namespace RecipeManager.WebAPI.Models.Database;
 public record DbRecipe
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; init; }
+    public Guid Id { get; init; }
     public string Title { get; set; } = string.Empty;
     public DbImageMeta? CoverImage { get; set; }
     public string Note { get; set; } = string.Empty;

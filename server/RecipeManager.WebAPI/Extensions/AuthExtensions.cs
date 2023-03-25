@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-using RecipeManager.WebAPI.Models.Database.Context;
+using RecipeManager.WebAPI.Context;
 
 namespace RecipeManager.WebAPI.Extensions;
 
