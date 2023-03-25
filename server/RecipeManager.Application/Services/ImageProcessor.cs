@@ -1,12 +1,13 @@
 using ImageMagick;
+using RecipeManager.Application.Services;
 
 namespace RecipeManager.WebAPI.Services;
 
 public class ImageProcessor : IImageProcessor
 {
-    public byte[] ConvertToWebP(IFormFile file, int imageWidth)
+    public byte[] ConvertToWebP(Stream fileStream, int imageWidth)
     {
-        using var image = new MagickImage(file.OpenReadStream());
+        using var image = new MagickImage(fileStream);
             
         image.Format = MagickFormat.WebP;
         StripExifProfile(image);
@@ -18,10 +19,10 @@ public class ImageProcessor : IImageProcessor
         return image.ToByteArray();
     }
 
-    public byte[] ConvertToWebPThumbnail(IFormFile file)
+    public byte[] ConvertToWebPThumbnail(Stream fileStream)
     {
         // Generate tiny thumbnail for loading downscaled, blurred image (<1kb)
-        using var image = new MagickImage(file.OpenReadStream());
+        using var image = new MagickImage(fileStream);
         
         image.Format = MagickFormat.WebP;
         StripExifProfile(image);
@@ -33,9 +34,9 @@ public class ImageProcessor : IImageProcessor
         return image.ToByteArray();
     }
 
-    public (int Width, int Height) GetImageDimensions(IFormFile file)
+    public (int Width, int Height) GetImageDimensions(Stream fileStream)
     {
-        using var image = new MagickImage(file.OpenReadStream());
+        using var image = new MagickImage(fileStream);
         
         image.AutoOrient();
 
@@ -51,11 +52,4 @@ public class ImageProcessor : IImageProcessor
             image.RemoveProfile(thumbExif);
         }
     }
-}
-
-public interface IImageProcessor
-{
-    byte[] ConvertToWebP(IFormFile file, int imageWidth);
-    byte[] ConvertToWebPThumbnail(IFormFile file);
-    (int Width, int Height) GetImageDimensions(IFormFile file);
 }

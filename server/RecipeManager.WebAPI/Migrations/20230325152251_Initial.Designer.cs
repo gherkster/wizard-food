@@ -4,15 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using RecipeManager.WebAPI.Models.Database.Context;
+using RecipeManager.WebAPI.Context;
 
 #nullable disable
 
 namespace RecipeManager.WebAPI.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230314122241_Images")]
-    partial class Images
+    [Migration("20230325152251_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,286 +22,10 @@ namespace RecipeManager.WebAPI.Migrations
                 .UseCollation("NOCASE")
                 .HasAnnotation("ProductVersion", "7.0.0-preview.2.22153.1");
 
-            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Label")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Label")
-                        .IsUnique();
-
-                    b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbCuisine", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Label")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Label")
-                        .IsUnique();
-
-                    b.ToTable("Cuisines");
-                });
-
-            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbCustomTime", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<TimeSpan>("CookingTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("CustomTimeLabelId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("RecipeId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomTimeLabelId");
-
-                    b.HasIndex("RecipeId");
-
-                    b.ToTable("CustomTimes");
-                });
-
-            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbCustomTimeLabel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Label")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Label")
-                        .IsUnique();
-
-                    b.ToTable("CustomTimeLabels");
-                });
-
-            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbImageMeta", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("AspectRatioX")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AspectRatioY")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Images");
-                });
-
-            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbIngredient", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Amount")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("IngredientGroupId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
-
-                    b.Property<string>("Note")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
-
-                    b.Property<string>("Unit")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IngredientGroupId");
-
-                    b.HasIndex("Name");
-
-                    b.ToTable("Ingredients");
-                });
-
-            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbIngredientGroup", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("DbRecipeId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DbRecipeId");
-
-                    b.ToTable("DbIngredientGroup");
-                });
-
-            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbInstruction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("InstructionGroupId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Label")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InstructionGroupId");
-
-                    b.ToTable("DbInstruction");
-                });
-
-            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbInstructionGroup", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("DbRecipeId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DbRecipeId");
-
-                    b.ToTable("DbInstructionGroup");
-                });
-
-            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbRecipe", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<TimeSpan>("CookingTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("CoverImageId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("CuisineId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Note")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
-
-                    b.Property<TimeSpan>("PreparationTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("Rating")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("Servings")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("CoverImageId");
-
-                    b.HasIndex("CuisineId");
-
-                    b.HasIndex("Slug")
-                        .IsUnique();
-
-                    b.HasIndex("Title");
-
-                    b.ToTable("Recipes");
-                });
-
-            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbTag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Label")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Label")
-                        .IsUnique();
-
-                    b.ToTable("Tags");
-                });
-
             modelBuilder.Entity("DbRecipeDbTag", b =>
                 {
-                    b.Property<int>("RecipesId")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid>("RecipesId")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("TagsId")
                         .HasColumnType("INTEGER");
@@ -534,6 +258,348 @@ namespace RecipeManager.WebAPI.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Label")
+                        .IsUnique();
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbCuisine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Label")
+                        .IsUnique();
+
+                    b.ToTable("Cuisines");
+                });
+
+            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbCustomTime", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<TimeSpan>("CookingTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("CustomTimeLabelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("RecipeId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomTimeLabelId");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("CustomTimes");
+                });
+
+            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbCustomTimeLabel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Label")
+                        .IsUnique();
+
+                    b.ToTable("CustomTimeLabels");
+                });
+
+            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbImageMeta", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("AspectRatioX")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AspectRatioY")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Images");
+                });
+
+            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbIngredient", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Amount")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("IngredientGroupId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IngredientGroupId");
+
+                    b.HasIndex("Name");
+
+                    b.ToTable("Ingredients");
+                });
+
+            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbIngredientGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid?>("DbRecipeId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DbRecipeId");
+
+                    b.ToTable("DbIngredientGroup");
+                });
+
+            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbInstruction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("InstructionGroupId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InstructionGroupId");
+
+                    b.ToTable("DbInstruction");
+                });
+
+            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbInstructionGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid?>("DbRecipeId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DbRecipeId");
+
+                    b.ToTable("DbInstructionGroup");
+                });
+
+            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbRecipe", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<TimeSpan>("CookingTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("CoverImageId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("CuisineId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.Property<TimeSpan>("PreparationTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Rating")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Servings")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CoverImageId");
+
+                    b.HasIndex("CuisineId");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.HasIndex("Title");
+
+                    b.ToTable("Recipes");
+                });
+
+            modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbTag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Label")
+                        .IsUnique();
+
+                    b.ToTable("Tags");
+                });
+
+            modelBuilder.Entity("DbRecipeDbTag", b =>
+                {
+                    b.HasOne("RecipeManager.WebAPI.Models.Database.DbRecipe", null)
+                        .WithMany()
+                        .HasForeignKey("RecipesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RecipeManager.WebAPI.Models.Database.DbTag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbCustomTime", b =>
                 {
                     b.HasOne("RecipeManager.WebAPI.Models.Database.DbCustomTimeLabel", "CustomTimeLabel")
@@ -612,72 +678,6 @@ namespace RecipeManager.WebAPI.Migrations
                     b.Navigation("CoverImage");
 
                     b.Navigation("Cuisine");
-                });
-
-            modelBuilder.Entity("DbRecipeDbTag", b =>
-                {
-                    b.HasOne("RecipeManager.WebAPI.Models.Database.DbRecipe", null)
-                        .WithMany()
-                        .HasForeignKey("RecipesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RecipeManager.WebAPI.Models.Database.DbTag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("RecipeManager.WebAPI.Models.Database.DbCategory", b =>
