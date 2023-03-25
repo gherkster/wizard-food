@@ -1,13 +1,12 @@
 using ImageMagick;
-using RecipeManager.Application.Services;
 
-namespace RecipeManager.WebAPI.Services;
+namespace RecipeManager.Application.Services;
 
 public class ImageProcessor : IImageProcessor
 {
-    public byte[] ConvertToWebP(Stream fileStream, int imageWidth)
+    public byte[] ConvertToWebP(byte[] imageBytes, int imageWidth)
     {
-        using var image = new MagickImage(fileStream);
+        using var image = new MagickImage(imageBytes);
             
         image.Format = MagickFormat.WebP;
         StripExifProfile(image);
@@ -19,10 +18,10 @@ public class ImageProcessor : IImageProcessor
         return image.ToByteArray();
     }
 
-    public byte[] ConvertToWebPThumbnail(Stream fileStream)
+    public byte[] ConvertToWebPThumbnail(byte[] imageBytes)
     {
         // Generate tiny thumbnail for loading downscaled, blurred image (<1kb)
-        using var image = new MagickImage(fileStream);
+        using var image = new MagickImage(imageBytes);
         
         image.Format = MagickFormat.WebP;
         StripExifProfile(image);
@@ -34,16 +33,16 @@ public class ImageProcessor : IImageProcessor
         return image.ToByteArray();
     }
 
-    public (int Width, int Height) GetImageDimensions(Stream fileStream)
+    public (int Width, int Height) GetImageDimensions(byte[] imageBytes)
     {
-        using var image = new MagickImage(fileStream);
+        using var image = new MagickImage(imageBytes);
         
         image.AutoOrient();
 
         return (image.Width, image.Height);
     }
 
-    private void StripExifProfile(MagickImage image)
+    private static void StripExifProfile(MagickImage image)
     {
         // Strip out EXIF data
         var thumbExif = image.GetExifProfile();
