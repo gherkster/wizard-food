@@ -1,9 +1,9 @@
 using RecipeManager.WebAPI.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RecipeManager.WebAPI.Models.Database.Context;
-using RecipeManager.WebAPI.Models.View;
-using RecipeManager.WebAPI.Services;
+using RecipeManager.Application.Models.View;
+using RecipeManager.Application.Services;
+using RecipeManager.WebAPI.Context;
 
 namespace RecipeManager.WebAPI.Controllers;
 
@@ -34,7 +34,7 @@ public class MediaController : ControllerBase
             return BadRequest("Invalid file type uploaded");
         }
 
-        var imageMeta = await _mediaLibrary.ConvertAndStoreImageAsync(file);
+        var imageMeta = await _mediaLibrary.ConvertAndStoreImageAsync(await file.ToByteArrayAsync(), file.FileName, file.ContentType);
 
         // Persist the image metadata in the database
         await _db.Images.AddAsync(imageMeta.AsDatabaseModel());
