@@ -3,7 +3,6 @@ import { useUserStore } from "@/store";
 
 const Home = () => import("@/views/home/Home.vue");
 const Recipe = () => import("@/views/recipe/Recipe.vue");
-const Search = () => import("@/views/search/Search.vue");
 const Editor = () => import("@/views/editor/Editor.vue");
 const RecipeList = () => import("@/views/recipe-list/RecipeList.vue");
 const Login = () => import("@/views/login/Login.vue");
@@ -13,11 +12,6 @@ const routes: Array<RouteRecordRaw> = [
     path: "/",
     name: "home",
     component: Home,
-  },
-  {
-    path: "/search",
-    name: "search",
-    component: Search,
   },
   {
     path: "/recipes",

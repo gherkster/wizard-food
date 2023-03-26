@@ -3,10 +3,18 @@
     <TransitionGroup name="blur">
       <!-- We can use X and Y aspect ratio values for height and width since we are using width 100% globally for img. This prevents
  cumulative layout shift (CLS) because the browser can calculate the area it should reserve based on the height/width aspect ratio -->
-      <img class="blur" v-if="!isFullResImageLoaded" :src="thumbnailSrc" :height="image.aspectRatioY" :width="image.aspectRatioX" />
+      <img
+        class="blur"
+        v-if="!isFullResImageLoaded"
+        :src="thumbnailSrc"
+        :key="thumbnailSrc"
+        :height="image.aspectRatioY"
+        :width="image.aspectRatioX"
+      />
       <img
         v-show="isFullResImageLoaded"
         :src="fullResImageSrc"
+        :key="fullResImageSrc"
         :height="image.aspectRatioY"
         :width="image.aspectRatioX"
         @load="swapToFullResImage"
