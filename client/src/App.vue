@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div>
     <n-config-provider inline-theme-disabled :theme-overrides="overrides">
       <app-header />
       <n-dialog-provider>
@@ -16,7 +16,7 @@
 
 <script>
 import AlertSection from "@/views/alerts/AlertListener.vue";
-import AppHeader from "@/views/nav/AppHeader.vue";
+import AppHeader from "@/views/nav/NavBar.vue";
 import { NDialogProvider, NConfigProvider, NThemeEditor, NLoadingBarProvider } from "naive-ui";
 import overrides from "@/theme/overrides";
 import PageView from "@/views/PageView.vue";
