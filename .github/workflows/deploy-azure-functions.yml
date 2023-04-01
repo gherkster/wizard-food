@@ -11,7 +11,7 @@ on:
 env:
   PROJECT_PATH: server/RecipeManager.AzureFunctions/RecipeManager.AzureFunctions.csproj
   ZIP_FOLDER_PATH: ./server/RecipeManager.AzureFunctions/bin/Release/net6.0/win-x64/publish
-  ZIP_FILE_PATH: server/RecipeManager.AzureFunctions/bin/Release/net6.0/win-x64/publish/release.zip
+  ZIP_FILE_PATH: server/RecipeManager.AzureFunctions/bin/Release/net6.0/win-x64/release.zip
   ZIP_NAME: release.zip
 
 jobs:
