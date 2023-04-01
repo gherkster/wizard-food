@@ -1,0 +1,40 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+    
+env:
+  PROJECT_PATH: server/RecipeManager.AzureFunctions/RecipeManager.AzureFunctions.csproj
+  ZIP_FOLDER: server/RecipeManager.AzureFunctions/bin/Release/net6.0/win-x64/publish/
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.PROJECT_PATH }}
+    - name: Build
+      run: dotnet build --no-restore ${{ env.PROJECT_PATH }}
+    - name: Test
+      run: dotnet test --no-build --verbosity normal ${{ env.PROJECT_PATH }}
+    - name: Zip artifacts
+      uses: TheDoctor0/zip-release@0.7.1
+      with:
+        # Filename for archive
+        filename: release.zip
+        # Base path for archive files
+        path: ${{ env.ZIP_FOLDER }}
+        
