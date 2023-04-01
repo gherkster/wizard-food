@@ -10,7 +10,8 @@ on:
     
 env:
   PROJECT_PATH: server/RecipeManager.AzureFunctions/RecipeManager.AzureFunctions.csproj
-  OUTPUT_FOLDER: server/RecipeManager.AzureFunctions/bin/Release/net6.0/win-x64/publish/**/*.*
+  OUTPUT_FOLDER: server/RecipeManager.AzureFunctions/out
+  R2_DEPLOY_FOLDER: app-deploy
 
 jobs:
   build:
@@ -25,14 +26,26 @@ jobs:
         dotnet-version: 6.0.x
     - name: Build and Publish
       # Build win-x64 target to match azure function configuration
-      run: dotnet publish -c Release --runtime win-x64 --no-self-contained ${{ env.PROJECT_PATH }}
-    - name: Upload output
+      run: dotnet publish -c Release --runtime win-x64 --no-self-contained ${{ env.PROJECT_PATH }} -o ${{ env.OUTPUT_FOLDER }}
+    - name: Publish output
       uses: actions/upload-artifact@v3.1.2
       with:
         # Artifact name
         name: release
         # A file, directory or wildcard pattern that describes what to upload
-        path: ${{ env.OUTPUT_FOLDER }}
+        path: ${{ env.OUTPUT_FOLDER }}/**/*.*
         # The desired behavior if no files are found using the provided path.
         if-no-files-found: error
-        
+    - name: Zip output
+      uses: TheDoctor0/zip-release@0.7.1
+      with:
+        filename: release.zip
+        # Working directory before zipping
+        directory: ${{ env.OUTPUT_FOLDER }}
+    - name: Upload to D2
+      uses: shallwefootball/s3-upload-action@master
+      with:
+        aws_key_id: ${{ secrets.R2_ACCESS_KEY }}
+        aws_secret_access_key: ${{ secrets.R2_SECRET_KEY}}
+        aws_bucket: ${{ env.R2_DEPLOY_FOLDER }}
+        source_dir: ${{ env.OUTPUT_FOLDER }}/release.zip
