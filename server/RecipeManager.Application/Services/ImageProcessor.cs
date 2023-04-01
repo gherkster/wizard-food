@@ -1,4 +1,4 @@
-using ImageMagick;
+using SixLabors.ImageSharp.Formats.Webp;
 
 namespace RecipeManager.Application.Services;
 
@@ -6,49 +6,47 @@ public class ImageProcessor : IImageProcessor
 {
     public byte[] ConvertToWebP(byte[] imageBytes, int imageWidth)
     {
-        using var image = new MagickImage(imageBytes);
-            
-        image.Format = MagickFormat.WebP;
-        StripExifProfile(image);
+        using var image = Image.Load(imageBytes);
         
-        // Ensure AutoOrient is called before Resize, so that resizing is performed on the rotated image
-        image.AutoOrient();
-        image.Resize(imageWidth, 0);
+        image.Mutate(c =>
+        {
+            c.AutoOrient();
+            c.Resize(imageWidth, 0);
+        });
 
-        return image.ToByteArray();
+        using var memoryStream = new MemoryStream();
+        image.Save(memoryStream, new WebpEncoder()
+        {
+            SkipMetadata = true
+        });
+        return memoryStream.ToArray();
     }
 
     public byte[] ConvertToWebPThumbnail(byte[] imageBytes)
     {
         // Generate tiny thumbnail for loading downscaled, blurred image (<1kb)
-        using var image = new MagickImage(imageBytes);
+        using var image = Image.Load(imageBytes);
         
-        image.Format = MagickFormat.WebP;
-        StripExifProfile(image);
+        image.Mutate(c =>
+        {
+            c.AutoOrient();
+            c.Resize(24, 0);
+        });
 
-        // Ensure AutoOrient is called before Resize, so that resizing is performed on the rotated image
-        image.AutoOrient();
-        image.Thumbnail(width: 24, 0);
-
-        return image.ToByteArray();
+        using var memoryStream = new MemoryStream();
+        image.Save(memoryStream, new WebpEncoder()
+        {
+            //Quality = 25,
+            NearLossless = false,
+            SkipMetadata = true,
+        });
+        
+        return memoryStream.ToArray();
     }
 
     public (int Width, int Height) GetImageDimensions(byte[] imageBytes)
     {
-        using var image = new MagickImage(imageBytes);
-        
-        image.AutoOrient();
-
-        return (image.Width, image.Height);
-    }
-
-    private static void StripExifProfile(MagickImage image)
-    {
-        // Strip out EXIF data
-        var thumbExif = image.GetExifProfile();
-        if (thumbExif != null)
-        {
-            image.RemoveProfile(thumbExif);
-        }
+        var imageInfo = Image.Identify(imageBytes);
+        return (imageInfo.Width, imageInfo.Height);
     }
 }
