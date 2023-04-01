@@ -11,7 +11,6 @@ on:
 env:
   PROJECT_PATH: server/RecipeManager.AzureFunctions/RecipeManager.AzureFunctions.csproj
   OUTPUT_FOLDER: server/RecipeManager.AzureFunctions/out
-  ARTIFACT_FOLDER: server/RecipeManager.AzureFunctions/artifacts
   R2_DEPLOY_FOLDER: app-deploy
 
 jobs:
@@ -44,11 +43,8 @@ jobs:
         # Working directory before zipping
         directory: ${{ env.OUTPUT_FOLDER }}
     - name: Upload to D2
-      uses: jakejarvis/s3-sync-action@master
+      uses: cloudflare/wrangler-action@2.0.0
       with:
-        args: --follow-symlinks
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_KEY}}
-        AWS_S3_BUCKET: ${{ env.R2_DEPLOY_FOLDER }}
-        SOURCE_DIR: ${{ env.OUTPUT_FOLDER }}/release.zip
+        apiToken: ${{ CLOUDFLARE_STORAGE_API_KEY }}
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        command: r2 object put app-deploy/release.zip --file ${{ env.OUTPUT_FOLDER }}/release.zip
