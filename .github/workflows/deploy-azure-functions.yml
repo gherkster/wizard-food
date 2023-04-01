@@ -47,4 +47,4 @@ jobs:
       with:
         apiToken: ${{ secrets.CLOUDFLARE_STORAGE_API_KEY }}
         accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        command: r2 object put app-deploy/release.zip --file ${{ env.OUTPUT_FOLDER }}/release.zip
+        command: r2 object put app-deploy/recipe-manager-app.zip --file ${{ env.OUTPUT_FOLDER }}/release.zip
