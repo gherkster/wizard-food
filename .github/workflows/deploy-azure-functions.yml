@@ -11,8 +11,6 @@ on:
 env:
   PROJECT_PATH: server/RecipeManager.AzureFunctions/RecipeManager.AzureFunctions.csproj
   OUTPUT_FOLDER: server/RecipeManager.AzureFunctions/bin/Release/net6.0/win-x64/publish/**/*.*
-  ZIP_FILE_PATH: server/RecipeManager.AzureFunctions/bin/Release/net6.0/win-x64/publish/release.zip
-  ZIP_NAME: release.zip
 
 jobs:
   build:
@@ -28,13 +26,6 @@ jobs:
     - name: Build and Publish
       # Build win-x64 target to match azure function configuration
       run: dotnet publish -c Release --runtime win-x64 --no-self-contained ${{ env.PROJECT_PATH }}
-    - name: Zip artifacts
-      uses: TheDoctor0/zip-release@0.7.1
-      with:
-        # Filename for archive
-        filename: ${{ env.ZIP_NAME }}
-        # Base working directory for archive action
-        directory: ${{ env.ZIP_FOLDER_PATH }}
     - name: Upload output
       uses: actions/upload-artifact@v3.1.2
       with:
