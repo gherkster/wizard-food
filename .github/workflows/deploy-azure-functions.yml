@@ -23,11 +23,9 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
-    - name: Restore dependencies
-      run: dotnet restore ${{ env.PROJECT_PATH }}
     - name: Build and Publish
       # Build win-x64 target to match azure function configuration
-      run: dotnet publish -c Release --runtime win-x64 --no-self-contained --no-restore ${{ env.PROJECT_PATH }}
+      run: dotnet publish -c Release --runtime win-x64 --no-self-contained ${{ env.PROJECT_PATH }}
     - name: Zip artifacts
       uses: TheDoctor0/zip-release@0.7.1
       with:
