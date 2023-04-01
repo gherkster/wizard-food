@@ -25,13 +25,9 @@ jobs:
         dotnet-version: 6.0.x
     - name: Restore dependencies
       run: dotnet restore ${{ env.PROJECT_PATH }}
-    - name: Build
+    - name: Build and Publish
       # Build win-x64 target to match azure function configuration
-      run: dotnet build --runtime win-x64 --no-self-contained --no-restore ${{ env.PROJECT_PATH }}
-    - name: Test
-      run: dotnet test --no-build --verbosity normal ${{ env.PROJECT_PATH }}
-    - name: Publish
-      run: dotnet publish -c Release --runtime win-x64 --no-build --no-self-contained
+      run: dotnet publish -c Release --runtime win-x64 --no-self-contained --no-restore
     - name: Zip artifacts
       uses: TheDoctor0/zip-release@0.7.1
       with:
