@@ -46,6 +46,8 @@ jobs:
     - name: Upload to D2
       uses: jakejarvis/s3-sync-action@master
       with:
+        args: --follow-symlinks
+      env:
         AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_KEY}}
         AWS_S3_BUCKET: ${{ env.R2_DEPLOY_FOLDER }}
