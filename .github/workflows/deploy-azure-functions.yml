@@ -45,6 +45,6 @@ jobs:
     - name: Upload to D2
       uses: cloudflare/wrangler-action@2.0.0
       with:
-        apiToken: ${{ CLOUDFLARE_STORAGE_API_KEY }}
+        apiToken: ${{ secrets.CLOUDFLARE_STORAGE_API_KEY }}
         accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         command: r2 object put app-deploy/release.zip --file ${{ env.OUTPUT_FOLDER }}/release.zip
