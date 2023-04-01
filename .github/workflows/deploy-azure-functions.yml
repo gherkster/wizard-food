@@ -42,7 +42,7 @@ jobs:
         name: output
         # A file, directory or wildcard pattern that describes what to upload
         #path: ${{ env.ZIP_FILE_PATH }}
-        path: /
+        path: server
         # The desired behavior if no files are found using the provided path.
         if-no-files-found: error
         
