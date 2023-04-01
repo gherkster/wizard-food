@@ -11,6 +11,7 @@ on:
 env:
   PROJECT_PATH: server/RecipeManager.AzureFunctions/RecipeManager.AzureFunctions.csproj
   OUTPUT_FOLDER: server/RecipeManager.AzureFunctions/out
+  ARTIFACT_FOLDER: server/RecipeManager.AzureFunctions/artifacts
   R2_DEPLOY_FOLDER: app-deploy
 
 jobs:
@@ -43,9 +44,9 @@ jobs:
         # Working directory before zipping
         directory: ${{ env.OUTPUT_FOLDER }}
     - name: Upload to D2
-      uses: shallwefootball/s3-upload-action@master
+      uses: jakejarvis/s3-sync-action@master
       with:
-        aws_key_id: ${{ secrets.R2_ACCESS_KEY }}
-        aws_secret_access_key: ${{ secrets.R2_SECRET_KEY}}
-        aws_bucket: ${{ env.R2_DEPLOY_FOLDER }}
-        source_dir: ${{ env.OUTPUT_FOLDER }}/release.zip
+        AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_KEY}}
+        AWS_S3_BUCKET: ${{ env.R2_DEPLOY_FOLDER }}
+        SOURCE_DIR: ${{ env.OUTPUT_FOLDER }}/release.zip
