@@ -19,7 +19,7 @@ public class FilesystemPersistenceProvider : IPersistenceProvider
         var imageDirectory = Path.Join(_mediaLibraryDirectory, folderPath);
         Directory.CreateDirectory(imageDirectory);
         
-        await File.WriteAllBytesAsync(Path.Join(imageDirectory, $"original{Path.GetExtension(fileName)}"), fileBytes);
+        await File.WriteAllBytesAsync(Path.Join(imageDirectory, fileName), fileBytes);
     }
 
     public Task DeleteImageAsync(Guid id)
