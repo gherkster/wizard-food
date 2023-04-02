@@ -7,10 +7,16 @@ on:
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
+
+# Allow access to token for Azure OIDC auth
+permissions:
+      id-token: write
+      contents: read
     
 env:
   PROJECT_PATH: server/RecipeManager.AzureFunctions/RecipeManager.AzureFunctions.csproj
-  ZIP_FOLDER: server/RecipeManager.AzureFunctions/bin/Release/net6.0/win-x64/publish/
+  OUTPUT_FOLDER: server/RecipeManager.AzureFunctions/out
+  R2_DEPLOY_FOLDER: app-deploy
 
 jobs:
   build:
@@ -23,17 +29,36 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
-    - name: Restore dependencies
-      run: dotnet restore ${{ env.PROJECT_PATH }}
-    - name: Build
-      run: dotnet build --no-restore ${{ env.PROJECT_PATH }}
-    - name: Test
-      run: dotnet test --no-build --verbosity normal ${{ env.PROJECT_PATH }}
-    - name: Zip artifacts
+    - name: Build and Publish
+      # Build win-x64 target to match azure function configuration
+      run: dotnet publish -c Release --runtime win-x64 --no-self-contained ${{ env.PROJECT_PATH }} -o ${{ env.OUTPUT_FOLDER }}
+    - name: Publish output
+      uses: actions/upload-artifact@v3.1.2
+      with:
+        # Artifact name
+        name: release
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ${{ env.OUTPUT_FOLDER }}/**/*.*
+        # The desired behavior if no files are found using the provided path.
+        if-no-files-found: error
+    - name: Zip output
       uses: TheDoctor0/zip-release@0.7.1
       with:
-        # Filename for archive
         filename: release.zip
-        # Base path for archive files
-        path: ${{ env.ZIP_FOLDER }}
-        
+        # Working directory before zipping
+        directory: ${{ env.OUTPUT_FOLDER }}
+    - name: Upload to D2
+      uses: cloudflare/wrangler-action@2.0.0
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_STORAGE_API_KEY }}
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        command: r2 object put app-deploy/recipe-manager-app.zip --file ${{ env.OUTPUT_FOLDER }}/release.zip
+    - name: Azure CLI Login
+      # Federated Azure login
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    - name: Restart Function app
+      run: az functionapp restart --name fa-recipe-site --resource-group rg-recipe-site
