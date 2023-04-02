@@ -7,6 +7,11 @@ on:
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
+
+# Allow access to token for Azure OIDC auth
+permissions:
+      id-token: write
+      contents: read
     
 env:
   PROJECT_PATH: server/RecipeManager.AzureFunctions/RecipeManager.AzureFunctions.csproj
