@@ -5,9 +5,11 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using RecipeManager.Application.Extensions;
 using RecipeManager.Application.Services;
+using RecipeManager.AzureFunctions.Auth;
 
 namespace RecipeManager.AzureFunctions.Functions;
 
+[Authorize(Roles.AdminRole)]
 public class UploadImage
 {
     private readonly IMediaLibrary _mediaLibrary;

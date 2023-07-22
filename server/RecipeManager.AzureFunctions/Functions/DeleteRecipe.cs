@@ -5,10 +5,12 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Options;
 using RecipeManager.Application.Models.View;
+using RecipeManager.AzureFunctions.Auth;
 using RecipeManager.AzureFunctions.Models;
 
 namespace RecipeManager.AzureFunctions.Functions;
 
+[Authorize(Roles.AdminRole)]
 public class DeleteRecipe
 {
     private readonly CosmosClient _dbClient;
@@ -30,7 +32,7 @@ public class DeleteRecipe
             return req.CreateResponse(HttpStatusCode.BadRequest);
         }
 
-        var container = _dbClient.GetContainer(_settings.DatabaseName, _settings.ContainerName);
+        var container = _dbClient.GetContainer(_settings.DatabaseName, _settings.RecipeContainerName);
         await container.DeleteItemAsync<Recipe>(recipeId, new PartitionKey(recipeId));
 
         return req.CreateResponse(HttpStatusCode.OK);

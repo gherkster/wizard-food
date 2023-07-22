@@ -13,8 +13,10 @@ public static class ConfigurationExtensions
         services.AddOptions<AppSettings>()
             .Configure<IConfiguration>((settings, configuration) =>
             {
+                settings.JwtKey = Environment.GetEnvironmentVariable(Constants.JwtKey)!;
                 settings.DatabaseName = Environment.GetEnvironmentVariable(Constants.DatabaseNameAppSetting)!;
-                settings.ContainerName = Environment.GetEnvironmentVariable(Constants.ContainerNameAppSetting)!;
+                settings.RecipeContainerName = Environment.GetEnvironmentVariable(Constants.RecipeContainerNameAppSetting)!;
+                settings.UserContainerName = Environment.GetEnvironmentVariable(Constants.UserContainerNameAppSetting)!;
                 settings.ConnectionString = Environment.GetEnvironmentVariable(Constants.ConnectionStringAppSetting)!;
                 settings.CloudflareBucketAccessKey = Environment.GetEnvironmentVariable(Constants.CloudflareBucketAccessKey)!;
                 settings.CloudflareBucketSecretKey = Environment.GetEnvironmentVariable(Constants.CloudflareBucketSecretKey)!;
