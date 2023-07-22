@@ -4,11 +4,13 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using RecipeManager.Application.Models.View;
+using RecipeManager.AzureFunctions.Auth;
 using RecipeManager.AzureFunctions.Extensions;
 using RecipeManager.AzureFunctions.Models;
 
 namespace RecipeManager.AzureFunctions.Functions;
 
+[Authorize(Roles.AdminRole)]
 public static class UpsertRecipe
 {
     [Function("UpsertRecipe")]
@@ -40,7 +42,7 @@ public static class UpsertRecipe
 public class CreateRecipeResponse
 {
     [CosmosDBOutput($"%{Constants.DatabaseNameAppSetting}%", 
-        $"%{Constants.ContainerNameAppSetting}%",
+        $"%{Constants.RecipeContainerNameAppSetting}%",
         Connection = $"{Constants.ConnectionStringAppSetting}")]
     public DbRecipe? Recipe { get; init; }
 

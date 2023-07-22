@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using RecipeManager.Application;
 using RecipeManager.WebAPI.Models;
 
 namespace RecipeManager.WebAPI.Controllers;

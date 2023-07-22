@@ -11,7 +11,13 @@ public static class ServiceExtensions
     public static IServiceCollection AddCosmosDbClient(this IServiceCollection services)
     {
         var connectionString = Environment.GetEnvironmentVariable(Constants.ConnectionStringAppSetting);
-        services.AddSingleton(_ => new CosmosClient(connectionString));
+        services.AddSingleton(_ => new CosmosClient(connectionString, new CosmosClientOptions()
+        {
+            SerializerOptions = new CosmosSerializationOptions()
+            {
+                PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
+            }
+        }));
 
         return services;
     }
