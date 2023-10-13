@@ -1,0 +1,17 @@
+@use "styles/mixins" as m;
+
+.nav-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-bottom: 1px lightgray solid;
+  &__search {
+    @include m.spacing("my", "xs");
+    max-width: 400px;
+  }
+  &__login {
+    margin-left: auto;
+    @include m.spacing("mr", "sm");
+    cursor: pointer;
+  }
+}
