@@ -1,0 +1,50 @@
+@use "mixins" as m;
+@use "variables" as v;
+@use "index";
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap'); // Inter
+
+html {
+  background: v.$colour-bg;
+}
+body {
+  font-family: v.$font-family-paragraph;
+}
+
+@each $key, $value in v.$font-sizes {
+  #{$key} {
+    @include m.responsive-text(map-get($value, font-size-min), map-get($value, font-size-max), v.$breakpoint-min, v.$breakpoint-max)
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: v.$font-family-headers;
+  margin: 16px 0;
+}
+
+small {
+  line-height: 0;
+}
+
+p {
+  margin-top: v.$paragraph-margin-top;
+  margin-bottom: v.$paragraph-margin-bottom;
+}
+
+b {
+  font-weight: 900;
+}
+
+li:not(:last-child) {
+  margin-bottom: v.$li-margin-bottom;
+}
+
+img {
+  width: 100%;
+  height: auto;
+  border-radius: v.$border-radius !important;
+}
+
+.text-muted {
+  color: v.$colour-font-muted;
+}

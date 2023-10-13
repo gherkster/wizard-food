@@ -1,0 +1,40 @@
+@use "styles/mixins" as m;
+@use "styles/variables" as v;
+
+.recipe {
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    @include m.spacing("g", "xs");
+  }
+  &__duration {
+    display: flex;
+    flex-wrap: wrap;
+    @include m.spacing("g", "xs");
+  }
+  &__ingredients {
+    display: flex;
+    flex-direction: column;
+    &-title {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+  &__multiplier {
+    display: flex;
+    align-items: center;
+    @include m.spacing("gx", "xs");
+    user-select: none;
+    > svg {
+      cursor: pointer;
+    }
+    > .disabled {
+      cursor: not-allowed;
+      color: v.$colour-disabled;
+    }
+  }
+  ul, ol {
+    @include m.spacing("pl", "xs");
+  }
+}
