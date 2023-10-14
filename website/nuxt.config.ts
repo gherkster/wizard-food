@@ -23,14 +23,12 @@ export default defineNuxtConfig({
       }),
     ],
   },
-  ignore: ["functions/**/*.*"],
   hooks: {
-    async "build:before"() {
+    async "prerender:routes"({ routes }) {
       await loadAllRecipes();
 
       await generateRecipeSearchIndex();
-    },
-    async "prerender:routes"({ routes }) {
+
       const slugs = recipes.map((r) => `/recipes/${r.slug}`);
       slugs.forEach((s) => routes.add(s));
     },
@@ -38,7 +36,8 @@ export default defineNuxtConfig({
 });
 
 async function loadAllRecipes() {
-  const client = useDirectus(baseUrl); // Cannot use useRuntimeConfig in here since it is undefined
+  console.log(`Loading recipes from ${baseUrl}`);
+  const client = useDirectus(baseUrl);
 
   const remoteRecipes = await client.getAllRecipes();
   if (remoteRecipes.length === 0) {
@@ -49,7 +48,9 @@ async function loadAllRecipes() {
 }
 
 async function generateRecipeSearchIndex() {
+  console.log("Generating recipe search index");
   const miniSearch = new MiniSearch<SearchIndexIndexed>(searchIndexSettings);
+
   miniSearch.addAll(recipes);
   const indexJson = JSON.stringify(miniSearch);
 
