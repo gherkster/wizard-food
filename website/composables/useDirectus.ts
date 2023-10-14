@@ -34,8 +34,8 @@ const searchFields = [
   ...getImageFields("instructionGroups.instructions.image"),
 ];
 
-export function useDirectus(baseUrl?: string) {
-  const url = baseUrl ?? useRuntimeConfig().public.baseUrl;
+export function useDirectus() {
+  const url = process.env.NUXT_PUBLIC_BASE_URL;
   const client = createDirectus<CmsSchema>(url).with<RestClient<CmsSchema>>(rest());
 
   async function getRecipe(slug: string) {
