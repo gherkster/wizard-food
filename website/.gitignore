@@ -6,6 +6,7 @@
 dist
 .wrangler
 assets/search-index.json
+stats.html
 
 # Node dependencies
 node_modules
