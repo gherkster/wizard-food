@@ -10,7 +10,6 @@ const baseUrl = import.meta.env.NUXT_PUBLIC_BASE_URL;
 const recipes: ServerRecipe[] = [];
 
 export default defineNuxtConfig({
-  devtools: { enabled: true },
   ssr: true,
   runtimeConfig: {
     public: {
