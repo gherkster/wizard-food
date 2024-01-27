@@ -35,8 +35,32 @@ const searchFields = [
 ];
 
 export function useDirectus() {
-  const url = process.env.NUXT_PUBLIC_BASE_URL;
-  const client = createDirectus<CmsSchema>(url).with<RestClient<CmsSchema>>(rest());
+  const url = process.env.NUXT_BASE_URL;
+  if (!url) {
+    throw new Error("Directus endpoint environment variable missing");
+  }
+  const clientId = process.env.NUXT_CF_ACCESS_CLIENT_ID;
+  if (!clientId) {
+    throw new Error("Cloudflare client ID environment variable missing");
+  }
+  const clientSecret = process.env.NUXT_CF_ACCESS_CLIENT_SECRET;
+  if (!clientSecret) {
+    throw new Error("Cloudflare client secret environment variable missing");
+  }
+
+  const requestHeaders: HeadersInit = new Headers();
+  requestHeaders.set("CF-Access-Client-Id", clientId);
+  requestHeaders.set("CF-Access-Client-Secret", clientSecret);
+
+  const client = createDirectus<CmsSchema>(url).with<RestClient<CmsSchema>>(
+    rest({
+      onRequest: () => {
+        return {
+          headers: requestHeaders,
+        };
+      },
+    }),
+  );
 
   async function getRecipe(slug: string) {
     const recipes = await client.request<ServerRecipe[]>(
