@@ -10,6 +10,7 @@ stats.html
 
 # Node dependencies
 node_modules
+.pnp.cjs
 
 # Yarn 3 files
 .yarn/*
