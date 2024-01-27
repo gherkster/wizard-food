@@ -10,7 +10,7 @@ const props = defineProps<{
   thumbnail?: boolean;
 }>();
 
-const src = ref(`/images/${props.img.id}?modifyDate=${props.img.modifyDate}`);
+const src = ref(`/api/images/${props.img.id}?modifyDate=${props.img.modifyDate}`);
 
 if (props.thumbnail) {
   src.value += "&thumbnail=true";
