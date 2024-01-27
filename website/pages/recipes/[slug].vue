@@ -100,9 +100,9 @@
         </div>
       </v-column>
       <v-column col-12 col-lg-2>
-        <div v-if="relatedRecipes && relatedRecipes.length > 0">
-          <recipe-preview v-for="preview in relatedRecipes" :key="preview.title" :title="preview.title" />
-        </div>
+<!--        <div v-if="relatedRecipes && relatedRecipes.length > 0">-->
+<!--          <recipe-preview v-for="preview in relatedRecipes" :key="preview.title" :title="preview.title" />-->
+<!--        </div>-->
       </v-column>
     </v-row>
   </div>
@@ -115,10 +115,10 @@ import { useDirectus } from "~/composables/useDirectus";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 
-const client = useDirectus();
-const route = useRoute();
-
 const recipesResponse = await useAsyncData(() => {
+  const client = useDirectus();
+  const route = useRoute();
+
   return client.getRecipe(route.params.slug.toString());
 });
 
@@ -129,11 +129,6 @@ if (!recipesResponse.data.value) {
   });
 }
 const recipe = ref(RecipeMapper.toClientRecipe(recipesResponse.data.value!));
-
-const relatedRecipesResponse = await useAsyncData(() => {
-  return client.getRelatedRecipes(route.params.slug.toString());
-});
-const relatedRecipes = relatedRecipesResponse.data;
 
 const ingredientMultiplier = ref<number>(
   recipe.value.servings && recipe.value.servings > 0 ? recipe.value.servings : 1,

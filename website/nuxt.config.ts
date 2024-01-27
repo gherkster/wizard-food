@@ -6,7 +6,7 @@ import { SearchIndexIndexed, searchIndexSettings } from "./types/searchIndex";
 import { ServerRecipe } from "~/types/serverRecipe";
 import visualizer from "rollup-plugin-visualizer";
 
-const baseUrl = process.env.NUXT_PUBLIC_BASE_URL;
+const baseUrl = process.env.NUXT_BASE_URL;
 const recipes: ServerRecipe[] = [];
 
 export default defineNuxtConfig({
@@ -34,7 +34,16 @@ async function loadAllRecipes() {
   console.log(`Loading recipes from ${baseUrl}`);
   const client = useDirectus();
 
+
   const remoteRecipes = await client.getAllRecipes();
+
+  remoteRecipes.forEach((r) => {
+    console.log(r.slug);
+    if (!r.slug) {
+      throw new Error(`Recipe not in the expected format: ${r}`);
+    }
+  });
+
   if (remoteRecipes.length === 0) {
     throw new Error(`No recipes were retrieved from ${baseUrl}`);
   }
