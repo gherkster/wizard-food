@@ -22,7 +22,7 @@ interface ServerIngredientGroup {
   ingredients: ServerIngredient[];
 }
 
-interface ServerIngredient {
+export interface ServerIngredient {
   unit?: string;
   name: string;
   note?: string;

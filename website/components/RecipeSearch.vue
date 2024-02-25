@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import MiniSearch from "minisearch";
-import { ServerRecipe } from "~/types/serverRecipe";
+import { ServerRecipe } from "common/types/serverRecipe";
 import { searchIndexSettings } from "~/types/searchIndex";
 
 const loadIndex = import("@/assets/search-index.json");
@@ -19,6 +19,7 @@ loadIndex.then((index) => {
 
 function testSearch(event) {
   const value = event.target.value;
+  // TODO: Check if still loading and spin until finished
   if (!miniSearch.value) {
     return [];
   }

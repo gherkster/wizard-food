@@ -1,6 +1,6 @@
 import { createDirectus, readItems, rest, RestClient } from "@directus/sdk";
-import { ServerRecipe } from "~/types/serverRecipe";
-import { GlobalSettings } from "~/types/global";
+import { ServerRecipe } from "common/types/serverRecipe";
+import { GlobalSettings } from "common/types/global";
 
 export interface CmsSchema {
   global: GlobalSettings[];
