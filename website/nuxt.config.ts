@@ -3,8 +3,9 @@ import * as fs from "fs/promises";
 import MiniSearch from "minisearch";
 import { SearchIndexIndexed, searchIndexSettings } from "./types/searchIndex";
 
-import { ServerRecipe } from "~/types/serverRecipe";
+import { ServerRecipe } from "common/types/serverRecipe";
 import visualizer from "rollup-plugin-visualizer";
+import { fileURLToPath } from "url";
 
 const baseUrl = process.env.NUXT_BASE_URL;
 const recipes: ServerRecipe[] = [];
@@ -17,6 +18,9 @@ export default defineNuxtConfig({
         gzipSize: true,
       }),
     ],
+  },
+  alias: {
+    common: fileURLToPath(new URL("../common", import.meta.url)),
   },
   hooks: {
     async "prerender:routes"({ routes }) {
@@ -33,7 +37,6 @@ export default defineNuxtConfig({
 async function loadAllRecipes() {
   console.log(`Loading recipes from ${baseUrl}`);
   const client = useDirectus();
-
 
   const remoteRecipes = await client.getAllRecipes();
 

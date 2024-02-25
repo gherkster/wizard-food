@@ -1,4 +1,4 @@
-import { ServerRecipe } from "~/types/serverRecipe";
+import { ServerRecipe } from "common/types/serverRecipe";
 import { Recipe } from "~/types/recipe";
 import Fraction from "fraction.js";
 
