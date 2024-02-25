@@ -7,6 +7,7 @@ obj
 .env.local
 .env.*.local
 chunk-sizes.html
+website/.dev.vars
 
 # Log files
 npm-debug.log*
