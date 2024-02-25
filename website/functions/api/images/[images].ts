@@ -1,5 +1,6 @@
 interface Env {
   BUCKET: R2Bucket;
+  CLOUDINARY_API_KEY: string;
 }
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
@@ -17,7 +18,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   // TODO: Make image extension not needed (or provided in request if required)
   const imageUrlSlug = `recipes/${imageId}.webp`;
 
-  const signature = await generateCloudinaryDeliverySignature(imageUrlSlug);
+  const signature = await generateCloudinaryDeliverySignature(context.env, imageUrlSlug);
   // TODO: Make account id an env variable
   const imageUrl = `https://res.cloudinary.com/dork0lbv9/image/upload/${signature}/${imageUrlSlug}`;
   return fetch(imageUrl);
@@ -26,11 +27,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 /**
  * https://cloudinary.com/documentation/advanced_url_delivery_options#generating_delivery_url_signatures
  */
-async function generateCloudinaryDeliverySignature(urlSlug: string) {
-  // TODO: Make secret
-  const apiSecret = "";
-
-  const hash = await crypto.subtle.digest("SHA-1", new TextEncoder().encode(`${urlSlug}${apiSecret}`));
+async function generateCloudinaryDeliverySignature(env: Env, urlSlug: string) {
+  const hash = await crypto.subtle.digest("SHA-1", new TextEncoder().encode(`${urlSlug}${env.CLOUDINARY_API_KEY}`));
   const bytes = new Uint8Array(hash);
   const base64Secret = btoa(String.fromCharCode(...bytes));
 
