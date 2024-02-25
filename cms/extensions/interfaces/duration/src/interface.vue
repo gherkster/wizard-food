@@ -1,26 +1,8 @@
 <template>
   <div v-if="internalDuration" class="custom-duration--container">
-    <v-input
-      v-model="internalDuration.minutes"
-      type="number"
-      suffix="mins"
-      :min="0"
-      hide-arrows
-    />
-    <v-input
-      v-model="internalDuration.hours"
-      type="number"
-      suffix="hrs"
-      :min="0"
-      hide-arrows
-    />
-    <v-input
-      v-model="internalDuration.days"
-      type="number"
-      suffix="days"
-      :min="0"
-      hide-arrows
-    />
+    <v-input v-model="internalDuration.minutes" type="number" suffix="mins" :min="0" hide-arrows />
+    <v-input v-model="internalDuration.hours" type="number" suffix="hrs" :min="0" hide-arrows />
+    <v-input v-model="internalDuration.days" type="number" suffix="days" :min="0" hide-arrows />
   </div>
 </template>
 
@@ -39,7 +21,7 @@ watch(
       // Wait until the component has finished loading, because props.value will not exist until then
       init();
     }
-  }
+  },
 );
 
 interface Duration {
@@ -61,10 +43,10 @@ function init() {
   internalDuration.value = initialValue
     ? convertSecondsToDuration(initialValue)
     : {
-      minutes: 0,
-      hours: 0,
-      days: 0,
-    };
+        minutes: 0,
+        hours: 0,
+        days: 0,
+      };
 
   const totalDuration = computed<number>(() => {
     return (
@@ -80,8 +62,7 @@ function init() {
 }
 
 function convertSecondsToDuration(seconds: number | string) {
-  const secondsNumber =
-    typeof seconds === "string" ? parseInt(seconds, 10) : seconds;
+  const secondsNumber = typeof seconds === "string" ? parseInt(seconds, 10) : seconds;
   return {
     days: Math.floor(secondsNumber / (3600 * 24)),
     hours: Math.floor((secondsNumber % (3600 * 24)) / 3600),
