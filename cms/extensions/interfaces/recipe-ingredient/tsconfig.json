@@ -23,7 +23,14 @@
 		"forceConsistentCasingInFileNames": true,
 		"allowSyntheticDefaultImports": true,
 		"isolatedModules": true,
-		"rootDir": "./src"
+		"rootDir": "./src",
+		"outDir": "./dist",
+		"baseUrl" : "src"
 	},
-	"include": ["./src/**/*.ts"]
+	"include": ["./src/**/*.ts"],
+	"references": [
+		{
+			"path": "../../../../common"
+		}
+	]
 }
