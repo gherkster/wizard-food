@@ -23,6 +23,7 @@ interface ServerIngredientGroup {
 }
 
 export interface ServerIngredient {
+  id: number;
   unit?: string;
   name: string;
   note?: string;

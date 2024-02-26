@@ -3,7 +3,7 @@
 
 <script setup lang="ts">
 import Editor from "@tinymce/tinymce-vue";
-import { ComponentPublicInstance, computed, inject, Ref, ref, watch } from "vue";
+import {ComponentPublicInstance, computed, inject, Ref, ref, unref, watch} from "vue";
 import { useItems } from "@directus/extensions-sdk";
 import { useI18n } from "vue-i18n";
 import getEditorStyles from "./get-editor-styles";
@@ -250,8 +250,8 @@ const { getItems, items }: RecipeItemQuery = useItems(ref("ingredients"), query)
 const currentIngredients = ref<ServerIngredient[]>([]);
 
 // Can't use async here so load the ingredients in the background,
-// and assume they will finish loading before they are needed
-getItems().then(() => {
+// and assume they will finish loading before they are needed and block on the button press if needed
+const getItemsPromise = getItems().then(() => {
   currentIngredients.value = items.value;
 });
 
@@ -265,7 +265,7 @@ async function setup(editor: TinyMCEEditor) {
     onAction: async function () {
       // Block until items are loaded in case on a very slow connection etc
       if (!items.value || items.value.length === 0) {
-        await getItems();
+        await getItemsPromise;
         currentIngredients.value = items.value;
       }
 
@@ -323,12 +323,38 @@ function setFocus(val: boolean) {
 const selectedIngredient = ref<ServerIngredient | null>(null);
 function insertInlineIngredient() {
   if (selectedIngredient.value) {
+    // Arrange ingredient so that a possibly fractional amount is displayed
+    const ingredient = {
+      id: selectedIngredient.value!.id,
+      amount: selectedIngredientAmount.value,
+      name: selectedIngredient.value!.name,
+      unit: selectedIngredient.value!.unit,
+      // Doesn't make sense to display the note for inline ingredients
+    };
     editorRef.value?.insertContent(
-      `<span class='inline-ingredient mceNonEditable'>${selectedIngredient.value!.name}</span>`,
+      `<span class='inline-ingredient mceNonEditable' data-ingredient="${selectedIngredient.value!.id}" data-amount="${selectedIngredientAmount.value}">${recipeFormatter.formatIngredient(ingredient)}</span>`,
     );
   }
   ingredientSelectorOpen.value = false;
 }
+
+const selectedIngredientAmount = ref("");
+function updateSelectedIngredientAmount(selectedIngredient: ServerIngredient) {
+  selectedIngredientAmount.value = selectedIngredient.amount?.toString() ?? "";
+}
+
+const isSelectionValid = computed(() => {
+  if (!selectedIngredient.value) {
+    return false;
+  }
+  // If the amount was not specified and nothing has been entered then there is no more validation to be done
+  if (!selectedIngredient.value!.amount) {
+    return true;
+  }
+
+  const enteredNumber = parseFloat(selectedIngredientAmount.value);
+  return !!selectedIngredientAmount.value && !isNaN(enteredNumber) && enteredNumber > 0;
+});
 
 const recipeFormatter = useRecipeFormatter();
 </script>
@@ -389,13 +415,29 @@ const recipeFormatter = useRecipeFormatter();
                 v-model="selectedIngredient"
                 :value="ingredient"
                 :label="recipeFormatter.formatIngredient(ingredient)"
+                @update:model-value="updateSelectedIngredientAmount"
               />
             </div>
           </div>
         </v-card-text>
-        <v-card-actions>
-          <v-button @click="insertInlineIngredient">Insert</v-button>
-        </v-card-actions>
+        <v-card-text>
+          <div class="grid">
+            <div class="field half">
+              <v-input v-model="selectedIngredientAmount" :disabled="!selectedIngredient?.amount" placeholder="Amount" type="number" :min="0">
+                <template #append>
+                  <span v-if="selectedIngredient?.unit">{{ selectedIngredient!.unit }}</span>
+                </template>
+              </v-input>
+            </div>
+            <div class="field half-right" style="margin: auto 0 auto auto">
+              <v-button
+                :disabled="!isSelectionValid"
+                @click="insertInlineIngredient"
+                >Insert</v-button
+              >
+            </div>
+          </div>
+        </v-card-text>
       </v-card>
     </v-dialog>
   </div>
