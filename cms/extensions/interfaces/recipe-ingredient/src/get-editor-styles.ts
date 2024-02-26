@@ -165,5 +165,9 @@ figure figcaption {
 	display: block;
 	margin-top: 0.25rem;
 	text-align: center;
-}`;
+}
+.inline-ingredient {
+	font-weight: bold;
+}
+`;
 }
