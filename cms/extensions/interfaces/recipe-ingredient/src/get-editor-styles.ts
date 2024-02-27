@@ -18,10 +18,10 @@ export default function getEditorStyles(font: 'sans-serif' | 'serif' | 'monospac
 	background: ${cssVar('--background-normal-alt')};
 }
 body {
-	color: ${cssVar('--foreground-normal')};
-	background-color: ${cssVar('--background-input')};
+	color: ${cssVar('--theme--form--field--input--foreground')};
+	background-color: ${cssVar('--theme--form--field--input--background')};
 	margin: 20px;
-	font-family: ${cssVar('--family-sans-serif')};
+	font-family: ${cssVar('--theme--fonts--sans--font-family')};
 	-webkit-font-smoothing: antialiased;
 	text-rendering: optimizeLegibility;
 	-moz-osx-font-smoothing: grayscale;
@@ -34,8 +34,8 @@ body.mce-content-readonly {
 	display: none;
 }
 h1, h2, h3, h4, h5, h6 {
-	font-family: ${cssVar(`--family-${font}`)}, serif;
-	color: ${cssVar('--foreground-normal-alt')};
+	font-family: ${cssVar(`--theme--fonts--display--font-family`)}, serif;
+	color: ${cssVar('--theme--foreground-accent')};
 	font-weight: 700;
 	margin-bottom: 0;
 }
@@ -73,7 +73,7 @@ h6 {
 	margin-top: 2em;
 }
 p {
-	font-family: ${cssVar(`--family-${font}`)}, serif;
+	font-family: ${cssVar(`--theme--fonts--display--font-family`)}, serif;
 	font-size: 15px;
 	line-height: 24px;
 	font-weight: 500;
@@ -84,7 +84,7 @@ a {
 	text-decoration: none;
 }
 ul, ol {
-	font-family: ${cssVar(`--family-${font}`)}, serif;
+	font-family: ${cssVar(`--theme--fonts--display--font-family`)}, serif;
 	font-size: 15px;
 	line-height: 24px;
 	font-weight: 500;
