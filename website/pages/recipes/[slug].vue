@@ -1,13 +1,13 @@
 <template>
   <div class="page content">
     <v-row>
-      <v-column col-12 col-lg-10>
+      <v-column col-12 col-lg-12>
         <div v-if="recipe" class="recipe">
           <v-row class="wide-gap">
-            <v-column col-12 col-lg-5 v-if="recipe.coverImage">
+            <v-column col-12 col-lg-4 v-if="recipe.coverImage">
               <blurrable-image :img="recipe.coverImage" />
             </v-column>
-            <v-column col-12 col-lg-7>
+            <v-column col-12 col-lg-8>
               <v-row>
                 <h1>{{ recipe.title }}</h1>
               </v-row>
@@ -37,7 +37,7 @@
             </v-column>
           </v-row>
           <v-row class="wide-gap">
-            <v-column col-12 col-lg-5>
+            <v-column col-12 col-lg-4>
               <div v-if="recipe.ingredientGroups.length > 0" class="recipe__ingredients">
                 <div class="recipe__ingredients-title">
                   <h2>Ingredients</h2>
@@ -48,9 +48,9 @@
                   </div>
                 </div>
                 <div v-for="ingredientSection in recipe.ingredientGroups" :key="JSON.stringify(ingredientSection)">
-                  <span v-if="ingredientSection.name">
+                  <p v-if="ingredientSection.name">
                     <b>{{ ingredientSection.name }}</b>
-                  </span>
+                  </p>
                   <ul>
                     <li v-for="ingredient in ingredientSection.ingredients" :key="JSON.stringify(ingredient)">
                       <span>
@@ -65,24 +65,24 @@
                 </div>
               </div>
             </v-column>
-            <v-column col-12 col-lg-7>
-              <div v-if="recipe.instructionGroups.length > 0">
+            <v-column col-12 col-lg-8>
+              <div v-if="recipe.instructionGroups.length > 0" class="recipe__instructions" :ref="instructionsRef">
                 <h2>Instructions</h2>
                 <div
                   v-for="instructionSection in recipe.instructionGroups"
                   :key="JSON.stringify(instructionSection)"
                   class="instruction-section"
                 >
-                  <span v-if="instructionSection.name">
+                  <p v-if="instructionSection.name">
                     <b>{{ instructionSection.name }}</b>
-                  </span>
+                  </p>
                   <div class="instruction-group">
                     <div
                       v-for="(instruction, index) in instructionSection.instructions"
                       :key="JSON.stringify(instruction)"
                       class="instruction"
                     >
-                      <h4>{{ index + 1 }}</h4>
+                      <h4>{{ index + 1 }}.</h4>
                       <div v-html="instruction.label" />
                       <blurrable-image v-if="instruction.image" :img="instruction.image" />
                     </div>
@@ -99,11 +99,7 @@
           </v-row>
         </div>
       </v-column>
-      <v-column col-12 col-lg-2>
-<!--        <div v-if="relatedRecipes && relatedRecipes.length > 0">-->
-<!--          <recipe-preview v-for="preview in relatedRecipes" :key="preview.title" :title="preview.title" />-->
-<!--        </div>-->
-      </v-column>
+      <v-column col-12 col-lg-2> </v-column>
     </v-row>
   </div>
 </template>
@@ -133,21 +129,46 @@ const recipe = ref(RecipeMapper.toClientRecipe(recipesResponse.data.value!));
 const ingredientMultiplier = ref<number>(
   recipe.value.servings && recipe.value.servings > 0 ? recipe.value.servings : 1,
 );
-const numberOfServings = ingredientMultiplier.value;
+const originalNumberOfServings = ingredientMultiplier.value;
 
 function adjustIngredientByMultiplier(amount: Fraction) {
   if (!amount) {
     return "";
   }
-  return amount.mul(ingredientMultiplier.value).div(numberOfServings).toFraction(true);
+  return amount.mul(ingredientMultiplier.value).div(originalNumberOfServings).toFraction(true);
 }
 function increaseMultiplier() {
+  // Will not exist until component has mounted
+  if (!instructionsRef.value) {
+    return;
+  }
+
   ingredientMultiplier.value++;
+  updateInlineIngredientMultiplier();
 }
 function decreaseMultiplier() {
+  // Will not exist until component has mounted
+  if (!instructionsRef.value) {
+    return;
+  }
+
   if (ingredientMultiplier.value > 1) {
     ingredientMultiplier.value--;
+    updateInlineIngredientMultiplier();
   }
+}
+
+const instructionsRef = ref<HTMLElement | null>(null);
+function updateInlineIngredientMultiplier() {
+  if (!instructionsRef.value) {
+    return;
+  }
+
+  // TODO: Do outside in an onMounted for better performance
+  const inlineIngredients = instructionsRef.value!.querySelectorAll(".inline-ingredient");
+  inlineIngredients.forEach((ingredientElement) => {
+    const amount = ingredientElement.getAttribute("amount");
+  });
 }
 
 const totalDuration = computed(() => {
@@ -193,5 +214,8 @@ function formatMinutesAsDuration(seconds: number) {
   p {
     margin-top: 0;
   }
+}
+.inline-ingredient {
+  font-weight: bold;
 }
 </style>

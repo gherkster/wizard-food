@@ -3,7 +3,7 @@
 
 <script setup lang="ts">
 import Editor from "@tinymce/tinymce-vue";
-import {ComponentPublicInstance, computed, inject, Ref, ref, unref, watch} from "vue";
+import { ComponentPublicInstance, computed, inject, Ref, ref, watch } from "vue";
 import { useItems } from "@directus/extensions-sdk";
 import { useI18n } from "vue-i18n";
 import getEditorStyles from "./get-editor-styles";
@@ -143,7 +143,6 @@ const editorOptions = computed(() => {
     content_css: false,
     content_style: getEditorStyles(props.font as "sans-serif" | "serif" | "monospace"),
     plugins: [
-      "noneditable",
       "media",
       "table",
       "lists",
@@ -326,13 +325,14 @@ function insertInlineIngredient() {
     // Arrange ingredient so that a possibly fractional amount is displayed
     const ingredient = {
       id: selectedIngredient.value!.id,
-      amount: selectedIngredientAmount.value,
+      amount: selectedIngredientAmount.value ?? "",
       name: selectedIngredient.value!.name,
-      unit: selectedIngredient.value!.unit,
-      // Doesn't make sense to display the note for inline ingredients
+      unit: selectedIngredient.value!.unit ?? "",
+      // Note won't be displayed for inline ingredients
     };
+    // TODO: Can I even put the ingredient text into the <span>? Changing the name of the ingredient would still contain the old name in the rich text and would only update on the page load.
     editorRef.value?.insertContent(
-      `<span class='inline-ingredient mceNonEditable' data-ingredient="${selectedIngredient.value!.id}" data-amount="${selectedIngredientAmount.value}">${recipeFormatter.formatIngredient(ingredient)}</span>`,
+      `<span class='inline-ingredient mceNonEditable' data-ingredient="${ingredient.id}">${recipeFormatter.formatIngredient(ingredient)}</span>`,
     );
   }
   ingredientSelectorOpen.value = false;
@@ -409,15 +409,13 @@ const recipeFormatter = useRecipeFormatter();
       <v-card>
         <v-card-title>Recipe Ingredients</v-card-title>
         <v-card-text>
-          <div class="grid">
-            <div class="field" v-for="ingredient in currentIngredients" :key="ingredient">
-              <v-radio
-                v-model="selectedIngredient"
-                :value="ingredient"
-                :label="recipeFormatter.formatIngredient(ingredient)"
-                @update:model-value="updateSelectedIngredientAmount"
-              />
-            </div>
+          <div class="field" v-for="ingredient in currentIngredients" :key="ingredient">
+            <v-radio
+              v-model="selectedIngredient"
+              :value="ingredient"
+              :label="recipeFormatter.formatIngredient(ingredient)"
+              @update:model-value="updateSelectedIngredientAmount"
+            />
           </div>
         </v-card-text>
         <v-card-text>
