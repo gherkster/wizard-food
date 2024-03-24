@@ -4,7 +4,13 @@ module.exports = {
     node: true,
     es2021: true,
   },
-  extends: ["plugin:vue/essential", "eslint:recommended", "@vue/prettier", "@vue/typescript/recommended"],
+  extends: [
+    "plugin:vue/vue3-recommended",
+    "plugin:vue/essential",
+    "eslint:recommended",
+    "@vue/prettier",
+    "@vue/typescript/recommended",
+  ],
   rules: {
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",

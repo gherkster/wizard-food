@@ -35,7 +35,8 @@ interface ServerInstructionGroup {
   instructions: ServerInstruction[];
 }
 
-interface ServerInstruction {
+export interface ServerInstruction {
+  id: number;
   text: string;
   image?: ServerImage;
 }
