@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import MiniSearch from "minisearch";
-import { ServerRecipe } from "common/types/serverRecipe";
+import type { ServerRecipe } from "common/types/serverRecipe";
 import { searchIndexSettings } from "~/types/searchIndex";
 
 const loadIndex = import("@/assets/search-index.json");

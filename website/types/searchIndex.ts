@@ -1,5 +1,5 @@
-import { ServerRecipe } from "common/types/serverRecipe";
-import { Options } from "minisearch";
+import type { ServerRecipe } from "common/types/serverRecipe";
+import type { Options } from "minisearch";
 
 export type SearchIndexIndexed = Pick<ServerRecipe, "title">;
 export type SearchIndexStored = Pick<ServerRecipe, "title">;
