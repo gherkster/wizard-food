@@ -1,4 +1,4 @@
-import Fraction from "fraction.js";
+import type { JSONContent } from "@tiptap/core";
 
 export interface Recipe {
   title: string;
@@ -23,7 +23,7 @@ export interface IngredientGroup {
 }
 
 export interface Ingredient {
-  amount?: Fraction;
+  amount?: number;
   unit?: string;
   name: string;
   note?: string;
@@ -43,6 +43,7 @@ export interface InstructionGroup {
 }
 
 export interface Instruction {
-  label: string;
+  text: string;
+  content: JSONContent | null;
   image?: Image;
 }

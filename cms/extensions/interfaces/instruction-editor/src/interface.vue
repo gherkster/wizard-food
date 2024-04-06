@@ -17,7 +17,8 @@
 
 <script setup lang="ts">
 import Toolbar from "./components/Toolbar.vue";
-import { EditorContent, JSONContent, useEditor } from "@tiptap/vue-3";
+import type { EditorContent, JSONContent } from "@tiptap/vue-3";
+import { useEditor } from "@tiptap/vue-3";
 import Document from "@tiptap/extension-document";
 import Text from "@tiptap/extension-text";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -59,6 +60,8 @@ const props = withDefaults(
     primaryKey: null,
   },
 );
+
+// TODO: Throw error if junction collection primary key is not uuid
 
 // TODO: Stop hardcoding
 interface InlineIngredient {
