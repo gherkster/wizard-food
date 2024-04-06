@@ -29,8 +29,12 @@ const searchFields = [
   "ingredientGroups.name",
   "ingredientGroups.ingredients.*",
   "instructionGroups.name",
+  "instructionGroups.instructions.id",
   "instructionGroups.instructions.text",
   "instructionGroups.instructions.image.id",
+  // Gets the inline_ingredient relationships from the instruction to the specified ingredient
+  "instructionGroups.instructions.inline_ingredients.*",
+  "instructionGroups.instructions.inline_ingredients.ingredient_id.*",
   ...getImageFields("instructionGroups.instructions.image"),
 ];
 

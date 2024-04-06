@@ -1,6 +1,5 @@
-import { ServerRecipe } from "common/types/serverRecipe";
-import { Recipe } from "~/types/recipe";
-import Fraction from "fraction.js";
+import type { ServerRecipe } from "common/types/serverRecipe";
+import type { Recipe } from "~/types/recipe";
 
 export const RecipeMapper = {
   toClientRecipe(serverRecipe: ServerRecipe): Recipe {
@@ -21,7 +20,7 @@ export const RecipeMapper = {
           name: ig.name,
           ingredients: ig.ingredients.map((i) => {
             return {
-              amount: i.amount ? new Fraction(i.amount) : undefined,
+              amount: i.amount,
               unit: i.unit,
               name: i.name,
               note: i.note,
@@ -34,7 +33,8 @@ export const RecipeMapper = {
           name: ig.name,
           instructions: ig.instructions.map((i) => {
             return {
-              label: i.text,
+              text: i.html,
+              content: i.text,
             };
           }),
         };
