@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { Image } from "~/types/recipe";
+import type { Image } from "~/types/recipe";
 
 const props = defineProps<{
   img: Image;
