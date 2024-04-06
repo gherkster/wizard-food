@@ -4,7 +4,7 @@
       <v-column col-12 col-lg-12>
         <div v-if="recipe" class="recipe">
           <v-row class="wide-gap">
-            <v-column col-12 col-lg-4 v-if="recipe.coverImage">
+            <v-column v-if="recipe.coverImage" col-12 col-lg-4>
               <blurrable-image :img="recipe.coverImage" />
             </v-column>
             <v-column col-12 col-lg-8>
@@ -66,7 +66,7 @@
               </div>
             </v-column>
             <v-column col-12 col-lg-8>
-              <div v-if="recipe.instructionGroups.length > 0" class="recipe__instructions" :ref="instructionsRef">
+              <div v-if="recipe.instructionGroups.length > 0" class="recipe__instructions">
                 <h2>Instructions</h2>
                 <div
                   v-for="instructionSection in recipe.instructionGroups"
@@ -83,7 +83,11 @@
                       class="instruction"
                     >
                       <h4>{{ index + 1 }}.</h4>
-                      <div v-html="instruction.label" />
+                      <recipe-instruction
+                        :content="instruction.text"
+                        :ingredient-multiplier="ingredientMultiplier"
+                        :original-number-of-servings="originalNumberOfServings"
+                      />
                       <blurrable-image v-if="instruction.image" :img="instruction.image" />
                     </div>
                   </div>
@@ -105,18 +109,59 @@
 </template>
 
 <script setup lang="ts">
-import Fraction from "fraction.js";
 import { RecipeMapper } from "~/mapping/recipeMapper";
 import { useDirectus } from "~/composables/useDirectus";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
+import type { JSONContent } from "@tiptap/core";
+import { generateHTML } from "@tiptap/html";
+import type { InlineIngredientRelation } from "common/types/serverRecipe";
+import extensions from "~/content/extensions";
 
-const recipesResponse = await useAsyncData(() => {
+const recipesResponse = await useAsyncData(async () => {
   const client = useDirectus();
   const route = useRoute();
 
-  return client.getRecipe(route.params.slug.toString());
+  const recipe = await client.getRecipe(route.params.slug.toString());
+  //console.log(JSON.stringify(recipe));
+  recipe?.instructionGroups.forEach((ig) => {
+    ig.instructions.forEach((i) => {
+      if (!i.text) {
+        i.html = "";
+        //console.warn("Recipe", recipe.title, "includes an instruction with no value. Instruction: ", i.id);
+        return;
+      }
+
+      // TODO: Pick/delete so that the unused fields are not delivered to the client
+      i.text = insertRelationDataIntoContent(i.text, i.inline_ingredients);
+      if (typeof window === "undefined" || typeof document === "undefined") {
+        i.html = generateHTML(i.text, extensions);
+      }
+    });
+  });
+
+  // TODO Do mapping here so that mapping logic can live server side
+
+  return recipe;
 });
+
+// TODO Check if this is sent to client
+function insertRelationDataIntoContent(content: JSONContent, inlineIngredients: InlineIngredientRelation[]) {
+  if (content.type === "inline-relation" && content.attrs?.id) {
+    const ingredient = inlineIngredients.find((i) => i.id === content.attrs!.id);
+    content.attrs.data = ingredient?.ingredient_id;
+  }
+
+  content.content?.forEach((con) => insertRelationDataIntoContent(con, inlineIngredients));
+  return content;
+}
+
+if (recipesResponse.error.value) {
+  throw createError({
+    statusCode: 500,
+    statusMessage: recipesResponse.error.value?.message,
+  });
+}
 
 if (!recipesResponse.data.value) {
   throw createError({
@@ -131,44 +176,20 @@ const ingredientMultiplier = ref<number>(
 );
 const originalNumberOfServings = ingredientMultiplier.value;
 
-function adjustIngredientByMultiplier(amount: Fraction) {
+const multipler = useIngredientMultiplier();
+function adjustIngredientByMultiplier(amount?: number) {
   if (!amount) {
     return "";
   }
-  return amount.mul(ingredientMultiplier.value).div(originalNumberOfServings).toFraction(true);
+  return multipler.multiplyToFraction(amount, ingredientMultiplier.value, originalNumberOfServings);
 }
 function increaseMultiplier() {
-  // Will not exist until component has mounted
-  if (!instructionsRef.value) {
-    return;
-  }
-
   ingredientMultiplier.value++;
-  updateInlineIngredientMultiplier();
 }
 function decreaseMultiplier() {
-  // Will not exist until component has mounted
-  if (!instructionsRef.value) {
-    return;
-  }
-
   if (ingredientMultiplier.value > 1) {
     ingredientMultiplier.value--;
-    updateInlineIngredientMultiplier();
   }
-}
-
-const instructionsRef = ref<HTMLElement | null>(null);
-function updateInlineIngredientMultiplier() {
-  if (!instructionsRef.value) {
-    return;
-  }
-
-  // TODO: Do outside in an onMounted for better performance
-  const inlineIngredients = instructionsRef.value!.querySelectorAll(".inline-ingredient");
-  inlineIngredients.forEach((ingredientElement) => {
-    const amount = ingredientElement.getAttribute("amount");
-  });
 }
 
 const totalDuration = computed(() => {
