@@ -1,9 +1,10 @@
 import { useDirectus } from "./composables/useDirectus";
 import * as fs from "fs/promises";
 import MiniSearch from "minisearch";
-import { SearchIndexIndexed, searchIndexSettings } from "./types/searchIndex";
+import { searchIndexSettings } from "./types/searchIndex";
+import type { SearchIndexIndexed } from "./types/searchIndex";
 
-import { ServerRecipe } from "common/types/serverRecipe";
+import type { ServerRecipe } from "common/types/serverRecipe";
 import visualizer from "rollup-plugin-visualizer";
 import { fileURLToPath } from "url";
 

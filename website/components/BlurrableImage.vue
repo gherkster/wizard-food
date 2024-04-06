@@ -19,7 +19,7 @@ The benefit of this is that a previously cached image will load so quickly that 
 should not cause any flickering, as the inline onload script can run before the rest of the javascript is loaded.
  */
 
-import { Image } from "~/types/recipe";
+import type { Image } from "~/types/recipe";
 
 const props = defineProps<{
   img: Image;
