@@ -1,21 +1,10 @@
 // COLOURS //
-$colour-bg: white;
-$colour-bg-grey-light: #e9e9e9;
+$colour-bg: #f7f2e9;
+$colour-primary: #f3e7d7;
+$colour-accent: #e0994c;
+$colour-active: #e0994c;
+
 $colour-font-muted: #868686;
-$colour-font-muted-light: #c5c5c5;
-
-$colour-primary: #4B749B;
-$colour-primary-active: #5faae3;
-
-$colour-primary-light: #E3ECF3;
-$colour-primary-light-highlight: #cee0ed;
-$colour-primary-light-active: #b0d1e8;
-
-$colour-input-bg: white;
-
-$colour-disabled: #999;
-$colour-error: #ff0000;
-$colour-input: white;
 
 // BREAKPOINTS //
 $breakpoints: (
@@ -23,7 +12,7 @@ $breakpoints: (
   sm: 480,
   md: 768,
   lg: 992,
-  xl: 1400,
+  xl: 1200,
 ) !default;
 $breakpoint-min: map-get($breakpoints, "xs");
 $breakpoint-max: map-get($breakpoints, "xl");
@@ -38,8 +27,8 @@ $font-family-paragraph-alt: "Inter", "Helvetica", sans-serif;
 $line-height: 1.6em;
 
 $font-sizes: (
-  h1: (font-size-min: 30, font-size-max: 64),
-  h2: (font-size-min: 24, font-size-max: 36),
+  h1: (font-size-min: 30, font-size-max: 48),
+  h2: (font-size-min: 24, font-size-max: 32),
   h3: (font-size-min: 20, font-size-max: 26),
   h4: (font-size-min: 16, font-size-max: 20),
   h5: (font-size-min: 16, font-size-max: 20),
@@ -73,11 +62,18 @@ $spacing-xsmall: (
   xl: 16px
 );
 
+$spacing-extrasmall: (
+  xs: 6px,
+  md: 6px,
+  xl: 8px
+);
+
 $spacing: (
   "lg": $spacing-large,
   "md": $spacing-medium,
   "sm": $spacing-small,
-  "xs": $spacing-xsmall
+  "xs": $spacing-xsmall,
+  "xxs": $spacing-extrasmall
 );
 
 $space-map: (
@@ -101,14 +97,16 @@ $space-map: (
 );
 
 $cols-horizontal-gap: 24px;
-$cols-horizontal-gap-wide: 100px;
+$cols-horizontal-gap-wide: 80px;
 $li-margin-bottom: 16px;
 
 $paragraph-margin-top: 16px;
 $paragraph-margin-bottom: 16px;
 
 // BORDERS //
-$border-radius: 4px;
+$border-radius-sm: 4px;
+$border-radius-md: 10px;
+$border-accent: 2px solid $colour-accent;
 
 // SIZING
 $min-width-button: 84px;
