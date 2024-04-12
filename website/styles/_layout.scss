@@ -12,7 +12,7 @@
 }
 
 .content {
-  padding: 4% 8% 0 8%;
+  padding: 4% 4% 0 4%;
 }
 
 .row {
@@ -21,6 +21,7 @@
   width: 100%;
   column-gap: v.$cols-horizontal-gap;
   @include m.spacing("mb", "xs");
+  @include m.spacing("gy", "xs");
   &.wide-gap {
     column-gap: v.$cols-horizontal-gap-wide;
   }

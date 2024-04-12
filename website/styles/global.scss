@@ -8,6 +8,7 @@ html {
   background: v.$colour-bg;
 }
 body {
+  margin: 0; // Unset browser margin
   font-family: v.$font-family-paragraph;
 }
 
@@ -19,7 +20,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: v.$font-family-headers;
-  margin: 16px 0;
+  margin: 0 0 16px 0;
 }
 
 small {
@@ -35,6 +36,10 @@ b {
   font-weight: 900;
 }
 
+ul {
+  margin: 0;
+}
+
 li:not(:last-child) {
   margin-bottom: v.$li-margin-bottom;
 }
@@ -42,7 +47,7 @@ li:not(:last-child) {
 img {
   width: 100%;
   height: auto;
-  border-radius: v.$border-radius !important;
+  border-radius: v.$border-radius-sm !important;
 }
 
 .text-muted {
