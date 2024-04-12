@@ -1,5 +1,6 @@
 <template>
-  <div ref="inlineIngredientsRef" v-html="content" />
+  <!-- eslint-disable-next-line vue/no-v-html -->
+  <div ref="inlineIngredientsRef" class="instruction" v-html="content" />
 </template>
 
 <script setup lang="ts">
@@ -60,3 +61,14 @@ function multiplyInlineIngredients(multiplicationFactor: number) {
   });
 }
 </script>
+
+<style lang="scss" scoped>
+.instruction {
+  flex: 1;
+}
+</style>
+<style lang="scss">
+.inline-ingredient {
+  font-weight: bold;
+}
+</style>
