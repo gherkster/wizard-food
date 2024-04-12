@@ -1,5 +1,10 @@
 <template>
-  <input placeholder="Search" class="nav-header__search" @input="testSearch" />
+  <div>
+    <input placeholder="Search" @input="search" />
+    <div>
+      <span v-for="result in searchResults" :key="result">{{ result }}</span>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -14,17 +19,24 @@ const miniSearch = ref<MiniSearch<ServerRecipe> | null>(null);
 loadIndex.then((index) => {
   if (index?.serializationVersion) {
     miniSearch.value = MiniSearch.loadJS(index, searchIndexSettings);
+    console.log(miniSearch.value);
   }
 });
 
-function testSearch(event) {
-  const value = event.target.value;
+const searchResults = ref<string[]>([]);
+
+function search(event: Event) {
+  const value = (event.target as HTMLInputElement).value;
   // TODO: Check if still loading and spin until finished
   if (!miniSearch.value) {
     return [];
   }
-  console.log(miniSearch.value?.autoSuggest(value));
+
+  // TODO Set minimum number of characters to do search
+  searchResults.value = miniSearch.value
+    ?.search(value, {
+      prefix: true, // Match on the prefix of the result, not exact word matches. I.e. chick -> chicken
+    })
+    .map((r) => r.id);
 }
 </script>
-
-<style scoped lang="scss"></style>
