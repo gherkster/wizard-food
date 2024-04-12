@@ -2,7 +2,7 @@ import type { ServerRecipe } from "common/types/serverRecipe";
 import type { Options } from "minisearch";
 
 export type SearchIndexIndexed = Pick<ServerRecipe, "title">;
-export type SearchIndexStored = Pick<ServerRecipe, "title">;
+type SearchIndexStored = Pick<ServerRecipe, "title">;
 
 // Type safe property name extraction
 const searchIndexIdField: keyof ServerRecipe = "slug";
