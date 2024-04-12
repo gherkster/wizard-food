@@ -20,6 +20,7 @@ export default defineNuxtConfig({
       }),
     ],
   },
+  modules: ["nuxt-icon"],
   alias: {
     common: fileURLToPath(new URL("../common", import.meta.url)),
   },
