@@ -21,6 +21,12 @@ export default defineNuxtConfig({
     ],
   },
   modules: ["nuxt-icon"],
+  // https://nuxt.com/docs/guide/going-further/runtime-config
+  runtimeConfig: {
+    baseUrl: "", // Overridden by .env NUXT_BASE_URL
+    cfAccessClientId: "", // Overridden by .env NUXT_CF_ACCESS_CLIENT_ID
+    cfAccessClientSecret: "", // Overridden by .env NUXT_CF_ACCESS_CLIENT_SECRET
+  },
   alias: {
     common: fileURLToPath(new URL("../common", import.meta.url)),
   },
@@ -30,6 +36,8 @@ export default defineNuxtConfig({
 
       await generateRecipeSearchIndex();
 
+      // TODO: This should be more efficient to avoid retrieving all recipes upfront,
+      // then again retrieving all recipes one by one when statically generating in useAsyncData
       const slugs = recipes.map((r) => `/recipes/${r.slug}`);
       slugs.forEach((s) => routes.add(s));
     },
@@ -38,7 +46,11 @@ export default defineNuxtConfig({
 
 async function loadAllRecipes() {
   console.log(`Loading recipes from ${baseUrl}`);
-  const client = useDirectus();
+  const client = useDirectus({
+    url: process.env.NUXT_BASE_URL!,
+    clientId: process.env.NUXT_CF_ACCESS_CLIENT_ID!,
+    clientSecret: process.env.NUXT_CF_ACCESS_CLIENT_SECRET!,
+  });
 
   const remoteRecipes = await client.getAllRecipes();
 

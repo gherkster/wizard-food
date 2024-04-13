@@ -1,6 +1,7 @@
-import { createDirectus, readItems, rest, RestClient } from "@directus/sdk";
-import { ServerRecipe } from "common/types/serverRecipe";
-import { GlobalSettings } from "common/types/global";
+import { createDirectus, readItems, rest } from "@directus/sdk";
+import type { RestClient } from "@directus/sdk";
+import type { ServerRecipe } from "common/types/serverRecipe";
+import type { GlobalSettings } from "common/types/global";
 
 export interface CmsSchema {
   global: GlobalSettings[];
@@ -38,20 +39,7 @@ const searchFields = [
   ...getImageFields("instructionGroups.instructions.image"),
 ];
 
-export function useDirectus() {
-  const url = process.env.NUXT_BASE_URL;
-  if (!url) {
-    throw new Error("Directus endpoint environment variable missing");
-  }
-  const clientId = process.env.NUXT_CF_ACCESS_CLIENT_ID;
-  if (!clientId) {
-    throw new Error("Cloudflare client ID environment variable missing");
-  }
-  const clientSecret = process.env.NUXT_CF_ACCESS_CLIENT_SECRET;
-  if (!clientSecret) {
-    throw new Error("Cloudflare client secret environment variable missing");
-  }
-
+export function useDirectus({ url, clientId, clientSecret }: { url: string; clientId: string; clientSecret: string }) {
   const requestHeaders: HeadersInit = new Headers();
   requestHeaders.set("CF-Access-Client-Id", clientId);
   requestHeaders.set("CF-Access-Client-Secret", clientSecret);
@@ -70,11 +58,15 @@ export function useDirectus() {
     const recipes = await client.request<ServerRecipe[]>(
       readItems("recipes", {
         filter: {
+          status: {
+            _eq: "published",
+          },
           slug: {
             _eq: slug,
           },
         },
         fields: searchFields,
+        limit: 1,
       }),
     );
 
@@ -94,18 +86,9 @@ export function useDirectus() {
     );
   }
 
-  async function getRelatedRecipes(slug: string) {
-    return [
-      {
-        title: slug,
-        coverImage: null,
-      },
-    ];
-  }
   return {
     client,
     getRecipe,
     getAllRecipes,
-    getRelatedRecipes,
   };
 }
