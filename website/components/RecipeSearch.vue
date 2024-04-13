@@ -19,7 +19,6 @@ const miniSearch = ref<MiniSearch<ServerRecipe> | null>(null);
 loadIndex.then((index) => {
   if (index?.serializationVersion) {
     miniSearch.value = MiniSearch.loadJS(index, searchIndexSettings);
-    console.log(miniSearch.value);
   }
 });
 
