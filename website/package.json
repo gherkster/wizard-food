@@ -8,16 +8,17 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "pages:dev": "wrangler pages dev --compatibility-date=2023-10-09 --proxy 3000 -- npm run dev",
-    "pages:deploy": "npm run build && wrangler pages deploy ./dist"
+    "pages:deploy": "npm run build && wrangler pages deploy ./dist",
+    "bundle:analyze": "npx nuxi analyze"
   },
   "dependencies": {
-    "@directus/sdk": "^11.0.0",
     "dayjs": "^1.11.9",
     "fraction.js": "^4.2.0",
     "minisearch": "^6.1.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20231010.0",
+    "@directus/sdk": "^11.0.0",
     "@tiptap/core": "^2.2.4",
     "@tiptap/extension-blockquote": "^2.2.2",
     "@tiptap/extension-bold": "^2.2.2",
