@@ -2,14 +2,16 @@
   <div>
     <header class="nav-header">
       <div class="nav-header__links">
-        <span>Home</span>
-        <span>Recipes</span>
+        <nuxt-link to="/">Home</nuxt-link>
+        <nuxt-link to="/recipes">Recipes</nuxt-link>
         <span>Categories</span>
         <span>About</span>
       </div>
       <recipe-search class="nav-header__search" />
     </header>
-    <slot />
+    <div class="page">
+      <slot />
+    </div>
   </div>
 </template>
 

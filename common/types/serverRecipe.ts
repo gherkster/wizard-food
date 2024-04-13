@@ -59,7 +59,7 @@ interface ServerTagsId {
   value: string;
 }
 
-interface ServerImage {
+export interface ServerImage {
   id: string;
   title: string;
   height: number;
