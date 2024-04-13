@@ -17,6 +17,12 @@ export interface Recipe {
   slug: string;
 }
 
+export interface RecipePreview {
+  title: string;
+  coverImage?: Image;
+  slug: string;
+}
+
 export interface IngredientGroup {
   name?: string;
   ingredients: Ingredient[];
