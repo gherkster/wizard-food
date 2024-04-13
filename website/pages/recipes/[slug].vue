@@ -1,5 +1,5 @@
 <template>
-  <div class="page content">
+  <div class="content">
     <div v-if="recipe" class="recipe">
       <v-row class="wide-gap">
         <v-column v-if="recipe.coverImage" col-12 col-lg-4>
@@ -110,52 +110,16 @@
 </template>
 
 <script setup lang="ts">
-import { RecipeMapper } from "~/mapping/recipeMapper";
-import { useDirectus } from "~/composables/useDirectus";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
-import type { JSONContent } from "@tiptap/core";
-import { generateHTML } from "@tiptap/html";
-import type { InlineIngredientRelation } from "common/types/serverRecipe";
-import extensions from "~/content/extensions";
+import type { Recipe } from "~/types/recipe";
 
 const recipesResponse = await useAsyncData(async () => {
-  const client = useDirectus();
   const route = useRoute();
 
-  const recipe = await client.getRecipe(route.params.slug.toString());
-  //console.log(JSON.stringify(recipe));
-  recipe?.instructionGroups.forEach((ig) => {
-    ig.instructions.forEach((i) => {
-      if (!i.text) {
-        i.html = "";
-        console.warn("Recipe", recipe.title, "includes an instruction with no value. Instruction: ", i.id);
-        return;
-      }
-
-      // TODO: Pick/delete so that the unused fields are not delivered to the client
-      i.text = insertRelationDataIntoContent(i.text, i.inline_ingredients);
-      if (typeof window === "undefined" || typeof document === "undefined") {
-        i.html = generateHTML(i.text, extensions);
-      }
-    });
-  });
-
-  // TODO Do mapping here so that mapping logic can live server side
-
-  return recipe;
+  const { data: recipe } = await useFetch<Recipe>(`/api/recipes/${route.params.slug.toString()}`);
+  return recipe.value;
 });
-
-// TODO Check if this is sent to client
-function insertRelationDataIntoContent(content: JSONContent, inlineIngredients: InlineIngredientRelation[]) {
-  if (content.type === "inline-relation" && content.attrs?.id) {
-    const ingredient = inlineIngredients.find((i) => i.id === content.attrs!.id);
-    content.attrs.data = ingredient?.ingredient_id;
-  }
-
-  content.content?.forEach((con) => insertRelationDataIntoContent(con, inlineIngredients));
-  return content;
-}
 
 if (recipesResponse.error.value) {
   throw createError({
@@ -170,7 +134,7 @@ if (!recipesResponse.data.value) {
     statusMessage: "Page not found!",
   });
 }
-const recipe = ref(RecipeMapper.toClientRecipe(recipesResponse.data.value!));
+const recipe = ref(recipesResponse.data.value);
 
 const servings = ref<number>(recipe.value.servings && recipe.value.servings > 0 ? recipe.value.servings : 1);
 const originalNumberOfServings = servings.value;
