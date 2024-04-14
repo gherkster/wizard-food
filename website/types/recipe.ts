@@ -6,9 +6,8 @@ export interface Recipe {
   coverImage?: Image;
   ingredientGroups: IngredientGroup[];
   instructionGroups: InstructionGroup[];
-  category: string;
-  cuisine: string;
   servings?: number;
+  servingsType?: string;
   preparationDuration?: number;
   cookingDuration?: number;
   customDurationName?: string;
@@ -19,8 +18,7 @@ export interface Recipe {
 
 export interface RecipePreview {
   title: string;
-  cuisine?: string;
-  category?: string;
+  featuredTag?: string;
   coverImage?: Image;
   slug: string;
 }
