@@ -19,7 +19,7 @@ import { TableHeader } from "@tiptap/extension-table-header";
 import { TableRow } from "@tiptap/extension-table-row";
 import { TableCell } from "@tiptap/extension-table-cell";
 import { Node } from "@tiptap/core";
-import { useRecipeFormatter } from "common/composables";
+import { useRecipeFormatter } from "~/composables";
 import type { ServerIngredient } from "common/types/serverRecipe";
 
 interface InlineIngredientAttributes {
