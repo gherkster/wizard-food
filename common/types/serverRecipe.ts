@@ -1,20 +1,22 @@
 import { JSONContent } from "@tiptap/core";
 
 export interface ServerRecipe {
+  id: number;
   title: string;
   note?: string;
   coverImage?: ServerImage;
-  category: string;
-  cuisine: string;
+  cuisine?: string;
+  course?: string;
+  diets?: string[];
   slug: string;
   preparationDuration?: number;
   cookingDuration?: number;
   customDurationName?: string;
   customDuration?: number;
   servings?: number;
+  servings_type?: string;
   ingredientGroups: ServerIngredientGroup[];
   instructionGroups: ServerInstructionGroup[];
-  tags: ServerTag[];
   status: "published" | "draft";
   date_created: Date;
 }

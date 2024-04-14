@@ -3,8 +3,8 @@
     <div class="recipe-preview">
       <blurrable-image v-if="recipe.coverImage" :img="recipe.coverImage" purpose="preview" />
       <div class="recipe-preview__content">
-        <p class="recipe-preview__tag text-grey">{{ props.recipe.category }} | {{ props.recipe.cuisine }}</p>
-        <span>{{ props.recipe.title }}</span>
+        <p v-if="props.recipe.featuredTag" class="recipe-preview__tag text-grey">{{ props.recipe.featuredTag }}</p>
+        <p>{{ props.recipe.title }}</p>
       </div>
     </div>
   </nuxt-link>
@@ -24,7 +24,7 @@ const props = defineProps<{
 @use "@/styles/mixins" as m;
 @use "@/styles/variables" as v;
 .recipe-preview {
-  max-width: 200px;
+  max-width: 240px;
   border: v.$border-outline;
   background-color: white;
   &__content {
@@ -32,9 +32,9 @@ const props = defineProps<{
     .text-grey {
       display: inline-block;
     }
-  }
-  &__tag {
-    margin-top: 0;
+    > p {
+      margin-top: 0;
+    }
   }
 }
 </style>

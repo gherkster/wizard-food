@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@directus/sdk':
-    specifier: ^11.0.0
-    version: 11.0.3
   dayjs:
     specifier: ^1.11.9
     version: 1.11.10
@@ -22,6 +19,9 @@ devDependencies:
   '@cloudflare/workers-types':
     specifier: ^4.20231010.0
     version: 4.20240405.0
+  '@directus/sdk':
+    specifier: ^11.0.0
+    version: 11.0.3
   '@tiptap/core':
     specifier: ^2.2.4
     version: 2.2.5(@tiptap/pm@2.2.5)
@@ -109,6 +109,9 @@ devDependencies:
   nuxt-icon:
     specifier: ^0.6.10
     version: 0.6.10(nuxt@3.11.2)(vite@5.2.8)(vue@3.4.21)
+  pure-rand:
+    specifier: ^6.1.0
+    version: 6.1.0
   rollup-plugin-visualizer:
     specifier: ^5.9.2
     version: 5.12.0(rollup@4.14.0)
@@ -577,7 +580,7 @@ packages:
   /@directus/sdk@11.0.3:
     resolution: {integrity: sha512-fHvHFcDhl8AY5quRP4cgLMHTU6F4c4ynmMpXRsi8dnSd38mIvciFyYmOVOh34Wp2N+a1YNYpXPU+NsHkfIheHw==}
     engines: {node: '>=18.0.0'}
-    dev: false
+    dev: true
 
   /@esbuild-plugins/node-globals-polyfill@0.2.3(esbuild@0.17.19):
     resolution: {integrity: sha512-r3MIryXDeXDOZh7ih1l/yE9ZLORCd5e8vWg02azWRGj5SPTuoh69A2AIyn0Z31V/kHBfZ4HgWJ+OK3GTTwLmnw==}
@@ -6351,6 +6354,10 @@ packages:
   /punycode.js@2.3.1:
     resolution: {integrity: sha512-uxFIHU0YlHYhDQtV4R9J6a52SLx28BCjT+4ieh7IGbgwVJWO+km431c4yRlREUAsAmt/uMjQUyQHNEPf0M39CA==}
     engines: {node: '>=6'}
+    dev: true
+
+  /pure-rand@6.1.0:
+    resolution: {integrity: sha512-bVWawvoZoBYpp6yIoQtQXHZjmz35RSVHnUOTefl8Vcjr8snTPY1wnpSPMWekcFwbxI6gtmT7rSYPFvz71ldiOA==}
     dev: true
 
   /queue-microtask@1.2.3:
