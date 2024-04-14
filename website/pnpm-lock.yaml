@@ -6,7 +6,7 @@ settings:
 
 dependencies:
   dayjs:
-    specifier: ^1.11.9
+    specifier: ^1.11.10
     version: 1.11.10
   fraction.js:
     specifier: ^4.2.0

@@ -38,6 +38,7 @@ defineProps<{
 .image-container {
   width: 100%;
   position: relative;
+  overflow: hidden;
 
   .image--full {
     position: absolute;
