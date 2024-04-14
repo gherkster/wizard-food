@@ -19,3 +19,11 @@ if (props.thumbnail) {
   src.value += "&thumbnail=true";
 }
 </script>
+
+<style lang="scss" scoped>
+@use "@/styles/variables" as v;
+img {
+  display: block;
+  border-radius: v.$border-radius-sm;
+}
+</style>

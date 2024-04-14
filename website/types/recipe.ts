@@ -19,6 +19,7 @@ export interface Recipe {
 export interface RecipePreview {
   title: string;
   featuredTag?: string;
+  totalDuration?: string;
   coverImage?: Image;
   slug: string;
 }
