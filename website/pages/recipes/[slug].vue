@@ -27,8 +27,6 @@
           </v-row>
           <v-row>
             <div class="recipe__tags">
-              <v-tag>{{ recipe.category }}</v-tag>
-              <v-tag>{{ recipe.cuisine }}</v-tag>
               <v-tag v-for="tag in recipe.tags" :key="tag">{{ tag }}</v-tag>
             </div>
           </v-row>
