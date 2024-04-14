@@ -1,18 +1,17 @@
 <template>
   <div class="content">
     <h1>Recipes</h1>
-    <div>
+    <div class="recipes">
       <recipe-preview v-for="recipe in recipes" :key="recipe.slug" :recipe="recipe" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { ServerRecipe } from "common/types/serverRecipe";
+import type { RecipePreview } from "~/types/recipe";
 
 const recipesResponse = await useAsyncData(async () => {
-  // TODO: Mapping? Also need to minimise the number of returned fields
-  const { data: recipes } = await useFetch<ServerRecipe[]>("/api/recipes");
+  const { data: recipes } = await useFetch<RecipePreview[]>("/api/recipes");
   return recipes.value;
 });
 
@@ -32,3 +31,9 @@ if (!recipesResponse.data.value || recipesResponse.data.value.length === 0) {
 
 const recipes = ref(recipesResponse.data.value!);
 </script>
+
+<style lang="scss" scoped>
+.recipes {
+  display: flex;
+}
+</style>

@@ -1,7 +1,13 @@
 <template>
   <div class="image-container">
-    <v-img class="blur" :img="props.img" thumbnail />
-    <v-img class="image--full hidden" onload="this.classList.remove('hidden')" loading="lazy" :img="props.img" />
+    <v-img class="blur" :img="img" :purpose="purpose" thumbnail />
+    <v-img
+      class="image--full hidden"
+      onload="this.classList.remove('hidden')"
+      loading="lazy"
+      :img="img"
+      :purpose="purpose"
+    />
   </div>
 </template>
 
@@ -19,10 +25,12 @@ The benefit of this is that a previously cached image will load so quickly that 
 should not cause any flickering, as the inline onload script can run before the rest of the javascript is loaded.
  */
 
+import type { ImagePurpose } from "~/types/image";
 import type { Image } from "~/types/recipe";
 
-const props = defineProps<{
+defineProps<{
   img: Image;
+  purpose: ImagePurpose;
 }>();
 </script>
 
@@ -37,6 +45,7 @@ const props = defineProps<{
     opacity: 1;
     transition: all 0.3s linear;
   }
+  // TODO: Confine the blur to inside the image area, don't spill over the border
   .image--full.hidden {
     filter: blur(8px);
     opacity: 0;
