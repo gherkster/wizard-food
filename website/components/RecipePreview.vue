@@ -3,8 +3,18 @@
     <div class="recipe-preview">
       <blurrable-image v-if="recipe.coverImage" :img="recipe.coverImage" purpose="preview" />
       <div class="recipe-preview__content">
-        <p v-if="props.recipe.featuredTag" class="recipe-preview__tag text-grey">{{ props.recipe.featuredTag }}</p>
         <p>{{ props.recipe.title }}</p>
+        <div class="recipe-preview__stats text-grey">
+          <span v-if="props.recipe.featuredTag" class="recipe-preview__tag">
+            <small>
+              {{ props.recipe.featuredTag }}
+            </small>
+          </span>
+          <span v-if="props.recipe.totalDuration" class="recipe-preview__duration">
+            <icon name="mdi:clock-outline" size="18px" />
+            <small>{{ props.recipe.totalDuration }}</small>
+          </span>
+        </div>
       </div>
     </div>
   </nuxt-link>
@@ -24,17 +34,36 @@ const props = defineProps<{
 @use "@/styles/mixins" as m;
 @use "@/styles/variables" as v;
 .recipe-preview {
-  max-width: 240px;
-  border: v.$border-outline;
-  background-color: white;
+  position: relative;
   &__content {
-    @include m.spacing("p", "xs");
-    .text-grey {
-      display: inline-block;
-    }
+    @include m.spacing("py", "xs");
+    font-weight: bold;
     > p {
       margin-top: 0;
     }
+  }
+  &__stats {
+    width: 100%;
+    display: inline-flex;
+    justify-content: space-between;
+  }
+  &__tag {
+    display: inline-flex;
+    align-items: center;
+  }
+  &__duration {
+    display: inline-flex;
+    align-items: center;
+    text-transform: uppercase;
+    > svg {
+      margin-right: 4px;
+    }
+  }
+  small {
+    text-wrap: nowrap;
+  }
+  &:hover {
+    top: -1px;
   }
 }
 </style>
