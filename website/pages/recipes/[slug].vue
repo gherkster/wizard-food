@@ -3,7 +3,7 @@
     <div v-if="recipe" class="recipe">
       <v-row class="wide-gap">
         <v-column v-if="recipe.coverImage" col-12 col-lg-4>
-          <blurrable-image :img="recipe.coverImage" />
+          <blurrable-image :img="recipe.coverImage" purpose="cover" />
         </v-column>
         <v-column col-12 col-lg-8>
           <v-row>
@@ -91,7 +91,7 @@
                     :ingredient-multiplier="servings"
                     :original-number-of-servings="originalNumberOfServings"
                   />
-                  <blurrable-image v-if="instruction.image" :img="instruction.image" />
+                  <blurrable-image v-if="instruction.image" :img="instruction.image" purpose="instruction" />
                 </div>
               </div>
             </div>
