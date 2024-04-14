@@ -1,5 +1,6 @@
 import type { ServerRecipe, ServerImage } from "common/types/serverRecipe";
 import type { Image, Recipe, RecipePreview } from "~/types/recipe";
+import { useRecipeFormatter } from "~/composables";
 import prand from "pure-rand";
 
 export const RecipeMapper = {
@@ -46,6 +47,7 @@ export const RecipeMapper = {
     return {
       title: serverRecipe.title,
       featuredTag: getRandomTag(serverRecipe),
+      totalDuration: getTotalDuration(serverRecipe),
       coverImage: serverRecipe.coverImage ? mapImage(serverRecipe.coverImage) : undefined,
       slug: serverRecipe.slug,
     };
@@ -71,6 +73,13 @@ function getRandomTag(recipe: ServerRecipe) {
   const randomness = prand.xoroshiro128plus(recipe.id);
   const [randomIndex] = prand.uniformIntDistribution(0, tags.length - 1, randomness);
   return tags[randomIndex];
+}
+
+const formatter = useRecipeFormatter();
+function getTotalDuration(recipe: ServerRecipe) {
+  return formatter.formatMinutesAsDuration(
+    (recipe.preparationDuration ?? 0) + (recipe.cookingDuration ?? 0) + (recipe.customDuration ?? 0),
+  );
 }
 
 function buildTagList(recipe: ServerRecipe): string[] {

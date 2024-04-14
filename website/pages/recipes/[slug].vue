@@ -15,13 +15,14 @@
                 >Total <b>{{ totalDuration }}</b></span
               >
               <span v-if="recipe.preparationDuration"
-                >Preparation <b>{{ formatMinutesAsDuration(recipe.preparationDuration) }}</b></span
+                >Preparation <b>{{ formatter.formatMinutesAsDuration(recipe.preparationDuration) }}</b></span
               >
               <span v-if="recipe.cookingDuration"
-                >Cooking <b>{{ formatMinutesAsDuration(recipe.cookingDuration) }}</b></span
+                >Cooking <b>{{ formatter.formatMinutesAsDuration(recipe.cookingDuration) }}</b></span
               >
-              <span v-if="recipe.customDuration"
-                >{{ recipe.customDurationName }} <b>{{ formatMinutesAsDuration(recipe.customDuration) }}</b></span
+              <span v-if="recipe.customDuration">
+                {{ recipe.customDurationName }}
+                <b>{{ formatter.formatMinutesAsDuration(recipe.customDuration) }}</b></span
               >
             </div>
           </v-row>
@@ -108,8 +109,7 @@
 </template>
 
 <script setup lang="ts">
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
+import { useRecipeFormatter } from "~/composables";
 import type { Recipe } from "~/types/recipe";
 
 const recipesResponse = await useAsyncData(async () => {
@@ -150,27 +150,12 @@ function updateNumberOfServings(newServings: number) {
 
 const unitType = ref<"Metric" | "US">("Metric");
 
+const formatter = useRecipeFormatter();
 const totalDuration = computed(() => {
-  return formatMinutesAsDuration(
+  return formatter.formatMinutesAsDuration(
     (recipe.value.preparationDuration ?? 0) + (recipe.value.cookingDuration ?? 0) + (recipe.value.customDuration ?? 0),
   );
 });
-function formatMinutesAsDuration(seconds: number) {
-  dayjs.extend(duration);
-  const totalDuration = dayjs.duration(seconds, "seconds");
-
-  const formatStrings = [];
-  if (totalDuration.asDays() >= 1) {
-    formatStrings.push("D[d]");
-  }
-  if (totalDuration.asHours() >= 1) {
-    formatStrings.push("H[h]");
-  }
-  if (totalDuration.asMinutes() >= 1) {
-    formatStrings.push("m[m]");
-  }
-  return totalDuration.format(formatStrings.join(" "));
-}
 </script>
 
 <style lang="scss" scoped>
