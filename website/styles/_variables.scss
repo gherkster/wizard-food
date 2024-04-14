@@ -4,6 +4,9 @@ $colour-primary: #f3e7d7;
 $colour-accent: #e0994c;
 $colour-active: #e0994c;
 
+$colour-text: black;
+$colour-muted: #b5b3b3;
+$colour-font-grey: #525252;
 $colour-font-muted: #868686;
 
 // BREAKPOINTS //
@@ -107,6 +110,7 @@ $paragraph-margin-bottom: 16px;
 $border-radius-sm: 4px;
 $border-radius-md: 10px;
 $border-accent: 2px solid $colour-accent;
+$border-outline: 2px solid $colour-muted;
 
 // SIZING
 $min-width-button: 84px;

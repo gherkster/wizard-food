@@ -4,13 +4,16 @@
 
 <script setup lang="ts">
 import type { Image } from "~/types/recipe";
+import type { ImagePurpose } from "~/types/image";
 
 const props = defineProps<{
   img: Image;
+  purpose: ImagePurpose;
   thumbnail?: boolean;
 }>();
 
-const src = ref(`/api/images/${props.img.id}?modifyDate=${props.img.modifyDate}`);
+// TODO: Build URL properly
+const src = ref(`/api/images/${props.img.id}?modifyDate=${props.img.modifyDate}&purpose=${props.purpose}`);
 
 if (props.thumbnail) {
   src.value += "&thumbnail=true";

@@ -3,11 +3,36 @@ interface Env {
   CLOUDINARY_API_KEY: string;
 }
 
+// TODO: Make sure images are caching correctly with the modifyDate cache-busting mechanism
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   // TODO: Check in R2 and use that if exists
 
-  // TODO: Be able to vary image sizes with hashed params
+  // TODO: Be able to vary image sizes and create thumbnails
   const imageId = context.params.images;
+
+  const { searchParams } = new URL(context.request.url);
+  const purpose = searchParams.get("purpose") as "cover" | "preview" | "instruction";
+
+  // TODO: Build URL properly
+  let transformations = "";
+  switch (purpose) {
+    case "instruction":
+    case "cover": {
+      transformations = "";
+      break;
+    }
+    case "preview": {
+      transformations = "ar_1:1,c_crop/ar_1:1,c_fit,h_300/";
+      break;
+    }
+    default: {
+      throw new Error(`Purpose: ${purpose} is not supported`);
+    }
+  }
+
+  // TODO: Handle no transformations
+  const fileName = `v1/recipes/${imageId}.webp`;
+  const signingParameters = `${transformations}${fileName}`;
 
   // Check for image in r2
   // if in r2 then return image
@@ -16,11 +41,19 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
   // TODO: Make parameters dynamic (but also don't allow abuse through small adjustments)
   // TODO: Make image extension not needed (or provided in request if required)
-  const imageUrlSlug = `recipes/${imageId}.webp`;
 
-  const signature = await generateCloudinaryDeliverySignature(context.env, imageUrlSlug);
-  // TODO: Make account id an env variable
-  const imageUrl = `https://res.cloudinary.com/dork0lbv9/image/upload/${signature}/${imageUrlSlug}`;
+  // TODO: Directus allows specifying a focal point of the image,
+  // use this to make thumbnails/crops focus on the subject properly
+  // https://cloudinary.com/documentation/resizing_and_cropping#special_positions
+
+  const signature = await generateCloudinaryDeliverySignature(context.env, signingParameters);
+  // TODO: Handle no transformations
+  const imageUrl = `https://res.cloudinary.com/dork0lbv9/image/upload/${signature}/${transformations}${fileName}`;
+
+  console.log();
+  console.log(imageUrl);
+  console.log();
+
   return fetch(imageUrl);
 };
 
