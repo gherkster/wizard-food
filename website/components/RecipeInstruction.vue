@@ -4,7 +4,7 @@
 </template>
 
 <script setup lang="ts">
-import { useRecipeFormatter } from "common/composables";
+import { useRecipeFormatter } from "~/composables";
 import type { ServerIngredient } from "common/types/serverRecipe";
 
 interface InlineIngredientMarkup {
