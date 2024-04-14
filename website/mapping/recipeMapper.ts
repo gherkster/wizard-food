@@ -45,6 +45,8 @@ export const RecipeMapper = {
   toClientPreview(serverRecipe: ServerRecipe): RecipePreview {
     return {
       title: serverRecipe.title,
+      category: serverRecipe.category,
+      cuisine: serverRecipe.cuisine,
       coverImage: serverRecipe.coverImage ? mapImage(serverRecipe.coverImage) : undefined,
       slug: serverRecipe.slug,
     };

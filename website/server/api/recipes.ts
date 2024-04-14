@@ -1,4 +1,5 @@
 import { useDirectus } from "~/composables/useDirectus";
+import { RecipeMapper } from "~/mapping/recipeMapper";
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event);
@@ -9,5 +10,7 @@ export default defineEventHandler(async (event) => {
     clientSecret: config.cfAccessClientSecret,
   });
 
-  return await directusClient.getAllRecipes();
+  // TODO: Need to limit fields being requested/returned
+  const recipes = await directusClient.getAllRecipes();
+  return recipes.map((r) => RecipeMapper.toClientPreview(r));
 });

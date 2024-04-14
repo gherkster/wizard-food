@@ -19,6 +19,8 @@ export interface Recipe {
 
 export interface RecipePreview {
   title: string;
+  cuisine?: string;
+  category?: string;
   coverImage?: Image;
   slug: string;
 }

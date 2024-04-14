@@ -44,6 +44,14 @@ li:not(:last-child) {
   margin-bottom: v.$li-margin-bottom;
 }
 
+a {
+  text-decoration: none;
+  color: v.$colour-text;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 img {
   width: 100%;
   height: auto;
@@ -52,4 +60,7 @@ img {
 
 .text-muted {
   color: v.$colour-font-muted;
+}
+.text-grey {
+  color: v.$colour-font-grey;
 }
