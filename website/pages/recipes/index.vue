@@ -2,7 +2,9 @@
   <div class="content">
     <h1>Recipes</h1>
     <div class="recipes">
-      <recipe-preview v-for="recipe in recipes" :key="recipe.slug" :recipe="recipe" />
+      <template v-for="index in 23">
+        <recipe-preview v-for="recipe in recipes" :key="recipe.slug" :recipe="recipe" />
+      </template>
     </div>
   </div>
 </template>
@@ -33,7 +35,10 @@ const recipes = ref(recipesResponse.data.value!);
 </script>
 
 <style lang="scss" scoped>
+@use "@/styles/mixins" as m;
 .recipes {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  @include m.spacing("g", "sm");
 }
 </style>
