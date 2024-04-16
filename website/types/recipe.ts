@@ -2,6 +2,7 @@ import type { JSONContent } from "@tiptap/core";
 
 export interface Recipe {
   title: string;
+  description?: string;
   note?: string;
   coverImage?: Image;
   ingredientGroups: IngredientGroup[];
