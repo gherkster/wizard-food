@@ -7,6 +7,7 @@ export const RecipeMapper = {
   toClientRecipe(serverRecipe: ServerRecipe): Recipe {
     return {
       title: serverRecipe.title,
+      description: serverRecipe.description,
       note: serverRecipe.note,
       coverImage: serverRecipe.coverImage ? mapImage(serverRecipe.coverImage) : undefined,
       ingredientGroups: serverRecipe.ingredientGroups.map((ig) => {
@@ -70,8 +71,10 @@ function getRandomTag(recipe: ServerRecipe) {
     return undefined;
   }
 
+  // Is this randomness enough with incrementing integers?
   const randomness = prand.xoroshiro128plus(recipe.id);
   const [randomIndex] = prand.uniformIntDistribution(0, tags.length - 1, randomness);
+  console.log(randomIndex);
   return tags[randomIndex];
 }
 
