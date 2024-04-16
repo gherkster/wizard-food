@@ -8,7 +8,6 @@
 @use "@/styles/variables" as v;
 $tag-size: 12px;
 .tag {
-  background-color: v.$colour-primary;
   border: v.$border-accent;
   padding: 4px 8px;
 
