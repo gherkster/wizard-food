@@ -38,7 +38,15 @@ const recipes = ref(recipesResponse.data.value!);
 @use "@/styles/mixins" as m;
 .recipes {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
   @include m.spacing("g", "sm");
+  @include m.breakpoint("xs") {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @include m.breakpoint("sm") {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @include m.breakpoint("md") {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 </style>
