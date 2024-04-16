@@ -8,6 +8,7 @@
         <v-column col-12 col-lg-8>
           <v-row>
             <h1>{{ recipe.title }}</h1>
+            <div v-if="recipe.description" v-html="recipe.description" />
           </v-row>
           <v-row>
             <div class="recipe__duration">
@@ -20,7 +21,7 @@
               <span v-if="recipe.cookingDuration"
                 >Cooking <b>{{ formatter.formatMinutesAsDuration(recipe.cookingDuration) }}</b></span
               >
-              <span v-if="recipe.customDuration">
+              <span v-if="recipe.customDuration && recipe.customDurationName">
                 {{ recipe.customDurationName }}
                 <b>{{ formatter.formatMinutesAsDuration(recipe.customDuration) }}</b></span
               >
@@ -41,11 +42,8 @@
             </div>
             <div class="recipe__options">
               <div class="recipe__multiplier">
-                <span>Servings</span>
                 <servings-adjuster :servings="servings" @input="updateNumberOfServings" />
-              </div>
-              <div class="recipe__units">
-                <v-switch v-model="unitType" :options="['Metric', 'US']" />
+                <span>{{ recipe.servingsType ?? "servings" }}</span>
               </div>
             </div>
             <v-divider />
@@ -148,12 +146,12 @@ function updateNumberOfServings(newServings: number) {
   servings.value = newServings;
 }
 
-const unitType = ref<"Metric" | "US">("Metric");
-
 const formatter = useRecipeFormatter();
 const totalDuration = computed(() => {
   return formatter.formatMinutesAsDuration(
-    (recipe.value.preparationDuration ?? 0) + (recipe.value.cookingDuration ?? 0) + (recipe.value.customDuration ?? 0),
+    (recipe.value.preparationDuration ?? 0) +
+      (recipe.value.cookingDuration ?? 0) +
+      (recipe.value.customDuration && recipe.value.customDurationName ? recipe.value.customDuration : 0),
   );
 });
 </script>
@@ -172,6 +170,7 @@ const totalDuration = computed(() => {
     display: flex;
     flex-wrap: wrap;
     @include m.spacing("g", "xs");
+    text-transform: capitalize;
   }
   &__ingredients {
     display: flex;
@@ -195,8 +194,8 @@ const totalDuration = computed(() => {
   }
   &__multiplier {
     display: flex;
-    flex-direction: column;
     align-items: center;
+    @include m.spacing("gx", "xs");
     @include m.spacing("gy", "xxs");
   }
   ul,
