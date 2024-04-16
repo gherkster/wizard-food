@@ -27,13 +27,6 @@
   }
 }
 
-// Hide any mobile-specific components on larger screen sizes
-@include m.breakpoint("md") {
-  .mobile {
-    display: none;
-  }
-}
-
 @include m.create-cols(null, v.$grid-cols-count);
 
 @each $breakpoint-name, $width in v.$breakpoints {

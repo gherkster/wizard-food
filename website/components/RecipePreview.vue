@@ -63,7 +63,7 @@ const props = defineProps<{
     text-wrap: nowrap;
   }
   &:hover {
-    top: -1px;
+    top: -2px;
   }
 }
 </style>
