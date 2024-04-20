@@ -14,5 +14,6 @@ export interface Configuration {
      */
     junctionField: Ref<string>;
     primaryKey: Ref<string | number>;
+    limitToCurrentItem: Ref<boolean>;
   };
 }

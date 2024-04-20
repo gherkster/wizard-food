@@ -47,7 +47,6 @@ const element = computed(() => {
   // and the inline text in the editor will be missing
   return {
     id: junctionItem.id,
-    [junctionItem.parentItem.junctionFieldName]: junctionItem.parentItem.data,
     [junctionItem.relatedItem.junctionFieldName]: junctionItem.relatedItem.data,
   };
 });
