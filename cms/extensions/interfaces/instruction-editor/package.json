@@ -1,22 +1,32 @@
 {
-	"name": "instruction-editor",
+	"name": "relational-editor",
 	"description": "Please enter a description for your extension",
 	"icon": "extension",
 	"version": "1.0.0",
 	"keywords": [
 		"directus",
-		"directus-extension",
-		"directus-extension-interface"
+		"directus-extension"
 	],
 	"type": "module",
 	"files": [
 		"dist"
 	],
 	"directus:extension": {
-		"type": "interface",
-		"path": "dist/index.js",
-		"source": "src/index.ts",
-		"host": "^10.10.0"
+		"type": "bundle",
+		"host": "^10.10.0",
+		"path": "dist/app.js",
+		"entries": [
+			{
+				"type": "interface",
+				"name": "interface",
+				"source": "src/interface/index.ts"
+			},
+			{
+				"type": "display",
+				"name": "display",
+				"source": "src/display/index.ts"
+			}
+		]
 	},
 	"scripts": {
 		"build": "directus-extension build",
