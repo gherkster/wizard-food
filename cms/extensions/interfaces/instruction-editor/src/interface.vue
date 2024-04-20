@@ -1,8 +1,8 @@
 <template>
   <div v-if="editor" :class="{ disabled }" class="field">
     <toolbar
-      v-if="tools.length"
-      :tools="selectedTools(tools)"
+      v-if="toolStore.selectedTools.length > 0"
+      :tools="toolStore.selectedTools"
       :editor="editor"
       :display-format="displayFormat"
     ></toolbar>
@@ -17,25 +17,26 @@
 
 <script setup lang="ts">
 import Toolbar from "./components/Toolbar.vue";
-import type { EditorContent, JSONContent } from "@tiptap/vue-3";
-import { useEditor } from "@tiptap/vue-3";
+import type { JSONContent } from "@tiptap/vue-3";
+import { EditorContent, useEditor } from "@tiptap/vue-3";
 import Document from "@tiptap/extension-document";
 import Text from "@tiptap/extension-text";
 import Placeholder from "@tiptap/extension-placeholder";
 import Paragraph from "@tiptap/extension-paragraph";
 import Dropcursor from "@tiptap/extension-dropcursor";
 import Gapcursor from "@tiptap/extension-gapcursor";
-import InlineRelation from "./nodes/inline-relation";
-import { defaultSelectedTools, pickSelectedTools, selectedTools } from "./tiptap/tools";
 import { provide, toRef, watch } from "vue";
 import { Configuration, configurationInjectionKey } from "./config/configuration";
 import { RelationDelta, useRelationStore } from "./stores/relationStore";
+import { useToolStore } from "./stores/toolStore";
 import { useEditorStoreSync } from "./composables/useEditorStoreSync";
+import { useTipTap } from "./composables/useTipTap";
 
 const props = withDefaults(
   defineProps<{
     value: string | null;
     m2mField: string;
+    tagName: string;
     disabled: boolean;
     placeholder: string;
     tools: string[];
@@ -50,7 +51,7 @@ const props = withDefaults(
   {
     disabled: false,
     placeholder: "",
-    tools: () => defaultSelectedTools,
+    tools: () => [],
     displayFormat: false,
     font: "sans-serif",
     spellcheck: false,
@@ -63,16 +64,9 @@ const props = withDefaults(
 
 // TODO: Throw error if junction collection primary key is not uuid
 
-// TODO: Stop hardcoding
-interface InlineIngredient {
-  id: string;
-  instruction_id: string | number;
-  ingredient_id: string | number;
-}
-
 interface EmittedRelationUpdate {
-  create: InlineIngredient[];
-  update: InlineIngredient[];
+  create: unknown[];
+  update: unknown[];
   delete: (string | number)[];
 }
 
@@ -87,10 +81,11 @@ const emit = defineEmits<{
 function emitRelationChanges(change: RelationDelta) {
   const emittedValue: EmittedRelationUpdate = {
     create: change.create.map((create) => {
+      // TODO: Don't hardcode
       return {
         id: create.id,
-        ingredient_id: create.ingredient_id.id,
-        instruction_id: create.instruction_id.id,
+        [create.relatedItem.junctionFieldName]: create.relatedItem.id,
+        [create.parentItem.junctionFieldName]: create.parentItem.id,
       };
     }),
     update: [], // Updates are not required for this interface
@@ -128,6 +123,11 @@ const config: Configuration = {
 provide(configurationInjectionKey, config);
 
 const editorSync = useEditorStoreSync();
+const tiptap = useTipTap();
+
+const toolStore = useToolStore();
+toolStore.setInlineNodeTool(props.tagName);
+const mappedTools = toolStore.pickSelectedTools(props.tools);
 
 const editor = useEditor({
   content: props.value,
@@ -138,11 +138,11 @@ const editor = useEditor({
     Placeholder.configure({ placeholder: props.placeholder }),
     Dropcursor,
     Gapcursor,
-    InlineRelation,
-    ...pickSelectedTools(props.tools),
+    tiptap.createInlineNode(props.tagName),
+    ...mappedTools,
   ],
   async onUpdate({ editor }) {
-    editorSync.syncEditorWithRelationChanges(editor);
+    editorSync.syncEditorWithRelationChanges(editor, props.tagName);
 
     const editorValue = editor.getJSON();
     const emptyJSON = { type: "doc", content: [{ type: "paragraph" }] };

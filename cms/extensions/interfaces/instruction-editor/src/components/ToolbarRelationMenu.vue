@@ -2,14 +2,19 @@
   <div>
     <v-menu show-arrow placement="bottom-start" :full-height="true">
       <template #activator="{ toggle }">
-        <ToolButton :title="relationBlockTool!.name" :icon="relationBlockTool!.icon" :action="toggle" />
+        <ToolButton
+          v-if="toolStore.relationBlockTool"
+          :title="toolStore.relationBlockTool!.name"
+          :icon="toolStore.relationBlockTool!.icon"
+          :action="toggle"
+        />
       </template>
       <v-list v-if="relation">
         <v-list-item
           clickable
-          :active="relationBlockTool!.active?.(editor)"
-          :aria-pressed="relationBlockTool!.active?.(editor)"
-          :disabled="relationBlockTool!.disabled?.(editor)"
+          :active="toolStore.relationBlockTool!.active?.(editor)"
+          :aria-pressed="toolStore.relationBlockTool!.active?.(editor)"
+          :disabled="toolStore.relationBlockTool!.disabled?.(editor)"
           @click="selectItem()"
         >
           <v-list-item-icon>
@@ -23,14 +28,17 @@
     </v-menu>
 
     <!-- Don't hardcode collection name -->
-    <drawer-collection v-model:active="selectModalActive" collection="ingredients" @input="stageSelects" />
+    <drawer-collection
+      v-model:active="selectModalActive"
+      :collection="relation?.relatedCollection.collection"
+      @input="stageSelects"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
 import ToolButton from "./ToolButton.vue";
-import { relationBlockTool } from "../tiptap/tools";
 import type { Editor } from "@tiptap/vue-3";
 import { v4 as uuidv4 } from "uuid";
 import { useRelation } from "../composables/useRelation";
@@ -40,6 +48,8 @@ import { Configuration, configurationInjectionKey } from "../config/configuratio
 import { inject } from "vue";
 import { useApi } from "@directus/extensions-sdk";
 import { watch } from "vue";
+import { useToolStore } from "../stores/toolStore";
+import type { Item } from "@directus/types";
 
 const props = defineProps<{
   editor: Editor;
@@ -60,9 +70,23 @@ const { items } = relationItems.getItems(
 );
 
 // TODO: Remove any
-watch(items, (loadedItems: any) => {
+watch(items, (loadedItems: Item[]) => {
   if (loadedItems && loadedItems.length > 0) {
-    store.preExistingRelations = loadedItems;
+    store.preExistingRelations = loadedItems.map((i) => {
+      return {
+        id: i.id,
+        relatedItem: {
+          id: i[relation.value!.junctionField.field].id,
+          junctionFieldName: relation.value!.junctionField.field,
+          data: i[relation.value!.junctionField.field],
+        },
+        parentItem: {
+          id: i[relation.value!.reverseJunctionField.field].id,
+          junctionFieldName: relation.value!.reverseJunctionField.field,
+          data: i[relation.value!.reverseJunctionField.field],
+        },
+      };
+    });
   }
 });
 
@@ -73,24 +97,36 @@ function selectItem() {
   selectModalActive.value = true;
 }
 
+const toolStore = useToolStore();
+
 async function stageSelects(items: [string | number]) {
   const nodeId = uuidv4();
 
   // TODO: Promise.all
-  const ingredientResponse = await api.get(`items/ingredients/${items[0]}`);
-  const instructionResponse = await api.get(`items/instructions/${config?.relation.primaryKey.value}`);
+  const relatedItemResponse = await api.get(`items/${relation.value!.relatedCollection.collection}/${items[0]}`);
+  const parentItemResponse = await api.get(
+    `items/${config!.relation.parentCollection.value}/${config?.relation.primaryKey.value}`,
+  );
 
+  // TODO: Remove any
   store.stagedChanges.create.push({
     id: nodeId,
-    ingredient_id: ingredientResponse.data.data, // TODO: Remove any
-    instruction_id: instructionResponse.data.data, // TODO: Remove any
+    relatedItem: {
+      id: relatedItemResponse.data.data.id,
+      junctionFieldName: relation.value!.junctionField.field,
+      data: relatedItemResponse.data.data,
+    },
+    parentItem: {
+      id: parentItemResponse.data.data.id,
+      junctionFieldName: relation.value!.reverseJunctionField.field,
+      data: parentItemResponse.data.data,
+    },
   });
 
-  // TODO: Don't hardcode collections
-  relationBlockTool!.action?.(props.editor, {
+  toolStore.relationBlockTool!.action?.(props.editor, {
     id: nodeId,
-    junction: "inline_ingredients",
-    collection: "ingredients",
+    junction: relation.value!.junctionCollection.collection,
+    collection: relation.value!.relatedCollection.collection,
   });
 }
 </script>
