@@ -4,8 +4,11 @@
     <v-skeleton-loader v-if="false" type="block-list-item" />
     <div v-else-if="element" class="v-list-item link block clickable">
       <v-icon data-drag-handle class="drag-handle" name="drag_handle" draggable="true" left @click.stop />
-      <!-- TODO Need to setup template and verify element type fields -->
-      <render-template collection="inline_ingredients" :template="templateWithDefaults" :item="element" />
+      <render-template
+        :collection="relation?.junctionCollection.collection"
+        :template="templateWithDefaults"
+        :item="element"
+      />
       <div class="spacer" />
       <v-icon class="clear-icon" name="delete" @click.stop="deleteNode" />
     </div>
@@ -29,13 +32,25 @@ const props = defineProps<NodeViewProps>();
 
 const { t } = useI18nFallback(useI18n());
 
-const { templateWithDefaults } = useRelation();
+const { templateWithDefaults, relation } = useRelation();
 
 const store = useRelationStore();
-const element = computed(() => {
-  return store.allRelations.find((item) => props.node.attrs.id === item.id);
-});
 
+const element = computed(() => {
+  const junctionItem = store.allRelations.find((item) => props.node.attrs.id === item.id);
+  if (!junctionItem) {
+    return null;
+  }
+
+  // These look like they need to be in the format item_id: itemData to render properly in the Directus render-template
+  // E.g. ingredient_id: ServerIngredient, otherwise the render template will not work
+  // and the inline text in the editor will be missing
+  return {
+    id: junctionItem.id,
+    [junctionItem.parentItem.junctionFieldName]: junctionItem.parentItem.data,
+    [junctionItem.relatedItem.junctionFieldName]: junctionItem.relatedItem.data,
+  };
+});
 </script>
 
 <style scoped>
