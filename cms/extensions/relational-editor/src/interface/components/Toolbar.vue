@@ -1,6 +1,6 @@
 <template>
   <div class="toolbar">
-    <toolbar-relation-menu :editor="editor" />
+    <toolbar-relation-menu v-if="!singleLineMode && useRelations" :editor="editor" />
 
     <v-menu v-if="formatTools.length" show-arrow placement="bottom-start" :full-height="true">
       <template #activator="{ toggle }">
@@ -79,7 +79,7 @@ import ToolButton from "./ToolButton.vue";
 import ToolbarRelationMenu from "./ToolbarRelationMenu.vue";
 import { useI18n } from "vue-i18n";
 import { useI18nFallback } from "../composables/use-i18n-fallback";
-import type { Tool, Dialog } from "../tiptap/types";
+import type { Tool, Dialog } from "../../common/types/tools";
 import type { Editor } from "@tiptap/vue-3";
 import { capitalize } from "lodash";
 
@@ -89,6 +89,7 @@ interface Props {
   editor: Editor;
   singleLineMode: boolean;
   displayFormat: boolean;
+  useRelations: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
   displayFormat: false,

@@ -6,6 +6,7 @@
       :editor="editor"
       :display-format="displayFormat"
       :single-line-mode="singleLineMode"
+      :use-relations="!!m2mField && !!tagName"
     ></toolbar>
     <editor-content
       :editor="editor"
@@ -37,8 +38,8 @@ import { computed } from "vue";
 const props = withDefaults(
   defineProps<{
     value: string | null;
-    m2mField: string;
-    tagName: string;
+    m2mField: string | null;
+    tagName: string | null;
     limitToCurrentItem: boolean;
     inputMode: "multi" | "single";
     disabled: boolean;
@@ -85,6 +86,9 @@ const emit = defineEmits<{
 
 // TODO: Do mapping somewhere else
 function emitRelationChanges(change: RelationDelta) {
+  if (!props.m2mField) {
+    return;
+  }
   const emittedValue: EmittedRelationUpdate = {
     create: change.create.map((create) => {
       // TODO: Don't hardcode
@@ -133,25 +137,33 @@ const editorSync = useEditorStoreSync();
 const tiptap = useTipTap();
 
 const toolStore = useToolStore();
-toolStore.setInlineNodeTool(props.tagName);
+
 const mappedTools = toolStore.pickSelectedTools(props.tools);
 
 const singleLineMode = computed(() => props.inputMode === "single");
 
+const extensions = [
+  Document.extend(singleLineMode.value ? { content: "block" } : {}),
+  Text,
+  Paragraph,
+  Placeholder.configure({ placeholder: props.placeholder }),
+  Dropcursor,
+  Gapcursor,
+  ...mappedTools,
+];
+
+if (props.tagName) {
+  toolStore.setInlineNodeTool(props.tagName);
+  extensions.push(tiptap.createInlineNode(props.tagName));
+}
+
 const editor = useEditor({
   content: props.value,
-  extensions: [
-    Document.extend(singleLineMode.value ? { content: "block" } : {}),
-    Text,
-    Paragraph,
-    Placeholder.configure({ placeholder: props.placeholder }),
-    Dropcursor,
-    Gapcursor,
-    tiptap.createInlineNode(props.tagName),
-    ...mappedTools,
-  ],
+  extensions: extensions,
   async onUpdate({ editor }) {
-    editorSync.syncEditorWithRelationChanges(editor, props.tagName);
+    if (props.m2mField && props.tagName) {
+      editorSync.syncEditorWithRelationChanges(editor, props.tagName);
+    }
 
     const editorValue = editor.getJSON();
     const emptyJSON = { type: "doc", content: [{ type: "paragraph" }] };
