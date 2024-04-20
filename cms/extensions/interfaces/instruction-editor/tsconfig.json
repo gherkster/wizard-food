@@ -22,9 +22,9 @@
 		"forceConsistentCasingInFileNames": true,
 		"allowSyntheticDefaultImports": true,
 		"isolatedModules": true,
-		"rootDir": "./src"
+		"rootDir": "interface"
 	},
-	"include": ["./src/**/*.ts"],
+	"include": ["interface/**/*.ts"],
 	"references": [
 		{
 			"path": "../../../../common"
