@@ -27,7 +27,7 @@
 	"include": ["interface/**/*.ts"],
 	"references": [
 		{
-			"path": "../../../../common"
+			"path": "../../../common"
 		}
 	]
 }

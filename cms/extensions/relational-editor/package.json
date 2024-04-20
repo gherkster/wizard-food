@@ -9,12 +9,16 @@
 	],
 	"type": "module",
 	"files": [
-		"dist"
+		"dist",
+		"common"
 	],
 	"directus:extension": {
 		"type": "bundle",
 		"host": "^10.10.0",
-		"path": "dist/app.js",
+		"path": {
+			"app": "dist/app.js",
+			"api": "dist/api.js"
+		},
 		"entries": [
 			{
 				"type": "interface",
@@ -33,7 +37,9 @@
 		"build-remote": "directus-extension build --no-minify && npm run push-remote",
 		"dev": "directus-extension build -w --no-minify",
 		"link": "directus-extension link",
-		"push-remote": "scp dist/index.js oracle:~/docker-cloud/directus/extensions/directus-extension-instruction-editor/dist/index.js"
+		"push-remote": "npm run push-app && npm run push-api",
+		"push-app": "scp dist/app.js oracle:~/docker-cloud/directus/extensions/directus-extension-relational-editor/dist/app.js",
+		"push-api": "scp dist/api.js oracle:~/docker-cloud/directus/extensions/directus-extension-relational-editor/dist/api.js"
 	},
 	"devDependencies": {
 		"@directus/extensions-sdk": "11.0.1",
