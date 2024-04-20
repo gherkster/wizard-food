@@ -20,12 +20,14 @@ interface JunctionItemData {
     data: unknown;
   };
   parentItem: {
+    /**
+     * This may just be a "+" when creating a new item at the same time
+     */
     id: string | number;
     /**
      * e.g. instruction_id
      */
     junctionFieldName: string;
-    data: unknown;
   };
 }
 
