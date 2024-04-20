@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import { ServerIngredient, ServerInstruction } from "../../../../../../common/types/serverRecipe";
 
 /**
  * Contains the new and removed relationships in the junction collection
@@ -12,8 +11,22 @@ export type RelationDelta = {
 
 interface JunctionItemData {
   id: string;
-  ingredient_id: ServerIngredient;
-  instruction_id: ServerInstruction;
+  relatedItem: {
+    id: string | number;
+    /**
+     * e.g. ingredient_id
+     */
+    junctionFieldName: string;
+    data: unknown;
+  };
+  parentItem: {
+    id: string | number;
+    /**
+     * e.g. instruction_id
+     */
+    junctionFieldName: string;
+    data: unknown;
+  };
 }
 
 export const useRelationStore = defineStore("custom-extension-relation", () => {
