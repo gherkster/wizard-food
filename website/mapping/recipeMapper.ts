@@ -7,8 +7,8 @@ export const RecipeMapper = {
   toClientRecipe(serverRecipe: ServerRecipe): Recipe {
     return {
       title: serverRecipe.title,
-      description: serverRecipe.description,
-      note: serverRecipe.note,
+      description: serverRecipe.description_html,
+      note: serverRecipe.note_html,
       coverImage: serverRecipe.coverImage ? mapImage(serverRecipe.coverImage) : undefined,
       ingredientGroups: serverRecipe.ingredientGroups.map((ig) => {
         return {
@@ -17,7 +17,7 @@ export const RecipeMapper = {
             return {
               amount: i.amount,
               unit: i.unit,
-              name: i.name,
+              name: i.name_html,
               note: i.note,
             };
           }),
