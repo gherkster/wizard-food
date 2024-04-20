@@ -37,6 +37,7 @@ const props = withDefaults(
     value: string | null;
     m2mField: string;
     tagName: string;
+    limitToCurrentItem: boolean;
     disabled: boolean;
     placeholder: string;
     tools: string[];
@@ -59,6 +60,7 @@ const props = withDefaults(
     field: null,
     collection: null,
     primaryKey: null,
+    limitToCurrentItem: false,
   },
 );
 
@@ -117,6 +119,7 @@ const config: Configuration = {
     parentField: toRef(props.field ?? ""),
     junctionField: toRef(props.m2mField ?? ""),
     primaryKey: toRef(props.primaryKey ?? ""),
+    limitToCurrentItem: toRef(props.limitToCurrentItem),
   },
 };
 
@@ -156,16 +159,14 @@ const editor = useEditor({
   },
 });
 
+// Reset staging values when opening the interface
+// This resolves an issue where if nodes are deleted and then the user navigates away,
+// upon returning the nodes would still be staged for removal even after the content has been restored
+store.$resetStaging();
+
 watch(
   () => props.value,
-  (value, oldValue) => {
-    if (oldValue === null) {
-      // Reset staging values when navigating away and returning to the interface
-      // This resolves an issue where if nodes are deleted and then the user navigates away,
-      // upon returning the nodes would still be staged for removal even after the content has been restored
-      store.$resetStaging();
-    }
-
+  (value) => {
     const isSame = JSON.stringify(editor.value?.getJSON()) === JSON.stringify(value);
     if (isSame) {
       return;
