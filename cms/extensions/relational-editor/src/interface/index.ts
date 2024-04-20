@@ -32,11 +32,11 @@ export default {
         field: "tagName",
         type: "string",
         name: "Inline node reference type",
-        required: true,
         meta: {
           interface: "select-dropdown",
           options: {
             choices: inlineNodeTagNames,
+            allowNone: true,
           },
         },
       },
