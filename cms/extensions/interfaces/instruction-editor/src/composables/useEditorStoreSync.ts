@@ -1,11 +1,10 @@
 import { Editor, NodeWithPos } from "@tiptap/core";
 import { useRelationStore } from "../stores/relationStore";
-import { tagName } from "../nodes/inline-relation";
 
 export function useEditorStoreSync() {
   const store = useRelationStore();
 
-  function getExistingInlineNodes(editor: Editor) {
+  function getExistingInlineNodes(editor: Editor, tagName: string) {
     const inlineNodes: NodeWithPos[] = [];
 
     editor.state.doc.descendants((node, pos) => {
@@ -63,8 +62,8 @@ export function useEditorStoreSync() {
     });
   }
 
-  function syncEditorWithRelationChanges(editor: Editor) {
-    const nodes = getExistingInlineNodes(editor);
+  function syncEditorWithRelationChanges(editor: Editor, tagName: string) {
+    const nodes = getExistingInlineNodes(editor, tagName);
     const currentNodeIds = nodes.map(({ node }) => node.attrs.id as string);
 
     // Staging of new items is already handled on insertion where the relationship data is already retrieved
