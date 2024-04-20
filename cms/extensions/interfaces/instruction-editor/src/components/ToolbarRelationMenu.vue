@@ -66,7 +66,12 @@ const relationItems = useRelationItems();
 
 const { items } = relationItems.getItems(
   relation.value!.junctionCollection.collection,
-  config!.relation.primaryKey.value,
+  config!.relation.limitToCurrentItem.value
+    ? {
+        id: config!.relation.primaryKey.value,
+        fieldName: relation.value!.reverseJunctionField.field,
+      }
+    : undefined,
 );
 
 // TODO: Remove any
@@ -83,7 +88,6 @@ watch(items, (loadedItems: Item[]) => {
         parentItem: {
           id: i[relation.value!.reverseJunctionField.field].id,
           junctionFieldName: relation.value!.reverseJunctionField.field,
-          data: i[relation.value!.reverseJunctionField.field],
         },
       };
     });
@@ -104,9 +108,6 @@ async function stageSelects(items: [string | number]) {
 
   // TODO: Promise.all
   const relatedItemResponse = await api.get(`items/${relation.value!.relatedCollection.collection}/${items[0]}`);
-  const parentItemResponse = await api.get(
-    `items/${config!.relation.parentCollection.value}/${config?.relation.primaryKey.value}`,
-  );
 
   // TODO: Remove any
   store.stagedChanges.create.push({
@@ -117,9 +118,8 @@ async function stageSelects(items: [string | number]) {
       data: relatedItemResponse.data.data,
     },
     parentItem: {
-      id: parentItemResponse.data.data.id,
+      id: config!.relation.primaryKey.value,
       junctionFieldName: relation.value!.reverseJunctionField.field,
-      data: parentItemResponse.data.data,
     },
   });
 

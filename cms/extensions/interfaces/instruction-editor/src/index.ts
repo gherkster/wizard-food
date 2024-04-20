@@ -4,9 +4,9 @@ import { useToolStore } from "./stores/toolStore";
 
 export default {
   id: "custom-instruction-editor",
-  name: "Instruction Editor",
+  name: "Relational Editor",
   icon: "box",
-  description: "Recipe instruction editor, storing in JSON and allowing inline ingredients to be inserted",
+  description: "Recipe editor, storing text in JSON and allowing items to be referenced inline",
   component: InterfaceComponent,
   types: ["json"],
   options: ({ collection }: { collection: string }) => {
@@ -46,6 +46,18 @@ export default {
               },
             ],
           },
+        },
+      },
+      {
+        field: "limitToCurrentItem",
+        name: "Limit to current item",
+        type: "boolean",
+        schema: {
+          default_value: false,
+        },
+        meta: {
+          width: "half",
+          interface: "toggle",
         },
       },
       {
