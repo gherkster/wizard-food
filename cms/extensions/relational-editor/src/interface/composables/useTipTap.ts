@@ -1,9 +1,9 @@
 import { Editor, mergeAttributes, Node } from "@tiptap/core";
 import { VueNodeViewRenderer } from "@tiptap/vue-3";
-import InlineRelation from "../components/InlineRelation.vue";
+import InlineRelation from "../../interface/components/InlineRelation.vue";
 import { RelationBlockAttrs } from "../../../../../../../common/types/relations";
-import { Tool } from "../types/tools";
-import customMessages from "../../interface/i18n/custom-messages";
+import { Tool } from "../../common/types/tools";
+import customMessages from "../i18n/custom-messages";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {

@@ -127,10 +127,9 @@
 import ToolButton from "./ToolButton.vue";
 import { useI18n } from "vue-i18n";
 import { useI18nFallback } from "../composables/use-i18n-fallback";
-import { ToolButtonProps } from "../tiptap/types";
+import { ToolButtonProps } from "../../common/types/tools";
 
 defineProps<ToolButtonProps>();
 
 const { t } = useI18nFallback(useI18n());
 </script>
-../../common/types/types

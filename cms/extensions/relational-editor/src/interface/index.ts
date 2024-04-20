@@ -1,3 +1,4 @@
+import inlineNodeTagNames from "../common/inlineNodeTagNames";
 import customMessages from "./i18n/custom-messages";
 import InterfaceComponent from "./interface.vue";
 import { useToolStore } from "./stores/toolStore";
@@ -35,16 +36,7 @@ export default {
         meta: {
           interface: "select-dropdown",
           options: {
-            choices: [
-              {
-                text: "Recipe",
-                value: "inline-recipe",
-              },
-              {
-                text: "Ingredient",
-                value: "inline-ingredient",
-              },
-            ],
+            choices: inlineNodeTagNames,
           },
         },
       },
