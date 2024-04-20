@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { ToolButtonProps } from "../tiptap/types";
+import { ToolButtonProps } from "../../common/types/tools";
 
 const props = withDefaults(defineProps<ToolButtonProps>(), {
   icon: false,

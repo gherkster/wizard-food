@@ -15,7 +15,7 @@ import bulletList from "../tiptap/options/bullet-list";
 import orderedList from "../tiptap/options/ordered-list";
 import blockquote from "../tiptap/options/blockquote";
 import table from "../tiptap/options/table";
-import { useTipTap } from "../../common/composables/useTipTap";
+import { useTipTap } from "../composables/useTipTap";
 import { ToolSelection } from "../../common/types/relation-nodes";
 import { AnyExtension } from "@tiptap/core";
 import { computed, ref } from "vue";
