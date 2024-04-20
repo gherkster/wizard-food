@@ -24,6 +24,20 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  recipe.description_html = recipe.description ? generateHTML(recipe.description, extensions) : "";
+  recipe.note_html = recipe.note ? generateHTML(recipe.note, extensions) : "";
+
+  recipe.ingredientGroups.forEach((ig) => {
+    ig.ingredients.forEach((i) => {
+      if (!i.name) {
+        i.name_html = "";
+        console.warn("Recipe", recipe!.title, "includes an ingredient with no name. Ingredient: ", i.id);
+        return;
+      }
+      i.name_html = generateHTML(i.name, extensions);
+    });
+  });
+
   recipe.instructionGroups.forEach((ig) => {
     ig.instructions.forEach((i) => {
       if (!i.text) {
@@ -42,7 +56,7 @@ export default defineEventHandler(async (event) => {
 });
 
 function insertRelationDataIntoContent(content: JSONContent, inlineIngredients: InlineIngredientRelation[]) {
-  if (content.type === "inline-relation" && content.attrs?.id) {
+  if (content.type === "inline-ingredient" && content.attrs?.id) {
     const ingredient = inlineIngredients.find((i) => i.id === content.attrs!.id);
     content.attrs.data = ingredient?.ingredient_id;
   }

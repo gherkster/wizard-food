@@ -1,5 +1,3 @@
-import type { JSONContent } from "@tiptap/core";
-
 export interface Recipe {
   title: string;
   description?: string;
@@ -52,6 +50,5 @@ export interface InstructionGroup {
 
 export interface Instruction {
   text: string;
-  content: JSONContent | null;
   image?: Image;
 }

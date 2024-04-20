@@ -53,10 +53,9 @@
               </p>
               <ul>
                 <li v-for="ingredient in ingredientSection.ingredients" :key="JSON.stringify(ingredient)">
-                  <span>
-                    {{ adjustIngredientByMultiplier(ingredient.amount) }} {{ ingredient.unit }}
-                    {{ ingredient.name }}</span
-                  >
+                  <span v-if="ingredient.amount">{{ adjustIngredientByMultiplier(ingredient.amount) }}&nbsp;</span>
+                  <span v-if="ingredient.unit">{{ ingredient.unit }}&nbsp;</span>
+                  <span class="recipe__ingredient__name" v-html="ingredient.name" />
                   <span v-if="ingredient.note" class="text-muted"
                     ><i>&nbsp;{{ ingredient.note }}</i></span
                   >
@@ -216,6 +215,14 @@ const totalDuration = computed(() => {
 </style>
 
 <style lang="scss">
+.recipe__ingredient {
+  &__name {
+    p {
+      display: inline-block;
+      margin: 0;
+    }
+  }
+}
 .instruction {
   p {
     margin-top: 0;

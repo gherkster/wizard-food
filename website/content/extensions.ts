@@ -19,6 +19,7 @@ import { TableHeader } from "@tiptap/extension-table-header";
 import { TableRow } from "@tiptap/extension-table-row";
 import { TableCell } from "@tiptap/extension-table-cell";
 import { Node } from "@tiptap/core";
+import { generateText } from "@tiptap/core";
 import { useRecipeFormatter } from "~/composables";
 import type { ServerIngredient } from "common/types/serverRecipe";
 
@@ -27,8 +28,31 @@ interface InlineIngredientAttributes {
   data?: ServerIngredient;
 }
 
+const extensions = [
+  Document,
+  Text,
+  Paragraph,
+  HardBreak,
+  Heading,
+  CodeBlock,
+  BulletList,
+  OrderedList,
+  ListItem,
+  Blockquote,
+  HorizontalRule,
+  Link,
+  Bold,
+  Italic,
+  Strike,
+  Code,
+  Table,
+  TableHeader,
+  TableRow,
+  TableCell,
+]
+
 const inlineIngredientSerializer = Node.create({
-  name: "inline-relation",
+  name: "inline-ingredient",
   addAttributes() {
     return {
       id: {
@@ -54,10 +78,14 @@ const inlineIngredientSerializer = Node.create({
           class: "inline-ingredient",
           "data-amount": HTMLAttributes.data?.amount,
           "data-unit": HTMLAttributes.data?.unit,
-          "data-name": HTMLAttributes.data?.name,
+          "data-name": generateText(HTMLAttributes.data?.name ?? {}, extensions),
           "data-note": HTMLAttributes.data?.note,
         },
-        recipeFormatter.formatIngredient(HTMLAttributes.data),
+        recipeFormatter.formatIngredient({
+          amount: HTMLAttributes.data?.amount,
+          unit: HTMLAttributes.data?.unit,
+          name: generateText(HTMLAttributes.data?.name ?? {}, extensions),
+        }),
       ];
     }
 
@@ -65,26 +93,6 @@ const inlineIngredientSerializer = Node.create({
   },
 });
 
-export default [
-  Document,
-  Text,
-  Paragraph,
-  HardBreak,
-  Heading,
-  CodeBlock,
-  BulletList,
-  OrderedList,
-  ListItem,
-  Blockquote,
-  HorizontalRule,
-  Link,
-  Bold,
-  Italic,
-  Strike,
-  Code,
-  Table,
-  TableHeader,
-  TableRow,
-  TableCell,
-  inlineIngredientSerializer,
-];
+extensions.push(inlineIngredientSerializer);
+
+export default extensions;
