@@ -10,7 +10,6 @@ export interface CmsSchema {
 
 const getImageFields = (path: string) => [
   `${path}.id`,
-  `${path}.name`,
   `${path}.width`,
   `${path}.height`,
   `${path}.title`,
@@ -19,13 +18,6 @@ const getImageFields = (path: string) => [
 
 const searchFields = [
   "*",
-  "tags.tags_id.value",
-  "coverImage.id",
-  "coverImage.name",
-  "coverImage.width",
-  "coverImage.height",
-  "coverImage.filename_disk",
-  "coverImage.modified_on",
   ...getImageFields("coverImage"),
   "ingredientGroups.name",
   "ingredientGroups.ingredients.*",
