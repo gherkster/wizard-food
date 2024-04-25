@@ -4,16 +4,44 @@
       <div class="nav-header__links">
         <nuxt-link to="/">Home</nuxt-link>
         <nuxt-link to="/recipes">Recipes</nuxt-link>
-        <span>Categories</span>
-        <span>About</span>
+        <nuxt-link to="/about">About</nuxt-link>
       </div>
-      <recipe-search class="nav-header__search" />
+      <div class="nav-header__search">
+        <v-input v-model="query" placeholder="Search" @keydown.prevent.enter="search" />
+      </div>
     </header>
     <div class="page">
       <slot />
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+const searchClient = useSearch();
+// Ensure the search index exists on each page load,
+// so that if it is missing it can trigger a background download
+searchClient.ensureIndex();
+
+const route = useRoute();
+const initialQuery = route.query.search && typeof route.query.search === "string" ? route.query.search : null;
+
+// Prefill the search box with the previously searched for query if one exists
+// This is only relevant for a page reload or following a search link
+const query = ref(initialQuery ?? "");
+
+async function search() {
+  if (query.value.length < 4) {
+    // TODO: Indicate minimum length
+    return;
+  }
+  await navigateTo({
+    path: "/recipes",
+    query: {
+      search: query.value,
+    },
+  });
+}
+</script>
 
 <style lang="scss" scoped>
 @use "@/styles/mixins" as m;
