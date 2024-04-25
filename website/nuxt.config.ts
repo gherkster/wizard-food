@@ -75,7 +75,7 @@ async function generateRecipeSearchIndex() {
   miniSearch.addAll(recipes);
   const indexJson = JSON.stringify(miniSearch);
 
-  const imageFolder = `${__dirname}/assets`;
+  const imageFolder = `${__dirname}/public`;
   await fs.mkdir(imageFolder, { recursive: true });
   await fs.writeFile(`${imageFolder}/search-index.json`, indexJson, "utf8");
 }
