@@ -10,6 +10,7 @@ export interface ServerRecipe {
   coverImage?: ServerImage;
   cuisine?: string;
   course?: string;
+  main_ingredients?: string[];
   diets?: string[];
   slug: string;
   preparationDuration?: number;
