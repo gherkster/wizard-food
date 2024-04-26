@@ -4,7 +4,6 @@
       <div class="nav-header__links">
         <nuxt-link to="/">Home</nuxt-link>
         <nuxt-link to="/recipes">Recipes</nuxt-link>
-        <nuxt-link to="/about">About</nuxt-link>
       </div>
       <div class="nav-header__search">
         <v-input v-model="query" placeholder="Search" @keydown.prevent.enter="search" />
@@ -30,6 +29,10 @@ const initialQuery = route.query.search && typeof route.query.search === "string
 const query = ref(initialQuery ?? "");
 
 async function search() {
+  if (query.value.length === 0) {
+    await navigateTo("/recipes");
+  }
+
   if (query.value.length < 4) {
     // TODO: Indicate minimum length
     return;

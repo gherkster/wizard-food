@@ -2,7 +2,7 @@ import type { ServerRecipe } from "common/types/serverRecipe";
 import type { Options } from "minisearch";
 
 export type SearchIndexIndexed = Pick<ServerRecipe, "title">;
-type SearchIndexStored = Pick<ServerRecipe, "title" | "coverImage">;
+export type SearchIndexStoredFields = Pick<ServerRecipe, "title" | "coverImage">;
 
 // Type safe property name extraction
 const searchIndexIdField: keyof ServerRecipe = "slug";
@@ -12,9 +12,15 @@ const emptySearchIndexIndexedFields: SearchIndexIndexed = {
 };
 const searchIndexIndexedFields = Object.keys(emptySearchIndexIndexedFields);
 
-const emptySearchIndexStoredFields: SearchIndexStored = {
+const emptySearchIndexStoredFields: SearchIndexStoredFields = {
   title: "",
-  coverImage: undefined,
+  coverImage: {
+    id: "",
+    title: "",
+    height: 0,
+    width: 0,
+    modified_on: "",
+  },
 };
 const searchIndexStoredFields = Object.keys(emptySearchIndexStoredFields);
 
