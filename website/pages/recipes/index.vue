@@ -4,7 +4,7 @@
     <div class="recipes">
       <client-only>
         <template v-for="index in 23">
-          <recipe-preview v-for="recipe in filteredRecipes" :key="recipe.slug" :recipe="recipe" />
+          <recipe-preview v-for="recipe in recipes" :key="recipe.slug" :recipe="recipe" />
         </template>
       </client-only>
     </div>
@@ -12,30 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import type { RecipeListResponse } from "~/types/recipe";
-
-const recipesResponse = await useAsyncData(async () => {
-  const { data: recipes } = await useFetch<RecipeListResponse>("/api/recipes");
-  return recipes.value;
-});
-
-if (recipesResponse.error.value) {
-  throw createError({
-    statusCode: 500,
-    statusMessage: recipesResponse.error.value?.message,
-  });
-}
-
-if (!recipesResponse.data.value || recipesResponse.data.value.recipes.length === 0) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: "Page not found!",
-  });
-}
-
-const recipes = ref(recipesResponse.data.value!.recipes);
-
-console.log("recipes from server: ", recipes.value.length);
+import type { RecipePreview } from "~/types/recipe";
 
 const route = useRoute();
 const searchTerm = computed(() => {
@@ -50,36 +27,47 @@ const dynamicTitle = computed(() => (searchTerm.value ? `Search Results - ${sear
 
 const searchClient = useSearch();
 
-const filteredRecipes = computed(() => {
-  if (!searchTerm.value) {
-    return recipes.value;
-  }
-
-  const searchSet = new Set(filteredRecipeIds.value);
-  return recipes.value.filter((r) => searchSet.has(r.slug));
-});
-
-const filteredRecipeIds = ref<string[]>([]);
+const recipes = ref<RecipePreview[]>([]);
 
 watch(
   () => route.query,
   async () => {
     if (!route.query.search || typeof route.query.search !== "string") {
+      const allItems = await searchClient.allItems();
+      recipes.value = allItems.map(toRecipePreview);
+      console.log("Showing all recipes", recipes.value);
       return;
     }
 
     // TODO Set minimum number of characters to do search
     // TODO: Need to use a loader if search index is still downloading
     const searchResults = await searchClient.search(route.query.search);
-    filteredRecipeIds.value = searchResults.map((r) => r.id as string);
+    recipes.value = searchResults.map(toRecipePreview);
 
-    console.log("watch route, searching for ", route.query.search, " results: ", searchResults);
+    console.log("watch route, searching for ", route.query.search, " results: ", recipes.value);
   },
   {
     // Need immediate so it also runs on fresh page load
     immediate: true,
   },
 );
+
+// TODO: Can I store the data in some way that doesn't require mapping? Does it make much difference either way?
+function toRecipePreview(result: RecipeSearchResult): RecipePreview {
+  return {
+    title: result.title,
+    slug: result.id,
+    coverImage: result.coverImage
+      ? {
+          id: result.coverImage.id,
+          title: result.coverImage.title,
+          height: result.coverImage.height,
+          width: result.coverImage.width,
+          modifyDate: result.coverImage.modified_on,
+        }
+      : undefined,
+  };
+}
 </script>
 
 <style lang="scss" scoped>

@@ -1,12 +1,14 @@
 import type { ServerRecipe } from "common/types/serverRecipe";
-import MiniSearch from "minisearch";
-import { searchIndexSettings } from "~/types/searchIndex";
+import MiniSearch, { type SearchResult } from "minisearch";
+import { searchIndexSettings, type SearchIndexStoredFields } from "~/types/searchIndex";
 
 import currentHashes from "@/assets/hash.json";
 
 // Store these outside the function in the global scope for re-use
 const miniSearch = ref<MiniSearch<ServerRecipe>>();
 let indexDownload: Promise<void> | null = null;
+
+export interface RecipeSearchResult extends SearchResult, SearchIndexStoredFields {}
 
 export function useSearch() {
   // TODO: Generate this value automatically
@@ -48,10 +50,11 @@ export function useSearch() {
 
   async function downloadIndex() {
     // Load lazily so that downloading the search index does not block page loads.
-    indexDownload = useFetch<JSON>("/search-index.json").then(({ data: data }) => {
-      console.log("loaded latest index from server", data.value);
-      if (data.value) {
-        const indexString = JSON.stringify(data.value);
+    indexDownload = useFetch<JSON>("/search-index.json").then((response) => {
+      console.log(response);
+      console.log("loaded latest index from server", response.data.value);
+      if (response.data.value) {
+        const indexString = JSON.stringify(response.data.value);
         miniSearch.value = MiniSearch.loadJSON(indexString, searchIndexSettings);
         if (process.client) {
           console.log("storing index in localstorage");
@@ -75,11 +78,24 @@ export function useSearch() {
 
     return miniSearch.value.search(query, {
       prefix: true, // Match on the prefix of the result, not exact word matches. I.e. chick -> chicken
-    });
+    }) as RecipeSearchResult[];
+  }
+
+  async function allItems() {
+    if (indexDownload) {
+      await indexDownload;
+    }
+
+    if (!miniSearch.value) {
+      return [];
+    }
+
+    return miniSearch.value.search(MiniSearch.wildcard) as RecipeSearchResult[];
   }
 
   return {
     ensureIndex,
     search,
+    allItems,
   };
 }
