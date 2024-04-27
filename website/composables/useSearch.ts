@@ -19,7 +19,10 @@ export function useSearch() {
       return;
     }
 
-    verifySearchIndexIsCached();
+    // TODO: May want to remove this check eventually
+    if (!import.meta.dev) {
+      verifySearchIndexIsCached();
+    }
 
     // If a valid copy of the search index wasn't found in localstorage,
     // trigger an async download of the index in the background
@@ -49,18 +52,18 @@ export function useSearch() {
   }
 
   async function downloadIndex() {
+    if (!process.client) {
+      return;
+    }
+
     // Load lazily so that downloading the search index does not block page loads.
-    indexDownload = useFetch<JSON>("/search-index.json").then((response) => {
-      console.log(response);
-      console.log("loaded latest index from server", response.data.value);
-      if (response.data.value) {
-        const indexString = JSON.stringify(response.data.value);
-        miniSearch.value = MiniSearch.loadJSON(indexString, searchIndexSettings);
-        if (process.client) {
-          console.log("storing index in localstorage");
-          localStorage.setItem("search-index", indexString);
-          localStorage.setItem("search-index-hash", currentSearchIndexHash);
-        }
+    indexDownload = $fetch("/api/search-index").then((index) => {
+      if (index) {
+        miniSearch.value = MiniSearch.loadJSON(index, searchIndexSettings);
+
+        console.log("storing index in localstorage");
+        localStorage.setItem("search-index", index);
+        localStorage.setItem("search-index-hash", currentSearchIndexHash);
       }
     });
   }
