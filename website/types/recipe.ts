@@ -27,6 +27,7 @@ export interface RecipeListResponse {
 
 export interface RecipePreview {
   title: string;
+  tags: string[];
   featuredTag?: string;
   totalDuration?: string;
   coverImage?: Image;

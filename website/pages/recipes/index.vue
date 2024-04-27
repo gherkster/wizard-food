@@ -33,8 +33,7 @@ watch(
   () => route.query,
   async () => {
     if (!route.query.search || typeof route.query.search !== "string") {
-      const allItems = await searchClient.allItems();
-      recipes.value = allItems.map(toRecipePreview);
+      recipes.value = await searchClient.allItems();
       console.log("Showing all recipes", recipes.value);
       return;
     }
@@ -42,7 +41,7 @@ watch(
     // TODO Set minimum number of characters to do search
     // TODO: Need to use a loader if search index is still downloading
     const searchResults = await searchClient.search(route.query.search);
-    recipes.value = searchResults.map(toRecipePreview);
+    recipes.value = searchResults;
 
     console.log("watch route, searching for ", route.query.search, " results: ", recipes.value);
   },
@@ -51,23 +50,6 @@ watch(
     immediate: true,
   },
 );
-
-// TODO: Can I store the data in some way that doesn't require mapping? Does it make much difference either way?
-function toRecipePreview(result: RecipeSearchResult): RecipePreview {
-  return {
-    title: result.title,
-    slug: result.id,
-    coverImage: result.coverImage
-      ? {
-          id: result.coverImage.id,
-          title: result.coverImage.title,
-          height: result.coverImage.height,
-          width: result.coverImage.width,
-          modifyDate: result.coverImage.modified_on,
-        }
-      : undefined,
-  };
-}
 </script>
 
 <style lang="scss" scoped>
