@@ -25,6 +25,20 @@ export interface ServerRecipe {
   date_created: Date;
 }
 
+export interface ServerRecipePreview {
+  id: number;
+  slug: string;
+  title: string;
+  coverImage?: ServerImage;
+  cuisine?: string;
+  course?: string;
+  main_ingredients?: string[];
+  diets?: string[];
+  preparationDuration?: number;
+  cookingDuration?: number;
+  customDuration?: number;
+}
+
 interface ServerIngredientGroup {
   name?: string;
   ingredients: ServerIngredient[];
