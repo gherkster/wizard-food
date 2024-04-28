@@ -17,16 +17,18 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const { searchParams } = new URL(context.request.url);
   const purpose = searchParams.get("purpose") as "cover" | "preview" | "instruction";
 
+  const thumbnail = searchParams.get("thumbnail") === "true";
+
   // TODO: Build URL properly
   let transformations = "";
   switch (purpose) {
     case "instruction":
     case "cover": {
-      transformations = "c_fill,w_600/";
+      transformations = thumbnail ? "c_thumb,w_48/" : "c_fill,w_600/";
       break;
     }
     case "preview": {
-      transformations = "ar_1:1,c_crop/ar_1:1,c_fit,h_300/";
+      transformations = thumbnail ? "ar_1:1,c_thumb,w_48/" : "ar_1:1,c_crop/ar_1:1,c_fit,h_300/";
       break;
     }
     default: {

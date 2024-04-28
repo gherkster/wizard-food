@@ -1,8 +1,8 @@
 <template>
   <div class="servings-adjuster">
-    <icon name="mdi:minus-circle" :class="{ disabled: servings <= 1 }" @click="decrementServings" />
+    <icon name="mdi:minus-circle" size="28" :class="{ disabled: servings <= 1 }" @click="decrementServings" />
     <span>{{ servings }}</span>
-    <icon name="mdi:plus-circle" @click="incrementServings" />
+    <icon name="mdi:plus-circle" size="28" @click="incrementServings" />
   </div>
 </template>
 

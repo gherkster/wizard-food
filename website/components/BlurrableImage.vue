@@ -48,11 +48,11 @@ defineProps<{
   }
   // TODO: Confine the blur to inside the image area, don't spill over the border
   .image--full.hidden {
-    filter: blur(8px);
+    filter: blur(2px);
     opacity: 0;
   }
   .blur {
-    filter: blur(8px);
+    filter: blur(2px);
   }
 }
 </style>

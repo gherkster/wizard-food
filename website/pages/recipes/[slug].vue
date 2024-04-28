@@ -8,6 +8,7 @@
         <v-column col-12 col-lg-8>
           <v-row>
             <h1>{{ recipe.title }}</h1>
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <div v-if="recipe.description" v-html="recipe.description" />
           </v-row>
           <v-row>
@@ -55,6 +56,7 @@
                 <li v-for="ingredient in ingredientSection.ingredients" :key="JSON.stringify(ingredient)">
                   <span v-if="ingredient.amount">{{ adjustIngredientByMultiplier(ingredient.amount) }}&nbsp;</span>
                   <span v-if="ingredient.unit">{{ ingredient.unit }}&nbsp;</span>
+                  <!-- eslint-disable-next-line vue/no-v-html -->
                   <span class="recipe__ingredient__name" v-html="ingredient.name" />
                   <span v-if="ingredient.note" class="text-muted"
                     ><i>&nbsp;{{ ingredient.note }}</i></span
