@@ -23,7 +23,7 @@ const searchTerm = computed(() => {
   return route.query.search;
 });
 
-const dynamicTitle = computed(() => (searchTerm.value ? `Search Results - ${searchTerm.value}` : "Recipes"));
+const dynamicTitle = computed(() => (searchTerm.value ? `Search Results for ${searchTerm.value}` : "Recipes"));
 
 const searchClient = useSearch();
 

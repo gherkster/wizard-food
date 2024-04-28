@@ -6,7 +6,7 @@
         <nuxt-link to="/recipes">Recipes</nuxt-link>
       </div>
       <div class="nav-header__search">
-        <v-input v-model="query" placeholder="Search" @keydown.prevent.enter="search" />
+        <v-input v-model="query" placeholder="Search" @update:model-value="search" @keydown.prevent.enter="search" />
       </div>
     </header>
     <div class="page">
@@ -29,18 +29,19 @@ const initialQuery = route.query.search && typeof route.query.search === "string
 const query = ref(initialQuery ?? "");
 
 async function search() {
-  if (query.value.length === 0) {
+  const trimmedQuery = query.value.trim();
+  if (trimmedQuery.length === 0) {
     await navigateTo("/recipes");
   }
 
-  if (query.value.length < 4) {
+  if (trimmedQuery.length < 4) {
     // TODO: Indicate minimum length
     return;
   }
   await navigateTo({
     path: "/recipes",
     query: {
-      search: query.value,
+      search: trimmedQuery,
     },
   });
 }
