@@ -18,7 +18,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   switch (purpose) {
     case "instruction":
     case "cover": {
-      transformations = "";
+      transformations = "c_fill,w_600/";
       break;
     }
     case "preview": {
