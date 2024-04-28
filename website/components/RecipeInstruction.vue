@@ -5,11 +5,15 @@
 
 <script setup lang="ts">
 import { useRecipeFormatter } from "~/composables";
-import type { ServerIngredient } from "common/types/serverRecipe";
 
 interface InlineIngredientMarkup {
   element: HTMLElement;
-  data: Omit<ServerIngredient, "id">;
+  data: {
+    amount?: number;
+    unit?: string;
+    name: string;
+    note?: string;
+  };
 }
 
 const props = defineProps<{
@@ -56,7 +60,7 @@ function multiplyInlineIngredients(multiplicationFactor: number) {
       multiplicationFactor,
       props.originalNumberOfServings,
     );
-    const displayedIngredient = formatter.formatIngredient({ ...ingredient.data, amount: multipliedAmount });
+    const displayedIngredient = formatter.formatIngredient({ ...ingredient.data, amount: multipliedAmount, note: "" });
     ingredient.element.textContent = displayedIngredient;
   });
 }
