@@ -2,8 +2,6 @@ import type { ServerRecipe } from "common/types/serverRecipe";
 import MiniSearch, { type SearchResult } from "minisearch";
 import { searchIndexSettings, type SearchIndexStoredFields } from "~/types/searchIndex";
 
-import currentHashes from "@/assets/hash.json";
-
 // Store these outside the function in the global scope for re-use
 const miniSearch = ref<MiniSearch<ServerRecipe>>();
 let indexDownload: Promise<void> | null = null;
@@ -12,7 +10,9 @@ export interface RecipeSearchResult extends SearchResult, SearchIndexStoredField
 
 export function useSearch() {
   // TODO: Generate this value automatically
-  const currentSearchIndexHash = currentHashes.search;
+  const config = useAppConfig();
+  console.log("hash", config.searchIndex.hash);
+  const currentSearchIndexHash = config.searchIndex.hash;
 
   async function ensureIndex() {
     if (miniSearch.value) {
@@ -57,12 +57,13 @@ export function useSearch() {
     }
 
     // Load lazily so that downloading the search index does not block page loads.
-    indexDownload = $fetch("/api/search-index").then((index) => {
+    indexDownload = $fetch("/search-index.json").then((index: JSON) => {
       if (index) {
-        miniSearch.value = MiniSearch.loadJSON(index, searchIndexSettings);
+        const jsonString = JSON.stringify(index);
+        miniSearch.value = MiniSearch.loadJSON(jsonString, searchIndexSettings);
 
         console.log("storing index in localstorage");
-        localStorage.setItem("search-index", index);
+        localStorage.setItem("search-index", jsonString);
         localStorage.setItem("search-index-hash", currentSearchIndexHash);
       }
     });

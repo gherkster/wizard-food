@@ -6,25 +6,27 @@ import { useDirectus, useRecipeFormatter } from "../../composables";
 import type { Image, RecipePreview } from "../../types/recipe";
 import { searchIndexSettings, type SearchIndexIndexed } from "../../types/searchIndex";
 import * as fs from "fs/promises";
+import * as crypto from "crypto";
+import type { Nuxt } from "nuxt/schema";
 
 export default defineNuxtModule({
-  setup(options, nuxt) {
+  async setup(options, nuxt) {
+    const recipes = await getAllRecipes();
+
+    const searchIndex = generateRecipeSearchIndex(recipes);
+
+    await saveRecipeSearchIndex(searchIndex, nuxt);
+
     nuxt.hook("prerender:routes", async ({ routes }) => {
-      const recipes = await loadAllRecipes();
-
-      await generateRecipeSearchIndex(recipes, nuxt.options.rootDir);
-
       // TODO: This should be more efficient to avoid retrieving all recipes upfront,
       // then again retrieving all recipes one by one when statically generating in useAsyncData
       const slugs = recipes.map((r) => `/recipes/${r.slug}`);
       slugs.forEach((s) => routes.add(s));
-
-      nuxt.options.runtimeConfig.public.something = "somethingbeingusedforsomethinglikethis";
     });
   },
 });
 
-async function loadAllRecipes() {
+async function getAllRecipes() {
   console.log(`Loading recipes from ${process.env.NUXT_BASE_URL}`);
   const client = useDirectus({
     url: process.env.NUXT_BASE_URL!,
@@ -57,16 +59,23 @@ async function loadAllRecipes() {
   });
 }
 
-async function generateRecipeSearchIndex(recipes: RecipePreview[], rootDirectory: string) {
+function generateRecipeSearchIndex(recipes: RecipePreview[]) {
   console.log("Generating recipe search index");
   const miniSearch = new MiniSearch<SearchIndexIndexed>(searchIndexSettings);
 
   miniSearch.addAll(recipes);
-  const indexJson = JSON.stringify(miniSearch);
+  return JSON.stringify(miniSearch);
+}
 
-  const imageFolder = `${rootDirectory}/public`;
+async function saveRecipeSearchIndex(index: string, nuxt: Nuxt) {
+  // Store recipe search index in public folder for client retrieval
+  const imageFolder = `${nuxt.options.rootDir}/public`;
   await fs.mkdir(imageFolder, { recursive: true });
-  await fs.writeFile(`${imageFolder}/search-index.json`, indexJson, "utf8");
+  await fs.writeFile(`${imageFolder}/search-index.json`, index, "utf8");
+
+  // Store a hash of the index in config for cache busting
+  const hash = crypto.createHash("md5").update(index).digest("hex");
+  nuxt.options.appConfig.searchIndex.hash = hash;
 }
 
 function mapImage(serverImage: ServerImage): Image {

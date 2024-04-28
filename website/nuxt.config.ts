@@ -7,6 +7,9 @@ export default defineNuxtConfig({
     nuxtIcon: {
       size: "24px",
     },
+    searchIndex: {
+      hash: "",
+    },
   },
   vite: {
     plugins: [
