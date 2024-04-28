@@ -7,6 +7,10 @@ interface Env {
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   // TODO: Check in R2 and use that if exists
 
+  if (!context.env.CLOUDINARY_API_KEY) {
+    throw new Error("Cloudinary API key environment variable not defined");
+  }
+
   // TODO: Be able to vary image sizes and create thumbnails
   const imageId = context.params.images;
 
