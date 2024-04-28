@@ -1,6 +1,6 @@
 import { createDirectus, readItems, rest } from "@directus/sdk";
 import type { RestClient } from "@directus/sdk";
-import type { ServerRecipe } from "common/types/serverRecipe";
+import type { ServerRecipe, ServerRecipePreview } from "common/types/serverRecipe";
 import type { GlobalSettings } from "common/types/global";
 
 export interface CmsSchema {
@@ -10,7 +10,6 @@ export interface CmsSchema {
 
 const getImageFields = (path: string) => [
   `${path}.id`,
-  `${path}.name`,
   `${path}.width`,
   `${path}.height`,
   `${path}.title`,
@@ -19,13 +18,6 @@ const getImageFields = (path: string) => [
 
 const searchFields = [
   "*",
-  "tags.tags_id.value",
-  "coverImage.id",
-  "coverImage.name",
-  "coverImage.width",
-  "coverImage.height",
-  "coverImage.filename_disk",
-  "coverImage.modified_on",
   ...getImageFields("coverImage"),
   "ingredientGroups.name",
   "ingredientGroups.ingredients.*",
@@ -73,10 +65,11 @@ export function useDirectus({ url, clientId, clientSecret }: { url: string; clie
     return recipes.length > 0 ? recipes[0] : null;
   }
 
+  // TODO: Only get back required fields
   async function getAllRecipes() {
-    return await client.request<ServerRecipe[]>(
+    return await client.request<ServerRecipePreview[]>(
       readItems("recipes", {
-        fields: searchFields,
+        fields: ["*", ...getImageFields("coverImage")],
         filter: {
           status: {
             _eq: "published",

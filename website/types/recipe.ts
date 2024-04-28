@@ -1,5 +1,3 @@
-import type { JSONContent } from "@tiptap/core";
-
 export interface Recipe {
   title: string;
   description?: string;
@@ -17,8 +15,19 @@ export interface Recipe {
   slug: string;
 }
 
+export interface RecipeListResponse {
+  recipes: RecipePreview[];
+  meta: {
+    cuisines: string[];
+    courses: string[];
+    diets: string[];
+    mainIngredients: string[];
+  };
+}
+
 export interface RecipePreview {
   title: string;
+  tags: string[];
   featuredTag?: string;
   totalDuration?: string;
   coverImage?: Image;
@@ -52,6 +61,5 @@ export interface InstructionGroup {
 
 export interface Instruction {
   text: string;
-  content: JSONContent | null;
   image?: Image;
 }

@@ -1,14 +1,12 @@
-import type { ServerRecipe, ServerImage } from "common/types/serverRecipe";
-import type { Image, Recipe, RecipePreview } from "~/types/recipe";
-import { useRecipeFormatter } from "~/composables";
-import prand from "pure-rand";
+import type { ServerRecipe, ServerImage, ServerRecipePreview } from "common/types/serverRecipe";
+import type { Image, Recipe } from "~/types/recipe";
 
 export const RecipeMapper = {
   toClientRecipe(serverRecipe: ServerRecipe): Recipe {
     return {
       title: serverRecipe.title,
-      description: serverRecipe.description,
-      note: serverRecipe.note,
+      description: serverRecipe.description_html,
+      note: serverRecipe.note_html,
       coverImage: serverRecipe.coverImage ? mapImage(serverRecipe.coverImage) : undefined,
       ingredientGroups: serverRecipe.ingredientGroups.map((ig) => {
         return {
@@ -17,7 +15,7 @@ export const RecipeMapper = {
             return {
               amount: i.amount,
               unit: i.unit,
-              name: i.name,
+              name: i.name_html,
               note: i.note,
             };
           }),
@@ -44,15 +42,6 @@ export const RecipeMapper = {
       tags: buildTagList(serverRecipe),
     };
   },
-  toClientPreview(serverRecipe: ServerRecipe): RecipePreview {
-    return {
-      title: serverRecipe.title,
-      featuredTag: getRandomTag(serverRecipe),
-      totalDuration: getTotalDuration(serverRecipe),
-      coverImage: serverRecipe.coverImage ? mapImage(serverRecipe.coverImage) : undefined,
-      slug: serverRecipe.slug,
-    };
-  },
 };
 
 function mapImage(serverImage: ServerImage): Image {
@@ -65,27 +54,7 @@ function mapImage(serverImage: ServerImage): Image {
   };
 }
 
-function getRandomTag(recipe: ServerRecipe) {
-  const tags = buildTagList(recipe);
-  if (tags.length === 0) {
-    return undefined;
-  }
-
-  // Is this randomness enough with incrementing integers?
-  const randomness = prand.xoroshiro128plus(recipe.id);
-  const [randomIndex] = prand.uniformIntDistribution(0, tags.length - 1, randomness);
-  console.log(randomIndex);
-  return tags[randomIndex];
-}
-
-const formatter = useRecipeFormatter();
-function getTotalDuration(recipe: ServerRecipe) {
-  return formatter.formatMinutesAsDuration(
-    (recipe.preparationDuration ?? 0) + (recipe.cookingDuration ?? 0) + (recipe.customDuration ?? 0),
-  );
-}
-
-function buildTagList(recipe: ServerRecipe): string[] {
+function buildTagList(recipe: ServerRecipePreview): string[] {
   const tags: string[] = [];
   if (recipe.cuisine) {
     tags.push(recipe.cuisine);

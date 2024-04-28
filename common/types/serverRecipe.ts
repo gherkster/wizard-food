@@ -3,11 +3,14 @@ import { JSONContent } from "@tiptap/core";
 export interface ServerRecipe {
   id: number;
   title: string;
-  description?: string;
-  note?: string;
+  description?: JSONContent | null;
+  description_html?: string;
+  note?: JSONContent | null;
+  note_html?: string;
   coverImage?: ServerImage;
   cuisine?: string;
   course?: string;
+  main_ingredients?: string[];
   diets?: string[];
   slug: string;
   preparationDuration?: number;
@@ -22,6 +25,20 @@ export interface ServerRecipe {
   date_created: Date;
 }
 
+export interface ServerRecipePreview {
+  id: number;
+  slug: string;
+  title: string;
+  coverImage?: ServerImage;
+  cuisine?: string;
+  course?: string;
+  main_ingredients?: string[];
+  diets?: string[];
+  preparationDuration?: number;
+  cookingDuration?: number;
+  customDuration?: number;
+}
+
 interface ServerIngredientGroup {
   name?: string;
   ingredients: ServerIngredient[];
@@ -30,7 +47,8 @@ interface ServerIngredientGroup {
 export interface ServerIngredient {
   id: number;
   unit?: string;
-  name: string;
+  name: JSONContent | null;
+  name_html: string;
   note?: string;
   amount?: number;
 }
