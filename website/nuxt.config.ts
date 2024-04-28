@@ -3,6 +3,14 @@ import { fileURLToPath } from "url";
 
 export default defineNuxtConfig({
   ssr: true,
+  routeRules: {
+    /*
+      Force all routes to prerender.
+      This fixes an issue with calls to /api/recipes/<id> working for a hard reload,
+      but still being made on client side navigation
+    */
+    "/**": { prerender: true },
+  },
   appConfig: {
     nuxtIcon: {
       size: "24px",
