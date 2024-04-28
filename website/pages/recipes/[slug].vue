@@ -109,9 +109,8 @@
 import { useRecipeFormatter } from "~/composables";
 import type { Recipe } from "~/types/recipe";
 
-const recipesResponse = await useAsyncData(async () => {
-  const route = useRoute();
-
+const route = useRoute();
+const recipesResponse = await useAsyncData(route.params.slug.toString(), async () => {
   const { data: recipe } = await useFetch<Recipe>(`/api/recipes/${route.params.slug.toString()}`);
   return recipe.value;
 });
