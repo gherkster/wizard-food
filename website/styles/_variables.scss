@@ -30,6 +30,9 @@ $font-family-paragraph-alt: "Inter", "Helvetica", sans-serif;
 
 $line-height: 1.6em;
 
+$font-weight-regular: 400;
+$font-weight-bold: 600;
+
 $font-sizes: (
   h1: (font-size-min: 30, font-size-max: 48),
   h2: (font-size-min: 24, font-size-max: 32),
@@ -38,7 +41,7 @@ $font-sizes: (
   h5: (font-size-min: 16, font-size-max: 20),
   h6: (font-size-min: 16, font-size-max: 20),
   body: (font-size-min: 16, font-size-max: 18),
-  small: (font-size-min: 12, font-size-max: 14)
+  small: (font-size-min: 14, font-size-max: 15)
 );
 
 // SPACING //

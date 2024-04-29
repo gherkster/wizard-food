@@ -37,7 +37,7 @@ const props = defineProps<{
   position: relative;
   &__content {
     @include m.spacing("py", "xs");
-    font-weight: bold;
+    font-weight: v.$font-weight-bold;
     > p {
       margin-top: 0;
     }

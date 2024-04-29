@@ -72,7 +72,8 @@ function multiplyInlineIngredients(multiplicationFactor: number) {
 }
 </style>
 <style lang="scss">
+@use "@/styles/variables" as v;
 .inline-ingredient {
-  font-weight: bold;
+  font-weight: v.$font-weight-bold;
 }
 </style>
