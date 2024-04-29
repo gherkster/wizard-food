@@ -22,11 +22,24 @@ const searchClient = useSearch();
 searchClient.ensureIndex();
 
 const route = useRoute();
+
 const initialQuery = route.query.search && typeof route.query.search === "string" ? route.query.search : null;
 
 // Prefill the search box with the previously searched for query if one exists
 // This is only relevant for a page reload or following a search link
 const query = ref(initialQuery ?? "");
+
+// Keep input value in sync with the url query param
+watch(
+  () => route.query.search,
+  (urlSearch) => {
+    if (typeof route.query.search !== "string") {
+      query.value = "";
+      return;
+    }
+    query.value = urlSearch?.toString() ?? "";
+  },
+);
 
 async function search() {
   const trimmedQuery = query.value.trim();
