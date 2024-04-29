@@ -43,16 +43,25 @@ watch(
 
 async function search() {
   const trimmedQuery = query.value.trim();
+  /*
+  navigateTo.replace is used below so that each keystroke of a search does not push a new entry into the browser history
+  The initial navigation to the search results is considered part of the history if the user was not searching before,
+  but any subsequent key presses triggering searches should not add to the browser history
+  */
   if (trimmedQuery.length === 0) {
-    await navigateTo("/recipes");
+    await navigateTo("/recipes", {
+      replace: !!route.query.search,
+    });
   }
 
   if (trimmedQuery.length < 4) {
     // TODO: Indicate minimum length
     return;
   }
+
   await navigateTo({
     path: "/recipes",
+    replace: !!route.query.search,
     query: {
       search: trimmedQuery,
     },
