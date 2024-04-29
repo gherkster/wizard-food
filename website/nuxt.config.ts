@@ -11,6 +11,13 @@ export default defineNuxtConfig({
     */
     "/**": { prerender: true },
   },
+  nitro: {
+    prerender: {
+      // Disable to prevent unnecessary trailing slash redirects
+      // https://community.cloudflare.com/t/removing-trailing-slash-on-static-websites/583429/3
+      autoSubfolderIndex: false,
+    },
+  },
   appConfig: {
     nuxtIcon: {
       size: "24px",
