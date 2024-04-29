@@ -1,12 +1,22 @@
 <template>
   <div class="content">
-    <h2>{{ dynamicTitle }}</h2>
-    <div class="recipes">
-      <client-only>
-        <template v-for="index in 23">
-          <recipe-preview v-for="recipe in recipes" :key="recipe.slug" :recipe="recipe" />
-        </template>
-      </client-only>
+    <div v-if="isEmptySearchResult" id="no-results-message">
+      <h2>
+        No recipes found for <b>{{ searchTerm }}</b>
+      </h2>
+      <v-button @click="showAllRecipes">See all recipes</v-button>
+    </div>
+    <div v-else>
+      <h2>
+        {{ title }}<b v-show="searchTerm">{{ searchTerm }}</b>
+      </h2>
+      <div class="recipes">
+        <client-only>
+          <template v-for="index in 23">
+            <recipe-preview v-for="recipe in recipes" :key="recipe.slug" :recipe="recipe" />
+          </template>
+        </client-only>
+      </div>
     </div>
   </div>
 </template>
@@ -20,10 +30,8 @@ const searchTerm = computed(() => {
     return null;
   }
 
-  return route.query.search;
+  return route.query.search.trim();
 });
-
-const dynamicTitle = computed(() => (searchTerm.value ? `Search Results for ${searchTerm.value}` : "Recipes"));
 
 const searchClient = useSearch();
 
@@ -50,6 +58,24 @@ watch(
     immediate: true,
   },
 );
+
+const isEmptySearchResult = computed(() => recipes.value.length === 0 && searchTerm.value);
+
+const title = computed(() => {
+  if (isEmptySearchResult.value) {
+    return "No recipes found for ";
+  }
+
+  if (searchTerm.value) {
+    return "Search Results for ";
+  }
+
+  return "Recipes";
+});
+
+async function showAllRecipes() {
+  await navigateTo("/recipes");
+}
 </script>
 
 <style lang="scss" scoped>
@@ -69,14 +95,13 @@ watch(
   }
 }
 
-.filter {
-  background-color: v.$colour-primary;
-  @include m.spacing("p", "xs");
+#no-results-message {
   display: flex;
   flex-direction: column;
-  &__section {
-    display: flex;
-    flex-direction: column;
-  }
+  align-items: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>

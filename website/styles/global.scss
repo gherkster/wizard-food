@@ -12,6 +12,10 @@ body {
   font-family: v.$font-family-paragraph;
 }
 
+html, body {
+  height: 100%;
+}
+
 @each $key, $value in v.$font-sizes {
   #{$key} {
     @include m.responsive-text(map-get($value, font-size-min), map-get($value, font-size-max), v.$breakpoint-min, v.$breakpoint-max)
