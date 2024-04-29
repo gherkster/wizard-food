@@ -14,7 +14,7 @@ $badge-size: 18px;
   border-radius: 50%;
   text-align: center;
   font-size: 16px;
-  border: v.$border-accent;
+  border: v.$border-primary;
   padding: 4px;
 }
 </style>

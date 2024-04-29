@@ -1,12 +1,21 @@
 <template>
-  <button class="v-button" :class="{ active: active }">
+  <button class="v-button" :class="{ 'btn-primary': primary }" @click="emit('click')">
     <span><slot /></span>
   </button>
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  active?: boolean;
+withDefaults(
+  defineProps<{
+    primary?: boolean;
+  }>(),
+  {
+    primary: true,
+  },
+);
+
+const emit = defineEmits<{
+  click: [];
 }>();
 </script>
 
@@ -16,19 +25,21 @@ defineProps<{
 @use "@/styles/variables" as v;
 $button-size: 16px;
 .v-button {
+  width: fit-content;
   border-style: none;
+  border-radius: v.$border-radius-sm;
   @include m.spacing("px", "xs");
   @include m.spacing("py", "xxs");
   //pointer-events: none;
   //background-color: transparent;
   font-size: $button-size;
   line-height: $button-size;
-  span {
-    //background-color: yellow;
-    //color: red;
+  &.btn-primary {
+    background-color: v.$colour-primary;
+    &:hover {
+      // TODO: Decide on a colour
+      background-color: red;
+    }
   }
-}
-.active {
-  background-color: v.$colour-active;
 }
 </style>

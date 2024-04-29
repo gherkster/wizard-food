@@ -36,7 +36,7 @@ function incrementServings() {
   user-select: none;
   > svg {
     cursor: pointer;
-    color: v.$colour-active;
+    color: v.$colour-primary;
   }
   span {
     @include m.spacing("mx", "xxs");
