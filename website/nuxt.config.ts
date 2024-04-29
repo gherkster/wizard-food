@@ -33,7 +33,7 @@ export default defineNuxtConfig({
       }),
     ],
   },
-  modules: ["nuxt-icon"],
+  modules: ["nuxt-icon", "@nuxt/fonts"],
   // https://nuxt.com/docs/guide/going-further/runtime-config
   runtimeConfig: {
     baseUrl: "", // Overridden by .env NUXT_BASE_URL
@@ -42,5 +42,10 @@ export default defineNuxtConfig({
   },
   alias: {
     common: fileURLToPath(new URL("../common", import.meta.url)),
+  },
+  fonts: {
+    defaults: {
+      weights: [400],
+    },
   },
 });
