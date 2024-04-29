@@ -43,30 +43,35 @@ $font-sizes: (
 
 // SPACING //
 $spacing-large: (
+  min: 32px,
   xs: 56px,
   md: 72px,
   xl: 96px
 );
 
 $spacing-medium: (
+  min: 24px,
   xs: 32px,
   md: 40px,
   xl: 48px
 );
 
 $spacing-small: (
+  min: 18px,
   xs: 24px,
   md: 28px,
   xl: 32px
 );
 
 $spacing-xsmall: (
+  min: 8px,
   xs: 12px,
   md: 14px,
   xl: 16px
 );
 
 $spacing-extrasmall: (
+  min: 4px,
   xs: 6px,
   md: 6px,
   xl: 8px

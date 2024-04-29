@@ -1,9 +1,9 @@
 <template>
   <div class="content">
     <div v-if="isEmptySearchResult" id="no-results-message">
-      <h2>
+      <h3>
         No recipes found for <b>{{ searchTerm }}</b>
-      </h2>
+      </h3>
       <v-button size="large" @click="showAllRecipes">See all recipes</v-button>
     </div>
     <div v-else>
