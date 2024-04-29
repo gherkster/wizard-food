@@ -1,8 +1,8 @@
 <template>
   <div class="servings-adjuster">
-    <icon name="mdi:minus-circle" size="28" :class="{ disabled: servings <= 1 }" @click="decrementServings" />
+    <icon name="mdi:minus-circle" size="32" :class="{ disabled: servings <= 1 }" @click="decrementServings" />
     <span>{{ servings }}</span>
-    <icon name="mdi:plus-circle" size="28" @click="incrementServings" />
+    <icon name="mdi:plus-circle" size="32" @click="incrementServings" />
   </div>
 </template>
 
@@ -42,12 +42,7 @@ function incrementServings() {
     @include m.spacing("mx", "xxs");
     text-align: center;
     min-width: 20px;
-    font-weight: bold;
-  }
-  > a {
-    padding: 4px 8px;
-    // TODO: Use variables font size
-    font-size: 28px;
+    font-weight: v.$font-weight-bold;
   }
   > .disabled {
     cursor: not-allowed;
