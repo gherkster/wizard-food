@@ -175,7 +175,7 @@ const totalDuration = computed(() => {
   &__ingredients {
     display: flex;
     flex-direction: column;
-    background-color: v.$colour-primary;
+    background-color: v.$colour-bg-highlight;
     border-radius: v.$border-radius-sm;
     @include m.spacing("p", "sm");
     &-title {

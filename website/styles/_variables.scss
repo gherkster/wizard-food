@@ -1,8 +1,9 @@
 // COLOURS //
 $colour-bg: #F9F5ED;
-$colour-primary: #f3e7d7;
+$colour-primary: #e0994c;
 $colour-accent: #e0994c;
 $colour-active: #e0994c;
+$colour-bg-highlight: #f3e7d7;
 
 $colour-text: black;
 $colour-muted: #b5b3b3;
@@ -110,7 +111,7 @@ $paragraph-margin-bottom: 16px;
 // BORDERS //
 $border-radius-sm: 6px;
 $border-radius-md: 10px;
-$border-accent: 2px solid $colour-accent;
+$border-primary: 2px solid $colour-primary;
 $border-outline: 2px solid $colour-muted;
 
 // SIZING
