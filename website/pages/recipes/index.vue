@@ -4,7 +4,7 @@
       <h2>
         No recipes found for <b>{{ searchTerm }}</b>
       </h2>
-      <v-button @click="showAllRecipes">See all recipes</v-button>
+      <v-button size="large" @click="showAllRecipes">See all recipes</v-button>
     </div>
     <div v-else>
       <h2>
@@ -98,6 +98,7 @@ async function showAllRecipes() {
 #no-results-message {
   display: flex;
   flex-direction: column;
+  width: 100%;
   align-items: center;
   position: fixed;
   top: 50%;
