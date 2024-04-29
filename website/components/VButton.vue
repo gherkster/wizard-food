@@ -1,18 +1,27 @@
 <template>
-  <button class="v-button" :class="{ 'btn-primary': primary }" @click="emit('click')">
-    <span><slot /></span>
+  <button class="control v-button" :class="classes" @click="emit('click')">
+    <span class="control__label"><slot /></span>
   </button>
 </template>
 
 <script setup lang="ts">
-withDefaults(
+const props = withDefaults(
   defineProps<{
     primary?: boolean;
+    size?: "small" | "medium" | "large";
   }>(),
   {
     primary: true,
+    size: "medium",
   },
 );
+
+const classes = computed(() => {
+  return {
+    "btn-primary": props.primary,
+    [props.size]: props.size,
+  };
+});
 
 const emit = defineEmits<{
   click: [];
