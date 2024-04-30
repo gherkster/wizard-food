@@ -24,11 +24,11 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   switch (purpose) {
     case "instruction":
     case "cover": {
-      transformations = thumbnail ? "c_thumb,w_48/" : "c_fill,w_600/";
+      transformations = thumbnail ? "c_thumb,w_48/" : "c_fill,w_800/";
       break;
     }
     case "preview": {
-      transformations = thumbnail ? "ar_1:1,c_thumb,w_48/" : "ar_1:1,c_crop/ar_1:1,c_fit,h_300/";
+      transformations = thumbnail ? "ar_1:1,c_thumb,w_48/" : "ar_1:1,c_crop/ar_1:1,c_fit,h_360/";
       break;
     }
     default: {
