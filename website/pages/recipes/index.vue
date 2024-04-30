@@ -1,22 +1,20 @@
 <template>
-  <div class="content">
-    <div v-if="isEmptySearchResult" id="no-results-message">
-      <h3>
-        No recipes found for <b>{{ searchTerm }}</b>
-      </h3>
-      <v-button size="large" @click="showAllRecipes">See all recipes</v-button>
-    </div>
-    <div v-else>
-      <h2>
-        {{ title }}<b v-show="searchTerm">{{ searchTerm }}</b>
-      </h2>
-      <div class="recipes">
-        <client-only>
-          <template v-for="index in 23">
-            <recipe-preview v-for="recipe in recipes" :key="recipe.slug" :recipe="recipe" />
-          </template>
-        </client-only>
-      </div>
+  <div v-if="isEmptySearchResult" id="no-results-message">
+    <h3>
+      No recipes found for <b>{{ searchTerm }}</b>
+    </h3>
+    <v-button size="large" @click="showAllRecipes">See all recipes</v-button>
+  </div>
+  <div v-else>
+    <h2>
+      {{ title }}<b v-show="searchTerm">{{ searchTerm }}</b>
+    </h2>
+    <div class="recipes">
+      <client-only>
+        <template v-for="index in 23">
+          <recipe-preview v-for="recipe in recipes" :key="recipe.slug" :recipe="recipe" />
+        </template>
+      </client-only>
     </div>
   </div>
 </template>
@@ -59,6 +57,7 @@ watch(
   },
 );
 
+// TODO: Don't show this if the index is still downloading
 const isEmptySearchResult = computed(() => recipes.value.length === 0 && searchTerm.value);
 
 const title = computed(() => {

@@ -9,7 +9,7 @@
         <v-input v-model="query" placeholder="Search" @update:model-value="search" @keydown.prevent.enter="search" />
       </div>
     </header>
-    <div class="page">
+    <div class="page content">
       <slot />
     </div>
   </div>

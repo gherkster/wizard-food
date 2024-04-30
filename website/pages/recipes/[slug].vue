@@ -1,26 +1,25 @@
 <template>
-  <div class="content">
-    <div v-if="recipe" class="recipe">
-      <v-row class="wide-gap">
-        <v-column v-if="recipe.coverImage" col-12 col-lg-4>
-          <blurrable-image :img="recipe.coverImage" purpose="cover" />
-        </v-column>
-        <v-column col-12 col-lg-8>
-          <div class="recipe__summary">
-            <h1 class="recipe__title">{{ recipe.title }}</h1>
-            <!-- eslint-disable-next-line vue/no-v-html -->
-            <div v-if="recipe.description" class="recipe__description" v-html="recipe.description" />
-            <div class="recipe__tags">
-              <nuxt-link v-for="tag in recipe.tags" :key="tag" :to="createSearchLink(tag)">
-                <v-tag>{{ tag }}</v-tag>
-              </nuxt-link>
-            </div>
-            <div class="recipe__details highlight-container">
-              <div class="recipe__duration">
-                <span v-if="totalDuration"
-                  >Total <b>{{ totalDuration }}</b></span
-                >
-                <!-- <span v-if="recipe.preparationDuration"
+  <div v-if="recipe" class="recipe">
+    <v-row class="wide-gap">
+      <v-column v-if="recipe.coverImage" col-12 col-lg-4>
+        <blurrable-image :img="recipe.coverImage" purpose="cover" />
+      </v-column>
+      <v-column col-12 col-lg-8>
+        <div class="recipe__summary">
+          <h1 class="recipe__title">{{ recipe.title }}</h1>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div v-if="recipe.description" class="recipe__description" v-html="recipe.description" />
+          <div class="recipe__tags">
+            <nuxt-link v-for="tag in recipe.tags" :key="tag" :to="createSearchLink(tag)">
+              <v-tag>{{ tag }}</v-tag>
+            </nuxt-link>
+          </div>
+          <div class="recipe__details highlight-container">
+            <div class="recipe__duration">
+              <span v-if="totalDuration"
+                >Total <b>{{ totalDuration }}</b></span
+              >
+              <!-- <span v-if="recipe.preparationDuration"
                   >Preparation <b>{{ formatter.formatMinutesAsDuration(recipe.preparationDuration) }}</b></span
                 >
                 <span v-if="recipe.cookingDuration"
@@ -30,81 +29,80 @@
                   {{ recipe.customDurationName }}
                   <b>{{ formatter.formatMinutesAsDuration(recipe.customDuration) }}</b></span
                 > -->
-              </div>
-              <div class="recipe__options">
-                <servings-adjuster
-                  :label="recipe.servingsType"
-                  :servings="servings"
-                  class="recipe__multiplier"
-                  @input="updateNumberOfServings"
-                />
-              </div>
+            </div>
+            <div class="recipe__options">
+              <servings-adjuster
+                :label="recipe.servingsType"
+                :servings="servings"
+                class="recipe__multiplier"
+                @input="updateNumberOfServings"
+              />
             </div>
           </div>
-        </v-column>
-      </v-row>
-      <v-row class="wide-gap">
-        <v-column col-12 col-lg-4>
-          <div v-if="recipe.ingredientGroups.length > 0" class="recipe__ingredients highlight-container">
-            <div class="recipe__ingredients-title">
-              <h2>Ingredients</h2>
-            </div>
-            <div v-for="ingredientSection in recipe.ingredientGroups" :key="JSON.stringify(ingredientSection)">
-              <p v-if="ingredientSection.name">
-                <b>{{ ingredientSection.name }}</b>
-              </p>
-              <ul>
-                <li v-for="ingredient in ingredientSection.ingredients" :key="JSON.stringify(ingredient)">
-                  <span v-if="ingredient.amount">{{ adjustIngredientByMultiplier(ingredient.amount) }}&nbsp;</span>
-                  <span v-if="ingredient.unit">{{ ingredient.unit }}&nbsp;</span>
-                  <!-- eslint-disable-next-line vue/no-v-html -->
-                  <span class="recipe__ingredient__name" v-html="ingredient.name" />
-                  <span v-if="ingredient.note" class="text-muted"
-                    ><i>&nbsp;{{ ingredient.note }}</i></span
-                  >
-                </li>
-              </ul>
-            </div>
+        </div>
+      </v-column>
+    </v-row>
+    <v-row class="wide-gap">
+      <v-column col-12 col-lg-4>
+        <div v-if="recipe.ingredientGroups.length > 0" class="recipe__ingredients highlight-container">
+          <div class="recipe__ingredients-title">
+            <h2>Ingredients</h2>
           </div>
-        </v-column>
-        <v-column col-12 col-lg-8>
-          <div v-if="recipe.instructionGroups.length > 0" class="recipe__instructions">
-            <h2>Instructions</h2>
-            <div
-              v-for="instructionSection in recipe.instructionGroups"
-              :key="JSON.stringify(instructionSection)"
-              class="instruction-section"
-            >
-              <p v-if="instructionSection.name">
-                <b>{{ instructionSection.name }}</b>
-              </p>
-              <div class="instruction-group">
-                <div
-                  v-for="(instruction, index) in instructionSection.instructions"
-                  :key="JSON.stringify(instruction)"
-                  class="instruction"
+          <div v-for="ingredientSection in recipe.ingredientGroups" :key="JSON.stringify(ingredientSection)">
+            <p v-if="ingredientSection.name">
+              <b>{{ ingredientSection.name }}</b>
+            </p>
+            <ul>
+              <li v-for="ingredient in ingredientSection.ingredients" :key="JSON.stringify(ingredient)">
+                <span v-if="ingredient.amount">{{ adjustIngredientByMultiplier(ingredient.amount) }}&nbsp;</span>
+                <span v-if="ingredient.unit">{{ ingredient.unit }}&nbsp;</span>
+                <!-- eslint-disable-next-line vue/no-v-html -->
+                <span class="recipe__ingredient__name" v-html="ingredient.name" />
+                <span v-if="ingredient.note" class="text-muted"
+                  ><i>&nbsp;{{ ingredient.note }}</i></span
                 >
-                  <v-badge>{{ index + 1 }}</v-badge>
-                  <recipe-instruction
-                    :content="instruction.text"
-                    :ingredient-multiplier="servings"
-                    :original-number-of-servings="originalNumberOfServings"
-                  />
-                  <blurrable-image v-if="instruction.image" :img="instruction.image" purpose="instruction" />
-                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </v-column>
+      <v-column col-12 col-lg-8>
+        <div v-if="recipe.instructionGroups.length > 0" class="recipe__instructions">
+          <h2>Instructions</h2>
+          <div
+            v-for="instructionSection in recipe.instructionGroups"
+            :key="JSON.stringify(instructionSection)"
+            class="instruction-section"
+          >
+            <p v-if="instructionSection.name">
+              <b>{{ instructionSection.name }}</b>
+            </p>
+            <div class="instruction-group">
+              <div
+                v-for="(instruction, index) in instructionSection.instructions"
+                :key="JSON.stringify(instruction)"
+                class="instruction"
+              >
+                <v-badge>{{ index + 1 }}</v-badge>
+                <recipe-instruction
+                  :content="instruction.text"
+                  :ingredient-multiplier="servings"
+                  :original-number-of-servings="originalNumberOfServings"
+                />
+                <blurrable-image v-if="instruction.image" :img="instruction.image" purpose="instruction" />
               </div>
             </div>
           </div>
-        </v-column>
-      </v-row>
-      <v-row v-if="recipe.note" class="wide-gap">
-        <v-column>
-          <h2>Notes</h2>
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <div v-html="recipe.note" />
-        </v-column>
-      </v-row>
-    </div>
+        </div>
+      </v-column>
+    </v-row>
+    <v-row v-if="recipe.note" class="wide-gap">
+      <v-column>
+        <h2>Notes</h2>
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <div v-html="recipe.note" />
+      </v-column>
+    </v-row>
   </div>
 </template>
 
@@ -178,7 +176,6 @@ function createSearchLink(term: string): RouteLocationRaw {
   &__summary {
     display: flex;
     flex-direction: column;
-    //height: 100%;
     @include m.spacing("gy", "md");
   }
   &__title {
