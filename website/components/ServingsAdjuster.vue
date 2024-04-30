@@ -1,11 +1,15 @@
 <template>
   <div class="servings-adjuster">
     <div class="servings-adjuster__control">
-      <icon name="mdi:minus" size="36" :class="{ disabled: servings <= 1 }" @click="decrementServings" />
-      <span>{{ servings }}</span>
-      <icon name="mdi:plus" size="36" @click="incrementServings" />
+      <icon name="gravity-ui:minus" size="30" :class="{ disabled: servings <= 1 }" @click="decrementServings" />
+      <span>
+        <span
+          ><b>{{ servings }}&nbsp;</b></span
+        >
+        <span>{{ label }}</span>
+      </span>
+      <icon name="gravity-ui:plus" size="30" @click="incrementServings" />
     </div>
-    <span>{{ label }}</span>
   </div>
 </template>
 
@@ -47,15 +51,14 @@ function incrementServings() {
     display: flex;
     align-items: center;
     user-select: none;
+    @include m.spacing("gx", "xxs");
     > svg {
       cursor: pointer;
       color: v.$colour-primary;
     }
     span {
       text-align: center;
-      min-width: 20px;
-      font-size: 20px;
-      font-weight: v.$font-weight-bold;
+      //min-width: 20px;
     }
     > .disabled {
       cursor: not-allowed;
