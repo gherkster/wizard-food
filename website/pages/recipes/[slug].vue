@@ -11,7 +11,9 @@
             <!-- eslint-disable-next-line vue/no-v-html -->
             <div v-if="recipe.description" class="recipe__description" v-html="recipe.description" />
             <div class="recipe__tags">
-              <v-tag v-for="tag in recipe.tags" :key="tag">{{ tag }}</v-tag>
+              <nuxt-link v-for="tag in recipe.tags" :key="tag" :to="createSearchLink(tag)">
+                <v-tag>{{ tag }}</v-tag>
+              </nuxt-link>
             </div>
             <div class="recipe__details highlight-container">
               <div class="recipe__duration">
@@ -109,6 +111,7 @@
 <script setup lang="ts">
 import { useRecipeFormatter } from "~/composables";
 import type { Recipe } from "~/types/recipe";
+import type { RouteLocationRaw } from "#vue-router";
 
 const route = useRoute();
 const recipesResponse = await useAsyncData(route.params.slug.toString(), async () => {
@@ -153,6 +156,15 @@ const totalDuration = computed(() => {
       (recipe.value.customDuration && recipe.value.customDurationName ? recipe.value.customDuration : 0),
   );
 });
+
+function createSearchLink(term: string): RouteLocationRaw {
+  return {
+    path: "/recipes",
+    query: {
+      search: term.trim(),
+    },
+  };
+}
 </script>
 
 <style lang="scss" scoped>
