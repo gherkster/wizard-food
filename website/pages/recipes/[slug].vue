@@ -174,11 +174,12 @@ function createSearchLink(term: string): RouteLocationRaw {
 .recipe {
   display: flex;
   flex-direction: column;
-  @include m.spacing("g", "sm");
+  @include m.spacing("g", "md");
   &__summary {
     display: flex;
     flex-direction: column;
-    @include m.spacing("gy", "sm");
+    //height: 100%;
+    @include m.spacing("gy", "md");
   }
   &__title {
     margin: 0;
@@ -187,6 +188,7 @@ function createSearchLink(term: string): RouteLocationRaw {
     display: flex;
     width: 100%;
     justify-content: space-between;
+    margin-top: auto;
   }
   &__tags {
     display: flex;
