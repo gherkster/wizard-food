@@ -35,10 +35,12 @@ defineProps<{
 </script>
 
 <style lang="scss">
+@use "@/styles/variables" as v;
 .image-container {
   width: 100%;
   position: relative;
   overflow: hidden;
+  border-radius: v.$border-radius-sm;
 
   .image--full {
     position: absolute;
