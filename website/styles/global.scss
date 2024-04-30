@@ -2,6 +2,10 @@
 @use "variables" as v;
 @use "index";
 
+* {
+  box-sizing: border-box;
+}
+
 html {
   background: v.$colour-bg;
 }
