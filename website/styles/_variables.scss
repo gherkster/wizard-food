@@ -16,7 +16,7 @@ $breakpoints: (
   sm: 480,
   md: 768,
   lg: 992,
-  xl: 1200,
+  xl: 1280,
 ) !default;
 $breakpoint-min: map-get($breakpoints, "xs");
 $breakpoint-max: map-get($breakpoints, "xl");
