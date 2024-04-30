@@ -20,7 +20,6 @@
   flex-wrap: wrap;
   width: 100%;
   column-gap: v.$cols-horizontal-gap;
-  @include m.spacing("mb", "xs");
   @include m.spacing("gy", "xs");
   &.wide-gap {
     column-gap: v.$cols-horizontal-gap-wide;
