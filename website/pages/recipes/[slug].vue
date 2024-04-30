@@ -6,48 +6,47 @@
           <blurrable-image :img="recipe.coverImage" purpose="cover" />
         </v-column>
         <v-column col-12 col-lg-8>
-          <v-row>
-            <h1>{{ recipe.title }}</h1>
+          <div class="recipe__summary">
+            <h1 class="recipe__title">{{ recipe.title }}</h1>
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <div v-if="recipe.description" v-html="recipe.description" />
-          </v-row>
-          <v-row>
-            <div class="recipe__duration">
-              <span v-if="totalDuration"
-                >Total <b>{{ totalDuration }}</b></span
-              >
-              <span v-if="recipe.preparationDuration"
-                >Preparation <b>{{ formatter.formatMinutesAsDuration(recipe.preparationDuration) }}</b></span
-              >
-              <span v-if="recipe.cookingDuration"
-                >Cooking <b>{{ formatter.formatMinutesAsDuration(recipe.cookingDuration) }}</b></span
-              >
-              <span v-if="recipe.customDuration && recipe.customDurationName">
-                {{ recipe.customDurationName }}
-                <b>{{ formatter.formatMinutesAsDuration(recipe.customDuration) }}</b></span
-              >
-            </div>
-          </v-row>
-          <v-row>
+            <div v-if="recipe.description" class="recipe__description" v-html="recipe.description" />
             <div class="recipe__tags">
               <v-tag v-for="tag in recipe.tags" :key="tag">{{ tag }}</v-tag>
             </div>
-          </v-row>
+            <div class="recipe__details highlight-container">
+              <div class="recipe__duration">
+                <span v-if="totalDuration"
+                  >Total <b>{{ totalDuration }}</b></span
+                >
+                <!-- <span v-if="recipe.preparationDuration"
+                  >Preparation <b>{{ formatter.formatMinutesAsDuration(recipe.preparationDuration) }}</b></span
+                >
+                <span v-if="recipe.cookingDuration"
+                  >Cooking <b>{{ formatter.formatMinutesAsDuration(recipe.cookingDuration) }}</b></span
+                >
+                <span v-if="recipe.customDuration && recipe.customDurationName">
+                  {{ recipe.customDurationName }}
+                  <b>{{ formatter.formatMinutesAsDuration(recipe.customDuration) }}</b></span
+                > -->
+              </div>
+              <div class="recipe__options">
+                <servings-adjuster
+                  :label="recipe.servingsType"
+                  :servings="servings"
+                  class="recipe__multiplier"
+                  @input="updateNumberOfServings"
+                />
+              </div>
+            </div>
+          </div>
         </v-column>
       </v-row>
       <v-row class="wide-gap">
         <v-column col-12 col-lg-4>
-          <div v-if="recipe.ingredientGroups.length > 0" class="recipe__ingredients">
+          <div v-if="recipe.ingredientGroups.length > 0" class="recipe__ingredients highlight-container">
             <div class="recipe__ingredients-title">
               <h2>Ingredients</h2>
             </div>
-            <div class="recipe__options">
-              <div class="recipe__multiplier">
-                <servings-adjuster :servings="servings" @input="updateNumberOfServings" />
-                <span>{{ recipe.servingsType ?? "servings" }}</span>
-              </div>
-            </div>
-            <v-divider />
             <div v-for="ingredientSection in recipe.ingredientGroups" :key="JSON.stringify(ingredientSection)">
               <p v-if="ingredientSection.name">
                 <b>{{ ingredientSection.name }}</b>
@@ -161,6 +160,22 @@ const totalDuration = computed(() => {
 @use "@/styles/variables" as v;
 
 .recipe {
+  display: flex;
+  flex-direction: column;
+  @include m.spacing("g", "sm");
+  &__summary {
+    display: flex;
+    flex-direction: column;
+    @include m.spacing("gy", "sm");
+  }
+  &__title {
+    margin: 0;
+  }
+  &__details {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+  }
   &__tags {
     display: flex;
     flex-wrap: wrap;
@@ -169,19 +184,18 @@ const totalDuration = computed(() => {
   &__duration {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     @include m.spacing("g", "xs");
     text-transform: capitalize;
   }
   &__ingredients {
     display: flex;
     flex-direction: column;
-    background-color: v.$colour-bg-highlight;
-    border-radius: v.$border-radius-sm;
-    @include m.spacing("p", "sm");
     &-title {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
+      flex-wrap: wrap;
     }
   }
   &__instructions {
@@ -191,12 +205,6 @@ const totalDuration = computed(() => {
     display: flex;
     justify-content: space-between;
     align-items: end;
-  }
-  &__multiplier {
-    display: flex;
-    align-items: center;
-    @include m.spacing("gx", "xs");
-    @include m.spacing("gy", "xxs");
   }
   ul,
   ol {
@@ -213,9 +221,21 @@ const totalDuration = computed(() => {
   display: flex;
   @include m.spacing("gx", "xs");
 }
+
+.highlight-container {
+  display: flex;
+  background-color: v.$colour-bg-highlight;
+  border-radius: v.$border-radius-sm;
+  @include m.spacing("p", "sm");
+}
 </style>
 
 <style lang="scss">
+.recipe__description {
+  p {
+    margin: 0;
+  }
+}
 .recipe__ingredient {
   &__name {
     p {
