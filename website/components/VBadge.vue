@@ -11,6 +11,7 @@ $badge-size: 18px;
   width: $badge-size;
   height: $badge-size;
   line-height: $badge-size;
+  box-sizing: content-box;
   border-radius: 50%;
   text-align: center;
   font-size: 16px;
