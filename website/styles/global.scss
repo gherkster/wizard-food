@@ -57,6 +57,9 @@ a {
   &:hover {
     text-decoration: underline;
   }
+  &:visited {
+    color: v.$colour-text;
+  }
 }
 
 img {
