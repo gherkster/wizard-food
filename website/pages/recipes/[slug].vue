@@ -11,7 +11,7 @@
           <div v-if="recipe.description" class="recipe__description" v-html="recipe.description" />
           <div class="recipe__tags">
             <nuxt-link v-for="tag in recipe.tags" :key="tag" :to="createSearchLink(tag)">
-              <v-tag>{{ tag }}</v-tag>
+              <v-tag icon-name="gravity-ui:magnifier">{{ tag }}</v-tag>
             </nuxt-link>
           </div>
           <div class="recipe__details highlight-container">
