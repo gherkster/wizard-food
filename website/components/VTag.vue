@@ -1,13 +1,24 @@
 <template>
   <div class="tag">
+    <icon v-if="iconName" :name="iconName" size="13" />
     <slot />
   </div>
 </template>
 
+<script setup lang="ts">
+defineProps<{
+  iconName?: string;
+}>();
+</script>
+
 <style scoped lang="scss">
+@use "@/styles/mixins" as m;
 @use "@/styles/variables" as v;
 $tag-size: 12px;
 .tag {
+  display: flex;
+  @include m.spacing("gx", "xxs");
+  align-items: center;
   box-sizing: content-box;
   border: v.$border-primary;
   padding: 4px 8px;
