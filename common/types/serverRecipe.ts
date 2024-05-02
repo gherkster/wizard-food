@@ -27,6 +27,7 @@ export interface ServerRecipe {
 
 export interface ServerRecipePreview {
   id: number;
+  date_created: string;
   slug: string;
   title: string;
   coverImage: ServerImage;
