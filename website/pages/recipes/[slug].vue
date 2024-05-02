@@ -1,10 +1,10 @@
 <template>
   <div v-if="recipe" class="recipe">
     <v-row class="wide-gap">
-      <v-column v-if="recipe.coverImage" col-12 col-lg-4>
+      <v-column v-if="recipe.coverImage" col-12 col-md-5 col-lg-4>
         <blurrable-image :img="recipe.coverImage" purpose="cover" />
       </v-column>
-      <v-column col-12 col-lg-8>
+      <v-column col-12 col-md-7 col-lg-8>
         <div class="recipe__summary">
           <h1 class="recipe__title">{{ recipe.title }}</h1>
           <!-- eslint-disable-next-line vue/no-v-html -->
@@ -43,7 +43,7 @@
       </v-column>
     </v-row>
     <v-row class="wide-gap">
-      <v-column col-12 col-lg-4>
+      <v-column col-12 col-md-5 col-lg-4>
         <div v-if="recipe.ingredientGroups.length > 0" class="recipe__ingredients highlight-container">
           <div class="recipe__ingredients-title">
             <h2>Ingredients</h2>
@@ -66,7 +66,7 @@
           </div>
         </div>
       </v-column>
-      <v-column col-12 col-lg-8>
+      <v-column col-12 col-md-7 col-lg-8>
         <div v-if="recipe.instructionGroups.length > 0" class="recipe__instructions">
           <h2>Instructions</h2>
           <div
