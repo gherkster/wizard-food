@@ -25,6 +25,7 @@ export default defineNuxtConfig({
     searchIndex: {
       hash: "",
     },
+    baseUrl: "https://wizardfood.com",
   },
   vite: {
     plugins: [
