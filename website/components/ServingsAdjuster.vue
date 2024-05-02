@@ -3,7 +3,7 @@
     <div class="servings-adjuster__control">
       <icon name="gravity-ui:minus" size="34" :class="{ disabled: servings <= 1 }" @click="decrementServings" />
       <span>
-        <span
+        <span class="servings-adjuster__amount"
           ><b>{{ servings }}&nbsp;</b></span
         >
         <span>{{ label }}</span>
@@ -51,19 +51,24 @@ function incrementServings() {
     display: flex;
     align-items: center;
     user-select: none;
-    @include m.spacing("gx", "xs");
     > svg {
       cursor: pointer;
       color: v.$colour-primary;
     }
-    span {
-      text-align: center;
-      //min-width: 20px;
+    > span {
+      // Match extra space on the left side reserved for larger numbers
+      margin-right: 0.7em;
     }
     > .disabled {
       cursor: not-allowed;
       opacity: 50%;
     }
+  }
+  &__amount {
+    text-align: right;
+    display: inline-block;
+    // Reserve space for larger numbers to avoid minus icon jumping around
+    min-width: 1.7em;
   }
 }
 </style>
