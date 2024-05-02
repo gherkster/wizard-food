@@ -7,3 +7,16 @@
   </div>
 </template>
 
+<script setup lang="ts">
+const recipesResponse = await useAsyncData(async () => {
+  const { data: response } = await useFetch("/api/featured-recipes");
+  return response.value;
+});
+
+console.log(recipesResponse.data.value);
+
+const firstRecipe = recipesResponse.data.value!.latest[0];
+const date = new Date(firstRecipe.date_created);
+console.log(firstRecipe.date_created, date);
+
+</script>
