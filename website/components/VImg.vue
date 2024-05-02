@@ -1,5 +1,5 @@
 <template>
-  <img :src="src.toString()" :alt="img.title" :width="props.img.width" :height="props.img.height" />
+  <img :src="src" :alt="img.title" :width="props.img.width" :height="props.img.height" />
 </template>
 
 <script setup lang="ts">
@@ -12,12 +12,13 @@ const props = defineProps<{
   thumbnail?: boolean;
 }>();
 
-// TODO: Build URL properly
-const src = ref(`/api/images/${props.img.id}?modifyDate=${props.img.modifyDate}&purpose=${props.purpose}`);
-
-if (props.thumbnail) {
-  src.value += "&thumbnail=true";
-}
+const image = useImage();
+const src = image.buildRelativeUrl({
+  imageId: props.img.id,
+  modifyDate: props.img.modifyDate,
+  purpose: props.purpose,
+  thumbnail: props.thumbnail,
+});
 </script>
 
 <style lang="scss" scoped>
