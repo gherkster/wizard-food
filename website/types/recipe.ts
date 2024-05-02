@@ -2,7 +2,7 @@ export interface Recipe {
   title: string;
   description?: string;
   note?: string;
-  coverImage?: Image;
+  coverImage: Image;
   ingredientGroups: IngredientGroup[];
   instructionGroups: InstructionGroup[];
   servings?: number;
@@ -30,7 +30,7 @@ export interface RecipePreview {
   tags: string[];
   featuredTag?: string;
   totalDuration?: string;
-  coverImage?: Image;
+  coverImage: Image;
   slug: string;
 }
 

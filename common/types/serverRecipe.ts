@@ -7,7 +7,7 @@ export interface ServerRecipe {
   description_html?: string;
   note?: JSONContent | null;
   note_html?: string;
-  coverImage?: ServerImage;
+  coverImage: ServerImage;
   cuisine?: string;
   course?: string;
   main_ingredients?: string[];
@@ -29,7 +29,7 @@ export interface ServerRecipePreview {
   id: number;
   slug: string;
   title: string;
-  coverImage?: ServerImage;
+  coverImage: ServerImage;
   cuisine?: string;
   course?: string;
   main_ingredients?: string[];
