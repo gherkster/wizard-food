@@ -1,4 +1,4 @@
-import { JSONContent } from "@tiptap/core";
+import { JSONContent, generateText } from "@tiptap/core";
 import { generateHTML } from "@tiptap/html";
 import { InlineIngredientRelation } from "common/types/serverRecipe";
 import { useDirectus } from "~/composables/useDirectus";
@@ -25,6 +25,8 @@ export default defineEventHandler(async (event) => {
   }
 
   recipe.description_html = recipe.description ? generateHTML(recipe.description, extensions) : "";
+  recipe.description_plain_text = recipe.description ? generateText(recipe.description, extensions) : "";
+
   recipe.note_html = recipe.note ? generateHTML(recipe.note, extensions) : "";
 
   recipe.ingredientGroups.forEach((ig) => {

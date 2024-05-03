@@ -1,4 +1,4 @@
-import type { ServerRecipe, ServerImage, ServerRecipePreview } from "common/types/serverRecipe";
+import type { ServerRecipe, ServerImage } from "common/types/serverRecipe";
 import type { Image, Recipe } from "~/types/recipe";
 
 export const RecipeMapper = {
@@ -6,6 +6,7 @@ export const RecipeMapper = {
     return {
       title: serverRecipe.title,
       description: serverRecipe.description_html,
+      descriptionPlainText: serverRecipe.description_plain_text,
       note: serverRecipe.note_html,
       coverImage: mapImage(serverRecipe.coverImage),
       ingredientGroups: serverRecipe.ingredientGroups.map((ig) => {

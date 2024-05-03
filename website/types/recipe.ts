@@ -1,6 +1,7 @@
 export interface Recipe {
   title: string;
   description?: string;
+  descriptionPlainText?: string;
   note?: string;
   coverImage: Image;
   ingredientGroups: IngredientGroup[];

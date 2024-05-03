@@ -5,6 +5,7 @@ export interface ServerRecipe {
   title: string;
   description?: JSONContent | null;
   description_html?: string;
+  description_plain_text?: string;
   note?: JSONContent | null;
   note_html?: string;
   coverImage: ServerImage;

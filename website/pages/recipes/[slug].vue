@@ -136,8 +136,8 @@ const image = useImage();
 useServerSeoMeta({
   title: recipe.value.title,
   ogTitle: recipe.value.title,
-  description: recipe.value.description,
-  ogDescription: recipe.value.description,
+  description: recipe.value.descriptionPlainText,
+  ogDescription: recipe.value.descriptionPlainText,
   ogImage: image.buildExternalUrl({
     imageId: recipe.value.coverImage.id,
     modifyDate: recipe.value.coverImage.modifyDate,
