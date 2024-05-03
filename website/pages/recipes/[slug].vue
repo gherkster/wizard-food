@@ -133,7 +133,7 @@ if (!recipesResponse.data.value) {
 const recipe = ref(recipesResponse.data.value);
 
 const image = useImage();
-useSeoMeta({
+useServerSeoMeta({
   title: recipe.value.title,
   ogTitle: recipe.value.title,
   description: recipe.value.description,
@@ -143,6 +143,9 @@ useSeoMeta({
     modifyDate: recipe.value.coverImage.modifyDate,
     purpose: "cover",
   }),
+});
+useHead({
+  title: recipe.value.title,
 });
 
 const servings = ref<number>(recipe.value.servings && recipe.value.servings > 0 ? recipe.value.servings : 1);
