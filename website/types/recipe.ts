@@ -15,16 +15,6 @@ export interface Recipe {
   slug: string;
 }
 
-export interface RecipeListResponse {
-  recipes: RecipePreview[];
-  meta: {
-    cuisines: string[];
-    courses: string[];
-    diets: string[];
-    mainIngredients: string[];
-  };
-}
-
 export interface RecipePreview {
   title: string;
   tags: string[];
