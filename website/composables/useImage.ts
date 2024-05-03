@@ -40,7 +40,7 @@ export function useImage() {
 
     const relativeUrl = buildRelativeUrl({ imageId, modifyDate, purpose });
 
-    return `${appConfig.externalUrl}${relativeUrl}`;
+    return `${appConfig.externalBaseUrl}${relativeUrl}`;
   }
   return {
     buildRelativeUrl,
