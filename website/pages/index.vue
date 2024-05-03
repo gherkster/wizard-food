@@ -1,6 +1,11 @@
 <template>
-  <div>
-    <h2>Latest Recipes</h2>
+  <div class="home">
+    <section>
+      <h2>Latest Recipes</h2>
+      <div class="featured-recipe-list">
+        <recipe-preview v-for="recipe in latestRecipes" :key="recipe.slug" :recipe="recipe" />
+      </div>
+    </section>
     <h2>Personal Favourites</h2>
     <h2>Fast (and Fancy)</h2>
     <h2>World Cuisines</h2>
@@ -13,10 +18,49 @@ const recipesResponse = await useAsyncData(async () => {
   return response.value;
 });
 
-console.log(recipesResponse.data.value);
+if (recipesResponse.error.value) {
+  throw createError({
+    statusCode: 500,
+    statusMessage: recipesResponse.error.value?.message,
+  });
+}
 
-const firstRecipe = recipesResponse.data.value!.latest[0];
-const date = new Date(firstRecipe.date_created);
-console.log(firstRecipe.date_created, date);
+if (!recipesResponse.data.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: "Page not found!",
+  });
+}
 
+const latestRecipes = ref(recipesResponse.data.value.latest.concat(recipesResponse.data.value.latest).concat(recipesResponse.data.value.latest));
 </script>
+
+<style lang="scss" scoped>
+@use "@/styles/mixins" as m;
+@use "@/styles/variables" as v;
+
+.home {
+  .featured-recipe-list {
+    display: grid;
+    @include m.spacing("g", "sm");
+    @include m.breakpoint("xs") {
+      grid-template-columns: repeat(2, 1fr);
+      > *:first-child {
+        grid-column: 1 / 3;
+      }
+    }
+    @include m.breakpoint("sm") {
+      grid-template-columns: repeat(3, 1fr);
+      > *:first-child {
+        grid-column: unset;
+      }
+    }
+    @include m.breakpoint("md") {
+      grid-template-columns: repeat(4, 1fr);
+      > *:first-child {
+        grid-column: unset;
+      }
+    }
+  }
+}
+</style>
