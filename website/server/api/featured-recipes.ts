@@ -1,4 +1,4 @@
-import { useDirectus } from "~/composables";
+import { useDirectus, useMapper } from "~/composables";
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event);
@@ -13,9 +13,11 @@ export default defineEventHandler(async (event) => {
 
   const latestRecipes = recipes
     .sort((a, b) => new Date(a.date_created).getSeconds() - new Date(b.date_created).getSeconds())
-    .slice(0, 5);
+    .slice(0, 3);
+
+  const mapper = useMapper();
 
   return {
-    latest: latestRecipes,
+    latest: latestRecipes.map(mapper.toRecipePreview),
   };
 });
