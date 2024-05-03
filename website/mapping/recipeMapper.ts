@@ -7,7 +7,7 @@ export const RecipeMapper = {
       title: serverRecipe.title,
       description: serverRecipe.description_html,
       note: serverRecipe.note_html,
-      coverImage: serverRecipe.coverImage ? mapImage(serverRecipe.coverImage) : undefined,
+      coverImage: mapImage(serverRecipe.coverImage),
       ingredientGroups: serverRecipe.ingredientGroups.map((ig) => {
         return {
           name: ig.name,
@@ -54,7 +54,7 @@ function mapImage(serverImage: ServerImage): Image {
   };
 }
 
-function buildTagList(recipe: ServerRecipePreview): string[] {
+function buildTagList(recipe: ServerRecipe): string[] {
   const tags: string[] = [];
   if (recipe.cuisine) {
     tags.push(recipe.cuisine);
