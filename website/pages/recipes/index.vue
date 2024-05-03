@@ -80,6 +80,7 @@ async function showAllRecipes() {
 <style lang="scss" scoped>
 @use "@/styles/mixins" as m;
 @use "@/styles/variables" as v;
+
 .recipes {
   display: grid;
   @include m.spacing("g", "sm");
