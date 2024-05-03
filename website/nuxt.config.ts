@@ -25,7 +25,7 @@ export default defineNuxtConfig({
     searchIndex: {
       hash: "",
     },
-    baseUrl: "https://wizardfood.com",
+    externalBaseUrl: "", // Overridden by recipe module
   },
   vite: {
     plugins: [

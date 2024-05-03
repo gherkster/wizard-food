@@ -31,10 +31,14 @@ export function useImage() {
     modifyDate: string;
     purpose: ImagePurpose;
   }) {
-    const relativeUrl = buildRelativeUrl({ imageId, modifyDate, purpose });
     const appConfig = useAppConfig();
+    if (!appConfig.externalBaseUrl) {
+      throw new Error("CF_PAGES_URL environment variable is not defined");
+    }
 
-    return `${appConfig.baseUrl}${relativeUrl}`;
+    const relativeUrl = buildRelativeUrl({ imageId, modifyDate, purpose });
+
+    return `${appConfig.externalUrl}${relativeUrl}`;
   }
   return {
     buildRelativeUrl,
