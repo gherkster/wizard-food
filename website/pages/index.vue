@@ -6,7 +6,12 @@
         <recipe-preview v-for="recipe in latestRecipes" :key="recipe.slug" :recipe="recipe" />
       </div>
     </section>
-    <h2>Personal Favourites</h2>
+    <section>
+      <h2>Personal Favourites</h2>
+      <div class="featured-recipe-list">
+        <recipe-preview v-for="recipe in favouriteRecipes" :key="recipe.slug" :recipe="recipe" />
+      </div>
+    </section>
     <h2>Fast (and Fancy)</h2>
     <h2>World Cuisines</h2>
   </div>
@@ -32,7 +37,16 @@ if (!recipesResponse.data.value) {
   });
 }
 
-const latestRecipes = ref(recipesResponse.data.value.latest);
+const latestRecipes = ref(
+  recipesResponse.data.value.latestRecipes
+    .concat(recipesResponse.data.value.latestRecipes)
+    .concat(recipesResponse.data.value.latestRecipes),
+);
+const favouriteRecipes = ref(
+  recipesResponse.data.value.favouriteRecipes
+    .concat(recipesResponse.data.value.favouriteRecipes)
+    .concat(recipesResponse.data.value.favouriteRecipes),
+);
 </script>
 
 <style lang="scss" scoped>
