@@ -24,7 +24,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   switch (purpose) {
     case "instruction":
     case "cover": {
-      transformations = thumbnail ? "c_thumb,w_48/" : "c_fill,w_800/";
+      transformations = thumbnail ? "c_thumb,w_48,ar_3:4/" : "c_fill,w_720,ar_3:4/";
       break;
     }
     case "preview": {
