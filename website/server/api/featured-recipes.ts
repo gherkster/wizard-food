@@ -1,4 +1,4 @@
-import type { Type } from "typescript";
+import { ServerRecipePreview } from "common/types/serverRecipe";
 import { useDirectus, useMapper } from "~/composables";
 
 export default defineEventHandler(async (event) => {
@@ -20,11 +20,22 @@ export default defineEventHandler(async (event) => {
   // This can be done once testing is done
   const favouriteRecipes = recipes.filter((r) => r.favourite);
 
+  const quickRecipes = recipes.filter(
+    (r) => r.course?.toLowerCase().startsWith("main") && getTotalDuration(r) > 0 && getTotalDuration(r) <= 45,
+  );
+
+  // TODO: Probably needs to cover more cuisines
+  const worldCuisines = recipes.filter(
+    (r) => r.cuisine && !["american", "australian"].includes(r.cuisine.toLowerCase()),
+  );
+
   const mapper = useMapper();
 
   return {
     latestRecipes: latestRecipes.map(mapper.toRecipePreview),
     favouriteRecipes: shuffleItems(favouriteRecipes).slice(0, 3).map(mapper.toRecipePreview),
+    quickRecipes: shuffleItems(quickRecipes).slice(0, 3).map(mapper.toRecipePreview),
+    worldCuisineRecipes: shuffleItems(worldCuisines).slice(0, 3).map(mapper.toRecipePreview),
   };
 });
 
@@ -34,4 +45,8 @@ function shuffleItems<Type>(items: Type[]) {
     .map((value) => ({ value, sort: Math.random() }))
     .sort((a, b) => a.sort - b.sort)
     .map(({ value }) => value);
+}
+
+function getTotalDuration(recipe: ServerRecipePreview) {
+  return (recipe.preparationDuration ?? 0) + (recipe.cookingDuration ?? 0) + (recipe.customDuration ?? 0);
 }
