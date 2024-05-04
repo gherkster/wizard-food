@@ -1,3 +1,5 @@
+import { useImage } from "../../../composables/useImage";
+
 interface Env {
   BUCKET: R2Bucket;
   CLOUDINARY_API_KEY: string;
@@ -19,16 +21,19 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
   const thumbnail = searchParams.get("thumbnail") === "true";
 
+  const image = useImage();
+  const { x, y } = image.getAspectRatio(purpose);
+
   // TODO: Build URL properly
   let transformations = "";
   switch (purpose) {
-    case "instruction":
     case "cover": {
-      transformations = thumbnail ? "c_thumb,w_48,ar_3:4/" : "c_fill,w_720,ar_3:4/";
+      transformations = thumbnail ? `c_thumb,w_48,ar_${x}:${y}/` : `c_fill,w_720,ar_${x}:${y}/`;
       break;
     }
+    case "instruction":
     case "preview": {
-      transformations = thumbnail ? "ar_1:1,c_thumb,w_48/" : "ar_1:1,c_crop/ar_1:1,c_fit,h_360/";
+      transformations = thumbnail ? `ar_${x}:${y},c_thumb,w_48/` : `ar_${x}:${y},c_crop/ar_${x}:${y},c_fit,h_360/`;
       break;
     }
     default: {

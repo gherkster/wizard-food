@@ -1,5 +1,5 @@
 <template>
-  <img :src="src" :alt="img.title" :width="props.img.width" :height="props.img.height" />
+  <img :src="src" :alt="img.title" :width="props.img.width" :height="adjustedHeight" />
 </template>
 
 <script setup lang="ts">
@@ -19,6 +19,13 @@ const src = image.buildRelativeUrl({
   purpose: props.purpose,
   thumbnail: props.thumbnail,
 });
+
+/*
+Set the height based on the final image aspect ratio to avoid CLS issues when loading
+e.g. a 3:4 aspect ratio image should have a height which is 4/3 x width
+*/
+const { x, y } = image.getAspectRatio(props.purpose);
+const adjustedHeight = Math.round((props.img.width * y) / x);
 </script>
 
 <style lang="scss" scoped>
