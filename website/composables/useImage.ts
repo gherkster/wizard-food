@@ -1,6 +1,22 @@
 import type { ImagePurpose } from "~/types/image";
 
 export function useImage() {
+  function getAspectRatio(purpose: ImagePurpose): { x: number; y: number } {
+    switch (purpose) {
+      case "cover":
+      case "instruction":
+        return {
+          x: 3,
+          y: 4,
+        };
+      case "preview":
+        return {
+          x: 1,
+          y: 1,
+        };
+    }
+  }
+
   function buildRelativeUrl({
     imageId,
     modifyDate,
@@ -45,5 +61,6 @@ export function useImage() {
   return {
     buildRelativeUrl,
     buildExternalUrl,
+    getAspectRatio,
   };
 }
