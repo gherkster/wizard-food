@@ -1,19 +1,29 @@
 <template>
   <div class="home">
-    <section>
+    <section v-if="latestRecipes.length > 0">
       <h2>Latest Recipes</h2>
       <div class="featured-recipe-list">
         <recipe-preview v-for="recipe in latestRecipes" :key="recipe.slug" :recipe="recipe" />
       </div>
     </section>
-    <section>
+    <section v-if="favouriteRecipes.length > 0">
       <h2>Personal Favourites</h2>
       <div class="featured-recipe-list">
         <recipe-preview v-for="recipe in favouriteRecipes" :key="recipe.slug" :recipe="recipe" />
       </div>
     </section>
-    <h2>Fast (and Fancy)</h2>
-    <h2>World Cuisines</h2>
+    <section v-if="quickRecipes.length > 0">
+      <h2>Quick Eats</h2>
+      <div class="featured-recipe-list">
+        <recipe-preview v-for="recipe in quickRecipes" :key="recipe.slug" :recipe="recipe" />
+      </div>
+    </section>
+    <section v-if="worldCuisineRecipes.length > 0">
+      <h2>World Cuisines</h2>
+      <div class="featured-recipe-list">
+        <recipe-preview v-for="recipe in worldCuisineRecipes" :key="recipe.slug" :recipe="recipe" />
+      </div>
+    </section>
   </div>
 </template>
 
@@ -47,6 +57,16 @@ const favouriteRecipes = ref(
     .concat(recipesResponse.data.value.favouriteRecipes)
     .concat(recipesResponse.data.value.favouriteRecipes),
 );
+const quickRecipes = ref(
+  recipesResponse.data.value.quickRecipes
+    .concat(recipesResponse.data.value.quickRecipes)
+    .concat(recipesResponse.data.value.quickRecipes),
+);
+const worldCuisineRecipes = ref(
+  recipesResponse.data.value.worldCuisineRecipes
+    .concat(recipesResponse.data.value.worldCuisineRecipes)
+    .concat(recipesResponse.data.value.worldCuisineRecipes),
+);
 </script>
 
 <style lang="scss" scoped>
@@ -73,7 +93,7 @@ const favouriteRecipes = ref(
       }
     }
     @include m.breakpoint("md") {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       > *:first-child {
         grid-column: unset;
       }
