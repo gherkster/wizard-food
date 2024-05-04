@@ -32,7 +32,7 @@ if (!recipesResponse.data.value) {
   });
 }
 
-const latestRecipes = ref(recipesResponse.data.value.latest.concat(recipesResponse.data.value.latest).concat(recipesResponse.data.value.latest));
+const latestRecipes = ref(recipesResponse.data.value.latest);
 </script>
 
 <style lang="scss" scoped>
@@ -40,6 +40,9 @@ const latestRecipes = ref(recipesResponse.data.value.latest.concat(recipesRespon
 @use "@/styles/variables" as v;
 
 .home {
+  display: flex;
+  flex-direction: column;
+  @include m.spacing("gy", "lg");
   .featured-recipe-list {
     display: grid;
     @include m.spacing("g", "sm");

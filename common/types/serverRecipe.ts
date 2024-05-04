@@ -8,6 +8,7 @@ export interface ServerRecipe {
   description_plain_text?: string;
   note?: JSONContent | null;
   note_html?: string;
+  favourite: boolean;
   coverImage: ServerImage;
   cuisine?: string;
   course?: string;
@@ -32,6 +33,7 @@ export interface ServerRecipePreview {
   slug: string;
   title: string;
   coverImage: ServerImage;
+  favourite: boolean;
   cuisine?: string;
   course?: string;
   main_ingredients?: string[];
