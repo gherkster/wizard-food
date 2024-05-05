@@ -1,7 +1,7 @@
 <template>
   <nuxt-link :to="link">
     <div class="card" :class="variant">
-      <blurrable-image :img="image" purpose="preview" />
+      <blurrable-image :img="image" :purpose="variant === 'promo' ? 'cover' : 'preview'" aspect-ratio="square" />
       <div class="card__content">
         <p class="title">{{ title }}</p>
         <p v-if="description">{{ description }}</p>
