@@ -20,6 +20,7 @@
             :link="`/recipes/${recipe.slug}`"
             :tag="recipe.featuredTag"
             :duration="recipe.totalDuration"
+            :lazy-load-image="index > 8"
           />
         </template>
       </client-only>
