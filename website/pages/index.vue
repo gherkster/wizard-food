@@ -27,6 +27,7 @@
           :link="`/recipes/${recipe.slug}`"
           :tag="recipe.featuredTag"
           :duration="recipe.totalDuration"
+          lazy-load-image
         />
       </div>
     </section>
@@ -41,6 +42,7 @@
           :link="`/recipes/${recipe.slug}`"
           :tag="recipe.featuredTag"
           :duration="recipe.totalDuration"
+          lazy-load-image
         />
       </div>
     </section>
@@ -55,6 +57,7 @@
           :link="`/recipes/${recipe.slug}`"
           :tag="recipe.featuredTag"
           :duration="recipe.totalDuration"
+          lazy-load-image
         />
       </div>
     </section>

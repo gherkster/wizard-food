@@ -4,7 +4,7 @@
     <v-img
       class="image--full hidden"
       onload="this.classList.remove('hidden')"
-      loading="lazy"
+      :loading="lazy ? 'lazy' : ''"
       :img="img"
       :purpose="purpose"
       :aspect-ratio="aspectRatio"
@@ -29,11 +29,17 @@ should not cause any flickering, as the inline onload script can run before the 
 import type { ImagePurpose, AspectRatio } from "~/types/image";
 import type { Image } from "~/types/recipe";
 
-defineProps<{
-  img: Image;
-  purpose: ImagePurpose;
-  aspectRatio: AspectRatio;
-}>();
+withDefaults(
+  defineProps<{
+    img: Image;
+    purpose: ImagePurpose;
+    aspectRatio: AspectRatio;
+    lazy?: boolean;
+  }>(),
+  {
+    lazy: false,
+  },
+);
 </script>
 
 <style lang="scss">
