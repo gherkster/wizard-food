@@ -45,12 +45,9 @@ defineProps<{
   .image--full {
     position: absolute;
     inset: 0;
-    opacity: 1;
-    transition: all 0.1s linear;
+    transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  // TODO: Confine the blur to inside the image area, don't spill over the border
   .image--full.hidden {
-    filter: blur(2px);
     opacity: 0;
   }
   .blur {
