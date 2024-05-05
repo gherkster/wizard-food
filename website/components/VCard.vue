@@ -101,16 +101,18 @@ withDefaults(
 
 <style lang="scss">
 @use "@/styles/mixins" as m;
-@include m.breakpoint("sm", "max") {
-  .image-container {
-    border-bottom-left-radius: unset;
-    border-bottom-right-radius: unset;
+.recipe-preview.promo {
+  @include m.breakpoint("sm", "max") {
+    .image-container {
+      border-bottom-left-radius: unset;
+      border-bottom-right-radius: unset;
+    }
   }
-}
-@include m.breakpoint("sm") {
-  .image-container {
-    border-top-right-radius: unset;
-    border-bottom-right-radius: unset;
+  @include m.breakpoint("sm") {
+    .image-container {
+      border-top-right-radius: unset;
+      border-bottom-right-radius: unset;
+    }
   }
 }
 </style>
