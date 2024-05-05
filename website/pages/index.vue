@@ -2,7 +2,7 @@
   <div class="home">
     <section v-if="latestRecipes.length > 0">
       <h2>Latest Recipes</h2>
-      <div class="recipe-list feature">
+      <div class="recipe-list promo">
         <v-card
           v-for="(recipe, index) in latestRecipes"
           :key="recipe.slug"
@@ -18,7 +18,7 @@
     </section>
     <section v-if="favouriteRecipes.length > 0">
       <h2>Personal Favourites</h2>
-      <div class="recipe-list">
+      <div class="recipe-list standard">
         <v-card
           v-for="recipe in favouriteRecipes"
           :key="recipe.slug"
@@ -32,7 +32,7 @@
     </section>
     <section v-if="quickRecipes.length > 0">
       <h2>Quick Eats</h2>
-      <div class="recipe-list">
+      <div class="recipe-list standard">
         <v-card
           v-for="recipe in quickRecipes"
           :key="recipe.slug"
@@ -46,7 +46,7 @@
     </section>
     <section v-if="worldCuisineRecipes.length > 0">
       <h2>World Cuisines</h2>
-      <div class="recipe-list">
+      <div class="recipe-list standard">
         <v-card
           v-for="recipe in worldCuisineRecipes"
           :key="recipe.slug"
@@ -89,15 +89,18 @@ const latestRecipes = ref(
 const favouriteRecipes = ref(
   recipesResponse.data.value.favouriteRecipes
     .concat(recipesResponse.data.value.favouriteRecipes)
+    .concat(recipesResponse.data.value.favouriteRecipes)
     .concat(recipesResponse.data.value.favouriteRecipes),
 );
 const quickRecipes = ref(
   recipesResponse.data.value.quickRecipes
     .concat(recipesResponse.data.value.quickRecipes)
+    .concat(recipesResponse.data.value.quickRecipes)
     .concat(recipesResponse.data.value.quickRecipes),
 );
 const worldCuisineRecipes = ref(
   recipesResponse.data.value.worldCuisineRecipes
+    .concat(recipesResponse.data.value.worldCuisineRecipes)
     .concat(recipesResponse.data.value.worldCuisineRecipes)
     .concat(recipesResponse.data.value.worldCuisineRecipes),
 );
@@ -114,26 +117,19 @@ const worldCuisineRecipes = ref(
   .recipe-list {
     display: grid;
     @include m.spacing("g", "sm");
+  }
+  .recipe-list.standard {
     @include m.breakpoint("xs") {
       grid-template-columns: repeat(2, 1fr);
-      > *:first-child {
-        grid-column: 1 / 3;
-      }
     }
     @include m.breakpoint("sm") {
       grid-template-columns: repeat(3, 1fr);
-      > *:first-child {
-        grid-column: unset;
-      }
     }
     @include m.breakpoint("md") {
-      grid-template-columns: repeat(3, 1fr);
-      > *:first-child {
-        grid-column: unset;
-      }
+      grid-template-columns: repeat(4, 1fr);
     }
   }
-  .recipe-list.feature {
+  .recipe-list.promo {
     @include m.breakpoint("xs") {
       grid-template-columns: repeat(2, 1fr);
       > *:first-child {
@@ -152,6 +148,14 @@ const worldCuisineRecipes = ref(
         grid-column: 1/4;
       }
     }
+  }
+}
+</style>
+
+<style lang="scss">
+.card {
+  .title {
+    font-size: 1.075rem; // Boost font size on home page
   }
 }
 </style>

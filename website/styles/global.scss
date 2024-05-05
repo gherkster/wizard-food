@@ -71,7 +71,7 @@ img {
 .control {
   &.large {
     .control__label {
-      font-size: #{map-get(map-get(v.$font-sizes, body), font-size-max)}px;
+      font-size: #{map-get(map-get(v.$font-sizes, html), font-size-max)}px;
     }
   }
 }
