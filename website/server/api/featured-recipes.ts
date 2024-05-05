@@ -32,10 +32,10 @@ export default defineEventHandler(async (event) => {
   const mapper = useMapper();
 
   return {
-    latestRecipes: latestRecipes.map(mapper.toRecipePreview),
-    favouriteRecipes: shuffleItems(favouriteRecipes).slice(0, 3).map(mapper.toRecipePreview),
-    quickRecipes: shuffleItems(quickRecipes).slice(0, 3).map(mapper.toRecipePreview),
-    worldCuisineRecipes: shuffleItems(worldCuisines).slice(0, 3).map(mapper.toRecipePreview),
+    latestRecipes: latestRecipes.slice(0, 3).map(mapper.toRecipePreview),
+    favouriteRecipes: shuffleItems(favouriteRecipes).slice(0, 4).map(mapper.toRecipePreview),
+    quickRecipes: shuffleItems(quickRecipes).slice(0, 4).map(mapper.toRecipePreview),
+    worldCuisineRecipes: shuffleItems(worldCuisines).slice(0, 4).map(mapper.toRecipePreview),
   };
 });
 
