@@ -1,17 +1,17 @@
 <template>
   <nuxt-link :to="link">
-    <div class="recipe-preview" :class="variant">
+    <div class="card" :class="variant">
       <blurrable-image :img="image" purpose="preview" />
-      <div class="recipe-preview__content">
+      <div class="card__content">
         <p class="title">{{ title }}</p>
         <p v-if="description">{{ description }}</p>
-        <div class="recipe-preview__stats text-grey">
-          <span v-if="tag" class="recipe-preview__label no-underline">
+        <div class="card__stats text-grey">
+          <span v-if="tag" class="card__label no-underline">
             <small
               ><span>{{ tag }}</span>
             </small>
           </span>
-          <span v-if="duration" class="recipe-preview__label recipe-preview__duration no-underline">
+          <span v-if="duration" class="card__label card__duration no-underline">
             <icon name="mdi:clock-outline" size="18px" />
             <small
               ><span>{{ duration }}</span></small
@@ -48,7 +48,7 @@ withDefaults(
 <style lang="scss" scoped>
 @use "@/styles/mixins" as m;
 @use "@/styles/variables" as v;
-.recipe-preview {
+.card {
   position: relative;
   &__content {
     @include m.spacing("py", "xs");
@@ -84,14 +84,14 @@ withDefaults(
     top: -2px;
   }
 }
-.recipe-preview.promo {
+.card.promo {
   display: flex;
   background-color: v.$colour-bg-highlight;
   border-radius: v.$border-radius-sm;
   @include m.breakpoint("sm", "max") {
     flex-direction: column;
   }
-  .recipe-preview__content {
+  .card__content {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -110,7 +110,7 @@ small {
 
 <style lang="scss">
 @use "@/styles/mixins" as m;
-.recipe-preview.promo {
+.card.promo {
   @include m.breakpoint("sm", "max") {
     .image-container {
       border-bottom-left-radius: unset;
