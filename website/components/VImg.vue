@@ -32,6 +32,5 @@ const adjustedHeight = Math.round((props.img.width * y) / x);
 @use "@/styles/variables" as v;
 img {
   display: block;
-  border-radius: v.$border-radius-sm;
 }
 </style>
