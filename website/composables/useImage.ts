@@ -52,8 +52,6 @@ export function useImage() {
       throw new Error("CF_PAGES_URL environment variable is not defined");
     }
 
-    console.log(appConfig.externalBaseUrl);
-
     const relativeUrl = buildRelativeUrl({ imageId, modifyDate, purpose });
 
     return `${appConfig.externalBaseUrl}${relativeUrl}`;
