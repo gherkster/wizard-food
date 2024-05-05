@@ -89,7 +89,12 @@
                   :ingredient-multiplier="servings"
                   :original-number-of-servings="originalNumberOfServings"
                 />
-                <blurrable-image v-if="instruction.image" :img="instruction.image" purpose="instruction" />
+                <blurrable-image
+                  v-if="instruction.image"
+                  :img="instruction.image"
+                  purpose="instruction"
+                  aspect-ratio="square"
+                />
               </div>
             </div>
           </div>
@@ -142,6 +147,7 @@ useServerSeoMeta({
     imageId: recipe.value.coverImage.id,
     modifyDate: recipe.value.coverImage.modifyDate,
     purpose: "cover",
+    aspectRatio: "square",
   }),
 });
 useHead({

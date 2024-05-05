@@ -43,17 +43,19 @@ export function useImage() {
     imageId,
     modifyDate,
     purpose,
+    aspectRatio,
   }: {
     imageId: string;
     modifyDate: string;
     purpose: ImagePurpose;
+    aspectRatio: AspectRatio;
   }) {
     const appConfig = useAppConfig();
     if (!appConfig.externalBaseUrl) {
       throw new Error("CF_PAGES_URL environment variable is not defined");
     }
 
-    const relativeUrl = buildRelativeUrl({ imageId, modifyDate, purpose });
+    const relativeUrl = buildRelativeUrl({ imageId, modifyDate, purpose, aspectRatio });
 
     return `${appConfig.externalBaseUrl}${relativeUrl}`;
   }
