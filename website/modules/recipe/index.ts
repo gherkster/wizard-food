@@ -13,7 +13,6 @@ export default defineNuxtModule({
 
     const searchIndex = generateRecipeSearchIndex(recipes);
 
-    console.log("CF_PAGES_URL", process.env.CF_PAGES_URL);
     // Populate external URL injected automatically in Cloudflare pipeline
     nuxt.options.appConfig.externalBaseUrl = process.env.CF_PAGES_URL ?? "";
 
