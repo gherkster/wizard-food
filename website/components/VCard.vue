@@ -6,14 +6,16 @@
         <p class="title">{{ title }}</p>
         <p v-if="description">{{ description }}</p>
         <div class="recipe-preview__stats text-grey">
-          <span v-if="tag" class="recipe-preview__label">
-            <small>
-              {{ tag }}
+          <span v-if="tag" class="recipe-preview__label no-underline">
+            <small
+              ><span>{{ tag }}</span>
             </small>
           </span>
-          <span v-if="duration" class="recipe-preview__label recipe-preview__duration">
+          <span v-if="duration" class="recipe-preview__label recipe-preview__duration no-underline">
             <icon name="mdi:clock-outline" size="18px" />
-            <small>{{ duration }}</small>
+            <small
+              ><span>{{ duration }}</span></small
+            >
           </span>
         </div>
       </div>
@@ -95,6 +97,13 @@ withDefaults(
     width: 100%;
     justify-content: center;
     @include m.spacing("p", "sm");
+  }
+}
+small {
+  span {
+    // Wrap contents of small with inline-block span to avoid
+    // a tag underline style propagating down to the tag and duration
+    display: inline-block;
   }
 }
 </style>
