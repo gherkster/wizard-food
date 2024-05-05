@@ -2,6 +2,7 @@ export interface Recipe {
   title: string;
   description?: string;
   descriptionPlainText?: string;
+  descriptionSnippet: string;
   note?: string;
   coverImage: Image;
   ingredientGroups: IngredientGroup[];
@@ -18,6 +19,7 @@ export interface Recipe {
 
 export interface RecipePreview {
   title: string;
+  descriptionSnippet: string;
   tags: string[];
   featuredTag?: string;
   totalDuration?: string;

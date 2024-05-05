@@ -137,7 +137,7 @@ useServerSeoMeta({
   title: recipe.value.title,
   ogTitle: recipe.value.title,
   description: recipe.value.descriptionPlainText,
-  ogDescription: recipe.value.descriptionPlainText,
+  ogDescription: recipe.value.descriptionSnippet,
   ogImage: image.buildExternalUrl({
     imageId: recipe.value.coverImage.id,
     modifyDate: recipe.value.coverImage.modifyDate,

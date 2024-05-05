@@ -12,6 +12,7 @@ export function useMapper() {
 function toRecipePreview(serverRecipePreview: ServerRecipePreview): RecipePreview {
   return {
     title: serverRecipePreview.title,
+    descriptionSnippet: serverRecipePreview.description_snippet,
     tags: buildTagList(serverRecipePreview),
     featuredTag: getRandomTag(serverRecipePreview),
     totalDuration: getTotalDuration(serverRecipePreview),
