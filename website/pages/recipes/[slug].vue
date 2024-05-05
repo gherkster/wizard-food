@@ -2,7 +2,7 @@
   <div v-if="recipe" class="recipe">
     <v-row class="wide-gap">
       <v-column v-if="recipe.coverImage" col-12 col-md-5 col-lg-4>
-        <blurrable-image :img="recipe.coverImage" purpose="cover" />
+        <blurrable-image :img="recipe.coverImage" purpose="cover" aspect-ratio="portrait" />
       </v-column>
       <v-column col-12 col-md-7 col-lg-8>
         <div class="recipe__summary">

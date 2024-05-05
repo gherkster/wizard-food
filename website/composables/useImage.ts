@@ -1,15 +1,14 @@
-import type { ImagePurpose } from "~/types/image";
+import type { AspectRatio, ImagePurpose } from "~/types/image";
 
 export function useImage() {
-  function getAspectRatio(purpose: ImagePurpose): { x: number; y: number } {
-    switch (purpose) {
-      case "cover":
-      case "instruction":
+  function getAspectRatio(aspectRatio: AspectRatio): { x: number; y: number } {
+    switch (aspectRatio) {
+      case "portrait":
         return {
           x: 3,
           y: 4,
         };
-      case "preview":
+      case "square":
         return {
           x: 1,
           y: 1,
@@ -21,15 +20,17 @@ export function useImage() {
     imageId,
     modifyDate,
     purpose,
+    aspectRatio,
     thumbnail = false,
   }: {
     imageId: string;
     modifyDate: string;
     purpose: ImagePurpose;
+    aspectRatio: AspectRatio;
     thumbnail?: boolean;
   }) {
     // TODO: Build URL properly
-    let src = `/api/images/${imageId}?modifyDate=${modifyDate}&purpose=${purpose}`;
+    let src = `/api/images/${imageId}?modifyDate=${modifyDate}&purpose=${purpose}&aspectRatio=${aspectRatio}`;
 
     if (thumbnail) {
       src += "&thumbnail=true";
