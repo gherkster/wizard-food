@@ -3,7 +3,8 @@ import { JSONContent } from "@tiptap/core";
 export interface ServerRecipe {
   id: number;
   title: string;
-  description?: JSONContent | null;
+  description: JSONContent | null;
+  description_snippet: string;
   description_html?: string;
   description_plain_text?: string;
   note?: JSONContent | null;
@@ -32,6 +33,7 @@ export interface ServerRecipePreview {
   date_created: string;
   slug: string;
   title: string;
+  description_snippet: string;
   coverImage: ServerImage;
   favourite: boolean;
   cuisine?: string;
