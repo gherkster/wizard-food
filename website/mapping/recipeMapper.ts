@@ -7,6 +7,7 @@ export const RecipeMapper = {
       title: serverRecipe.title,
       description: serverRecipe.description_html,
       descriptionPlainText: serverRecipe.description_plain_text,
+      descriptionSnippet: serverRecipe.description_snippet,
       note: serverRecipe.note_html,
       coverImage: mapImage(serverRecipe.coverImage),
       ingredientGroups: serverRecipe.ingredientGroups.map((ig) => {
