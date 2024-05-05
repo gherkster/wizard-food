@@ -12,7 +12,15 @@
     <div class="recipes">
       <client-only>
         <template v-for="index in 23">
-          <recipe-preview v-for="recipe in recipes" :key="recipe.slug" :recipe="recipe" />
+          <v-card
+            v-for="recipe in recipes"
+            :key="recipe.slug"
+            :title="recipe.title"
+            :image="recipe.coverImage"
+            :link="`/recipes/${recipe.slug}`"
+            :tag="recipe.featuredTag"
+            :duration="recipe.totalDuration"
+          />
         </template>
       </client-only>
     </div>
