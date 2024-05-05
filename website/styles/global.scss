@@ -33,6 +33,7 @@ h1, h2, h3, h4, h5, h6 {
 p {
   margin-top: v.$paragraph-margin-top;
   margin-bottom: v.$paragraph-margin-bottom;
+  line-height: v.$line-height;
 }
 
 b {
