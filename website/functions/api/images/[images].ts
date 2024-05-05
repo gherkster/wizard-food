@@ -1,4 +1,5 @@
 import { useImage } from "../../../composables/useImage";
+import type { AspectRatio, ImagePurpose } from "../../../types/image";
 
 interface Env {
   BUCKET: R2Bucket;
@@ -17,12 +18,13 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const imageId = context.params.images;
 
   const { searchParams } = new URL(context.request.url);
-  const purpose = searchParams.get("purpose") as "cover" | "preview" | "instruction";
+  const purpose = searchParams.get("purpose") as ImagePurpose;
+  const aspectRatio = searchParams.get("aspectRatio") as AspectRatio;
 
   const thumbnail = searchParams.get("thumbnail") === "true";
 
   const image = useImage();
-  const { x, y } = image.getAspectRatio(purpose);
+  const { x, y } = image.getAspectRatio(aspectRatio);
 
   // TODO: Build URL properly
   let transformations = "";
@@ -33,7 +35,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     }
     case "instruction":
     case "preview": {
-      transformations = thumbnail ? `ar_${x}:${y},c_thumb,w_48/` : `ar_${x}:${y},c_crop/ar_${x}:${y},c_fit,h_360/`;
+      transformations = thumbnail ? `ar_${x}:${y},c_thumb,w_48/` : `ar_${x}:${y},c_crop/ar_${x}:${y},c_fit,h_480/`;
       break;
     }
     default: {

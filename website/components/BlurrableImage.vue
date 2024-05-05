@@ -1,12 +1,13 @@
 <template>
   <div class="image-container">
-    <v-img class="blur" :img="img" :purpose="purpose" thumbnail />
+    <v-img class="blur" :img="img" :purpose="purpose" :aspect-ratio="aspectRatio" thumbnail />
     <v-img
       class="image--full hidden"
       onload="this.classList.remove('hidden')"
       loading="lazy"
       :img="img"
       :purpose="purpose"
+      :aspect-ratio="aspectRatio"
     />
   </div>
 </template>
@@ -25,12 +26,13 @@ The benefit of this is that a previously cached image will load so quickly that 
 should not cause any flickering, as the inline onload script can run before the rest of the javascript is loaded.
  */
 
-import type { ImagePurpose } from "~/types/image";
+import type { ImagePurpose, AspectRatio } from "~/types/image";
 import type { Image } from "~/types/recipe";
 
 defineProps<{
   img: Image;
   purpose: ImagePurpose;
+  aspectRatio: AspectRatio;
 }>();
 </script>
 
