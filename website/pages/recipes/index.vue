@@ -48,8 +48,6 @@ watch(
     // TODO: Need to use a loader if search index is still downloading
     const searchResults = await searchClient.search(route.query.search);
     recipes.value = searchResults;
-
-    console.log("watch route, searching for ", route.query.search, " results: ", recipes.value);
   },
   {
     // Need immediate so it also runs on fresh page load
