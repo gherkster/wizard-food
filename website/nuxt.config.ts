@@ -34,7 +34,7 @@ export default defineNuxtConfig({
       }),
     ],
   },
-  modules: ["nuxt-icon", "@nuxt/fonts"],
+  modules: ["nuxt-icon", "@nuxt/fonts", "@nuxtjs/sitemap"],
   // https://nuxt.com/docs/guide/going-further/runtime-config
   runtimeConfig: {
     baseUrl: "", // Overridden by .env NUXT_BASE_URL
