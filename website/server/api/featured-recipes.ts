@@ -12,35 +12,45 @@ export default defineEventHandler(async (event) => {
 
   const recipes = await directusClient.getAllRecipes();
 
+  // Track the recipes that have already been picked so far so that duplicates are not displayed
+  const alreadyShownRecipes = new Set<number>();
+
   const latestRecipes = recipes
     .sort((a, b) => new Date(a.date_created).getSeconds() - new Date(b.date_created).getSeconds())
     .slice(0, 3);
+  latestRecipes.forEach((r) => alreadyShownRecipes.add(r.id));
 
-  // TODO: Filter out any recipes that exist in previous collections to ensure recipes aren't shown twice.
-  // This can be done once testing is done
-  const favouriteRecipes = recipes.filter((r) => r.favourite);
+  const favouriteRecipes = shuffle(recipes)
+    .filter((r) => !alreadyShownRecipes.has(r.id) && r.favourite)
+    .slice(0, 4);
+  favouriteRecipes.forEach((r) => alreadyShownRecipes.add(r.id));
 
-  const quickRecipes = recipes.filter(
-    (r) => r.course?.toLowerCase().startsWith("main") && getTotalDuration(r) > 0 && getTotalDuration(r) <= 45,
+  const quickRecipes = shuffle(recipes).filter(
+    (r) =>
+      !alreadyShownRecipes.has(r.id) &&
+      r.course?.toLowerCase().startsWith("main") &&
+      getTotalDuration(r) > 0 &&
+      getTotalDuration(r) <= 45,
   );
+  quickRecipes.forEach((r) => alreadyShownRecipes.add(r.id));
 
   // TODO: Probably needs to cover more cuisines
-  const worldCuisines = recipes.filter(
-    (r) => r.cuisine && !["american", "australian"].includes(r.cuisine.toLowerCase()),
+  const worldCuisines = shuffle(recipes).filter(
+    (r) => !alreadyShownRecipes.has(r.id) && r.cuisine && !["american", "australian"].includes(r.cuisine.toLowerCase()),
   );
 
   const mapper = useMapper();
 
   return {
-    latestRecipes: latestRecipes.slice(0, 3).map(mapper.toRecipePreview),
-    favouriteRecipes: shuffleItems(favouriteRecipes).slice(0, 4).map(mapper.toRecipePreview),
-    quickRecipes: shuffleItems(quickRecipes).slice(0, 4).map(mapper.toRecipePreview),
-    worldCuisineRecipes: shuffleItems(worldCuisines).slice(0, 4).map(mapper.toRecipePreview),
+    latestRecipes: latestRecipes.map(mapper.toRecipePreview),
+    favouriteRecipes: favouriteRecipes.map(mapper.toRecipePreview),
+    quickRecipes: quickRecipes.map(mapper.toRecipePreview),
+    worldCuisineRecipes: worldCuisines.map(mapper.toRecipePreview),
   };
 });
 
 // https://stackoverflow.com/a/46545530
-function shuffleItems<Type>(items: Type[]) {
+function shuffle<Type>(items: Type[]) {
   return items
     .map((value) => ({ value, sort: Math.random() }))
     .sort((a, b) => a.sort - b.sort)
