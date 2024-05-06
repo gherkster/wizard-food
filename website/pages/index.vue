@@ -108,29 +108,10 @@ if (!recipesResponse.data.value) {
   });
 }
 
-const latestRecipes = ref(
-  recipesResponse.data.value.latestRecipes
-    .concat(recipesResponse.data.value.latestRecipes)
-    .concat(recipesResponse.data.value.latestRecipes),
-);
-const favouriteRecipes = ref(
-  recipesResponse.data.value.favouriteRecipes
-    .concat(recipesResponse.data.value.favouriteRecipes)
-    .concat(recipesResponse.data.value.favouriteRecipes)
-    .concat(recipesResponse.data.value.favouriteRecipes),
-);
-const quickRecipes = ref(
-  recipesResponse.data.value.quickRecipes
-    .concat(recipesResponse.data.value.quickRecipes)
-    .concat(recipesResponse.data.value.quickRecipes)
-    .concat(recipesResponse.data.value.quickRecipes),
-);
-const worldCuisineRecipes = ref(
-  recipesResponse.data.value.worldCuisineRecipes
-    .concat(recipesResponse.data.value.worldCuisineRecipes)
-    .concat(recipesResponse.data.value.worldCuisineRecipes)
-    .concat(recipesResponse.data.value.worldCuisineRecipes),
-);
+const latestRecipes = ref(recipesResponse.data.value.latestRecipes);
+const favouriteRecipes = ref(recipesResponse.data.value.favouriteRecipes);
+const quickRecipes = ref(recipesResponse.data.value.quickRecipes);
+const worldCuisineRecipes = ref(recipesResponse.data.value.worldCuisineRecipes);
 
 const headerIcon = {
   name: "gravity-ui:circle-chevron-right",
