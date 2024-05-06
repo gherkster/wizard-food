@@ -11,26 +11,22 @@
     </h2>
     <div class="recipes">
       <client-only>
-        <template v-for="index in 23">
-          <v-card
-            v-for="recipe in recipes"
-            :key="recipe.slug"
-            :title="recipe.title"
-            :image="recipe.coverImage"
-            :link="`/recipes/${recipe.slug}`"
-            :tag="recipe.featuredTag"
-            :duration="recipe.totalDuration"
-            :lazy-load-image="index > 8"
-          />
-        </template>
+        <v-card
+          v-for="(recipe, index) in recipes"
+          :key="recipe.slug"
+          :title="recipe.title"
+          :image="recipe.coverImage"
+          :link="`/recipes/${recipe.slug}`"
+          :tag="recipe.featuredTag"
+          :duration="recipe.totalDuration"
+          :lazy-load-image="index > 8"
+        />
       </client-only>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { RecipePreview } from "~/types/recipe";
-
 const route = useRoute();
 const searchTerm = computed(() => {
   if (!route.query.search || typeof route.query.search !== "string") {
@@ -42,7 +38,7 @@ const searchTerm = computed(() => {
 
 const searchClient = useSearch();
 
-const recipes = ref<RecipePreview[]>([]);
+const recipes = ref<RecipeSearchResult[]>([]);
 
 watch(
   () => route.query,
