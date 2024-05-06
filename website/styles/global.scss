@@ -1,16 +1,16 @@
 @use "mixins" as m;
 @use "variables" as v;
-@use "index";
 
 * {
   box-sizing: border-box;
 }
 
 html {
-  background: v.$colour-bg;
+  background: var(--theme-body-background-color);
 }
 body {
   margin: 0; // Unset browser margin
+  color: var(--theme-font-color);
   font-family: v.$font-family-paragraph;
   text-underline-offset: 3px;
 }
@@ -59,12 +59,12 @@ li:not(:last-child) {
 
 a {
   text-decoration: none;
-  color: v.$colour-text;
+  color: var(--theme-font-color);
   &:hover {
     text-decoration: underline;
   }
   &:visited {
-    color: v.$colour-text;
+    color: var(--theme-font-color);
   }
 }
 
@@ -81,9 +81,10 @@ img {
   }
 }
 
-.text-muted {
-  color: v.$colour-font-muted;
+input {
+  color: var(--theme-font-color);
 }
-.text-grey {
-  color: v.$colour-font-grey;
+
+.text-muted {
+  color: var(--theme-font-color-muted);
 }

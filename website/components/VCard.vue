@@ -10,7 +10,7 @@
       <div class="card__content">
         <p class="title">{{ title }}</p>
         <p v-if="description">{{ description }}</p>
-        <div class="card__stats text-grey">
+        <div class="card__stats text-muted">
           <span v-if="tag" class="card__label no-underline">
             <small
               ><span>{{ tag }}</span>
@@ -93,7 +93,7 @@ withDefaults(
 }
 .card.promo {
   display: flex;
-  background-color: v.$colour-bg-highlight;
+  background-color: var(--theme-body-highlight-color);
   border-radius: v.$border-radius-sm;
   @include m.breakpoint("sm", "max") {
     flex-direction: column;
