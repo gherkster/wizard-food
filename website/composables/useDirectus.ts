@@ -75,6 +75,7 @@ export function useDirectus({ url, clientId, clientSecret }: { url: string; clie
             _eq: "published",
           },
         },
+        sort: "-date_created",
       }),
     );
   }
