@@ -27,7 +27,7 @@ html, body {
 h1, h2, h3, h4, h5, h6 {
   font-family: v.$font-family-headers;
   font-weight: v.$font-weight-regular;
-  margin: 0 0 16px 0;
+  margin: 0 0 v.$header-margin-bottom 0;
 }
 
 p {
