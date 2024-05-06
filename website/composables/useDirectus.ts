@@ -1,11 +1,12 @@
-import { createDirectus, readItems, rest } from "@directus/sdk";
+import { createDirectus, readItems, readSingleton, rest } from "@directus/sdk";
 import type { RestClient } from "@directus/sdk";
 import type { ServerRecipe, ServerRecipePreview } from "common/types/serverRecipe";
-import type { GlobalSettings } from "common/types/global";
+import type { PageContent } from "common/types/content";
 
 export interface CmsSchema {
-  global: GlobalSettings[];
   recipes: ServerRecipe[];
+  home_page: PageContent;
+  recipes_page: PageContent;
 }
 
 const getImageFields = (path: string) => [
@@ -80,9 +81,19 @@ export function useDirectus({ url, clientId, clientSecret }: { url: string; clie
     );
   }
 
+  async function getHomePageContent() {
+    return await client.request<PageContent>(readSingleton("home_page"));
+  }
+
+  async function getRecipesPageContent() {
+    return await client.request<PageContent>(readSingleton("recipes_page"));
+  }
+
   return {
     client,
     getRecipe,
     getAllRecipes,
+    getHomePageContent,
+    getRecipesPageContent,
   };
 }
