@@ -25,10 +25,10 @@
     <section v-if="favouriteRecipes.length > 0">
       <div class="section-header">
         <h2>Personal Favourites</h2>
-        <nuxt-link class="section-header__link">
+        <!-- <nuxt-link class="section-header__link">
           <span>See more</span>
           <icon :name="headerIcon.name" :size="headerIcon.size" />
-        </nuxt-link>
+        </nuxt-link> -->
       </div>
       <div class="recipe-list standard">
         <v-card
@@ -46,10 +46,10 @@
     <section v-if="quickRecipes.length > 0">
       <div class="section-header">
         <h2>Quick Eats</h2>
-        <nuxt-link class="section-header__link">
+        <!-- <nuxt-link class="section-header__link">
           <span>See more</span>
           <icon :name="headerIcon.name" :size="headerIcon.size" />
-        </nuxt-link>
+        </nuxt-link> -->
       </div>
       <div class="recipe-list standard">
         <v-card
@@ -67,10 +67,10 @@
     <section v-if="worldCuisineRecipes.length > 0">
       <div class="section-header">
         <h2>World Cuisines</h2>
-        <nuxt-link class="section-header__link">
+        <!-- <nuxt-link class="section-header__link">
           <span>See more</span>
           <icon :name="headerIcon.name" :size="headerIcon.size" />
-        </nuxt-link>
+        </nuxt-link> -->
       </div>
       <div class="recipe-list standard">
         <v-card
