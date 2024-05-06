@@ -257,7 +257,7 @@ function createSearchLink(term: string): RouteLocationRaw {
 
 .highlight-container {
   display: flex;
-  background-color: v.$colour-bg-highlight;
+  background-color: var(--theme-body-highlight-color);
   border-radius: v.$border-radius-sm;
   @include m.spacing("p", "sm");
 }

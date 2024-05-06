@@ -75,8 +75,7 @@ async function search() {
 .nav-header {
   display: flex;
   align-items: center;
-  // TODO Colour variables
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  border-bottom: var(--theme-border-outline);
   @include m.spacing("py", "xs");
   @include m.spacing("px", "sm");
   &__links {

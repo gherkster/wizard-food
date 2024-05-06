@@ -1,13 +1,25 @@
 // COLOURS //
-$colour-bg: #F9F5ED;
 $colour-primary: #e0994c;
-$colour-active: #e0994c;
-$colour-bg-highlight: #f3e7d7;
+$colour-active: #b97c3b;
 
-$colour-text: black;
 $colour-muted: #b5b3b3;
-$colour-font-grey: #525252;
-$colour-font-muted: #868686;
+
+:root {
+  --theme-body-background-color: #F9F5ED;
+  --theme-body-highlight-color: #f3e7d7;
+  --theme-font-color: #000000;
+  --theme-font-color-muted: #737373;
+  --theme-border-outline: 1px solid rgba(0, 0, 0, 0.2);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --theme-body-background-color: #26211c;
+    --theme-body-highlight-color: #443123;
+    --theme-font-color: #ffffff;
+    --theme-font-color-muted: #999;
+    --theme-border-outline: 1px solid rgba(255, 255, 255, 0.25);
+  }
+}
 
 // BREAKPOINTS //
 $breakpoints: (
@@ -122,7 +134,7 @@ $border-radius-md: 10px;
 $border-primary: 2px solid $colour-primary;
 $border-outline: 2px solid $colour-muted;
 
-// SIZING
+// SIZING //
 $min-width-button: 84px;
 
 $preview-max-width: 260px;
