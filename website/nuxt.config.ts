@@ -49,4 +49,11 @@ export default defineNuxtConfig({
       weights: [400],
     },
   },
+  app: {
+    head: {
+      htmlAttrs: {
+        lang: "en",
+      },
+    },
+  },
 });
