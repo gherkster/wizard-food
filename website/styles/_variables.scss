@@ -2,8 +2,6 @@
 $colour-primary: #e0994c;
 $colour-active: #b97c3b;
 
-$colour-muted: #b5b3b3;
-
 :root {
   --theme-body-background-color: #F9F5ED;
   --theme-body-highlight-color: #f3e7d7;
@@ -132,7 +130,6 @@ $paragraph-margin-bottom: 16px;
 $border-radius-sm: 6px;
 $border-radius-md: 10px;
 $border-primary: 2px solid $colour-primary;
-$border-outline: 2px solid $colour-muted;
 
 // SIZING //
 $min-width-button: 84px;
