@@ -12,6 +12,7 @@ html {
 body {
   margin: 0; // Unset browser margin
   font-family: v.$font-family-paragraph;
+  text-underline-offset: 3px;
 }
 
 html, body {
@@ -33,6 +34,10 @@ h1, h2, h3, h4, h5, h6 {
 p {
   margin-top: v.$paragraph-margin-top;
   margin-bottom: v.$paragraph-margin-bottom;
+  line-height: v.$line-height;
+}
+
+span {
   line-height: v.$line-height;
 }
 
