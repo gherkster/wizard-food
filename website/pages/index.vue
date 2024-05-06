@@ -113,6 +113,22 @@ const favouriteRecipes = ref(recipesResponse.data.value.favouriteRecipes);
 const quickRecipes = ref(recipesResponse.data.value.quickRecipes);
 const worldCuisineRecipes = ref(recipesResponse.data.value.worldCuisineRecipes);
 
+const contentResponse = await useAsyncData(async () => {
+  const { data: response } = await useFetch("/api/content/home");
+  return response.value;
+});
+const content = contentResponse.data.value;
+
+useServerSeoMeta({
+  title: content?.title,
+  ogTitle: content?.title,
+  description: content?.description,
+  ogDescription: content?.openGraphDescription,
+});
+useHead({
+  title: content?.title,
+});
+
 const headerIcon = {
   name: "gravity-ui:circle-chevron-right",
   size: "32",

@@ -75,6 +75,22 @@ const title = computed(() => {
   return "Recipes";
 });
 
+const contentResponse = await useAsyncData(async () => {
+  const { data: response } = await useFetch("/api/content/recipes");
+  return response.value;
+});
+const content = contentResponse.data.value;
+
+useServerSeoMeta({
+  title: content?.title,
+  ogTitle: content?.title,
+  description: content?.description,
+  ogDescription: content?.openGraphDescription,
+});
+useHead({
+  title: content?.title,
+});
+
 async function showAllRecipes() {
   await navigateTo("/recipes");
 }
