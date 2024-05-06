@@ -1,7 +1,13 @@
 <template>
   <div class="home">
     <section v-if="latestRecipes.length > 0">
-      <h2>Latest Recipes</h2>
+      <div class="section-header">
+        <h2>Latest Recipes</h2>
+        <nuxt-link to="/recipes" class="section-header__link">
+          <span>See more</span>
+          <icon :name="headerIcon.name" :size="headerIcon.size" />
+        </nuxt-link>
+      </div>
       <div class="recipe-list promo">
         <v-card
           v-for="(recipe, index) in latestRecipes"
@@ -17,7 +23,13 @@
       </div>
     </section>
     <section v-if="favouriteRecipes.length > 0">
-      <h2>Personal Favourites</h2>
+      <div class="section-header">
+        <h2>Personal Favourites</h2>
+        <nuxt-link class="section-header__link">
+          <span>See more</span>
+          <icon :name="headerIcon.name" :size="headerIcon.size" />
+        </nuxt-link>
+      </div>
       <div class="recipe-list standard">
         <v-card
           v-for="recipe in favouriteRecipes"
@@ -32,7 +44,13 @@
       </div>
     </section>
     <section v-if="quickRecipes.length > 0">
-      <h2>Quick Eats</h2>
+      <div class="section-header">
+        <h2>Quick Eats</h2>
+        <nuxt-link class="section-header__link">
+          <span>See more</span>
+          <icon :name="headerIcon.name" :size="headerIcon.size" />
+        </nuxt-link>
+      </div>
       <div class="recipe-list standard">
         <v-card
           v-for="recipe in quickRecipes"
@@ -47,7 +65,13 @@
       </div>
     </section>
     <section v-if="worldCuisineRecipes.length > 0">
-      <h2>World Cuisines</h2>
+      <div class="section-header">
+        <h2>World Cuisines</h2>
+        <nuxt-link class="section-header__link">
+          <span>See more</span>
+          <icon :name="headerIcon.name" :size="headerIcon.size" />
+        </nuxt-link>
+      </div>
       <div class="recipe-list standard">
         <v-card
           v-for="recipe in worldCuisineRecipes"
@@ -107,6 +131,11 @@ const worldCuisineRecipes = ref(
     .concat(recipesResponse.data.value.worldCuisineRecipes)
     .concat(recipesResponse.data.value.worldCuisineRecipes),
 );
+
+const headerIcon = {
+  name: "gravity-ui:circle-chevron-right",
+  size: "32",
+};
 </script>
 
 <style lang="scss" scoped>
@@ -149,6 +178,27 @@ const worldCuisineRecipes = ref(
       grid-template-columns: repeat(5, 1fr);
       > *:first-child {
         grid-column: 1/4;
+      }
+    }
+  }
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    // Move header margin to the container to vertically align both sides
+    margin-bottom: v.$header-margin-bottom;
+    h2 {
+      margin-bottom: 0;
+    }
+    span {
+      vertical-align: middle;
+      @include m.breakpoint("sm", "max") {
+        display: none;
+      }
+    }
+    &__link {
+      span {
+        @include m.spacing("pr", "xxs");
       }
     }
   }
