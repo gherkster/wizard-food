@@ -46,8 +46,7 @@ $button-size: 16px;
   &.btn-primary {
     background-color: v.$colour-primary;
     &:hover {
-      // TODO: Decide on a colour
-      background-color: red;
+      background-color: v.$colour-active;
     }
   }
 }
