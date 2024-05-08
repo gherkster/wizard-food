@@ -8,6 +8,7 @@
 const props = withDefaults(
   defineProps<{
     primary?: boolean;
+    transparent?: boolean;
     size?: "small" | "medium" | "large";
   }>(),
   {
@@ -19,6 +20,7 @@ const props = withDefaults(
 const classes = computed(() => {
   return {
     "btn-primary": props.primary,
+    "btn-transparent": props.transparent,
     [props.size]: props.size,
   };
 });
@@ -35,7 +37,6 @@ const emit = defineEmits<{
 $button-size: 16px;
 .v-button {
   width: fit-content;
-  min-width: 140px;
   border-style: none;
   border-radius: v.$border-radius-sm;
   @include m.spacing("px", "sm");
@@ -44,11 +45,27 @@ $button-size: 16px;
   //background-color: transparent;
   font-size: $button-size;
   line-height: $button-size;
+  &:hover {
+    cursor: pointer;
+  }
+
   &.btn-primary {
     background-color: var(--theme-color-primary);
     &:hover {
       background-color: var(--theme-color-active);
     }
+  }
+  &.btn-transparent {
+    background-color: transparent;
+    &:hover {
+      background-color: transparent;
+    }
+  }
+  &.large {
+    min-width: 140px;
+  }
+  &.small {
+    @include m.spacing("p", "xxs");
   }
 }
 </style>
