@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="$emit('search', query)">
+  <form class="search" @submit.prevent="$emit('search', query)">
     <v-input
       v-model="query"
       class="text-muted"
@@ -24,3 +24,12 @@ defineEmits<{
   search: [value: string];
 }>();
 </script>
+
+<style lang="scss" scoped>
+@use "@/styles/mixins" as m;
+@include m.breakpoint("sm", "max") {
+  .search {
+    flex-basis: 100%;
+  }
+}
+</style>
