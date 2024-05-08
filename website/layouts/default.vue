@@ -1,5 +1,6 @@
 <template>
   <div>
+    <nuxt-loading-indicator :duration="1000" :throttle="500" :height="3" :color="false" />
     <header class="nav-header">
       <div class="nav-header__links">
         <nuxt-link to="/">Home</nuxt-link>
@@ -83,5 +84,11 @@ async function search(value: string) {
   &__search {
     margin-left: auto;
   }
+}
+</style>
+
+<style lang="scss">
+.nuxt-loading-indicator {
+  background-color: var(--theme-color-primary);
 }
 </style>
