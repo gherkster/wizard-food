@@ -1,9 +1,9 @@
 <template>
   <div class="input-container">
-    <icon v-if="iconLeft" :name="iconLeft" size="16" />
+    <icon v-if="iconLeft" :name="iconLeft" size="16" @click="focusButton" />
     <label>
       {{ label }}
-      <input v-model="model" :placeholder="placeholder" size="1" />
+      <input ref="btnRef" v-model="model" type="search" :placeholder="placeholder" size="1" />
     </label>
   </div>
 </template>
@@ -14,7 +14,12 @@ defineProps<{
   placeholder?: string;
   iconLeft?: string;
 }>();
+
 const model = defineModel<string>();
+
+// Trigger input field focus if the icon is clicked
+const btnRef = ref<HTMLInputElement>();
+const focusButton = () => btnRef.value?.focus();
 </script>
 
 <style lang="scss" scoped>
@@ -23,11 +28,15 @@ const model = defineModel<string>();
 .input-container {
   display: flex;
   align-items: center;
+  min-width: 160px;
   background-color: var(--theme-input-background-color);
   @include m.spacing("px", "xs");
   border-radius: v.$border-radius-md;
+  label,
   input {
-    min-width: 160px;
+    width: 100%;
+  }
+  input {
     outline: none;
     background-color: var(--theme-input-background-color);
     border: none;
