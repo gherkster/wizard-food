@@ -26,6 +26,17 @@
   }
 }
 
+.center-screen {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 @include m.create-cols(null, v.$grid-cols-count);
 
 @each $breakpoint-name, $width in v.$breakpoints {
