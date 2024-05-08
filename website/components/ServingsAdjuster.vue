@@ -53,7 +53,7 @@ function incrementServings() {
     user-select: none;
     > svg {
       cursor: pointer;
-      color: v.$colour-primary;
+      color: var(--theme-color-primary);
     }
     > span {
       // Match extra space on the left side reserved for larger numbers

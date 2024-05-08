@@ -15,7 +15,7 @@ $badge-size: 18px;
   border-radius: 50%;
   text-align: center;
   font-size: 16px;
-  border: v.$border-primary;
+  border: var(--theme-border-primary);
   padding: 4px;
 }
 </style>

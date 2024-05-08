@@ -8,7 +8,7 @@
 .v-divider {
   width: 100%;
   opacity: 50%;
-  border: 1px solid v.$colour-primary;
+  border: 1px solid var(--theme-color-primary);
   @include m.spacing("my", "xs");
 }
 </style>
