@@ -35,6 +35,7 @@ const emit = defineEmits<{
 $button-size: 16px;
 .v-button {
   width: fit-content;
+  min-width: 140px;
   border-style: none;
   border-radius: v.$border-radius-sm;
   @include m.spacing("px", "sm");
@@ -44,9 +45,9 @@ $button-size: 16px;
   font-size: $button-size;
   line-height: $button-size;
   &.btn-primary {
-    background-color: v.$colour-primary;
+    background-color: var(--theme-color-primary);
     &:hover {
-      background-color: v.$colour-active;
+      background-color: var(--theme-color-active);
     }
   }
 }

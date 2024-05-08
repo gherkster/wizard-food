@@ -5,9 +5,7 @@
         <nuxt-link to="/">Home</nuxt-link>
         <nuxt-link to="/recipes">Recipes</nuxt-link>
       </div>
-      <div class="nav-header__search">
-        <v-input v-model="query" placeholder="Search" @update:model-value="search" @keydown.prevent.enter="search" />
-      </div>
+      <v-search :value="query" class="nav-header__search" @input="search" @search="search" />
     </header>
     <div class="page content">
       <slot />
@@ -41,7 +39,8 @@ watch(
   },
 );
 
-async function search() {
+async function search(value: string) {
+  query.value = value;
   const trimmedQuery = query.value.trim();
   /*
   navigateTo.replace is used below so that each keystroke of a search does not push a new entry into the browser history
@@ -75,9 +74,8 @@ async function search() {
 .nav-header {
   display: flex;
   align-items: center;
-  border-bottom: var(--theme-border-outline);
-  @include m.spacing("py", "xs");
-  @include m.spacing("px", "sm");
+  @include m.spacing("p", "sm");
+
   &__links {
     display: flex;
     @include m.spacing("gx", "sm");
