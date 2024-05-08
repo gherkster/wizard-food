@@ -74,15 +74,17 @@ async function search(value: string) {
 
 .nav-header {
   display: flex;
-  @include m.spacing("py", "sm");
+  @include m.spacing("pt", "sm");
   @include m.spacing("px", "xs");
+  @include m.spacing("pb", "xs");
 
   &__options {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     width: 100%;
-    @include m.spacing("g", "xs");
+    @include m.spacing("gx", "xs");
+    @include m.spacing("gy", "sm");
     > a {
       @include m.spacing("p", "xxs");
     }
