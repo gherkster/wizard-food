@@ -3,7 +3,7 @@
     <section v-if="latestRecipes.length > 0">
       <div class="section-header">
         <h2>Latest Recipes</h2>
-        <nuxt-link to="/recipes" class="section-header__link">
+        <nuxt-link to="/recipes" class="section-header__link" aria-label="See all recipes">
           <span>See more</span>
           <icon :name="headerIcon.name" :size="headerIcon.size" />
         </nuxt-link>
