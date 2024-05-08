@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isEmptySearchResult" id="no-results-message">
+  <div v-if="isEmptySearchResult" class="center-screen">
     <h3>
       No recipes found for <b>{{ searchTerm }}</b>
     </h3>
@@ -112,16 +112,5 @@ async function showAllRecipes() {
   @include m.breakpoint("md") {
     grid-template-columns: repeat(4, 1fr);
   }
-}
-
-#no-results-message {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  align-items: center;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 </style>

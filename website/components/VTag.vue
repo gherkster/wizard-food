@@ -20,7 +20,7 @@ $tag-size: 12px;
   @include m.spacing("gx", "xxs");
   align-items: center;
   box-sizing: content-box;
-  border: v.$border-primary;
+  border: var(--theme-border-primary);
   padding: 4px 8px;
 
   height: $tag-size;
