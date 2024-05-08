@@ -2,11 +2,11 @@
   <div>
     <nuxt-loading-indicator :duration="1000" :throttle="500" :height="3" :color="false" />
     <header class="nav-header">
-      <div class="nav-header__links">
+      <div class="nav-header__options">
         <nuxt-link to="/">Home</nuxt-link>
         <nuxt-link to="/recipes">Recipes</nuxt-link>
+        <v-search :value="query" class="nav-header-search" @input="search" @search="search" />
       </div>
-      <v-search :value="query" class="nav-header__search" @input="search" @search="search" />
     </header>
     <div class="page content">
       <slot />
@@ -74,15 +74,22 @@ async function search(value: string) {
 
 .nav-header {
   display: flex;
-  align-items: center;
-  @include m.spacing("p", "sm");
+  @include m.spacing("py", "sm");
+  @include m.spacing("px", "xs");
 
-  &__links {
+  &__options {
     display: flex;
-    @include m.spacing("gx", "sm");
-  }
-  &__search {
-    margin-left: auto;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    @include m.spacing("g", "xs");
+    > a {
+      @include m.spacing("p", "xxs");
+    }
+    .nav-header-search {
+      width: 200px;
+      margin-left: auto;
+    }
   }
 }
 </style>
