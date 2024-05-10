@@ -36,6 +36,7 @@ export default defineNuxtConfig({
   },
   modules: ["nuxt-icon", "@nuxt/fonts", "@nuxtjs/sitemap"],
   icon: {
+    class: "icon",
     customCollections: [
       {
         prefix: "custom",
