@@ -19,7 +19,7 @@ export default defineNuxtConfig({
     },
   },
   appConfig: {
-    nuxtIcon: {
+    icon: {
       size: "24px",
     },
     searchIndex: {
@@ -35,6 +35,14 @@ export default defineNuxtConfig({
     ],
   },
   modules: ["nuxt-icon", "@nuxt/fonts", "@nuxtjs/sitemap"],
+  icon: {
+    customCollections: [
+      {
+        prefix: "my-icons",
+        dir: "./assets/icons",
+      },
+    ],
+  },
   // https://nuxt.com/docs/guide/going-further/runtime-config
   runtimeConfig: {
     baseUrl: "", // Overridden by .env NUXT_BASE_URL
