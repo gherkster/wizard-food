@@ -8,7 +8,7 @@
         >
         <span>{{ label }}</span>
       </span>
-      <icon name="gravity-ui:plus" size="34" @click="incrementServings" />
+      <icon name="gravity-ui:plus" class="icon" size="34" @click="incrementServings" />
     </div>
   </div>
 </template>
@@ -51,11 +51,11 @@ function incrementServings() {
     display: flex;
     align-items: center;
     user-select: none;
-    > svg {
+    .icon {
       cursor: pointer;
       color: var(--theme-color-primary);
     }
-    > span {
+    > span:not(.icon) {
       // Match extra space on the left side reserved for larger numbers
       margin-right: 0.7em;
     }
