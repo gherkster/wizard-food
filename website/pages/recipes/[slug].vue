@@ -108,6 +108,9 @@
         <div v-html="recipe.note" />
       </v-column>
     </v-row>
+    <footer class="footer">
+      <icon name="custom:logo" size="168" />
+    </footer>
   </div>
 </template>
 
@@ -260,6 +263,12 @@ function createSearchLink(term: string): RouteLocationRaw {
   background-color: var(--theme-body-highlight-color);
   border-radius: v.$border-radius-sm;
   @include m.spacing("p", "sm");
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  @include m.spacing("m", "md");
 }
 </style>
 
