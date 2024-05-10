@@ -3,10 +3,12 @@
     <nuxt-loading-indicator :duration="1000" :throttle="500" :height="3" :color="false" />
     <header class="nav-header">
       <div class="nav-header__options">
-        <Icon name="my-icons:logo" size="88" />
         <nuxt-link to="/"> Home </nuxt-link>
         <nuxt-link to="/recipes">Recipes</nuxt-link>
-        <v-search :value="query" class="nav-header-search" @input="search" @search="search" />
+        <div class="nav-header-search">
+          <icon name="custom:head" size="44" class="nav-header-search__logo" />
+          <v-search :value="query" class="nav-header-search__input" @input="search" @search="search" />
+        </div>
       </div>
     </header>
     <div class="page content">
@@ -75,9 +77,9 @@ async function search(value: string) {
 
 .nav-header {
   display: flex;
-  @include m.spacing("pt", "xs");
   @include m.spacing("px", "xs");
-  //@include m.spacing("pb", "xs");
+  @include m.spacing("pb", "xs");
+  padding-top: 42px; // Hardcode spacing to guarantee consistent space for logo
 
   &__options {
     display: flex;
@@ -90,8 +92,25 @@ async function search(value: string) {
       @include m.spacing("p", "xxs");
     }
     .nav-header-search {
-      width: 200px;
+      display: flex;
+      position: relative;
+      flex-direction: column;
       margin-left: auto;
+      width: 200px;
+      @include m.breakpoint("sm", "max") {
+        width: 100%;
+      }
+      &__input {
+        width: 100%;
+      }
+      &__logo {
+        top: 0;
+        right: 0;
+        transform: translateY(-100%);
+        position: absolute;
+        align-self: flex-end;
+        @include m.spacing("mr", "sm");
+      }
     }
   }
 }
