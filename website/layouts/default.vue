@@ -3,7 +3,8 @@
     <nuxt-loading-indicator :duration="1000" :throttle="500" :height="3" :color="false" />
     <header class="nav-header">
       <div class="nav-header__options">
-        <nuxt-link to="/">Home</nuxt-link>
+        <Icon name="my-icons:logo" size="88" />
+        <nuxt-link to="/"> Home </nuxt-link>
         <nuxt-link to="/recipes">Recipes</nuxt-link>
         <v-search :value="query" class="nav-header-search" @input="search" @search="search" />
       </div>
@@ -74,9 +75,9 @@ async function search(value: string) {
 
 .nav-header {
   display: flex;
-  @include m.spacing("pt", "sm");
+  @include m.spacing("pt", "xs");
   @include m.spacing("px", "xs");
-  @include m.spacing("pb", "xs");
+  //@include m.spacing("pb", "xs");
 
   &__options {
     display: flex;
