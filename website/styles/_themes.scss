@@ -1,0 +1,11 @@
+.light-theme-only {
+  @media (prefers-color-scheme: dark) {
+    display: none;
+  }
+}
+
+.dark-theme-only {
+  @media not (prefers-color-scheme: dark) {
+    display: none;
+  }
+}

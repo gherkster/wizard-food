@@ -194,6 +194,8 @@ const headerIcon = {
       }
     }
     &__link {
+      display: inline-flex;
+      align-items: center;
       span {
         @include m.spacing("pr", "xxs");
       }
