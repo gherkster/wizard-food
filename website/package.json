@@ -2,7 +2,7 @@
   "name": "recipe-client",
   "private": true,
   "scripts": {
-    "build": "NITRO_PRESET=cloudflare_pages nuxt build",
+    "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
