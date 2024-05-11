@@ -45,7 +45,6 @@ watch(
   async () => {
     if (!route.query.search || typeof route.query.search !== "string") {
       recipes.value = await searchClient.allItems();
-      console.log("Showing all recipes", recipes.value);
       return;
     }
 
