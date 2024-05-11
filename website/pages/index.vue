@@ -5,7 +5,7 @@
         <h2>Latest Recipes</h2>
         <nuxt-link to="/recipes" class="section-header__link" aria-label="See all recipes">
           <span>See more</span>
-          <icon :name="headerIcon.name" :size="headerIcon.size" />
+          <v-icon :icon="circleChevronRight" :size="24" />
         </nuxt-link>
       </div>
       <div class="recipe-list promo">
@@ -89,6 +89,8 @@
 </template>
 
 <script setup lang="ts">
+import circleChevronRight from "~icons/gravity-ui/circle-chevron-right";
+
 const recipesResponse = await useAsyncData(async () => {
   const { data: response } = await useFetch("/api/featured-recipes");
   return response.value;
