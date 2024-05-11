@@ -27,6 +27,18 @@ export default defineNuxtConfig({
     externalBaseUrl: "", // Overridden by recipe module
   },
   vite: {
+    build: {
+      rollupOptions: {
+        output: {
+          /*
+            Fix nuxt always generating a new entry filename based on the build ID,
+            which subsequently means all other scripts will also be renamed and have their cache invalidated
+            https://github.com/nuxt/nuxt/issues/25133
+          */
+          entryFileNames: "_nuxt/[name].js",
+        },
+      },
+    },
     plugins: [
       visualizer({
         gzipSize: true,
