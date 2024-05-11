@@ -22,6 +22,9 @@ devDependencies:
   '@directus/sdk':
     specifier: ^11.0.0
     version: 11.0.3
+  '@iconify-json/gravity-ui':
+    specifier: ^1.1.2
+    version: 1.1.2
   '@nuxt/fonts':
     specifier: ^0.6.1
     version: 0.6.1(nuxt@3.11.2)(vite@5.2.8)
@@ -112,9 +115,6 @@ devDependencies:
   nuxt:
     specifier: ^3.11.2
     version: 3.11.2(@types/node@18.19.30)(@unocss/reset@0.59.4)(floating-vue@5.2.2)(sass@1.74.1)(typescript@5.0.4)(unocss@0.59.4)(vite@5.2.8)
-  nuxt-icon:
-    specifier: 1.0.0-beta.4
-    version: 1.0.0-beta.4(nuxt@3.11.2)(vite@5.2.8)(vue@3.4.21)
   pure-rand:
     specifier: ^6.1.0
     version: 6.1.0
@@ -130,6 +130,9 @@ devDependencies:
   typescript:
     specifier: 5.0.4
     version: 5.0.4
+  unplugin-icons:
+    specifier: ^0.19.0
+    version: 0.19.0
   wrangler:
     specifier: 3.19.0
     version: 3.19.0
@@ -149,6 +152,12 @@ packages:
     dependencies:
       execa: 5.1.1
       find-up: 5.0.0
+    dev: true
+
+  /@antfu/install-pkg@0.3.3:
+    resolution: {integrity: sha512-nHHsk3NXQ6xkCfiRRC8Nfrg8pU5kkr3P3Y9s9dKqiuRmBD0Yap7fymNDjGFKeWhZQHqqbCS5CfeMy9wtExM24w==}
+    dependencies:
+      '@jsdevtools/ez-spawn': 3.0.4
     dev: true
 
   /@antfu/utils@0.7.7:
@@ -1052,6 +1061,12 @@ packages:
       '@iconify/types': 2.0.0
     dev: true
 
+  /@iconify-json/gravity-ui@1.1.2:
+    resolution: {integrity: sha512-1xDGuR/pxZJqQNxx7lA3a1gRxus9UwLgdBJpLHP/FNdLER1iwIPA5X5jNMYUp7Z34y6OkwHrb2ULz/bybTewuA==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
   /@iconify-json/logos@1.1.42:
     resolution: {integrity: sha512-/f+frtPm3m3Z30oy8Pk+QqRDkbmAiIaWGPl5CmsCXm15MVfvw9a/V/gD7WzdyuSGAZcFuQaqbHXj92y/n+2ifg==}
     dependencies:
@@ -1066,12 +1081,6 @@ packages:
 
   /@iconify-json/tabler@1.1.111:
     resolution: {integrity: sha512-0qCmOCUUgcBXtvSUwaKMM4yum6XNrjPLxZBwueRPn14pAmWhS7Un15chxJ+ULfE1hBaVM7gSPIYz4JAUOo28Aw==}
-    dependencies:
-      '@iconify/types': 2.0.0
-    dev: true
-
-  /@iconify/collections@1.0.420:
-    resolution: {integrity: sha512-CU2pV2VXtCxWoXo+2dDyLziWhX3ryqVr2yKn0I8lTIRcQXOUlhXNEotZf6w70bnQ7eqwdTO3C9QLQrU6OzaF/g==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: true
@@ -1092,15 +1101,6 @@ packages:
       mlly: 1.6.1
     transitivePeerDependencies:
       - supports-color
-    dev: true
-
-  /@iconify/vue@4.1.2(vue@3.4.21):
-    resolution: {integrity: sha512-CQnYqLiQD5LOAaXhBrmj1mdL2/NCJvwcC4jtW2Z8ukhThiFkLDkutarTOV2trfc9EXqUqRs0KqXOL9pZ/IyysA==}
-    peerDependencies:
-      vue: '>=3'
-    dependencies:
-      '@iconify/types': 2.0.0
-      vue: 3.4.21(typescript@5.0.4)
     dev: true
 
   /@ioredis/commands@1.2.0:
@@ -1154,6 +1154,16 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.4.15
+    dev: true
+
+  /@jsdevtools/ez-spawn@3.0.4:
+    resolution: {integrity: sha512-f5DRIOZf7wxogefH03RjMPMdBF7ADTWUMoOs9kaJo06EfwF+aFhMZMDZxHg/Xe12hptN9xoZjGso2fdjapBRIA==}
+    engines: {node: '>=10'}
+    dependencies:
+      call-me-maybe: 1.0.2
+      cross-spawn: 7.0.3
+      string-argv: 0.3.2
+      type-detect: 4.0.8
     dev: true
 
   /@kwsites/file-exists@1.1.1:
@@ -3945,6 +3955,10 @@ packages:
       unique-filename: 3.0.0
     dev: true
 
+  /call-me-maybe@1.0.2:
+    resolution: {integrity: sha512-HpX65o1Hnr9HH25ojC1YGs7HCQLq0GCOibSaWER0eNpgJ/Z1MZv2mTc7+xh6WOPxbRVcmgbv4hGU+uSQ/2xFZQ==}
+    dev: true
+
   /camelcase@6.3.0:
     resolution: {integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==}
     engines: {node: '>=10'}
@@ -6353,27 +6367,6 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /nuxt-icon@1.0.0-beta.4(nuxt@3.11.2)(vite@5.2.8)(vue@3.4.21):
-    resolution: {integrity: sha512-+1KDY9wAmvRM393QTaaeWiLQE/9huU+aq6wXuTp/D2bH1k4mCGZSogGnS+RPJv7xB/FxywZmbe8z8Qhfj4umeQ==}
-    dependencies:
-      '@iconify/collections': 1.0.420
-      '@iconify/types': 2.0.0
-      '@iconify/utils': 2.1.23
-      '@iconify/vue': 4.1.2(vue@3.4.21)
-      '@nuxt/devtools-kit': 1.2.0(nuxt@3.11.2)(vite@5.2.8)
-      '@nuxt/kit': 3.11.2
-      consola: 3.2.3
-      fast-glob: 3.3.2
-      local-pkg: 0.5.0
-      pathe: 1.1.2
-    transitivePeerDependencies:
-      - nuxt
-      - rollup
-      - supports-color
-      - vite
-      - vue
-    dev: true
-
   /nuxt-site-config-kit@2.2.12(vue@3.4.21):
     resolution: {integrity: sha512-8amzGtBzHZervHgRkKXNI3lq0E1kP73vX+373uiBI9qGBFClFayuUSTDXAJreI7Yx0vB78iAjAA3a+YKM5iIdw==}
     dependencies:
@@ -7921,6 +7914,11 @@ packages:
       bare-events: 2.2.2
     dev: true
 
+  /string-argv@0.3.2:
+    resolution: {integrity: sha512-aqD2Q0144Z+/RqG52NeHEkZauTAUWJO8c6yTftGJKO3Tja5tUgIfmIl6kExvhtxSDP7fXB6DvzkfMpCd/F3G+Q==}
+    engines: {node: '>=0.6.19'}
+    dev: true
+
   /string-width@4.2.3:
     resolution: {integrity: sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==}
     engines: {node: '>=8'}
@@ -8174,6 +8172,11 @@ packages:
       - supports-color
     dev: true
 
+  /type-detect@4.0.8:
+    resolution: {integrity: sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==}
+    engines: {node: '>=4'}
+    dev: true
+
   /type-fest@0.21.3:
     resolution: {integrity: sha512-t0rzBq87m3fVcduHDUFhKmyyX+9eo6WQjZvf51Ea/M0Q7+T374Jp1aUiyUl0GKxp8M/OETVHSDvmkyPgvX+X2w==}
     engines: {node: '>=10'}
@@ -8352,6 +8355,37 @@ packages:
     transitivePeerDependencies:
       - postcss
       - rollup
+      - supports-color
+    dev: true
+
+  /unplugin-icons@0.19.0:
+    resolution: {integrity: sha512-u5g/gIZPZEj1wUGEQxe9nzftOSqmblhusc+sL3cawIRoIt/xWpE6XYcPOfAeFTYNjSbRrX/3QiX89PFiazgU1w==}
+    peerDependencies:
+      '@svgr/core': '>=7.0.0'
+      '@svgx/core': ^1.0.1
+      '@vue/compiler-sfc': ^3.0.2 || ^2.7.0
+      vue-template-compiler: ^2.6.12
+      vue-template-es2015-compiler: ^1.9.0
+    peerDependenciesMeta:
+      '@svgr/core':
+        optional: true
+      '@svgx/core':
+        optional: true
+      '@vue/compiler-sfc':
+        optional: true
+      vue-template-compiler:
+        optional: true
+      vue-template-es2015-compiler:
+        optional: true
+    dependencies:
+      '@antfu/install-pkg': 0.3.3
+      '@antfu/utils': 0.7.7
+      '@iconify/utils': 2.1.23
+      debug: 4.3.4
+      kolorist: 1.8.0
+      local-pkg: 0.5.0
+      unplugin: 1.10.1
+    transitivePeerDependencies:
       - supports-color
     dev: true
 

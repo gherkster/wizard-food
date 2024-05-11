@@ -6,7 +6,7 @@
         <nuxt-link to="/"> Home </nuxt-link>
         <nuxt-link to="/recipes">Recipes</nuxt-link>
         <div class="nav-header-search">
-          <icon name="custom:head" size="44" class="nav-header-search__logo" />
+          <v-icon :icon="LogoHead" :size="44" class="nav-header-search__logo" />
           <v-search :value="query" class="nav-header-search__input" @input="search" @search="search" />
         </div>
       </div>
@@ -18,6 +18,8 @@
 </template>
 
 <script setup lang="ts">
+import LogoHead from "~icons/custom/head";
+
 const searchClient = useSearch();
 // Ensure the search index exists on each page load,
 // so that if it is missing it can trigger a background download

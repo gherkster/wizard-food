@@ -1,19 +1,22 @@
 <template>
   <div class="servings-adjuster">
     <div class="servings-adjuster__control">
-      <icon name="gravity-ui:minus" size="34" :class="{ disabled: servings <= 1 }" @click="decrementServings" />
+      <v-icon :icon="minus" :size="32" :class="{ disabled: servings <= 1 }" @click="decrementServings" />
       <span>
         <span class="servings-adjuster__amount"
           ><b>{{ servings }}&nbsp;</b></span
         >
         <span>{{ label }}</span>
       </span>
-      <icon name="gravity-ui:plus" class="icon" size="34" @click="incrementServings" />
+      <v-icon :icon="plus" :size="32" @click="incrementServings" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import minus from "~icons/gravity-ui/circle-minus";
+import plus from "~icons/gravity-ui/circle-plus";
+
 const props = withDefaults(
   defineProps<{
     servings: number;

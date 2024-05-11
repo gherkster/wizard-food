@@ -6,11 +6,17 @@
       icon-left="gravity-ui:magnifier"
       placeholder="Search.."
       @update:model-value="$emit('input', query)"
-    />
+    >
+      <template #prepend="{ onClick }">
+        <v-icon :icon="magnifier" :size="16" @click="onClick" />
+      </template>
+    </v-input>
   </form>
 </template>
 
 <script setup lang="ts">
+import magnifier from "~icons/gravity-ui/magnifier";
+
 const props = defineProps<{
   value: string;
 }>();

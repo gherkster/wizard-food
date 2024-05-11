@@ -1,13 +1,13 @@
 <template>
   <div class="tag">
-    <icon v-if="iconName" :name="iconName" size="13" />
+    <v-icon v-if="icon" :icon="icon" :size="13" />
     <slot />
   </div>
 </template>
 
 <script setup lang="ts">
 defineProps<{
-  iconName?: string;
+  icon?: Component;
 }>();
 </script>
 
