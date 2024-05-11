@@ -63,10 +63,6 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   // TODO: Handle no transformations
   const imageUrl = `https://res.cloudinary.com/dork0lbv9/image/upload/${signature}/${transformations}${fileName}`;
 
-  console.log();
-  console.log(imageUrl);
-  console.log();
-
   return fetch(imageUrl);
 };
 
