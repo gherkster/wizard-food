@@ -17,7 +17,7 @@
             </small>
           </span>
           <span v-if="duration" class="card__label card__duration no-underline">
-            <icon name="mdi:clock-outline" size="18px" />
+            <v-icon :icon="clock" :size="18" />
             <small
               ><span>{{ duration }}</span></small
             >
@@ -30,6 +30,7 @@
 
 <script setup lang="ts">
 import type { Image } from "~/types/recipe";
+import clock from "~icons/gravity-ui/clock";
 
 withDefaults(
   defineProps<{

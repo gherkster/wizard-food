@@ -1,4 +1,6 @@
 import visualizer from "rollup-plugin-visualizer";
+import Icons from "unplugin-icons/vite";
+import { FileSystemIconLoader } from "unplugin-icons/loaders";
 import { fileURLToPath } from "url";
 
 export default defineNuxtConfig({
@@ -19,9 +21,6 @@ export default defineNuxtConfig({
     },
   },
   appConfig: {
-    icon: {
-      size: "24px",
-    },
     searchIndex: {
       hash: "",
     },
@@ -32,19 +31,17 @@ export default defineNuxtConfig({
       visualizer({
         gzipSize: true,
       }),
+      Icons({
+        defaultStyle: "font-size: 24px",
+        defaultClass: "icon",
+        autoInstall: true,
+        customCollections: {
+          custom: FileSystemIconLoader("./assets/icons"),
+        },
+      }),
     ],
   },
-  modules: ["nuxt-icon", "@nuxt/fonts", "@nuxtjs/sitemap"],
-  icon: {
-    mode: "svg", // Default css mode causes missing icons on client side navigation as of 1.0 beta
-    class: "icon",
-    customCollections: [
-      {
-        prefix: "custom",
-        dir: "./assets/icons",
-      },
-    ],
-  },
+  modules: ["unplugin-icons/nuxt", "@nuxt/fonts", "@nuxtjs/sitemap"],
   // https://nuxt.com/docs/guide/going-further/runtime-config
   runtimeConfig: {
     baseUrl: "", // Overridden by .env NUXT_BASE_URL
