@@ -11,7 +11,6 @@ export interface RecipeSearchResult extends SearchResult, SearchIndexStoredField
 export function useSearch() {
   // TODO: Generate this value automatically
   const config = useAppConfig();
-  console.log("hash", config.searchIndex.hash);
   const currentSearchIndexHash = config.searchIndex.hash;
 
   async function ensureIndex() {
@@ -41,7 +40,6 @@ export function useSearch() {
           try {
             miniSearch.value = MiniSearch.loadJSON(storedIndex, searchIndexSettings);
             miniSearch.value.search("a"); // Do a search to validate this is a valid search index
-            console.log("Got index from localstorage");
           } catch (error) {
             miniSearch.value = undefined;
             console.error(error);
@@ -62,7 +60,6 @@ export function useSearch() {
         const jsonString = JSON.stringify(index);
         miniSearch.value = MiniSearch.loadJSON(jsonString, searchIndexSettings);
 
-        console.log("storing index in localstorage");
         localStorage.setItem("search-index", jsonString);
         localStorage.setItem("search-index-hash", currentSearchIndexHash);
       }
@@ -73,8 +70,6 @@ export function useSearch() {
     if (indexDownload) {
       await indexDownload;
     }
-
-    console.log("searching, is search loaded: ", !!miniSearch.value);
 
     if (!miniSearch.value) {
       return [];
