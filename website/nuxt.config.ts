@@ -36,6 +36,7 @@ export default defineNuxtConfig({
   },
   modules: ["nuxt-icon", "@nuxt/fonts", "@nuxtjs/sitemap"],
   icon: {
+    mode: "svg", // Default css mode causes missing icons on client side navigation as of 1.0 beta
     class: "icon",
     customCollections: [
       {
