@@ -11,7 +11,7 @@
           <div v-if="recipe.description" class="recipe__description" v-html="recipe.description" />
           <div class="recipe__tags">
             <nuxt-link v-for="tag in recipe.tags" :key="tag" :to="createSearchLink(tag)">
-              <v-tag icon-name="gravity-ui:magnifier">{{ tag }}</v-tag>
+              <v-tag :icon="magnifier">{{ tag }}</v-tag>
             </nuxt-link>
           </div>
           <div class="recipe__details highlight-container">
@@ -109,8 +109,8 @@
       </v-column>
     </v-row>
     <footer class="footer">
-      <icon class="light-theme-only" name="custom:logo-light" size="168" />
-      <icon class="dark-theme-only" name="custom:logo-dark" size="168" />
+      <v-icon :icon="logoLight" :size="168" class="light-theme-only" />
+      <v-icon :icon="logoDark" :size="168" class="dark-theme-only" />
     </footer>
   </div>
 </template>
@@ -119,6 +119,9 @@
 import { useRecipeFormatter } from "~/composables";
 import type { Recipe } from "~/types/recipe";
 import type { RouteLocationRaw } from "#vue-router";
+import logoLight from "~icons/custom/logo-light";
+import logoDark from "~icons/custom/logo-dark";
+import magnifier from "~icons/gravity-ui/magnifier";
 
 const route = useRoute();
 const recipesResponse = await useAsyncData(route.params.slug.toString(), async () => {

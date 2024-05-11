@@ -1,6 +1,6 @@
 <template>
   <div class="input-container">
-    <icon v-if="iconLeft" :name="iconLeft" size="16" @click="focusButton" />
+    <slot name="prepend" :on-click="focusButton" />
     <label>
       {{ label }}
       <input ref="btnRef" v-model="model" type="search" :placeholder="placeholder" size="1" />
