@@ -114,6 +114,10 @@ async function search(value: string) {
     }
   }
 }
+
+.router-link-active {
+  text-decoration: underline;
+}
 </style>
 
 <style lang="scss">
