@@ -71,6 +71,12 @@ export function useSearch() {
       await indexDownload;
     }
 
+    // If for some the search index is still missing then try downloading again
+    // Could happen from a network error
+    if (!miniSearch.value) {
+      await downloadIndex();
+    }
+
     if (!miniSearch.value) {
       return [];
     }
