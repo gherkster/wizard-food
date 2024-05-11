@@ -109,7 +109,8 @@
       </v-column>
     </v-row>
     <footer class="footer">
-      <icon name="custom:logo" size="168" />
+      <icon class="light-theme-only" name="custom:logo-light" size="168" />
+      <icon class="dark-theme-only" name="custom:logo-dark" size="168" />
     </footer>
   </div>
 </template>
@@ -268,7 +269,8 @@ function createSearchLink(term: string): RouteLocationRaw {
 footer {
   display: flex;
   justify-content: center;
-  @include m.spacing("m", "md");
+  @include m.spacing("mt", "md");
+  @include m.spacing("mb", "lg");
 }
 </style>
 
