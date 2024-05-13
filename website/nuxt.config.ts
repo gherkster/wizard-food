@@ -84,15 +84,21 @@ export default defineNuxtConfig({
       ],
     },
     workbox: {
-      globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
-      navigateFallbackAllowlist: [/^\/$/],
+      globPatterns: ["**/*.{js,css,html,json,png,svg,ico}"],
+      dontCacheBustURLsMatching: /.*/i, // TODO: Match anything - may want to revisit
       runtimeCaching: [
         {
-          urlPattern: ({ url, sameOrigin }) => sameOrigin,// && url.pathname.match(/^\/(api|article)\/.*/i),
+          // Match /recipes/*
+          urlPattern: ({ url, sameOrigin }) => sameOrigin && url.pathname.match(/^\/(recipes)\/.*/i),
           handler: 'NetworkFirst',
-          options: { cacheName: 'site-cache' }
-        }
-      ]
+          options: {
+            cacheName: 'site-cache',
+            matchOptions: {
+              ignoreSearch: true,
+            },
+          },
+        },
+      ],
     },
   },
   alias: {
