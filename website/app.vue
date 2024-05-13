@@ -1,7 +1,10 @@
 <template>
-  <NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
+  <div>
+    <NuxtPwaManifest />
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -18,10 +21,10 @@ useHead({
       sizes: "32x32",
       href: "/favicon-32x32.png",
     },
-    {
-      rel: "manifest",
-      href: "/site.webmanifest",
-    },
+    // {
+    //   rel: "manifest",
+    //   href: "/site.webmanifest",
+    // },
   ],
 });
 </script>
