@@ -5,13 +5,14 @@
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "preview": "nuxt preview",
+    "preview": "wrangler pages dev .output/public",
     "postinstall": "nuxt prepare",
     "pages:dev": "wrangler pages dev --compatibility-date=2023-10-09 --proxy 3000 -- npm run dev",
     "pages:deploy": "npm run build && wrangler pages deploy ./dist",
     "bundle:analyze": "npx nuxi analyze"
   },
   "dependencies": {
+    "@vite-pwa/nuxt": "^0.7.0",
     "dayjs": "^1.11.10",
     "fraction.js": "^4.2.0",
     "minisearch": "^6.1.0"
