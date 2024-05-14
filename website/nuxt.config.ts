@@ -49,54 +49,12 @@ export default defineNuxtConfig({
       }),
     ],
   },
-  modules: ["unplugin-icons/nuxt", "@nuxt/fonts", "@nuxtjs/sitemap", "@vite-pwa/nuxt"],
+  modules: ["unplugin-icons/nuxt", "@nuxt/fonts", "@nuxtjs/sitemap"],
   // https://nuxt.com/docs/guide/going-further/runtime-config
   runtimeConfig: {
     baseUrl: "", // Overridden by .env NUXT_BASE_URL
     cfAccessClientId: "", // Overridden by .env NUXT_CF_ACCESS_CLIENT_ID
     cfAccessClientSecret: "", // Overridden by .env NUXT_CF_ACCESS_CLIENT_SECRET
-  },
-  pwa: {
-    registerType: "autoUpdate",
-    manifest: {
-      name: "My PWA",
-      icons: [
-        {
-          src: "android-chrome-192x192.png",
-          sizes: "192x192",
-          type: "image/png",
-        },
-        {
-          src: "android-chrome-512x512.png",
-          sizes: "512x512",
-          type: "image/png",
-        },
-        {
-          src: "android-chrome-512x512.png",
-          sizes: "512x512",
-          type: "image/png",
-          purpose: "any maskable",
-        },
-      ],
-    },
-    workbox: {
-      globPatterns: ["**/*.{js,css,html,json,png,svg,ico}"],
-      dontCacheBustURLsMatching: /.*/i, // TODO: Match anything - may want to revisit
-      navigateFallback: undefined,
-      runtimeCaching: [
-        {
-          // Match /*
-          urlPattern: ({ sameOrigin }) => sameOrigin,
-          handler: "NetworkFirst",
-          options: {
-            cacheName: "site-cache",
-            matchOptions: {
-              ignoreSearch: true,
-            },
-          },
-        },
-      ],
-    },
   },
   alias: {
     common: fileURLToPath(new URL("../common", import.meta.url)),
