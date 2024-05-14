@@ -1,4 +1,3 @@
-import visualizer from "rollup-plugin-visualizer";
 import Icons from "unplugin-icons/vite";
 import { FileSystemIconLoader } from "unplugin-icons/loaders";
 import { fileURLToPath } from "url";
@@ -40,9 +39,6 @@ export default defineNuxtConfig({
       },
     },
     plugins: [
-      visualizer({
-        gzipSize: true,
-      }),
       Icons({
         defaultStyle: "font-size: 24px",
         defaultClass: "icon",
@@ -86,13 +82,14 @@ export default defineNuxtConfig({
     workbox: {
       globPatterns: ["**/*.{js,css,html,json,png,svg,ico}"],
       dontCacheBustURLsMatching: /.*/i, // TODO: Match anything - may want to revisit
+      navigateFallback: undefined,
       runtimeCaching: [
         {
-          // Match /recipes/*
-          urlPattern: ({ url, sameOrigin }) => sameOrigin && url.pathname.match(/^\/(recipes)\/.*/i),
-          handler: 'NetworkFirst',
+          // Match /*
+          urlPattern: ({ sameOrigin }) => sameOrigin,
+          handler: "NetworkFirst",
           options: {
-            cacheName: 'site-cache',
+            cacheName: "site-cache",
             matchOptions: {
               ignoreSearch: true,
             },
