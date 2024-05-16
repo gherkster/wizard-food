@@ -54,8 +54,10 @@
             </p>
             <ul>
               <li v-for="ingredient in ingredientSection.ingredients" :key="JSON.stringify(ingredient)">
-                <span v-if="ingredient.amount">{{ adjustIngredientByMultiplier(ingredient.amount) }}&nbsp;</span>
-                <span v-if="ingredient.unit">{{ ingredient.unit }}&nbsp;</span>
+                <span v-if="ingredient.amount">{{ adjustIngredientAmountByMultiplier(ingredient.amount) }}&nbsp;</span>
+                <span v-if="ingredient.unit"
+                  >{{ adjustIngredientUnitByAmount(ingredient.unit, ingredient.amount) }}&nbsp;</span
+                >
                 <!-- eslint-disable-next-line vue/no-v-html -->
                 <span class="recipe__ingredient__name" v-html="ingredient.name" />
                 <span v-if="ingredient.note" class="text-muted"
@@ -88,6 +90,7 @@
                   :content="instruction.text"
                   :ingredient-multiplier="servings"
                   :original-number-of-servings="originalNumberOfServings"
+                  :unit-forms="unitForms"
                 />
                 <blurrable-image
                   v-if="instruction.image"
@@ -122,6 +125,7 @@ import type { RouteLocationRaw } from "#vue-router";
 import logoLight from "~icons/custom/logo-light";
 import logoDark from "~icons/custom/logo-dark";
 import magnifier from "~icons/gravity-ui/magnifier";
+import type { IngredientUnitForm } from "~/types/mapping";
 
 const route = useRoute();
 const recipesResponse = await useAsyncData(route.params.slug.toString(), async () => {
@@ -165,7 +169,7 @@ const servings = ref<number>(recipe.value.servings && recipe.value.servings > 0 
 const originalNumberOfServings = servings.value;
 
 const multipler = useIngredientMultiplier();
-function adjustIngredientByMultiplier(amount?: number) {
+function adjustIngredientAmountByMultiplier(amount?: number) {
   if (!amount) {
     return "";
   }
@@ -173,6 +177,31 @@ function adjustIngredientByMultiplier(amount?: number) {
 }
 function updateNumberOfServings(newServings: number) {
   servings.value = newServings;
+}
+
+const unitFormsResponse = await useAsyncData("ingredientUnitVariants", async () => {
+  const { data: mapping } = await useFetch<IngredientUnitForm[]>("/api/mapping/ingredientUnitVariants");
+  return mapping.value;
+});
+const unitForms = unitFormsResponse.data.value ?? [];
+
+function adjustIngredientUnitByAmount(unit?: string, amount?: number) {
+  if (!unit) {
+    return "";
+  }
+  // We can't switch between a singular and plural form if there's no number to use as a threshold
+  if (!amount) {
+    return unit;
+  }
+
+  const multipleFormsUnit = unitForms.find((m) => m.singularForm === unit || m.pluralForm === unit);
+  if (!multipleFormsUnit) {
+    return unit;
+  }
+
+  const multipliedAmount = multipler.multiplyToNumber(amount, servings.value, originalNumberOfServings);
+
+  return multipliedAmount <= 1 ? multipleFormsUnit.singularForm : multipleFormsUnit.pluralForm;
 }
 
 const formatter = useRecipeFormatter();
