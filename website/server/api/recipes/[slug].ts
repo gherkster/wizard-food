@@ -1,9 +1,8 @@
 import { JSONContent, generateText } from "@tiptap/core";
 import { generateHTML } from "@tiptap/html";
 import { InlineIngredientRelation } from "common/types/serverRecipe";
-import { useDirectus } from "~/composables/useDirectus";
-import extensions from "~/content/extensions";
-import { RecipeMapper } from "~/mapping/recipeMapper";
+import { useDirectus, useMapper } from "~/composables";
+import extensions from "~/server/content/extensions";
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event);
@@ -60,7 +59,7 @@ export default defineEventHandler(async (event) => {
     });
   });
 
-  return RecipeMapper.toClientRecipe(recipe);
+  return useMapper().toRecipe(recipe);
 });
 
 function insertRelationDataIntoContent(content: JSONContent, inlineIngredients: InlineIngredientRelation[]) {
