@@ -1,12 +1,13 @@
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
+import Fraction from "fraction.js";
 
 function formatIngredient(ingredient: { amount?: number | string; name: string; unit?: string; note?: string }) {
-  const amount = ingredient.amount?.toString() ?? "";
+  const amountFraction = ingredient.amount ? new Fraction(ingredient.amount).toFraction(true) : "";
   const unit = ingredient.unit?.toString() ?? "";
   const note = ingredient.note ?? "";
 
-  const value = `${amount} ${unit} ${ingredient.name} ${note}`;
+  const value = `${amountFraction} ${unit} ${ingredient.name} ${note}`;
   return value.trim();
 }
 
