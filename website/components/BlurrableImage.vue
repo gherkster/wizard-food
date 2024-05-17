@@ -1,6 +1,15 @@
 <template>
   <div class="image-container">
     <v-img class="blur" :img="img" :purpose="purpose" :aspect-ratio="aspectRatio" thumbnail />
+    <noscript>
+      <v-img
+        class="image--full"
+        :loading="lazy ? 'lazy' : ''"
+        :img="img"
+        :purpose="purpose"
+        :aspect-ratio="aspectRatio"
+      />
+    </noscript>
     <v-img
       class="image--full hidden"
       onload="this.classList.remove('hidden')"
