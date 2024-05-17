@@ -12,7 +12,10 @@ interface InlineIngredientMarkup {
   data: {
     amount?: number;
     unit?: string;
-    name: string;
+    name: {
+      singular: string;
+      plural: string;
+    };
     note?: string;
   };
 }
@@ -36,7 +39,10 @@ onMounted(() => {
       data: {
         amount: isNaN(amount) ? undefined : amount,
         unit: elem.dataset.unit,
-        name: elem.dataset.name ?? "",
+        name: {
+          singular: elem.dataset.nameSingular ?? "",
+          plural: elem.dataset.namePlural ?? "",
+        },
         note: elem.dataset.note,
       },
     });
@@ -71,7 +77,7 @@ function multiplyInlineIngredients(multiplicationFactor: number) {
 
     const displayedIngredient = formatter.formatIngredient({
       amount: multipliedAmount,
-      name: ingredient.data.name,
+      name: currentAmount <= 1 ? ingredient.data.name.singular : ingredient.data.name.plural,
       unit: getUnitLabel(ingredient.data.unit, currentAmount),
       note: "",
     });

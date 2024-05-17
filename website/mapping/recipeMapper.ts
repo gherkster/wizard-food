@@ -17,7 +17,10 @@ export const RecipeMapper = {
             return {
               amount: i.amount,
               unit: i.unit,
-              name: i.name_html,
+              name: {
+                singular: i.name_singular_html,
+                plural: i.name_plural_html,
+              },
               note: i.note,
             };
           }),

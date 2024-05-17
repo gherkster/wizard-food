@@ -54,15 +54,12 @@
             </p>
             <ul>
               <li v-for="ingredient in ingredientSection.ingredients" :key="JSON.stringify(ingredient)">
-                <span v-if="ingredient.amount">{{ adjustIngredientAmountByMultiplier(ingredient.amount) }}&nbsp;</span>
-                <span v-if="ingredient.unit"
-                  >{{ adjustIngredientUnitByAmount(ingredient.unit, ingredient.amount) }}&nbsp;</span
-                >
-                <!-- eslint-disable-next-line vue/no-v-html -->
-                <span class="recipe__ingredient__name" v-html="ingredient.name" />
-                <span v-if="ingredient.note" class="text-muted"
-                  ><i>&nbsp;{{ ingredient.note }}</i></span
-                >
+                <recipe-ingredient
+                  :ingredient="ingredient"
+                  :ingredient-multiplier="servings"
+                  :original-number-of-servings="originalNumberOfServings"
+                  :unit-forms="unitForms"
+                />
               </li>
             </ul>
           </div>
@@ -168,13 +165,6 @@ useHead({
 const servings = ref<number>(recipe.value.servings && recipe.value.servings > 0 ? recipe.value.servings : 1);
 const originalNumberOfServings = servings.value;
 
-const multipler = useIngredientMultiplier();
-function adjustIngredientAmountByMultiplier(amount?: number) {
-  if (!amount) {
-    return "";
-  }
-  return multipler.multiplyToFraction(amount, servings.value, originalNumberOfServings);
-}
 function updateNumberOfServings(newServings: number) {
   servings.value = newServings;
 }
@@ -184,25 +174,6 @@ const unitFormsResponse = await useAsyncData("ingredientUnitVariants", async () 
   return mapping.value;
 });
 const unitForms = unitFormsResponse.data.value ?? [];
-
-function adjustIngredientUnitByAmount(unit?: string, amount?: number) {
-  if (!unit) {
-    return "";
-  }
-  // We can't switch between a singular and plural form if there's no number to use as a threshold
-  if (!amount) {
-    return unit;
-  }
-
-  const multipleFormsUnit = unitForms.find((m) => m.singularForm === unit || m.pluralForm === unit);
-  if (!multipleFormsUnit) {
-    return unit;
-  }
-
-  const multipliedAmount = multipler.multiplyToNumber(amount, servings.value, originalNumberOfServings);
-
-  return multipliedAmount <= 1 ? multipleFormsUnit.singularForm : multipleFormsUnit.pluralForm;
-}
 
 const formatter = useRecipeFormatter();
 const totalDuration = computed(() => {
