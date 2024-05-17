@@ -49,7 +49,7 @@ const extensions = [
   TableHeader,
   TableRow,
   TableCell,
-]
+];
 
 const inlineIngredientSerializer = Node.create({
   name: "inline-ingredient",
@@ -78,13 +78,16 @@ const inlineIngredientSerializer = Node.create({
           class: "inline-ingredient",
           "data-amount": HTMLAttributes.data?.amount,
           "data-unit": HTMLAttributes.data?.unit,
-          "data-name": generateText(HTMLAttributes.data?.name ?? {}, extensions),
+          "data-name-singular": generateText(HTMLAttributes.data?.name_singular ?? {}, extensions),
+          "data-name-plural": generateText(HTMLAttributes.data?.name_plural ?? {}, extensions),
           "data-note": HTMLAttributes.data?.note,
         },
         recipeFormatter.formatIngredient({
           amount: HTMLAttributes.data?.amount,
           unit: HTMLAttributes.data?.unit,
-          name: generateText(HTMLAttributes.data?.name ?? {}, extensions),
+          // Defaulting to plural as we don't know the current servings multiplier and that is more likely to be correct
+          // However this shouldn't matter as it will be server side rendered with the correct one picked
+          name: generateText(HTMLAttributes.data?.name_plural ?? {}, extensions),
         }),
       ];
     }

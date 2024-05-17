@@ -31,12 +31,18 @@ export default defineEventHandler(async (event) => {
 
   recipe.ingredientGroups.forEach((ig) => {
     ig.ingredients.forEach((i) => {
-      if (!i.name) {
-        i.name_html = "";
-        console.warn("Recipe", recipe!.title, "includes an ingredient with no name. Ingredient: ", i.id);
+      if (!i.name_singular) {
+        i.name_singular_html = "";
+        console.warn("Recipe", recipe!.title, "includes a ingredient with no singular form name. Ingredient: ", i.id);
         return;
       }
-      i.name_html = generateHTML(i.name, extensions);
+      if (!i.name_plural) {
+        i.name_plural_html = "";
+        console.warn("Recipe", recipe!.title, "includes an ingredient with no plural form name. Ingredient: ", i.id);
+        return;
+      }
+      i.name_singular_html = generateHTML(i.name_singular, extensions);
+      i.name_plural_html = generateHTML(i.name_plural, extensions);
     });
   });
 

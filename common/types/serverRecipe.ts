@@ -1,4 +1,4 @@
-import { JSONContent } from "@tiptap/core";
+import type { JSONContent } from "@tiptap/core";
 
 export interface ServerRecipe {
   id: number;
@@ -53,8 +53,10 @@ interface ServerIngredientGroup {
 export interface ServerIngredient {
   id: number;
   unit?: string;
-  name: JSONContent | null;
-  name_html: string;
+  name_singular: JSONContent | null;
+  name_singular_html: string;
+  name_plural: JSONContent | null;
+  name_plural_html: string;
   note?: string;
   amount?: number;
 }
@@ -76,14 +78,6 @@ export interface InlineIngredientRelation {
   id: string;
   instruction_id: ServerInstruction | number;
   ingredient_id: ServerIngredient | number;
-}
-
-interface ServerTag {
-  tags_id: ServerTagsId;
-}
-
-interface ServerTagsId {
-  value: string;
 }
 
 export interface ServerImage {
