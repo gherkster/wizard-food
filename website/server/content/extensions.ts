@@ -76,18 +76,26 @@ const inlineIngredientSerializer = Node.create({
         "span",
         {
           class: "inline-ingredient",
-          "data-amount": HTMLAttributes.data?.amount,
-          "data-unit": HTMLAttributes.data?.unit,
-          "data-name-singular": generateText(HTMLAttributes.data?.name_singular ?? {}, extensions),
-          "data-name-plural": generateText(HTMLAttributes.data?.name_plural ?? {}, extensions),
-          "data-note": HTMLAttributes.data?.note,
+          "data-amount": HTMLAttributes.data.amount,
+          "data-unit": HTMLAttributes.data.unit,
+          "data-name-singular": generateText(HTMLAttributes.data.name_singular ?? {}, extensions),
+          "data-name-plural": generateText(HTMLAttributes.data.name_plural ?? {}, extensions),
+          "data-note": HTMLAttributes.data.note,
         },
         recipeFormatter.formatIngredient({
-          amount: HTMLAttributes.data?.amount,
-          unit: HTMLAttributes.data?.unit,
-          // Defaulting to plural as we don't know the current servings multiplier and that is more likely to be correct
-          // However this shouldn't matter as it will be server side rendered with the correct one picked
-          name: generateText(HTMLAttributes.data?.name_plural ?? {}, extensions),
+          amount: HTMLAttributes.data.amount,
+          unit: HTMLAttributes.data.unit,
+          /*
+            This is only relevant on page load before the component starts creating the name based on data attributes
+            So we can assume if an amount is specified <= 1 that it should show the singular form,
+            since on page load the servings multiplier is in the default state
+          */
+          name: generateText(
+            HTMLAttributes.data.amount && HTMLAttributes.data.amount <= 1
+              ? HTMLAttributes.data.name_singular ?? {}
+              : HTMLAttributes.data.name_plural ?? {},
+            extensions,
+          ),
         }),
       ];
     }
