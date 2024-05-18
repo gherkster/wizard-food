@@ -9,7 +9,6 @@ let indexDownload: Promise<void> | null = null;
 export interface RecipeSearchResult extends SearchResult, SearchIndexStoredFields {}
 
 export function useSearch() {
-  // TODO: Generate this value automatically
   const config = useAppConfig();
   const currentSearchIndexHash = config.searchIndex.hash;
 
@@ -18,7 +17,6 @@ export function useSearch() {
       return;
     }
 
-    // TODO: May want to remove this check eventually
     if (!import.meta.dev) {
       verifySearchIndexIsCached();
     }

@@ -1,6 +1,6 @@
-import { JSONContent } from "@tiptap/core";
+import type { JSONContent } from "@tiptap/core";
 
-export interface ServerRecipe {
+export interface ServerRecipe extends ServerRecipeCategories {
   id: number;
   title: string;
   description: JSONContent | null;
@@ -11,10 +11,6 @@ export interface ServerRecipe {
   note_html?: string;
   favourite: boolean;
   coverImage: ServerImage;
-  cuisine?: string;
-  course?: string;
-  main_ingredients?: string[];
-  diets?: string[];
   slug: string;
   preparationDuration?: number;
   cookingDuration?: number;
@@ -28,7 +24,7 @@ export interface ServerRecipe {
   date_created: Date;
 }
 
-export interface ServerRecipePreview {
+export interface ServerRecipePreview extends ServerRecipeCategories {
   id: number;
   date_created: string;
   slug: string;
@@ -36,13 +32,16 @@ export interface ServerRecipePreview {
   description_snippet: string;
   coverImage: ServerImage;
   favourite: boolean;
+  preparationDuration?: number;
+  cookingDuration?: number;
+  customDuration?: number;
+}
+
+export interface ServerRecipeCategories {
   cuisine?: string;
   course?: string;
   main_ingredients?: string[];
   diets?: string[];
-  preparationDuration?: number;
-  cookingDuration?: number;
-  customDuration?: number;
 }
 
 interface ServerIngredientGroup {
@@ -53,8 +52,10 @@ interface ServerIngredientGroup {
 export interface ServerIngredient {
   id: number;
   unit?: string;
-  name: JSONContent | null;
-  name_html: string;
+  name_singular: JSONContent | null;
+  name_singular_html: string;
+  name_plural: JSONContent | null;
+  name_plural_html: string;
   note?: string;
   amount?: number;
 }
@@ -76,14 +77,6 @@ export interface InlineIngredientRelation {
   id: string;
   instruction_id: ServerInstruction | number;
   ingredient_id: ServerIngredient | number;
-}
-
-interface ServerTag {
-  tags_id: ServerTagsId;
-}
-
-interface ServerTagsId {
-  value: string;
 }
 
 export interface ServerImage {

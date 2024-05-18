@@ -5,13 +5,17 @@
 
 <script setup lang="ts">
 import { useRecipeFormatter } from "~/composables";
+import type { IngredientUnitForm } from "~/types/mapping";
 
 interface InlineIngredientMarkup {
   element: HTMLElement;
   data: {
     amount?: number;
     unit?: string;
-    name: string;
+    name: {
+      singular: string;
+      plural: string;
+    };
     note?: string;
   };
 }
@@ -20,6 +24,7 @@ const props = defineProps<{
   content: string;
   ingredientMultiplier: number;
   originalNumberOfServings: number;
+  unitForms: IngredientUnitForm[];
 }>();
 
 const inlineIngredientsRef = ref<HTMLDivElement>();
@@ -34,7 +39,10 @@ onMounted(() => {
       data: {
         amount: isNaN(amount) ? undefined : amount,
         unit: elem.dataset.unit,
-        name: elem.dataset.name ?? "",
+        name: {
+          singular: elem.dataset.nameSingular ?? "",
+          plural: elem.dataset.namePlural ?? "",
+        },
         note: elem.dataset.note,
       },
     });
@@ -60,9 +68,38 @@ function multiplyInlineIngredients(multiplicationFactor: number) {
       multiplicationFactor,
       props.originalNumberOfServings,
     );
-    const displayedIngredient = formatter.formatIngredient({ ...ingredient.data, amount: multipliedAmount, note: "" });
+
+    const currentAmount = multipler.multiplyToNumber(
+      ingredient.data.amount,
+      multiplicationFactor,
+      props.originalNumberOfServings,
+    );
+
+    const displayedIngredient = formatter.formatIngredient({
+      amount: multipliedAmount,
+      name: currentAmount <= 1 ? ingredient.data.name.singular : ingredient.data.name.plural,
+      unit: getUnitLabel(ingredient.data.unit, currentAmount),
+      note: "",
+    });
     ingredient.element.textContent = displayedIngredient;
   });
+}
+
+function getUnitLabel(unit?: string, currentAmount?: number) {
+  if (!unit) {
+    return undefined;
+  }
+  // We can't switch between a singular and plural form if there's no number to use as a threshold
+  if (!currentAmount) {
+    return unit;
+  }
+
+  const multipleFormsUnit = props.unitForms.find((m) => m.singularForm === unit || m.pluralForm === unit);
+  if (!multipleFormsUnit) {
+    return unit;
+  }
+
+  return currentAmount <= 1 ? multipleFormsUnit.singularForm : multipleFormsUnit.pluralForm;
 }
 </script>
 

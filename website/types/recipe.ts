@@ -35,7 +35,10 @@ export interface IngredientGroup {
 export interface Ingredient {
   amount?: number;
   unit?: string;
-  name: string;
+  name: {
+    singular: string;
+    plural: string;
+  };
   note?: string;
 }
 

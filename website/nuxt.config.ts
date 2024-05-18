@@ -1,4 +1,3 @@
-import visualizer from "rollup-plugin-visualizer";
 import Icons from "unplugin-icons/vite";
 import { FileSystemIconLoader } from "unplugin-icons/loaders";
 import { fileURLToPath } from "url";
@@ -40,9 +39,6 @@ export default defineNuxtConfig({
       },
     },
     plugins: [
-      visualizer({
-        gzipSize: true,
-      }),
       Icons({
         defaultStyle: "font-size: 24px",
         defaultClass: "icon",

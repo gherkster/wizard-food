@@ -1,9 +1,8 @@
 import { JSONContent, generateText } from "@tiptap/core";
 import { generateHTML } from "@tiptap/html";
 import { InlineIngredientRelation } from "common/types/serverRecipe";
-import { useDirectus } from "~/composables/useDirectus";
-import extensions from "~/content/extensions";
-import { RecipeMapper } from "~/mapping/recipeMapper";
+import { useDirectus, useMapper } from "~/composables";
+import extensions from "~/server/content/extensions";
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event);
@@ -31,12 +30,18 @@ export default defineEventHandler(async (event) => {
 
   recipe.ingredientGroups.forEach((ig) => {
     ig.ingredients.forEach((i) => {
-      if (!i.name) {
-        i.name_html = "";
-        console.warn("Recipe", recipe!.title, "includes an ingredient with no name. Ingredient: ", i.id);
+      if (!i.name_singular) {
+        i.name_singular_html = "";
+        console.warn("Recipe", recipe!.title, "includes a ingredient with no singular form name. Ingredient: ", i.id);
         return;
       }
-      i.name_html = generateHTML(i.name, extensions);
+      if (!i.name_plural) {
+        i.name_plural_html = "";
+        console.warn("Recipe", recipe!.title, "includes an ingredient with no plural form name. Ingredient: ", i.id);
+        return;
+      }
+      i.name_singular_html = generateHTML(i.name_singular, extensions);
+      i.name_plural_html = generateHTML(i.name_plural, extensions);
     });
   });
 
@@ -54,7 +59,7 @@ export default defineEventHandler(async (event) => {
     });
   });
 
-  return RecipeMapper.toClientRecipe(recipe);
+  return useMapper().toRecipe(recipe);
 });
 
 function insertRelationDataIntoContent(content: JSONContent, inlineIngredients: InlineIngredientRelation[]) {

@@ -48,7 +48,6 @@ watch(
       return;
     }
 
-    // TODO Set minimum number of characters to do search
     // TODO: Need to use a loader if search index is still downloading
     const searchResults = await searchClient.search(route.query.search);
     recipes.value = searchResults;
@@ -59,7 +58,6 @@ watch(
   },
 );
 
-// TODO: Don't show this if the index is still downloading
 const isEmptySearchResult = computed(() => recipes.value.length === 0 && searchTerm.value);
 
 const title = computed(() => {
