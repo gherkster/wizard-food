@@ -10,7 +10,7 @@
     ></toolbar>
     <editor-content
       :editor="editor"
-      :spellcheck="spellcheck ? 'true' : 'false'"
+      :spellcheck="'true'"
       :class="{ [font]: true, [editorHeight]: true, ['single-line']: singleLineMode }"
       class="flexible-editor"
     />

@@ -34,7 +34,7 @@
 	},
 	"scripts": {
 		"build": "directus-extension build",
-		"build-remote": "directus-extension build --no-minify && npm run push-remote",
+		"build-remote": "directus-extension build && npm run push-remote",
 		"dev": "directus-extension build -w --no-minify",
 		"link": "directus-extension link",
 		"push-remote": "npm run push-app && npm run push-api",

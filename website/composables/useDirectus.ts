@@ -2,11 +2,13 @@ import { createDirectus, readItems, readSingleton, rest } from "@directus/sdk";
 import type { RestClient } from "@directus/sdk";
 import type { ServerRecipe, ServerRecipePreview } from "common/types/serverRecipe";
 import type { PageContent } from "common/types/content";
+import type { ServerIngredientUnitForm } from "common/types/serverMapping";
 
 export interface CmsSchema {
   recipes: ServerRecipe[];
   home_page: PageContent;
   recipes_page: PageContent;
+  ingredient_unit_forms: ServerIngredientUnitForm[];
 }
 
 const getImageFields = (path: string) => [
@@ -89,11 +91,16 @@ export function useDirectus({ url, clientId, clientSecret }: { url: string; clie
     return await client.request<PageContent>(readSingleton("recipes_page"));
   }
 
+  async function getIngredientUnitSingularPluralMapping() {
+    return await client.request<ServerIngredientUnitForm[]>(readItems("ingredient_unit_forms"));
+  }
+
   return {
     client,
     getRecipe,
     getAllRecipes,
     getHomePageContent,
     getRecipesPageContent,
+    getIngredientUnitSingularPluralMapping,
   };
 }

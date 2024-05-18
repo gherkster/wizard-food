@@ -1,11 +1,58 @@
 import prand from "pure-rand";
 import { useRecipeFormatter } from "./useRecipeFormatter";
-import type { ServerImage, ServerRecipePreview } from "common/types/serverRecipe";
-import type { Image, RecipePreview } from "~/types/recipe";
+import type { ServerImage, ServerRecipe, ServerRecipeCategories, ServerRecipePreview } from "common/types/serverRecipe";
+import type { Image, Recipe, RecipePreview } from "~/types/recipe";
 
 export function useMapper() {
   return {
     toRecipePreview,
+    toRecipe,
+  };
+}
+
+function toRecipe(serverRecipe: ServerRecipe): Recipe {
+  return {
+    title: serverRecipe.title,
+    description: serverRecipe.description_html,
+    descriptionPlainText: serverRecipe.description_plain_text,
+    descriptionSnippet: serverRecipe.description_snippet,
+    note: serverRecipe.note_html,
+    coverImage: mapImage(serverRecipe.coverImage),
+    ingredientGroups: serverRecipe.ingredientGroups.map((ig) => {
+      return {
+        name: ig.name,
+        ingredients: ig.ingredients.map((i) => {
+          return {
+            amount: i.amount,
+            unit: i.unit,
+            name: {
+              singular: i.name_singular_html,
+              plural: i.name_plural_html,
+            },
+            note: i.note,
+          };
+        }),
+      };
+    }),
+    instructionGroups: serverRecipe.instructionGroups.map((ig) => {
+      return {
+        name: ig.name,
+        instructions: ig.instructions.map((i) => {
+          return {
+            text: i.html,
+            content: i.text,
+          };
+        }),
+      };
+    }),
+    preparationDuration: serverRecipe.preparationDuration,
+    cookingDuration: serverRecipe.cookingDuration,
+    customDurationName: serverRecipe.customDurationName,
+    customDuration: serverRecipe.customDuration,
+    servings: serverRecipe.servings,
+    servingsType: serverRecipe.servings_type,
+    slug: serverRecipe.slug,
+    tags: buildTagList(serverRecipe),
   };
 }
 
@@ -50,19 +97,19 @@ function getTotalDuration(recipe: ServerRecipePreview) {
   );
 }
 
-function buildTagList(recipe: ServerRecipePreview): string[] {
+function buildTagList(categories: ServerRecipeCategories): string[] {
   const tags: string[] = [];
-  if (recipe.cuisine) {
-    tags.push(recipe.cuisine);
+  if (categories.cuisine) {
+    tags.push(categories.cuisine);
   }
-  if (recipe.course) {
-    tags.push(recipe.course);
+  if (categories.course) {
+    tags.push(categories.course);
   }
-  if (recipe.diets) {
-    tags.push(...recipe.diets);
+  if (categories.diets) {
+    tags.push(...categories.diets);
   }
-  if (recipe.main_ingredients) {
-    tags.push(...recipe.main_ingredients);
+  if (categories.main_ingredients) {
+    tags.push(...categories.main_ingredients);
   }
   return tags.sort();
 }

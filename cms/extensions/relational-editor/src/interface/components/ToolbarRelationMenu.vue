@@ -3,7 +3,7 @@
     <v-menu show-arrow placement="bottom-start" :full-height="true">
       <template #activator="{ toggle }">
         <ToolButton
-          v-if="toolStore.relationBlockTool"
+          v-if="toolStore.relationBlockTool && !loading"
           :title="toolStore.relationBlockTool!.name"
           :icon="toolStore.relationBlockTool!.icon"
           :action="toggle"
@@ -27,10 +27,10 @@
       </v-list>
     </v-menu>
 
-    <!-- Don't hardcode collection name -->
     <drawer-collection
       v-model:active="selectModalActive"
       :collection="relation?.relatedCollection.collection"
+      :filter="filter"
       @input="stageSelects"
     />
   </div>
@@ -46,10 +46,12 @@ import { useRelationItems } from "../composables/useRelationItems";
 import { useRelationStore } from "../stores/relationStore";
 import { Configuration, configurationInjectionKey } from "../config/configuration";
 import { inject } from "vue";
-import { useApi } from "@directus/extensions-sdk";
+import { useApi, useItems } from "@directus/extensions-sdk";
 import { watch } from "vue";
 import { useToolStore } from "../stores/toolStore";
-import type { Item } from "@directus/types";
+import type { Item, Filter } from "@directus/types";
+import { computed } from "vue";
+import { toRef } from "vue";
 
 const props = defineProps<{
   editor: Editor;
@@ -73,6 +75,69 @@ const { items } = relationItems.getItems(
       }
     : undefined,
 );
+
+// Hacky way to extract the recipe ID from the URL,
+// this is necessary while Directus doesn't provide the current form values for sub-forms
+const recipeId = computed(() => {
+  if (!window.location.pathname.includes("/recipes/")) {
+    return undefined;
+  }
+
+  const path = window.location.pathname.endsWith("/")
+    ? window.location.pathname.slice(0, -1)
+    : window.location.pathname;
+
+  const recipeId = path.split("/").pop();
+  if (!recipeId) {
+    console.warn("Could not find recipe ID on recipe page");
+    return undefined;
+  }
+
+  return Number(recipeId);
+});
+
+const loading = ref(false);
+
+const filter = ref<Filter>();
+
+interface RecipeQueryResult {
+  ingredientGroups: number[];
+}
+
+if (recipeId.value && config!.relation.limitToCurrentItem) {
+  loading.value = true;
+  const { items } = useItems(toRef("recipes"), {
+    fields: ref(["*"]),
+    filter: ref({
+      id: {
+        _eq: recipeId.value,
+      },
+    }),
+    limit: ref(-1),
+    page: ref(1),
+    search: ref(null),
+    sort: ref(null),
+  });
+
+  watch(
+    () => items.value,
+    (loadedItems) => {
+      if (loadedItems && loadedItems.length > 0) {
+        const recipe = items.value[0] as RecipeQueryResult;
+        filter.value = {
+          ingredientGroup_id: {
+            _in: recipe.ingredientGroups,
+          },
+        };
+
+        loading.value = false;
+      }
+    },
+    {
+      immediate: true,
+    },
+  );
+}
 
 // TODO: Remove any
 watch(items, (loadedItems: Item[]) => {
@@ -106,7 +171,6 @@ const toolStore = useToolStore();
 async function stageSelects(items: [string | number]) {
   const nodeId = uuidv4();
 
-  // TODO: Promise.all
   const relatedItemResponse = await api.get(`items/${relation.value!.relatedCollection.collection}/${items[0]}`);
 
   // TODO: Remove any

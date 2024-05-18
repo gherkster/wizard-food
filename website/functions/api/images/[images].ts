@@ -6,15 +6,11 @@ interface Env {
   CLOUDINARY_API_KEY: string;
 }
 
-// TODO: Make sure images are caching correctly with the modifyDate cache-busting mechanism
 export const onRequestGet: PagesFunction<Env> = async (context) => {
-  // TODO: Check in R2 and use that if exists
-
   if (!context.env.CLOUDINARY_API_KEY) {
     throw new Error("Cloudinary API key environment variable not defined");
   }
 
-  // TODO: Be able to vary image sizes and create thumbnails
   const imageId = context.params.images;
 
   const { searchParams } = new URL(context.request.url);
@@ -43,24 +39,15 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     }
   }
 
-  // TODO: Handle no transformations
   const fileName = `v1/recipes/${imageId}.webp`;
   const signingParameters = `${transformations}${fileName}`;
 
-  // Check for image in r2
-  // if in r2 then return image
-  // if not, then get image from cloudinary and cache into r2
-  // just follow what https://github.com/kotx/render does for now, performance testing can come later to validate
-
-  // TODO: Make parameters dynamic (but also don't allow abuse through small adjustments)
-  // TODO: Make image extension not needed (or provided in request if required)
-
-  // TODO: Directus allows specifying a focal point of the image,
-  // use this to make thumbnails/crops focus on the subject properly
-  // https://cloudinary.com/documentation/resizing_and_cropping#special_positions
+  if (!transformations) {
+    // Don't allow downloading the original images, as they may be inappropriately sized or contain unwanted metadata
+    throw new Error("Transformation not specified, requesting original images is not allowed");
+  }
 
   const signature = await generateCloudinaryDeliverySignature(context.env, signingParameters);
-  // TODO: Handle no transformations
   const imageUrl = `https://res.cloudinary.com/dork0lbv9/image/upload/${signature}/${transformations}${fileName}`;
 
   return fetch(imageUrl);
