@@ -56,9 +56,6 @@ export default defineNuxtConfig({
     cfAccessClientId: "", // Overridden by .env NUXT_CF_ACCESS_CLIENT_ID
     cfAccessClientSecret: "", // Overridden by .env NUXT_CF_ACCESS_CLIENT_SECRET
   },
-  site: {
-    url: process.env.CF_PAGES_URL,
-  },
   alias: {
     common: fileURLToPath(new URL("../common", import.meta.url)),
   },
