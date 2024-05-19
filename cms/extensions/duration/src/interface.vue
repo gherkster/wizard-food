@@ -14,23 +14,13 @@ const props = defineProps<{
   loading: boolean;
 }>();
 
-watch(
-  () => props.loading,
-  (isLoading, wasLoading) => {
-    if (wasLoading && !isLoading) {
-      // Wait until the component has finished loading, because props.value will not exist until then
-      init();
-    }
-  },
-);
-
 interface Duration {
   minutes: number;
   hours: number;
   days: number;
 }
 
-const internalDuration = ref<Duration | null>(null);
+const internalDuration = ref<Duration>();
 
 function init() {
   /**
@@ -69,6 +59,19 @@ function convertSecondsToDuration(seconds: number | string) {
     minutes: Math.floor((secondsNumber % 3600) / 60),
   };
 }
+
+watch(
+  () => props.loading,
+  (isLoading) => {
+    if (!isLoading) {
+      // Wait until the component has finished loading, because props.value will not exist until then
+      init();
+    }
+  },
+  {
+    immediate: true,
+  },
+);
 
 const emit = defineEmits<{
   (e: "input", v: number): void;
