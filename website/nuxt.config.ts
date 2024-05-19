@@ -20,8 +20,13 @@ export default defineNuxtConfig({
     },
   },
   appConfig: {
-    searchIndex: {
-      hash: "",
+    nuxt: {
+      /*
+        Fix nuxt always generating a new entry filename based on the random build ID,
+        which subsequently means all other scripts will also be renamed and have their cache invalidated
+        https://github.com/nuxt/nuxt/issues/25133
+      */
+      buildId: "1",
     },
     externalBaseUrl: "", // Overridden by recipe module
   },
@@ -29,12 +34,7 @@ export default defineNuxtConfig({
     build: {
       rollupOptions: {
         output: {
-          /*
-            Fix nuxt always generating a new entry filename based on the build ID,
-            which subsequently means all other scripts will also be renamed and have their cache invalidated
-            https://github.com/nuxt/nuxt/issues/25133
-          */
-          entryFileNames: "_nuxt/[name].js",
+          entryFileNames: "_nuxt/entry.[hash].js",
         },
       },
     },
@@ -55,6 +55,13 @@ export default defineNuxtConfig({
     baseUrl: "", // Overridden by .env NUXT_BASE_URL
     cfAccessClientId: "", // Overridden by .env NUXT_CF_ACCESS_CLIENT_ID
     cfAccessClientSecret: "", // Overridden by .env NUXT_CF_ACCESS_CLIENT_SECRET
+    public: {
+      /*
+        Overridden in recipe module. This is included in the generated HTML,
+        meaning it does not cause cascading cache busting issues
+      */
+      searchIndexHash: "",
+    },
   },
   alias: {
     common: fileURLToPath(new URL("../common", import.meta.url)),

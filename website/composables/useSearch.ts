@@ -9,9 +9,8 @@ let indexDownload: Promise<void> | null = null;
 export interface RecipeSearchResult extends SearchResult, SearchIndexStoredFields {}
 
 export function useSearch() {
-  const config = useAppConfig();
-  const currentSearchIndexHash = config.searchIndex.hash;
-  console.log("appconfig searchindex hash", currentSearchIndexHash);
+  const config = useRuntimeConfig();
+  const currentSearchIndexHash = config.public.searchIndexHash;
 
   async function ensureIndex() {
     if (miniSearch.value) {
