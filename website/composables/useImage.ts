@@ -52,7 +52,7 @@ export function useImage() {
   }) {
     const appConfig = useAppConfig();
     if (!appConfig.externalBaseUrl) {
-      throw new Error("CF_PAGES_URL environment variable is not defined");
+      throw new Error("NUXT_PUBLIC_SITE_URL environment variable is not defined");
     }
 
     const relativeUrl = buildRelativeUrl({ imageId, modifyDate, purpose, aspectRatio });

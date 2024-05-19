@@ -14,7 +14,7 @@ export default defineNuxtModule({
     const searchIndex = generateRecipeSearchIndex(recipes);
 
     // Populate external URL injected automatically in Cloudflare pipeline
-    nuxt.options.appConfig.externalBaseUrl = process.env.CF_PAGES_URL ?? "";
+    nuxt.options.appConfig.externalBaseUrl = process.env.NUXT_PUBLIC_SITE_URL ?? "";
 
     await saveRecipeSearchIndex(searchIndex, nuxt);
 
@@ -62,12 +62,17 @@ function generateRecipeSearchIndex(recipes: RecipePreview[]) {
 
 async function saveRecipeSearchIndex(index: string, nuxt: Nuxt) {
   // Store recipe search index in public folder for client retrieval
-  const imageFolder = `${nuxt.options.rootDir}/public`;
-  await fs.mkdir(imageFolder, { recursive: true });
-  await fs.writeFile(`${imageFolder}/search-index.json`, index, "utf8");
+  const publicFolderPath = `${nuxt.options.rootDir}/public`;
+  await fs.mkdir(publicFolderPath, { recursive: true });
+  await fs.writeFile(`${publicFolderPath}/search-index.json`, index, "utf8");
 
   // Store a hash of the index in config for cache busting
   const hash = crypto.createHash("md5").update(index).digest("hex");
   console.log("Generated search index hash:", hash);
-  nuxt.options.appConfig.searchIndex.hash = hash;
+
+  /*
+  Store the hash in the runtimeConfig instead of appConfig
+  to avoid baking it into the JS and causing cascading cache invalidation
+  */
+  nuxt.options.runtimeConfig.public.searchIndexHash = hash;
 }
