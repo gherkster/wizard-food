@@ -68,5 +68,6 @@ async function saveRecipeSearchIndex(index: string, nuxt: Nuxt) {
 
   // Store a hash of the index in config for cache busting
   const hash = crypto.createHash("md5").update(index).digest("hex");
+  console.log("Generated search index hash:", hash);
   nuxt.options.appConfig.searchIndex.hash = hash;
 }
