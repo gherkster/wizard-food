@@ -79,7 +79,6 @@ withDefaults(
   &__duration {
     display: inline-flex;
     align-items: center;
-    text-transform: uppercase;
     > svg {
       margin-right: 4px;
     }
