@@ -11,6 +11,7 @@ export interface RecipeSearchResult extends SearchResult, SearchIndexStoredField
 export function useSearch() {
   const config = useAppConfig();
   const currentSearchIndexHash = config.searchIndex.hash;
+  console.log("appconfig searchindex hash", currentSearchIndexHash);
 
   async function ensureIndex() {
     if (miniSearch.value) {
