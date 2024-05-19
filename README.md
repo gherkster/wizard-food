@@ -1,3 +1,4 @@
-# Recipe Manager
+# [wizardfood.com](https://wizardfood.com)
 
-A personal recipe manager, with Azure Functions and Web API backend and Vue SPA frontend.
+Source code for the [wizardfood.com](https://wizardfood.com) website and CMS integration.
+
