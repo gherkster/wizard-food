@@ -92,9 +92,13 @@ function getRandomTag(recipe: ServerRecipePreview) {
 
 const formatter = useRecipeFormatter();
 function getTotalDuration(recipe: ServerRecipePreview) {
-  return formatter.formatMinutesAsDuration(
-    (recipe.preparationDuration ?? 0) + (recipe.cookingDuration ?? 0) + (recipe.customDuration ?? 0),
-  );
+  const totalDuration =
+    (recipe.preparationDuration ?? 0) + (recipe.cookingDuration ?? 0) + (recipe.customDuration ?? 0);
+  if (totalDuration === 0) {
+    return "";
+  }
+
+  return formatter.formatMinutesAsDuration(totalDuration);
 }
 
 function buildTagList(categories: ServerRecipeCategories): string[] {
