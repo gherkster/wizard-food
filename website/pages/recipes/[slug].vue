@@ -109,8 +109,8 @@
       </v-column>
     </v-row>
     <footer class="footer">
-      <v-icon :icon="logoLight" :size="168" class="light-theme-only" />
-      <v-icon :icon="logoDark" :size="168" class="dark-theme-only" />
+      <v-icon :icon="logoLight" :size="140" class="light-theme-only" />
+      <v-icon :icon="logoDark" :size="140" class="dark-theme-only" />
     </footer>
   </div>
 </template>
@@ -177,11 +177,16 @@ const unitForms = unitFormsResponse.data.value ?? [];
 
 const formatter = useRecipeFormatter();
 const totalDuration = computed(() => {
-  return formatter.formatMinutesAsDuration(
+  const sumDuration =
     (recipe.value.preparationDuration ?? 0) +
-      (recipe.value.cookingDuration ?? 0) +
-      (recipe.value.customDuration && recipe.value.customDurationName ? recipe.value.customDuration : 0),
-  );
+    (recipe.value.cookingDuration ?? 0) +
+    (recipe.value.customDuration && recipe.value.customDurationName ? recipe.value.customDuration : 0);
+
+  if (sumDuration === 0) {
+    return "";
+  }
+
+  return formatter.formatMinutesAsDuration(sumDuration);
 });
 
 function createSearchLink(term: string): RouteLocationRaw {

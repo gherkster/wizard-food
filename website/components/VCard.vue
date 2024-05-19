@@ -10,7 +10,7 @@
       <div class="card__content">
         <p class="title">{{ title }}</p>
         <p v-if="description">{{ description }}</p>
-        <div class="card__stats text-muted">
+        <div class="card__stats">
           <span v-if="tag" class="card__label no-underline">
             <small
               ><span>{{ tag }}</span>
@@ -75,7 +75,6 @@ withDefaults(
   &__label {
     display: inline-flex;
     align-items: center;
-    font-weight: v.$font-weight-bold;
   }
   &__duration {
     display: inline-flex;
@@ -118,6 +117,17 @@ small {
 
 <style lang="scss">
 @use "@/styles/mixins" as m;
+.card.preview {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  .card__content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
+  }
+}
 .card.promo {
   @include m.breakpoint("sm", "max") {
     .image-container {
