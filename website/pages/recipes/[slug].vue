@@ -291,7 +291,7 @@ footer {
 .recipe__ingredient {
   &__name {
     p {
-      display: inline-block;
+      display: inline;
       margin: 0;
     }
   }
