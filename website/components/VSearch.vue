@@ -1,5 +1,5 @@
 <template>
-  <form class="search" @submit.prevent="$emit('search', query)">
+  <form class="search" role="search" @submit.prevent="$emit('search', query)">
     <v-input
       v-model="query"
       class="text-muted"
