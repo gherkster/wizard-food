@@ -3,7 +3,7 @@
     <slot name="prepend" :on-click="focusButton" />
     <label>
       {{ label }}
-      <input ref="btnRef" v-model="model" type="search" :placeholder="placeholder" size="1" />
+      <input ref="btnRef" v-model="model" type="input" :placeholder="placeholder" size="1" />
     </label>
   </div>
 </template>
