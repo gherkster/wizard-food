@@ -1,11 +1,12 @@
-.light-theme-only {
-  @media (prefers-color-scheme: dark) {
-    display: none;
-  }
+.dark-theme-only {
+  display: none;
 }
 
-.dark-theme-only {
-  @media not (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) {
+  .light-theme-only {
     display: none;
+  }
+  .dark-theme-only {
+    display: unset;
   }
 }
