@@ -42,16 +42,16 @@
 		"push-api": "scp dist/api.js oracle:~/docker-cloud/directus/extensions/directus-extension-relational-editor/dist/api.js"
 	},
 	"devDependencies": {
-		"@directus/extensions-sdk": "11.0.1",
-		"@types/lodash": "^4.14.195",
+		"@directus/extensions-sdk": "^11.0.4",
 		"@tiptap/pm": "^2.2.2",
 		"@tiptap/vue-3": "^2.2.2",
+		"@types/lodash": "^4.14.195",
 		"@types/uuid": "^9.0.2",
 		"lodash": "^4.17.21",
 		"pinia": "2.1.7",
 		"typescript": "^5.4.2",
 		"uuid": "^9.0.0",
-    "validator": "^13.9.0",
+		"validator": "^13.9.0",
 		"vue": "^3.4.21",
 		"vue-i18n": "^9.4.0"
 	},
