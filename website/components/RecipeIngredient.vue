@@ -33,15 +33,17 @@ const multipliedAmount = computed(() => {
   );
 });
 
+const formatter = useRecipeFormatter();
 const formattedAmount = computed(() => {
   if (!props.ingredient.amount) {
     return "";
   }
-  return multiplier.multiplyToFraction(
+  const amount = multiplier.multiplyToNumber(
     props.ingredient.amount,
     props.ingredientMultiplier,
     props.originalNumberOfServings,
   );
+  return formatter.formatIngredientAmount(amount);
 });
 
 const unitVariant = computed(() => {

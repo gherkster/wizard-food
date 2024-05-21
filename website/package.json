@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "dayjs": "^1.11.10",
-    "fraction.js": "^4.2.0",
+    "fraction.js": "^4.3.7",
     "minisearch": "^6.1.0"
   },
   "devDependencies": {
