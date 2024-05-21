@@ -55,7 +55,7 @@ watch(
 );
 
 const formatter = useRecipeFormatter();
-const multipler = useIngredientMultiplier();
+const multiplier = useIngredientMultiplier();
 
 function multiplyInlineIngredients(multiplicationFactor: number) {
   inlineIngredients.value.forEach((ingredient) => {
@@ -63,20 +63,14 @@ function multiplyInlineIngredients(multiplicationFactor: number) {
       return;
     }
 
-    const multipliedAmount = multipler.multiplyToFraction(
-      ingredient.data.amount,
-      multiplicationFactor,
-      props.originalNumberOfServings,
-    );
-
-    const currentAmount = multipler.multiplyToNumber(
+    const currentAmount = multiplier.multiplyToNumber(
       ingredient.data.amount,
       multiplicationFactor,
       props.originalNumberOfServings,
     );
 
     const displayedIngredient = formatter.formatIngredient({
-      amount: multipliedAmount,
+      amount: currentAmount,
       name: currentAmount <= 1 ? ingredient.data.name.singular : ingredient.data.name.plural,
       unit: getUnitLabel(ingredient.data.unit, currentAmount),
       note: "",
