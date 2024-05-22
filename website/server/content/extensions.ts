@@ -22,6 +22,7 @@ import { Node } from "@tiptap/core";
 import { generateText } from "@tiptap/core";
 import { useRecipeFormatter } from "~/composables";
 import type { ServerIngredient } from "common/types/serverRecipe";
+import Fraction from "fraction.js";
 
 interface InlineIngredientAttributes {
   collection: string;
@@ -83,7 +84,7 @@ const inlineIngredientSerializer = Node.create({
           "data-note": HTMLAttributes.data.note,
         },
         recipeFormatter.formatIngredient({
-          amount: HTMLAttributes.data.amount,
+          amount: HTMLAttributes.data.amount ? new Fraction(HTMLAttributes.data.amount) : undefined,
           unit: HTMLAttributes.data.unit,
           /*
             This is only relevant on page load before the component starts creating the name based on data attributes

@@ -10,6 +10,7 @@
 </template>
 
 <script setup lang="ts">
+import Fraction from "fraction.js";
 import type { IngredientUnitForm } from "~/types/mapping";
 import type { Ingredient } from "~/types/recipe";
 
@@ -20,30 +21,24 @@ const props = defineProps<{
   unitForms: IngredientUnitForm[];
 }>();
 
-const multiplier = useIngredientMultiplier();
+const amount = computed(() => (props.ingredient.amount ? new Fraction(props.ingredient.amount) : undefined));
 
 const multipliedAmount = computed(() => {
-  if (!props.ingredient.amount) {
+  if (!amount.value) {
     return undefined;
   }
-  return multiplier.multiplyToNumber(
-    props.ingredient.amount,
-    props.ingredientMultiplier,
-    props.originalNumberOfServings,
-  );
+
+  return amount.value.mul(props.ingredientMultiplier).div(props.originalNumberOfServings);
 });
 
 const formatter = useRecipeFormatter();
+
 const formattedAmount = computed(() => {
-  if (!props.ingredient.amount) {
+  if (!multipliedAmount.value) {
     return "";
   }
-  const amount = multiplier.multiplyToNumber(
-    props.ingredient.amount,
-    props.ingredientMultiplier,
-    props.originalNumberOfServings,
-  );
-  return formatter.formatIngredientAmount(amount);
+
+  return formatter.formatIngredientAmount(multipliedAmount.value);
 });
 
 const unitVariant = computed(() => {
@@ -62,7 +57,7 @@ const unitVariant = computed(() => {
     return props.ingredient.unit;
   }
 
-  return multipliedAmount.value <= 1 ? multipleFormsUnit.singularForm : multipleFormsUnit.pluralForm;
+  return multipliedAmount.value.valueOf() <= 1 ? multipleFormsUnit.singularForm : multipleFormsUnit.pluralForm;
 });
 
 const nameVariant = computed(() => {
@@ -72,6 +67,6 @@ const nameVariant = computed(() => {
     return props.ingredient.name.plural;
   }
 
-  return multipliedAmount.value <= 1 ? props.ingredient.name.singular : props.ingredient.name.plural;
+  return multipliedAmount.value.valueOf() <= 1 ? props.ingredient.name.singular : props.ingredient.name.plural;
 });
 </script>
