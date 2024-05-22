@@ -4,13 +4,14 @@
 </template>
 
 <script setup lang="ts">
+import Fraction from "fraction.js";
 import { useRecipeFormatter } from "~/composables";
 import type { IngredientUnitForm } from "~/types/mapping";
 
 interface InlineIngredientMarkup {
   element: HTMLElement;
   data: {
-    amount?: number;
+    amount?: Fraction;
     unit?: string;
     name: {
       singular: string;
@@ -37,7 +38,7 @@ onMounted(() => {
     inlineIngredients.value.push({
       element: elem,
       data: {
-        amount: isNaN(amount) ? undefined : amount,
+        amount: isNaN(amount) ? undefined : new Fraction(amount),
         unit: elem.dataset.unit,
         name: {
           singular: elem.dataset.nameSingular ?? "",
@@ -55,7 +56,6 @@ watch(
 );
 
 const formatter = useRecipeFormatter();
-const multiplier = useIngredientMultiplier();
 
 function multiplyInlineIngredients(multiplicationFactor: number) {
   inlineIngredients.value.forEach((ingredient) => {
@@ -63,16 +63,12 @@ function multiplyInlineIngredients(multiplicationFactor: number) {
       return;
     }
 
-    const currentAmount = multiplier.multiplyToNumber(
-      ingredient.data.amount,
-      multiplicationFactor,
-      props.originalNumberOfServings,
-    );
+    const currentAmount = ingredient.data.amount.mul(multiplicationFactor).div(props.originalNumberOfServings);
 
     const displayedIngredient = formatter.formatIngredient({
       amount: currentAmount,
-      name: currentAmount <= 1 ? ingredient.data.name.singular : ingredient.data.name.plural,
-      unit: getUnitLabel(ingredient.data.unit, currentAmount),
+      name: currentAmount.valueOf() <= 1 ? ingredient.data.name.singular : ingredient.data.name.plural,
+      unit: getUnitLabel(ingredient.data.unit, currentAmount.valueOf()),
       note: "",
     });
     ingredient.element.textContent = displayedIngredient;

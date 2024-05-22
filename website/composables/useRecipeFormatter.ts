@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import Fraction from "fraction.js";
 
-function formatIngredient(ingredient: { amount?: number; name: string; unit?: string; note?: string }) {
+function formatIngredient(ingredient: { amount?: Fraction; name: string; unit?: string; note?: string }) {
   const amountFraction = ingredient.amount ? formatIngredientAmount(ingredient.amount) : "";
   const unit = ingredient.unit?.toString() ?? "";
   const note = ingredient.note ?? "";
@@ -16,35 +16,35 @@ function formatIngredient(ingredient: { amount?: number; name: string; unit?: st
  * @param amount The ingredient amount
  * @returns The ingredient amount, rounded to avoid excessively accurate fractions
  */
-function formatIngredientAmount(amount: number) {
-  let amountFraction = new Fraction(amount);
+function formatIngredientAmount(amount: Fraction) {
+  const decimalAmount = amount.valueOf();
 
   // Round numbers relative to their size
-  if (amount > 1000) {
-    amountFraction = amountFraction.div(25).ceil().mul(25);
-  } else if (amount > 100) {
-    amountFraction = amountFraction.div(10).ceil().mul(10);
-  } else if (amount > 50) {
-    amountFraction = amountFraction.div(5).ceil().mul(5);
-  } else if (amount > 10) {
-    amountFraction = amountFraction.round();
+  if (decimalAmount > 1000) {
+    amount = amount.div(25).ceil().mul(25);
+  } else if (decimalAmount > 100) {
+    amount = amount.div(10).ceil().mul(10);
+  } else if (decimalAmount > 50) {
+    amount = amount.div(5).ceil().mul(5);
+  } else if (decimalAmount > 10) {
+    amount = amount.round();
   } else {
     // @ts-expect-error fraction.js@4.3.7 does not include type for roundTo
-    const roundedToOneEighth = amountFraction.roundTo("1/8") as Fraction;
+    const roundedToOneEighth = amount.roundTo("1/8") as Fraction;
     // @ts-expect-error fraction.js@4.3.7 does not include type for roundTo
-    const roundedToOneThird = amountFraction.roundTo("1/3") as Fraction;
+    const roundedToOneThird = amount.roundTo("1/3") as Fraction;
 
     /*
       We want the maximum accuracy to be 1/8 to avoid excessively precise fractions,
       however 1/3 or 2/3 is often a better approximation for things like going from 6 to 4 servings
     */
-    amountFraction =
-      Math.abs(roundedToOneEighth.valueOf() - amount) < Math.abs(roundedToOneThird.valueOf() - amount)
+    amount =
+      Math.abs(roundedToOneEighth.valueOf() - decimalAmount) < Math.abs(roundedToOneThird.valueOf() - decimalAmount)
         ? roundedToOneEighth
         : roundedToOneThird;
   }
 
-  return amountFraction.toFraction(true).trim();
+  return amount.toFraction(true).trim();
 }
 
 function formatMinutesAsDuration(seconds: number) {
