@@ -4,75 +4,56 @@ import { searchIndexSettings, type SearchIndexStoredFields } from "~/types/searc
 
 // Store these outside the function in the global scope for re-use
 const miniSearch = ref<MiniSearch<ServerRecipe>>();
-let indexDownload: Promise<void> | null = null;
 
 export interface RecipeSearchResult extends SearchResult, SearchIndexStoredFields {}
 
 export function useSearch() {
-  const config = useRuntimeConfig();
-  const currentSearchIndexHash = config.public.searchIndexHash;
-
   async function ensureIndex() {
     if (miniSearch.value) {
       return;
     }
 
-    if (!import.meta.dev) {
-      verifySearchIndexIsCached();
-    }
+    verifySearchIndexIsCached();
 
     // If a valid copy of the search index wasn't found in localstorage,
     // trigger an async download of the index in the background
     if (!miniSearch.value) {
-      downloadIndex();
+      await refreshIndex();
     }
   }
 
   function verifySearchIndexIsCached() {
     if (process.client) {
-      const storedSearchIndexHash = localStorage.getItem("search-index-hash");
-
-      if (currentSearchIndexHash && currentSearchIndexHash === storedSearchIndexHash) {
-        const storedIndex = localStorage.getItem("search-index");
-        if (storedIndex) {
-          try {
-            miniSearch.value = MiniSearch.loadJSON(storedIndex, searchIndexSettings);
-            miniSearch.value.search("a"); // Do a search to validate this is a valid search index
-          } catch (error) {
-            miniSearch.value = undefined;
-            console.error(error);
-          }
+      const storedIndex = localStorage.getItem("search-index");
+      if (storedIndex) {
+        try {
+          miniSearch.value = MiniSearch.loadJSON(storedIndex, searchIndexSettings);
+          miniSearch.value.search("a"); // Do a search to validate this is a valid search index
+        } catch (error) {
+          miniSearch.value = undefined;
+          console.error(error);
         }
       }
     }
   }
 
-  async function downloadIndex() {
+  async function refreshIndex() {
     if (!process.client) {
       return;
     }
 
-    // Load lazily so that downloading the search index does not block page loads.
-    indexDownload = $fetch("/search-index.json").then((index: JSON) => {
-      if (index) {
-        const jsonString = JSON.stringify(index);
-        miniSearch.value = MiniSearch.loadJSON(jsonString, searchIndexSettings);
+    const { data: index } = await useFetch<JSON>("/search-index.json");
+    if (index.value) {
+      const jsonString = JSON.stringify(index.value);
+      miniSearch.value = MiniSearch.loadJSON(jsonString, searchIndexSettings);
 
-        localStorage.setItem("search-index", jsonString);
-        localStorage.setItem("search-index-hash", currentSearchIndexHash);
-      }
-    });
+      localStorage.setItem("search-index", jsonString);
+    }
   }
 
   async function search(query: string) {
-    if (indexDownload) {
-      await indexDownload;
-    }
-
-    // If for some the search index is still missing then try downloading again
-    // Could happen from a network error
     if (!miniSearch.value) {
-      await downloadIndex();
+      await refreshIndex();
     }
 
     if (!miniSearch.value) {
@@ -85,8 +66,8 @@ export function useSearch() {
   }
 
   async function allItems() {
-    if (indexDownload) {
-      await indexDownload;
+    if (!miniSearch.value) {
+      await refreshIndex();
     }
 
     if (!miniSearch.value) {
@@ -98,6 +79,7 @@ export function useSearch() {
 
   return {
     ensureIndex,
+    refreshIndex,
     search,
     allItems,
   };

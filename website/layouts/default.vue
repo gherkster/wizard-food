@@ -20,11 +20,6 @@
 <script setup lang="ts">
 import LogoHead from "~icons/custom/head";
 
-const searchClient = useSearch();
-// Ensure the search index exists on each page load,
-// so that if it is missing it can trigger a background download
-searchClient.ensureIndex();
-
 const route = useRoute();
 
 const initialQuery = route.query.search && typeof route.query.search === "string" ? route.query.search : null;
