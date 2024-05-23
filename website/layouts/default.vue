@@ -21,8 +21,11 @@
 import LogoHead from "~icons/custom/head";
 
 const searchClient = useSearch();
-// Ensure the search index exists on each page load,
-// so that if it is missing it can trigger a background download
+/*
+  Kick off a background download of the search index if it hasn't been downloaded yet.
+  Periodic checks are done after page load within the versioning middleware.
+  This is also needed to pull in the data from localStorage on a fresh page load.
+*/
 searchClient.ensureIndex();
 
 const route = useRoute();

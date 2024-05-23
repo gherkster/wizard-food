@@ -130,11 +130,6 @@ useServerSeoMeta({
 useHead({
   title: content?.title,
 });
-
-const headerIcon = {
-  name: "gravity-ui:circle-chevron-right",
-  size: "32",
-};
 </script>
 
 <style lang="scss" scoped>

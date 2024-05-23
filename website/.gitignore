@@ -6,6 +6,7 @@
 dist
 .wrangler
 public/search-index.json
+public/version.json
 stats.html
 .data
 
@@ -35,3 +36,4 @@ logs
 .env
 .env.*
 !.env.example
+.dev.vars
