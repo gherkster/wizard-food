@@ -81,8 +81,8 @@ async function saveRecipeSearchIndex(index: string, nuxt: Nuxt) {
   };
 
   /*
-    Store the current versions of assets in /public to allow the client
-    to periodically check for newer content
+    Store the current versions of assets in /public to allow the client to periodically check for newer content.
+    The documentation for why this is required is in the versioning global middleware.
   */
   await fs.writeFile(`${publicFolderPath}/version.json`, JSON.stringify(currentVersion), "utf8");
 }

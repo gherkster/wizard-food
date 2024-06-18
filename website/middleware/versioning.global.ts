@@ -36,36 +36,40 @@ export default defineNuxtRouteMiddleware((to) => {
   }
 
   // Check for newer versions in the background to avoid delaying navigation
-  getLatestVersionNumbers().then((version) => {
-    if (!version) {
-      return;
-    }
+  getLatestVersionNumbers()
+    .then((version) => {
+      if (!version) {
+        return;
+      }
 
-    const isSearchIndexStale = checkForStaleSearchIndex(version.searchIndex);
-    if (isSearchIndexStale) {
-      /*
+      const isSearchIndexStale = checkForStaleSearchIndex(version.searchIndex);
+      if (isSearchIndexStale) {
+        /*
         Trigger a background download of the latest search index,
         skipping if there are any already active requests to prevent duplicate requests
       */
-      if (!searchIndexDownload) {
-        searchIndexDownload = useSearch()
-          .refreshIndex()
-          .finally(() => {
-            localStorage.setItem(searchIndexHashStorageKey, version.searchIndex);
-            searchIndexDownload = null;
-          });
+        if (!searchIndexDownload) {
+          searchIndexDownload = useSearch()
+            .refreshIndex()
+            .finally(() => {
+              localStorage.setItem(searchIndexHashStorageKey, version.searchIndex);
+              searchIndexDownload = null;
+            });
+        }
       }
-    }
 
-    /*
+      /*
       If the search index is downloading we don't want to trigger a full page load and cancel a pending request.
       It can always happen after the next navigation, an old build won't immediately affect the user experience.
     */
-    if (!searchIndexDownload && checkForStaleBuild(version.build)) {
-      localStorage.setItem("build-version", version.build);
-      isBuildStale = true;
-    }
-  });
+      if (!searchIndexDownload && checkForStaleBuild(version.build)) {
+        localStorage.setItem("build-version", version.build);
+        isBuildStale = true;
+      }
+    })
+    .catch((e) => {
+      console.error(e);
+    });
 
   localStorage.setItem(lastCheckTimeStorageKey, Date.now().toString());
 });
