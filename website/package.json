@@ -49,7 +49,7 @@
     "@tiptap/extension-text": "^2.2.2",
     "@tiptap/html": "^2.2.4",
     "@types/node": "^18.16.19",
-    "nuxt": "^3.11.2",
+    "nuxt": "^3.12.2",
     "pure-rand": "^6.1.0",
     "sass": "^1.64.1",
     "tiptap-render-view": "^1.0.2",
