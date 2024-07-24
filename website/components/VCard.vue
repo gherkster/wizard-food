@@ -1,5 +1,5 @@
 <template>
-  <nuxt-link :to="link">
+  <nuxt-link :to="link" class="concealed">
     <div class="card" :class="variant">
       <blurrable-image
         :img="image"
