@@ -3,8 +3,8 @@
     <nuxt-loading-indicator :duration="1000" :throttle="500" :height="3" :color="false" />
     <header class="nav-header">
       <div class="nav-header__options">
-        <nuxt-link to="/"> Home </nuxt-link>
-        <nuxt-link to="/recipes">Recipes</nuxt-link>
+        <nuxt-link to="/" class="concealed"> Home </nuxt-link>
+        <nuxt-link to="/recipes" class="concealed">Recipes</nuxt-link>
         <div class="nav-header-search">
           <v-icon :icon="LogoHead" :size="44" class="nav-header-search__logo" />
           <v-search :value="query" class="nav-header-search__input" @input="search" @search="search" />

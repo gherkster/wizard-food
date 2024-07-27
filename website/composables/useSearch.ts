@@ -61,7 +61,10 @@ export function useSearch() {
     }
 
     return miniSearch.value.search(query, {
-      prefix: true, // Match on the prefix of the result, not exact word matches. I.e. chick -> chicken
+      // Match on the prefix of the result, not exact word matches. I.e. chick -> chicken
+      prefix: true,
+      // Don't use the default "OR" matching, which can match different recipes when the query includes spaces
+      combineWith: "AND",
     }) as RecipeSearchResult[];
   }
 

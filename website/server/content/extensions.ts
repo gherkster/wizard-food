@@ -32,7 +32,20 @@ interface InlineIngredientAttributes {
 const extensions = [
   Document,
   Text,
-  Paragraph,
+  Paragraph.extend({
+    addAttributes() {
+      return {
+        ...this.parent?.(),
+        text: {
+          renderHTML: () => {
+            return {
+              class: "rich-text",
+            };
+          },
+        },
+      };
+    },
+  }),
   HardBreak,
   Heading,
   CodeBlock,

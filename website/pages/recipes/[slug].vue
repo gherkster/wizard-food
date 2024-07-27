@@ -10,7 +10,7 @@
           <!-- eslint-disable-next-line vue/no-v-html -->
           <div v-if="recipe.description" class="recipe__description" v-html="recipe.description" />
           <div class="recipe__tags">
-            <nuxt-link v-for="tag in recipe.tags" :key="tag" :to="createSearchLink(tag)">
+            <nuxt-link v-for="tag in recipe.tags" :key="tag" :to="createSearchLink(tag)" class="concealed">
               <v-tag :icon="magnifier">{{ tag }}</v-tag>
             </nuxt-link>
           </div>
@@ -283,22 +283,12 @@ footer {
 </style>
 
 <style lang="scss">
-.recipe__description {
-  p {
-    margin: 0;
-  }
-}
 .recipe__ingredient {
   &__name {
     p {
       display: inline;
       margin: 0;
     }
-  }
-}
-.instruction {
-  p {
-    margin-top: 0;
   }
 }
 </style>

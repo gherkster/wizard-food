@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
   const alreadyShownRecipes = new Set<number>();
 
   const latestRecipes = recipes
-    .sort((a, b) => new Date(b.date_created).getSeconds() - new Date(a.date_created).getSeconds())
+    .sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime())
     .slice(0, 3);
   latestRecipes.forEach((r) => alreadyShownRecipes.add(r.id));
 

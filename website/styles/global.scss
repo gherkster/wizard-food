@@ -58,6 +58,10 @@ li:not(:last-child) {
 }
 
 a {
+  color: var(--theme-link-color);
+}
+
+a.concealed {
   text-decoration: none;
   color: var(--theme-font-color);
   &:hover {
@@ -87,4 +91,11 @@ input {
 
 .text-muted {
   color: var(--theme-font-color-muted);
+}
+
+.rich-text {
+  margin-top: 0;
+  a {
+    text-decoration: underline;
+  }
 }
