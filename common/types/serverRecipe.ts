@@ -42,6 +42,7 @@ export interface ServerRecipeCategories {
   course?: string;
   main_ingredients?: string[];
   diets?: string[];
+  method?: string;
 }
 
 interface ServerIngredientGroup {
