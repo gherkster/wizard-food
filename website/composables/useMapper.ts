@@ -112,6 +112,9 @@ function buildTagList(categories: ServerRecipeCategories): string[] {
   if (categories.diets) {
     tags.push(...categories.diets);
   }
+  if (categories.method) {
+    tags.push(categories.method);
+  }
   if (categories.main_ingredients) {
     tags.push(...categories.main_ingredients);
   }
