@@ -52,13 +52,13 @@ function formatMinutesAsDuration(seconds: number) {
   const totalDuration = dayjs.duration(seconds, "seconds");
 
   const formatStrings = [];
-  if (totalDuration.asDays() >= 1) {
+  if (totalDuration.days() >= 1) {
     formatStrings.push("D[d]");
   }
-  if (totalDuration.asHours() >= 1) {
+  if (totalDuration.hours() >= 1) {
     formatStrings.push("H[h]");
   }
-  if (totalDuration.asMinutes() >= 1) {
+  if (totalDuration.minutes() >= 1) {
     formatStrings.push("m[m]");
   }
   return totalDuration.format(formatStrings.join(" "));
