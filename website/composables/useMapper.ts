@@ -30,6 +30,7 @@ function toRecipe(serverRecipe: ServerRecipe): Recipe {
               plural: i.name_plural_html,
             },
             note: i.note,
+            inlineOnly: i.inline_only,
           };
         }),
       };

@@ -52,13 +52,14 @@ interface ServerIngredientGroup {
 
 export interface ServerIngredient {
   id: number;
+  amount?: number;
   unit?: string;
   name_singular: JSONContent | null;
   name_singular_html: string;
   name_plural: JSONContent | null;
   name_plural_html: string;
   note?: string;
-  amount?: number;
+  inline_only: boolean;
 }
 
 interface ServerInstructionGroup {

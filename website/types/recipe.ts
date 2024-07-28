@@ -40,6 +40,7 @@ export interface Ingredient {
     plural: string;
   };
   note?: string;
+  inlineOnly: boolean;
 }
 
 export interface Image {
