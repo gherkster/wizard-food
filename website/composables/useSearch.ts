@@ -23,7 +23,7 @@ export function useSearch() {
   }
 
   function verifySearchIndexIsCached() {
-    if (process.client) {
+    if (import.meta.client) {
       const storedIndex = localStorage.getItem("search-index");
       if (storedIndex) {
         try {
@@ -38,7 +38,7 @@ export function useSearch() {
   }
 
   async function refreshIndex() {
-    if (!process.client) {
+    if (!import.meta.client) {
       return;
     }
 
