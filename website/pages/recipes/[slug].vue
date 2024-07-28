@@ -53,14 +53,16 @@
               <b>{{ ingredientSection.name }}</b>
             </p>
             <ul>
-              <li v-for="ingredient in ingredientSection.ingredients" :key="JSON.stringify(ingredient)">
-                <recipe-ingredient
-                  :ingredient="ingredient"
-                  :ingredient-multiplier="servings"
-                  :original-number-of-servings="originalNumberOfServings"
-                  :unit-forms="unitForms"
-                />
-              </li>
+              <template v-for="ingredient in ingredientSection.ingredients">
+                <li v-if="!ingredient.inlineOnly" :key="JSON.stringify(ingredient)">
+                  <recipe-ingredient
+                    :ingredient="ingredient"
+                    :ingredient-multiplier="servings"
+                    :original-number-of-servings="originalNumberOfServings"
+                    :unit-forms="unitForms"
+                  />
+                </li>
+              </template>
             </ul>
           </div>
         </div>
