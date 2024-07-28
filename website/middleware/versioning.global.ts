@@ -16,7 +16,7 @@ const lastCheckTimeStorageKey = "last-version-check";
  * or downloading and swapping in the new search index in the background
  */
 export default defineNuxtRouteMiddleware((to) => {
-  if (!process.client) {
+  if (!import.meta.client) {
     return;
   }
 
