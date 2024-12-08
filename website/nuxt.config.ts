@@ -34,6 +34,10 @@ export default defineNuxtConfig({
       searchIndexHash: "",
     },
   },
+  typescript: {
+    // Enable build-time type checking
+    typeCheck: true,
+  },
   vite: {
     build: {
       rollupOptions: {
