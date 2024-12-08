@@ -18,8 +18,7 @@ import { Table } from "@tiptap/extension-table";
 import { TableHeader } from "@tiptap/extension-table-header";
 import { TableRow } from "@tiptap/extension-table-row";
 import { TableCell } from "@tiptap/extension-table-cell";
-import { Node } from "@tiptap/core";
-import { generateText } from "@tiptap/core";
+import { Node, generateText } from "@tiptap/core";
 import { useRecipeFormatter } from "~/composables";
 import type { ServerIngredient } from "common/types/serverRecipe";
 import Fraction from "fraction.js";
@@ -83,38 +82,42 @@ const inlineIngredientSerializer = Node.create({
       },
     };
   },
-  renderHTML({ node, HTMLAttributes }: { node: Node; HTMLAttributes: InlineIngredientAttributes }) {
+  renderHTML(props) {
     const recipeFormatter = useRecipeFormatter();
-    if (HTMLAttributes.collection === "ingredients" && HTMLAttributes.data) {
+
+    // Cast type since tiptap uses any here
+    const htmlAttributes = props.HTMLAttributes as InlineIngredientAttributes;
+
+    if (htmlAttributes.collection === "ingredients" && htmlAttributes.data) {
       return [
         "span",
         {
           class: "inline-ingredient",
-          "data-amount": HTMLAttributes.data.amount,
-          "data-unit": HTMLAttributes.data.unit,
-          "data-name-singular": generateText(HTMLAttributes.data.name_singular ?? {}, extensions),
-          "data-name-plural": generateText(HTMLAttributes.data.name_plural ?? {}, extensions),
-          "data-note": HTMLAttributes.data.note,
+          "data-amount": htmlAttributes.data.amount,
+          "data-unit": htmlAttributes.data.unit,
+          "data-name-singular": generateText(htmlAttributes.data.name_singular ?? {}, extensions),
+          "data-name-plural": generateText(htmlAttributes.data.name_plural ?? {}, extensions),
+          "data-note": htmlAttributes.data.note,
         },
         recipeFormatter.formatIngredient({
-          amount: HTMLAttributes.data.amount ? new Fraction(HTMLAttributes.data.amount) : undefined,
-          unit: HTMLAttributes.data.unit,
+          amount: htmlAttributes.data.amount ? new Fraction(htmlAttributes.data.amount) : undefined,
+          unit: htmlAttributes.data.unit,
           /*
             This is only relevant on page load before the component starts creating the name based on data attributes
             So we can assume if an amount is specified <= 1 that it should show the singular form,
             since on page load the servings multiplier is in the default state
           */
           name: generateText(
-            HTMLAttributes.data.amount && HTMLAttributes.data.amount <= 1
-              ? HTMLAttributes.data.name_singular ?? {}
-              : HTMLAttributes.data.name_plural ?? {},
+            htmlAttributes.data.amount && htmlAttributes.data.amount <= 1
+              ? htmlAttributes.data.name_singular ?? {}
+              : htmlAttributes.data.name_plural ?? {},
             extensions,
           ),
         }),
       ];
     }
 
-    return [node.type, HTMLAttributes, 0];
+    return [props.node.type.name, htmlAttributes, 0];
   },
 });
 

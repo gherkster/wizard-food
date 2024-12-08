@@ -82,9 +82,10 @@ async function search(value: string) {
 
 .nav-header {
   display: flex;
+  padding-top: 42px; // Hardcode spacing to guarantee consistent space for logo
+
   @include m.spacing("px", "xs");
   @include m.spacing("pb", "xs");
-  padding-top: 42px; // Hardcode spacing to guarantee consistent space for logo
 
   &__options {
     display: flex;

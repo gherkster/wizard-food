@@ -1,6 +1,6 @@
-import { JSONContent, generateText } from "@tiptap/core";
+import { type JSONContent, generateText } from "@tiptap/core";
 import { generateHTML } from "@tiptap/html";
-import { InlineIngredientRelation } from "common/types/serverRecipe";
+import type { InlineIngredientRelation } from "common/types/serverRecipe";
 import { useDirectus, useMapper } from "~/composables";
 import extensions from "~/server/content/extensions";
 

@@ -232,8 +232,8 @@ function createSearchLink(term: string): RouteLocationRaw {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    @include m.spacing("g", "xs");
     text-transform: capitalize;
+    @include m.spacing("g", "xs");
   }
   &__ingredients {
     display: flex;

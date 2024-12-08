@@ -56,8 +56,15 @@ export default defineNuxtConfig({
         },
       }),
     ],
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: "modern-compiler", // or "modern"
+        },
+      },
+    },
   },
-  modules: ["unplugin-icons/nuxt", "@nuxt/fonts", "@nuxtjs/sitemap"],
+  modules: ["unplugin-icons/nuxt", "@nuxt/fonts", "@nuxtjs/sitemap", "@nuxt/eslint"],
   alias: {
     common: fileURLToPath(new URL("../common", import.meta.url)),
   },
