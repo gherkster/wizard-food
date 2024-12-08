@@ -7,6 +7,7 @@
     </label>
   </div>
 </template>
+
 <script setup lang="ts">
 defineProps<{
   value?: string;
@@ -25,17 +26,21 @@ const focusButton = () => btnRef.value?.focus();
 <style lang="scss" scoped>
 @use "@/styles/mixins" as m;
 @use "@/styles/variables" as v;
+
 .input-container {
   display: flex;
   align-items: center;
   min-width: 160px;
   background-color: var(--theme-input-background-color);
-  @include m.spacing("px", "xs");
   border-radius: v.$border-radius-md;
+
+  @include m.spacing("px", "xs");
+
   label,
   input {
     width: 100%;
   }
+
   input {
     outline: none;
     background-color: var(--theme-input-background-color);

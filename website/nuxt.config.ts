@@ -34,6 +34,10 @@ export default defineNuxtConfig({
       searchIndexHash: "",
     },
   },
+  typescript: {
+    // Enable build-time type checking, only currently enabled in local development due to pipeline issues
+    typeCheck: import.meta.dev,
+  },
   vite: {
     build: {
       rollupOptions: {
@@ -52,8 +56,15 @@ export default defineNuxtConfig({
         },
       }),
     ],
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: "modern-compiler", // or "modern"
+        },
+      },
+    },
   },
-  modules: ["unplugin-icons/nuxt", "@nuxt/fonts", "@nuxtjs/sitemap"],
+  modules: ["unplugin-icons/nuxt", "@nuxt/fonts", "@nuxtjs/sitemap", "@nuxt/eslint"],
   alias: {
     common: fileURLToPath(new URL("../common", import.meta.url)),
   },

@@ -1,8 +1,10 @@
+@use "sass:map";
+
 @use "variables" as v;
 @use "mixins" as m;
 
 .page {
-  max-width: map-get(v.$breakpoints, xl) * 1px;
+  max-width: map.get(v.$breakpoints, xl) * 1px;
   margin: 0 auto;
 
   &--fluid {
@@ -21,6 +23,7 @@
   width: 100%;
   column-gap: v.$cols-horizontal-gap;
   @include m.spacing("gy", "xs");
+
   &.wide-gap {
     column-gap: v.$cols-horizontal-gap-wide;
   }
@@ -40,8 +43,7 @@
 @include m.create-cols(null, v.$grid-cols-count);
 
 @each $breakpoint-name, $width in v.$breakpoints {
-  @media screen and (min-width: $width * 1px) {
+  @media screen and (min-width: ($width * 1px)) {
     @include m.create-cols($breakpoint-name, v.$grid-cols-count);
   }
 }
-

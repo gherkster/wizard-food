@@ -1,3 +1,5 @@
+@use "sass:map";
+
 @use "mixins" as m;
 @use "variables" as v;
 
@@ -15,17 +17,28 @@ body {
   text-underline-offset: 3px;
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
 @each $key, $value in v.$font-sizes {
   #{$key} {
-    @include m.responsive-text(map-get($value, font-size-min), map-get($value, font-size-max), v.$breakpoint-min, v.$breakpoint-max)
+    @include m.responsive-text(
+      map.get($value, font-size-min),
+      map.get($value, font-size-max),
+      v.$breakpoint-min,
+      v.$breakpoint-max
+    );
   }
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: v.$font-family-headers;
   font-weight: v.$font-weight-regular;
   margin: 0 0 v.$header-margin-bottom 0;
@@ -80,7 +93,7 @@ img {
 .control {
   &.large {
     .control__label {
-      font-size: #{map-get(map-get(v.$font-sizes, html), font-size-max)}px;
+      font-size: #{map.get(map.get(v.$font-sizes, html), font-size-max)}px;
     }
   }
 }

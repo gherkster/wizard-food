@@ -34,17 +34,19 @@ const emit = defineEmits<{
 // TODO: Use font size variable
 @use "@/styles/mixins" as m;
 @use "@/styles/variables" as v;
+
 $button-size: 16px;
+
 .v-button {
   width: fit-content;
   border-style: none;
   border-radius: v.$border-radius-sm;
-  @include m.spacing("px", "sm");
-  @include m.spacing("py", "xs");
-  //pointer-events: none;
-  //background-color: transparent;
   font-size: $button-size;
   line-height: $button-size;
+
+  @include m.spacing("px", "sm");
+  @include m.spacing("py", "xs");
+
   &:hover {
     cursor: pointer;
   }
@@ -55,15 +57,18 @@ $button-size: 16px;
       background-color: var(--theme-color-active);
     }
   }
+
   &.btn-transparent {
     background-color: transparent;
     &:hover {
       background-color: transparent;
     }
   }
+
   &.large {
     min-width: 140px;
   }
+
   &.small {
     @include m.spacing("p", "xxs");
   }

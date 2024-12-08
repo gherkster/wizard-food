@@ -1,4 +1,4 @@
-import { ServerRecipePreview } from "common/types/serverRecipe";
+import type { ServerRecipePreview } from "common/types/serverRecipe";
 import { useDirectus, useMapper } from "~/composables";
 
 export default defineEventHandler(async (event) => {

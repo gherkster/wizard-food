@@ -7,7 +7,7 @@
   </div>
   <div v-else>
     <h2>
-      {{ title }}<b v-show="searchTerm">{{ searchTerm }}</b>
+      {{ searchResultsPrefix }}<b v-show="searchTerm">{{ searchTerm }}</b>
     </h2>
     <div class="recipes">
       <client-only>
@@ -58,9 +58,9 @@ watch(
   },
 );
 
-const isEmptySearchResult = computed(() => recipes.value.length === 0 && searchTerm.value);
+const isEmptySearchResult = computed(() => recipes.value.length === 0 && !!searchTerm.value);
 
-const title = computed(() => {
+const searchResultsPrefix = computed(() => {
   if (isEmptySearchResult.value) {
     return "No recipes found for ";
   }

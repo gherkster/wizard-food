@@ -4,12 +4,12 @@ import type { ServerRecipe, ServerRecipePreview } from "common/types/serverRecip
 import type { PageContent } from "common/types/content";
 import type { ServerIngredientUnitForm } from "common/types/serverMapping";
 
-export interface CmsSchema {
+type CmsSchema = {
   recipes: ServerRecipe[];
   home_page: PageContent;
   recipes_page: PageContent;
   ingredient_unit_forms: ServerIngredientUnitForm[];
-}
+};
 
 const getImageFields = (path: string) => [
   `${path}.id`,
@@ -65,7 +65,7 @@ export function useDirectus({ url, clientId, clientSecret }: { url: string; clie
       }),
     );
 
-    return recipes.length > 0 ? recipes[0] : null;
+    return recipes.length === 1 ? recipes[0] : null;
   }
 
   // TODO: Only get back required fields
