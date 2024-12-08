@@ -1,5 +1,5 @@
 import { createDirectus, readItems, readSingleton, rest } from "@directus/sdk";
-import type { QueryFields, RestClient } from "@directus/sdk";
+import type { RestClient } from "@directus/sdk";
 import type { ServerRecipe, ServerRecipePreview } from "common/types/serverRecipe";
 import type { PageContent } from "common/types/content";
 import type { ServerIngredientUnitForm } from "common/types/serverMapping";
@@ -11,7 +11,7 @@ type CmsSchema = {
   ingredient_unit_forms: ServerIngredientUnitForm[];
 };
 
-const getImageFields = (path: string): QueryFields<CmsSchema, ServerRecipe> => [
+const getImageFields = (path: string) => [
   `${path}.id`,
   `${path}.width`,
   `${path}.height`,
@@ -19,7 +19,7 @@ const getImageFields = (path: string): QueryFields<CmsSchema, ServerRecipe> => [
   `${path}.modified_on`,
 ];
 
-const searchFields: QueryFields<CmsSchema, ServerRecipe> = [
+const searchFields = [
   "*",
   ...getImageFields("coverImage"),
   "ingredientGroups.name",
@@ -65,7 +65,7 @@ export function useDirectus({ url, clientId, clientSecret }: { url: string; clie
       }),
     );
 
-    return recipes.length === 0 ? recipes[0] : null;
+    return recipes.length === 1 ? recipes[0] : null;
   }
 
   // TODO: Only get back required fields

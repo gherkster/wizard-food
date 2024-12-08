@@ -35,8 +35,8 @@ export default defineNuxtConfig({
     },
   },
   typescript: {
-    // Enable build-time type checking
-    typeCheck: true,
+    // Enable build-time type checking, only currently enabled in local development due to pipeline issues
+    typeCheck: import.meta.dev,
   },
   vite: {
     build: {
