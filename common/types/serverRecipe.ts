@@ -1,6 +1,6 @@
 import type { JSONContent } from "@tiptap/core";
 
-export interface ServerRecipe extends ServerRecipeCategories {
+export type ServerRecipe = ServerRecipeCategories & {
   id: number;
   title: string;
   description: JSONContent | null;
@@ -22,9 +22,9 @@ export interface ServerRecipe extends ServerRecipeCategories {
   instructionGroups: ServerInstructionGroup[];
   status: "published" | "draft";
   date_created: Date;
-}
+};
 
-export interface ServerRecipePreview extends ServerRecipeCategories {
+export type ServerRecipePreview = ServerRecipeCategories & {
   id: number;
   date_created: string;
   slug: string;
@@ -35,22 +35,22 @@ export interface ServerRecipePreview extends ServerRecipeCategories {
   preparationDuration?: number;
   cookingDuration?: number;
   customDuration?: number;
-}
+};
 
-export interface ServerRecipeCategories {
+export type ServerRecipeCategories = {
   cuisine?: string;
   course?: string;
   main_ingredients?: string[];
   diets?: string[];
   method?: string;
-}
+};
 
-interface ServerIngredientGroup {
+type ServerIngredientGroup = {
   name?: string;
   ingredients: ServerIngredient[];
-}
+};
 
-export interface ServerIngredient {
+export type ServerIngredient = {
   id: number;
   amount?: number;
   unit?: string;
@@ -60,31 +60,31 @@ export interface ServerIngredient {
   name_plural_html: string;
   note?: string;
   inline_only: boolean;
-}
+};
 
-interface ServerInstructionGroup {
+type ServerInstructionGroup = {
   name?: string;
   instructions: ServerInstruction[];
-}
+};
 
-export interface ServerInstruction {
+export type ServerInstruction = {
   id: number;
   text: JSONContent | null;
   html: string;
   image?: ServerImage;
   inline_ingredients: InlineIngredientRelation[];
-}
+};
 
-export interface InlineIngredientRelation {
+export type InlineIngredientRelation = {
   id: string;
   instruction_id: ServerInstruction | number;
   ingredient_id: ServerIngredient | number;
-}
+};
 
-export interface ServerImage {
+export type ServerImage = {
   id: string;
   title: string;
   height: number;
   width: number;
   modified_on: string;
-}
+};

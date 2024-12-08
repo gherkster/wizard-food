@@ -20,8 +20,8 @@ devDependencies:
     specifier: ^4.20231010.0
     version: 4.20241205.0
   '@directus/sdk':
-    specifier: ^11.0.0
-    version: 11.0.3
+    specifier: ^18.0.1
+    version: 18.0.1
   '@iconify-json/gravity-ui':
     specifier: ^1.1.2
     version: 1.2.2
@@ -565,8 +565,8 @@ packages:
     resolution: {integrity: sha512-pj1VKRHT/ScQbHOIMFODZaNAlJHQHdBSZXNIdr9ebJzwBff9Qz8VdqhbhggV7f+aUEh8WSbrsPIo4a+WtgjUvw==}
     dev: true
 
-  /@directus/sdk@11.0.3:
-    resolution: {integrity: sha512-fHvHFcDhl8AY5quRP4cgLMHTU6F4c4ynmMpXRsi8dnSd38mIvciFyYmOVOh34Wp2N+a1YNYpXPU+NsHkfIheHw==}
+  /@directus/sdk@18.0.1:
+    resolution: {integrity: sha512-vUYhqn7qwuaIcqbVRhQtKhjGB9DNhumnzauOg0M8dVnuxk6BgW1W6ZYzkhXmP1vcsU3RohM1l8KPTxOkjikktg==}
     engines: {node: '>=18.0.0'}
     dev: true
 

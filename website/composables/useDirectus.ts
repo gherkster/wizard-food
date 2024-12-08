@@ -4,12 +4,12 @@ import type { ServerRecipe, ServerRecipePreview } from "common/types/serverRecip
 import type { PageContent } from "common/types/content";
 import type { ServerIngredientUnitForm } from "common/types/serverMapping";
 
-export interface CmsSchema {
+type CmsSchema = {
   recipes: ServerRecipe[];
   home_page: PageContent;
   recipes_page: PageContent;
   ingredient_unit_forms: ServerIngredientUnitForm[];
-}
+};
 
 const getImageFields = (path: string) => [
   `${path}.id`,
