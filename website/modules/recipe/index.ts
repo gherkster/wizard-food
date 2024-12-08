@@ -45,7 +45,12 @@ async function getAllRecipes(): Promise<RecipePreview[]> {
   remoteRecipes.forEach((r) => {
     console.log(r.slug);
     if (!r.slug) {
-      throw new Error(`Recipe not in the expected format: ${r}`);
+      throw new Error(`Recipe ${r.title} not in the expected format: ${r}`);
+    }
+
+    // Cover images are optional in the CMS to make drafting recipes easier, but they must be populated when published.
+    if (!r.coverImage?.id) {
+      throw new Error(`Recipe ${r.title} is missing a cover image`);
     }
   });
 
