@@ -3,6 +3,8 @@ export interface Recipe {
   description?: string;
   descriptionPlainText?: string;
   descriptionSnippet: string;
+  cuisine?: string;
+  course?: string;
   note?: string;
   coverImage: Image;
   ingredientGroups: IngredientGroup[];

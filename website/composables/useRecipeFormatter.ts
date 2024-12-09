@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
+import duration, { type Duration } from "dayjs/plugin/duration";
 import type Fraction from "fraction.js";
 
 function formatIngredient(ingredient: { amount?: Fraction; name: string; unit?: string; note?: string }) {
@@ -47,27 +47,36 @@ function formatIngredientAmount(amount: Fraction) {
   return amount.toFraction(true).trim();
 }
 
-function formatMinutesAsDuration(seconds: number) {
+function secondsToDuration(seconds: number): Duration {
   dayjs.extend(duration);
-  const totalDuration = dayjs.duration(seconds, "seconds");
 
-  const formatStrings = [];
-  if (totalDuration.days() >= 1) {
+  return dayjs.duration(seconds, "seconds");
+}
+
+const formatDuration = (duration: Duration): string => {
+  if (duration.asSeconds() === 0) {
+    return "";
+  }
+
+  const formatStrings: string[] = [];
+  if (duration.days() >= 1) {
     formatStrings.push("D[d]");
   }
-  if (totalDuration.hours() >= 1) {
+  if (duration.hours() >= 1) {
     formatStrings.push("H[h]");
   }
-  if (totalDuration.minutes() >= 1) {
+  if (duration.minutes() >= 1) {
     formatStrings.push("m[m]");
   }
-  return totalDuration.format(formatStrings.join(" "));
-}
+
+  return duration.format(formatStrings.join(" "));
+};
 
 export function useRecipeFormatter() {
   return {
     formatIngredient,
     formatIngredientAmount,
-    formatMinutesAsDuration,
+    secondsToDuration,
+    formatDuration,
   };
 }

@@ -16,19 +16,9 @@
           </div>
           <div class="recipe__details highlight-container">
             <div class="recipe__duration">
-              <span v-if="totalDuration"
-                >Total <b>{{ totalDuration }}</b></span
+              <span v-if="formattedTotalDuration"
+                >Total <b>{{ formattedTotalDuration }}</b></span
               >
-              <!-- <span v-if="recipe.preparationDuration"
-                  >Preparation <b>{{ formatter.formatMinutesAsDuration(recipe.preparationDuration) }}</b></span
-                >
-                <span v-if="recipe.cookingDuration"
-                  >Cooking <b>{{ formatter.formatMinutesAsDuration(recipe.cookingDuration) }}</b></span
-                >
-                <span v-if="recipe.customDuration && recipe.customDurationName">
-                  {{ recipe.customDurationName }}
-                  <b>{{ formatter.formatMinutesAsDuration(recipe.customDuration) }}</b></span
-                > -->
             </div>
             <div class="recipe__options">
               <servings-adjuster
@@ -147,6 +137,19 @@ if (!recipesResponse.data.value) {
 }
 const recipe = ref(recipesResponse.data.value);
 
+const formatter = useRecipeFormatter();
+
+const totalDuration = computed(() => {
+  const sumDuration =
+    (recipe.value.preparationDuration ?? 0) +
+    (recipe.value.cookingDuration ?? 0) +
+    (recipe.value.customDuration && recipe.value.customDurationName ? recipe.value.customDuration : 0);
+
+  return formatter.secondsToDuration(sumDuration);
+});
+
+const formattedTotalDuration = computed(() => formatter.formatDuration(totalDuration.value));
+
 const image = useImage();
 useServerSeoMeta({
   title: recipe.value.title,
@@ -163,6 +166,26 @@ useServerSeoMeta({
 useHead({
   title: recipe.value.title,
 });
+useJsonld({
+  "@context": "https://schema.org",
+  "@type": "Recipe",
+  name: recipe.value.title,
+  description: recipe.value.descriptionSnippet,
+  image: image.buildExternalUrl({
+    imageId: recipe.value.coverImage.id,
+    modifyDate: recipe.value.coverImage.modifyDate,
+    purpose: "cover",
+    aspectRatio: "square",
+  }),
+  recipeCategory: recipe.value.course,
+  recipeCuisine: recipe.value.cuisine,
+  recipeYield:
+    recipe.value.servings && recipe.value.servingsType
+      ? `${recipe.value.servings} ${recipe.value.servingsType}`
+      : undefined,
+  keywords: recipe.value.tags.filter((t) => t !== recipe.value.course && t !== recipe.value.cuisine).join(", "),
+  totalTime: totalDuration.value.toISOString(),
+});
 
 const servings = ref<number>(recipe.value.servings && recipe.value.servings > 0 ? recipe.value.servings : 1);
 const originalNumberOfServings = servings.value;
@@ -176,20 +199,6 @@ const unitFormsResponse = await useAsyncData("ingredientUnitVariants", async () 
   return mapping.value;
 });
 const unitForms = unitFormsResponse.data.value ?? [];
-
-const formatter = useRecipeFormatter();
-const totalDuration = computed(() => {
-  const sumDuration =
-    (recipe.value.preparationDuration ?? 0) +
-    (recipe.value.cookingDuration ?? 0) +
-    (recipe.value.customDuration && recipe.value.customDurationName ? recipe.value.customDuration : 0);
-
-  if (sumDuration === 0) {
-    return "";
-  }
-
-  return formatter.formatMinutesAsDuration(sumDuration);
-});
 
 function createSearchLink(term: string): RouteLocationRaw {
   return {
