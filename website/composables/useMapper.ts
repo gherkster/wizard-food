@@ -16,6 +16,8 @@ function toRecipe(serverRecipe: ServerRecipe): Recipe {
     description: serverRecipe.description_html,
     descriptionPlainText: serverRecipe.description_plain_text,
     descriptionSnippet: serverRecipe.description_snippet,
+    cuisine: serverRecipe.cuisine,
+    course: serverRecipe.course,
     note: serverRecipe.note_html,
     coverImage: mapImage(serverRecipe.coverImage),
     ingredientGroups: serverRecipe.ingredientGroups.map((ig) => {
@@ -99,7 +101,7 @@ function getTotalDuration(recipe: ServerRecipePreview) {
     return "";
   }
 
-  return formatter.formatMinutesAsDuration(totalDuration);
+  return formatter.formatDuration(formatter.secondsToDuration(totalDuration));
 }
 
 function buildTagList(categories: ServerRecipeCategories): string[] {

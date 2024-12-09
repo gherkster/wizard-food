@@ -10,6 +10,7 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-vue": "^9.15.1",
+    "nuxt-jsonld": "^2.1.0",
     "prettier": "^3.0.0"
   },
   "packageManager": "pnpm@8.9.0"
