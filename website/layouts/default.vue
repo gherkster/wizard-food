@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="layout">
     <nuxt-loading-indicator :duration="1000" :throttle="500" :height="3" :color="false" />
     <header class="nav-header">
       <div class="nav-header__options">
@@ -11,7 +11,7 @@
         </div>
       </div>
     </header>
-    <div class="page content">
+    <div class="content">
       <slot />
     </div>
   </div>
@@ -78,14 +78,26 @@ async function search(value: string) {
 </script>
 
 <style lang="scss" scoped>
+@use "sass:map";
 @use "@/styles/mixins" as m;
+@use "@/styles/variables" as v;
+
+.layout {
+  max-width: 2000px;
+  margin: 0 auto;
+  padding: 2rem 5%;
+}
+
+.content {
+  max-width: map.get(v.$breakpoints, xl) * 1px;
+  margin: 0 auto;
+}
 
 .nav-header {
   display: flex;
   padding-top: 42px; // Hardcode spacing to guarantee consistent space for logo
 
-  @include m.spacing("px", "xs");
-  @include m.spacing("pb", "xs");
+  @include m.spacing("pb", "lg");
 
   &__options {
     display: flex;
@@ -102,7 +114,7 @@ async function search(value: string) {
       position: relative;
       flex-direction: column;
       margin-left: auto;
-      width: 200px;
+      width: 260px;
       @include m.breakpoint("sm", "max") {
         width: 100%;
       }
