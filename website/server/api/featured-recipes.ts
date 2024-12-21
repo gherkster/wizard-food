@@ -1,5 +1,4 @@
-import type { ServerRecipePreview } from "common/types/serverRecipe";
-import { useDirectus, useMapper } from "~/composables";
+import { useDirectus, useMapper, useRecipeFormatter } from "~/composables";
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event);
@@ -25,19 +24,28 @@ export default defineEventHandler(async (event) => {
     .slice(0, 4);
   favouriteRecipes.forEach((r) => alreadyShownRecipes.add(r.id));
 
-  const quickRecipes = shuffle(recipes).filter(
-    (r) =>
-      !alreadyShownRecipes.has(r.id) &&
-      r.course?.toLowerCase().startsWith("main") &&
-      getTotalDuration(r) > 0 &&
-      getTotalDuration(r) <= 45,
-  );
+  const formatter = useRecipeFormatter();
+
+  const quickRecipes = shuffle(recipes)
+    .filter((r) => {
+      const totalDuration = formatter.recipeTotalDuration(r);
+      return (
+        !alreadyShownRecipes.has(r.id) &&
+        r.course?.toLowerCase().startsWith("main") &&
+        totalDuration.asMinutes() > 0 &&
+        totalDuration.asMinutes() <= 45
+      );
+    })
+    .slice(0, 4);
   quickRecipes.forEach((r) => alreadyShownRecipes.add(r.id));
 
   // TODO: Probably needs to cover more cuisines
-  const worldCuisines = shuffle(recipes).filter(
-    (r) => !alreadyShownRecipes.has(r.id) && r.cuisine && !["american", "australian"].includes(r.cuisine.toLowerCase()),
-  );
+  const worldCuisines = shuffle(recipes)
+    .filter(
+      (r) =>
+        !alreadyShownRecipes.has(r.id) && r.cuisine && !["american", "australian"].includes(r.cuisine.toLowerCase()),
+    )
+    .slice(0, 4);
 
   const mapper = useMapper();
 
@@ -55,8 +63,4 @@ function shuffle<Type>(items: Type[]) {
     .map((value) => ({ value, sort: Math.random() }))
     .sort((a, b) => a.sort - b.sort)
     .map(({ value }) => value);
-}
-
-function getTotalDuration(recipe: ServerRecipePreview) {
-  return (recipe.preparationDuration ?? 0) + (recipe.cookingDuration ?? 0) + (recipe.customDuration ?? 0);
 }

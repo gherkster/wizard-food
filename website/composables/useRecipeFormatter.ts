@@ -73,11 +73,14 @@ const formatDuration = (duration: Duration): string | undefined => {
   return duration.format(formatStrings.join(" "));
 };
 
-const recipeTotalDuration = (recipe: Recipe) => {
-  const sumDuration =
-    (recipe.preparationDuration ?? 0) +
-    (recipe.cookingDuration ?? 0) +
-    (recipe.customDuration && recipe.customDurationName ? recipe.customDuration : 0);
+type RecipeDuration = {
+  preparationDuration?: number;
+  cookingDuration?: number;
+  customDuration?: number;
+};
+
+const recipeTotalDuration = (recipe: RecipeDuration) => {
+  const sumDuration = (recipe.preparationDuration ?? 0) + (recipe.cookingDuration ?? 0) + (recipe.customDuration ?? 0);
 
   return secondsToDuration(sumDuration);
 };
