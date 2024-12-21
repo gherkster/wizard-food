@@ -140,10 +140,12 @@ useHead({
   display: flex;
   flex-direction: column;
   @include m.spacing("gy", "lg");
+
   .recipe-list {
     display: grid;
     @include m.spacing("g", "sm");
   }
+
   .recipe-list.standard {
     @include m.breakpoint("xs") {
       grid-template-columns: repeat(2, 1fr);
@@ -155,6 +157,7 @@ useHead({
       grid-template-columns: repeat(4, 1fr);
     }
   }
+
   .recipe-list.promo {
     @include m.breakpoint("xs") {
       grid-template-columns: repeat(2, 1fr);
@@ -175,6 +178,7 @@ useHead({
       }
     }
   }
+
   .section-header {
     display: flex;
     justify-content: space-between;
