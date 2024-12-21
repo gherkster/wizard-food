@@ -96,8 +96,10 @@ function getUnitLabel(unit?: string, currentAmount?: number) {
 <style lang="scss" scoped>
 .instruction {
   flex: 1;
+  flex-direction: column;
 }
 </style>
+
 <style lang="scss">
 @use "@/styles/variables" as v;
 .inline-ingredient {
