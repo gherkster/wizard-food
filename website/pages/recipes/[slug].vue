@@ -11,10 +11,34 @@
         </nuxt-link>
       </div>
       <div class="recipe__details highlight-container">
-        <div class="recipe__duration">
-          <span v-if="formattedTotalDuration"
-            >Total <b>{{ formattedTotalDuration }}</b></span
-          >
+        <div v-if="durationLabels.total" class="recipe__duration">
+          <v-popover>
+            <template #trigger>
+              <span
+                >Total <b>{{ durationLabels.total }}</b></span
+              >
+            </template>
+            <template #content>
+              <ul>
+                <li v-if="durationLabels.preparation">
+                  <span
+                    >Preparation <b>{{ durationLabels.preparation }}</b></span
+                  >
+                </li>
+                <li v-if="durationLabels.cooking">
+                  <span
+                    >Cooking <b>{{ durationLabels.cooking }}</b></span
+                  >
+                </li>
+                <li v-if="recipe.customDurationName && durationLabels.custom">
+                  <span>
+                    {{ recipe.customDurationName }}
+                    <b>{{ durationLabels.custom }}</b></span
+                  >
+                </li>
+              </ul>
+            </template>
+          </v-popover>
         </div>
         <div class="recipe__options">
           <servings-adjuster
@@ -124,17 +148,7 @@ if (!recipesResponse.data.value) {
 const recipe = ref(recipesResponse.data.value);
 
 const formatter = useRecipeFormatter();
-
-const totalDuration = computed(() => {
-  const sumDuration =
-    (recipe.value.preparationDuration ?? 0) +
-    (recipe.value.cookingDuration ?? 0) +
-    (recipe.value.customDuration && recipe.value.customDurationName ? recipe.value.customDuration : 0);
-
-  return formatter.secondsToDuration(sumDuration);
-});
-
-const formattedTotalDuration = computed(() => formatter.formatDuration(totalDuration.value));
+const durationLabels = computed(() => formatter.formatRecipeDurations(recipe.value));
 
 const image = useImage();
 useServerSeoMeta({
@@ -170,7 +184,7 @@ useJsonld({
       ? `${recipe.value.servings} ${recipe.value.servingsType}`
       : undefined,
   keywords: recipe.value.tags.filter((t) => t !== recipe.value.course && t !== recipe.value.cuisine).join(", "),
-  totalTime: totalDuration.value.toISOString(),
+  totalTime: formatter.recipeTotalDuration(recipe.value).toISOString(),
 });
 
 const servings = ref<number>(recipe.value.servings && recipe.value.servings > 0 ? recipe.value.servings : 1);
@@ -229,6 +243,7 @@ function createSearchLink(term: string): RouteLocationRaw {
   &__tags {
     display: flex;
     flex-wrap: wrap;
+
     @include m.spacing("g", "xs");
   }
   &__duration {
@@ -236,6 +251,7 @@ function createSearchLink(term: string): RouteLocationRaw {
     flex-wrap: wrap;
     align-items: center;
     text-transform: capitalize;
+
     @include m.spacing("g", "xs");
   }
   &__ingredients {
@@ -280,7 +296,7 @@ function createSearchLink(term: string): RouteLocationRaw {
 .highlight-container {
   display: flex;
   height: fit-content;
-  background-color: var(--theme-body-highlight-color);
+  background-color: var(--theme-body-accent-color);
   border-radius: v.$border-radius-sm;
 
   @include m.spacing("p", "sm");

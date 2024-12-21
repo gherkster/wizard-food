@@ -92,7 +92,7 @@ withDefaults(
 }
 .card.promo {
   display: flex;
-  background-color: var(--theme-body-highlight-color);
+  background-color: var(--theme-body-accent-color);
   border-radius: v.$border-radius-sm;
   @include m.breakpoint("sm", "max") {
     flex-direction: column;

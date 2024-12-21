@@ -12,9 +12,14 @@ html {
 }
 body {
   margin: 0; // Unset browser margin
+  text-underline-offset: 3px;
+}
+
+body,
+input,
+button {
   color: var(--theme-font-color);
   font-family: v.$font-family-paragraph;
-  text-underline-offset: 3px;
 }
 
 html,
