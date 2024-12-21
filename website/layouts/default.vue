@@ -48,7 +48,7 @@ watch(
   },
 );
 
-async function search(value: string) {
+const search = debounce(async (value: string) => {
   query.value = value;
   const trimmedQuery = query.value.trim();
   /*
@@ -60,10 +60,6 @@ async function search(value: string) {
     await navigateTo("/recipes", {
       replace: !!route.query.search,
     });
-  }
-
-  if (trimmedQuery.length < 4) {
-    // TODO: Indicate minimum length
     return;
   }
 
@@ -74,7 +70,8 @@ async function search(value: string) {
       search: trimmedQuery,
     },
   });
-}
+  return;
+}, 300);
 </script>
 
 <style lang="scss" scoped>
