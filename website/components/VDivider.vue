@@ -5,6 +5,7 @@
 <style lang="scss" scoped>
 @use "@/styles/mixins" as m;
 @use "@/styles/variables" as v;
+
 .v-divider {
   width: 100%;
   opacity: 50%;

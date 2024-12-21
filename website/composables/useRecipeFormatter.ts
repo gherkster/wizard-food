@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import duration, { type Duration } from "dayjs/plugin/duration";
 import type Fraction from "fraction.js";
+import type { Recipe } from "~/types/recipe";
 
 function formatIngredient(ingredient: { amount?: Fraction; name: string; unit?: string; note?: string }) {
   const amountFraction = ingredient.amount ? formatIngredientAmount(ingredient.amount) : "";
@@ -53,9 +54,9 @@ function secondsToDuration(seconds: number): Duration {
   return dayjs.duration(seconds, "seconds");
 }
 
-const formatDuration = (duration: Duration): string => {
+const formatDuration = (duration: Duration): string | undefined => {
   if (duration.asSeconds() === 0) {
-    return "";
+    return undefined;
   }
 
   const formatStrings: string[] = [];
@@ -72,11 +73,34 @@ const formatDuration = (duration: Duration): string => {
   return duration.format(formatStrings.join(" "));
 };
 
+const recipeTotalDuration = (recipe: Recipe) => {
+  const sumDuration =
+    (recipe.preparationDuration ?? 0) +
+    (recipe.cookingDuration ?? 0) +
+    (recipe.customDuration && recipe.customDurationName ? recipe.customDuration : 0);
+
+  return secondsToDuration(sumDuration);
+};
+
+const formatRecipeDurations = (recipe: Recipe) => {
+  return {
+    preparation: recipe.preparationDuration ? formatDuration(secondsToDuration(recipe.preparationDuration)) : undefined,
+    cooking: recipe.cookingDuration ? formatDuration(secondsToDuration(recipe.cookingDuration)) : undefined,
+    custom:
+      recipe.customDuration && recipe.customDurationName
+        ? formatDuration(secondsToDuration(recipe.customDuration))
+        : undefined,
+    total: formatDuration(recipeTotalDuration(recipe)),
+  };
+};
+
 export function useRecipeFormatter() {
   return {
+    formatRecipeDurations,
     formatIngredient,
     formatIngredientAmount,
     secondsToDuration,
     formatDuration,
+    recipeTotalDuration,
   };
 }

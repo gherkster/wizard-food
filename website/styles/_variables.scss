@@ -5,7 +5,8 @@
   --theme-color-primary: #e0994c;
   --theme-color-active: #b97c3b;
   --theme-body-background-color: #f9f5ed;
-  --theme-body-highlight-color: #f9e7d5;
+  --theme-body-accent-color: #f9e7d5;
+  --theme-body-overlay-color: #fffbf3;
   --theme-font-color: #000000;
   --theme-font-color-muted: #737373;
   --theme-input-background-color: #fff;
@@ -18,7 +19,8 @@
     --theme-color-primary: #bd8344;
     --theme-color-active: #9f6a31;
     --theme-body-background-color: #2d241d;
-    --theme-body-highlight-color: #533b2d;
+    --theme-body-accent-color: #533b2d;
+    --theme-body-overlay-color: #684c3d;
     --theme-font-color: #f2f2f2;
     --theme-font-color-muted: #999;
     --theme-input-background-color: #4a403a;
@@ -58,7 +60,11 @@ $font-sizes: (
   ),
   input: (
     font-size-min: 16,
-    font-size-max: 16,
+    font-size-max: 18,
+  ),
+  button: (
+    font-size-min: 16,
+    font-size-max: 18,
   ),
   h1: (
     font-size-min: 30,
