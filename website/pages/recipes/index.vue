@@ -100,6 +100,7 @@ async function showAllRecipes() {
 .recipes {
   display: grid;
   @include m.spacing("g", "sm");
+
   @include m.breakpoint("xs") {
     grid-template-columns: repeat(2, 1fr);
   }

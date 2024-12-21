@@ -16,23 +16,6 @@
   }
 }
 
-@mixin create-cols($breakpoint-name, $max-cols) {
-  $infix: if($breakpoint-name == null, "", "-#{$breakpoint-name}");
-
-  @for $i from 1 through $max-cols {
-    .col#{$infix}-#{$i} {
-      display: flex;
-      // Reduce each column flex-basis (width) by a percentage of the column-gap
-      // to provide spacing between columns while not inadvertently wrapping around to the next row
-      flex-basis: calc((100% - ((#{$max-cols} / #{$i}) - 1) * #{v.$cols-horizontal-gap}) / (#{$max-cols} / #{$i}));
-      flex-direction: column;
-    }
-    .row.wide-gap > .col#{$infix}-#{$i} {
-      flex-basis: calc((100% - ((#{$max-cols} / #{$i}) - 1) * #{v.$cols-horizontal-gap-wide}) / (#{$max-cols} / #{$i}));
-    }
-  }
-}
-
 @mixin spacing($type: "p", $size: "md") {
   $size-map: map.get(
     $map: v.$spacing,

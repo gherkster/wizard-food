@@ -1,105 +1,91 @@
 <template>
   <div v-if="recipe" class="recipe">
-    <v-row class="wide-gap">
-      <v-column v-if="recipe.coverImage" col-12 col-md-5 col-lg-4>
-        <blurrable-image :img="recipe.coverImage" purpose="cover" aspect-ratio="portrait" />
-      </v-column>
-      <v-column col-12 col-md-7 col-lg-8>
-        <div class="recipe__summary">
-          <h1 class="recipe__title">{{ recipe.title }}</h1>
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <div v-if="recipe.description" class="recipe__description" v-html="recipe.description" />
-          <div class="recipe__tags">
-            <nuxt-link v-for="tag in recipe.tags" :key="tag" :to="createSearchLink(tag)" class="concealed">
-              <v-tag :icon="magnifier">{{ tag }}</v-tag>
-            </nuxt-link>
-          </div>
-          <div class="recipe__details highlight-container">
-            <div class="recipe__duration">
-              <span v-if="formattedTotalDuration"
-                >Total <b>{{ formattedTotalDuration }}</b></span
-              >
-            </div>
-            <div class="recipe__options">
-              <servings-adjuster
-                :label="recipe.servingsType"
-                :servings="servings"
-                class="recipe__multiplier"
-                @input="updateNumberOfServings"
-              />
-            </div>
-          </div>
-        </div>
-      </v-column>
-    </v-row>
-    <v-row class="wide-gap">
-      <v-column col-12 col-md-5 col-lg-4>
-        <div v-if="recipe.ingredientGroups.length > 0" class="recipe__ingredients highlight-container">
-          <div class="recipe__ingredients-title">
-            <h2>Ingredients</h2>
-          </div>
-          <div v-for="ingredientSection in recipe.ingredientGroups" :key="JSON.stringify(ingredientSection)">
-            <p v-if="ingredientSection.name">
-              <b>{{ ingredientSection.name }}</b>
-            </p>
-            <ul>
-              <template v-for="ingredient in ingredientSection.ingredients">
-                <li v-if="!ingredient.inlineOnly" :key="JSON.stringify(ingredient)">
-                  <recipe-ingredient
-                    :ingredient="ingredient"
-                    :ingredient-multiplier="servings"
-                    :original-number-of-servings="originalNumberOfServings"
-                    :unit-forms="unitForms"
-                  />
-                </li>
-              </template>
-            </ul>
-          </div>
-        </div>
-      </v-column>
-      <v-column col-12 col-md-7 col-lg-8>
-        <div v-if="recipe.instructionGroups.length > 0" class="recipe__instructions">
-          <h2>Instructions</h2>
-          <div
-            v-for="instructionSection in recipe.instructionGroups"
-            :key="JSON.stringify(instructionSection)"
-            class="instruction-section"
+    <blurrable-image :img="recipe.coverImage" purpose="cover" aspect-ratio="portrait" />
+    <div class="recipe__summary">
+      <h1 class="recipe__title">{{ recipe.title }}</h1>
+      <!-- eslint-disable-next-line vue/no-v-html -->
+      <div v-if="recipe.description" class="recipe__description" v-html="recipe.description" />
+      <div class="recipe__tags">
+        <nuxt-link v-for="tag in recipe.tags" :key="tag" :to="createSearchLink(tag)" class="concealed">
+          <v-tag :icon="magnifier">{{ tag }}</v-tag>
+        </nuxt-link>
+      </div>
+      <div class="recipe__details highlight-container">
+        <div class="recipe__duration">
+          <span v-if="formattedTotalDuration"
+            >Total <b>{{ formattedTotalDuration }}</b></span
           >
-            <p v-if="instructionSection.name">
-              <b>{{ instructionSection.name }}</b>
-            </p>
-            <div class="instruction-group">
-              <div
-                v-for="(instruction, index) in instructionSection.instructions"
-                :key="JSON.stringify(instruction)"
-                class="instruction"
-              >
-                <v-badge>{{ index + 1 }}</v-badge>
-                <recipe-instruction
-                  :content="instruction.text"
-                  :ingredient-multiplier="servings"
-                  :original-number-of-servings="originalNumberOfServings"
-                  :unit-forms="unitForms"
-                />
-                <blurrable-image
-                  v-if="instruction.image"
-                  :img="instruction.image"
-                  purpose="instruction"
-                  aspect-ratio="square"
-                />
-              </div>
-            </div>
+        </div>
+        <div class="recipe__options">
+          <servings-adjuster
+            :label="recipe.servingsType"
+            :servings="servings"
+            class="recipe__multiplier"
+            @input="updateNumberOfServings"
+          />
+        </div>
+      </div>
+    </div>
+    <div v-if="recipe.ingredientGroups.length > 0" class="recipe__ingredients highlight-container">
+      <div class="recipe__ingredients-title">
+        <h2>Ingredients</h2>
+      </div>
+      <div v-for="ingredientSection in recipe.ingredientGroups" :key="JSON.stringify(ingredientSection)">
+        <p v-if="ingredientSection.name">
+          <b>{{ ingredientSection.name }}</b>
+        </p>
+        <ul>
+          <template v-for="ingredient in ingredientSection.ingredients">
+            <li v-if="!ingredient.inlineOnly" :key="JSON.stringify(ingredient)">
+              <recipe-ingredient
+                :ingredient="ingredient"
+                :ingredient-multiplier="servings"
+                :original-number-of-servings="originalNumberOfServings"
+                :unit-forms="unitForms"
+              />
+            </li>
+          </template>
+        </ul>
+      </div>
+    </div>
+    <div v-if="recipe.instructionGroups.length > 0" class="recipe__instructions">
+      <h2>Instructions</h2>
+      <div
+        v-for="instructionSection in recipe.instructionGroups"
+        :key="JSON.stringify(instructionSection)"
+        class="instruction-section"
+      >
+        <p v-if="instructionSection.name">
+          <b>{{ instructionSection.name }}</b>
+        </p>
+        <div class="instruction-group">
+          <div
+            v-for="(instruction, index) in instructionSection.instructions"
+            :key="JSON.stringify(instruction)"
+            class="instruction"
+          >
+            <v-badge>{{ index + 1 }}</v-badge>
+            <recipe-instruction
+              :content="instruction.text"
+              :ingredient-multiplier="servings"
+              :original-number-of-servings="originalNumberOfServings"
+              :unit-forms="unitForms"
+            />
+            <blurrable-image
+              v-if="instruction.image"
+              :img="instruction.image"
+              purpose="instruction"
+              aspect-ratio="square"
+            />
           </div>
         </div>
-      </v-column>
-    </v-row>
-    <v-row v-if="recipe.note" class="wide-gap">
-      <v-column>
-        <h2>Notes</h2>
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <div v-html="recipe.note" />
-      </v-column>
-    </v-row>
+      </div>
+    </div>
+    <div v-if="recipe.note" class="recipe__notes">
+      <h2>Notes</h2>
+      <!-- eslint-disable-next-line vue/no-v-html -->
+      <div v-html="recipe.note" />
+    </div>
     <footer class="footer">
       <v-icon :icon="logoLight" :size="140" class="light-theme-only" />
       <v-icon :icon="logoDark" :size="140" class="dark-theme-only" />
@@ -215,9 +201,17 @@ function createSearchLink(term: string): RouteLocationRaw {
 @use "@/styles/variables" as v;
 
 .recipe {
-  display: flex;
-  flex-direction: column;
-  @include m.spacing("g", "md");
+  display: grid;
+  @include m.spacing("gx", "lg");
+  @include m.spacing("gy", "md");
+
+  @include m.breakpoint("md") {
+    grid-template-columns: 5fr 7fr;
+  }
+  @include m.breakpoint("lg") {
+    grid-template-columns: 4fr 8fr;
+  }
+
   &__summary {
     display: flex;
     flex-direction: column;
@@ -262,6 +256,10 @@ function createSearchLink(term: string): RouteLocationRaw {
     justify-content: space-between;
     align-items: end;
   }
+  &__notes {
+    grid-column: 1 / -1; // Full width
+  }
+
   ul,
   ol {
     @include m.spacing("pl", "xs");
@@ -273,6 +271,7 @@ function createSearchLink(term: string): RouteLocationRaw {
   flex-direction: column;
   @include m.spacing("gy", "xs");
 }
+
 .instruction {
   display: flex;
   @include m.spacing("gx", "xs");
@@ -280,14 +279,17 @@ function createSearchLink(term: string): RouteLocationRaw {
 
 .highlight-container {
   display: flex;
+  height: fit-content;
   background-color: var(--theme-body-highlight-color);
   border-radius: v.$border-radius-sm;
+
   @include m.spacing("p", "sm");
 }
 
 footer {
   display: flex;
   justify-content: center;
+  grid-column: 1 / -1; // Full width
   @include m.spacing("mt", "md");
   @include m.spacing("mb", "lg");
 }

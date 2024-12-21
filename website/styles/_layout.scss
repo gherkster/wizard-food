@@ -1,18 +1,6 @@
 @use "variables" as v;
 @use "mixins" as m;
 
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-  column-gap: v.$cols-horizontal-gap;
-  @include m.spacing("gy", "xs");
-
-  &.wide-gap {
-    column-gap: v.$cols-horizontal-gap-wide;
-  }
-}
-
 .center-screen {
   display: flex;
   flex-direction: column;
@@ -22,12 +10,4 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-}
-
-@include m.create-cols(null, v.$grid-cols-count);
-
-@each $breakpoint-name, $width in v.$breakpoints {
-  @media screen and (min-width: ($width * 1px)) {
-    @include m.create-cols($breakpoint-name, v.$grid-cols-count);
-  }
 }
