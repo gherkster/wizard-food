@@ -1,21 +1,5 @@
-@use "sass:map";
-
 @use "variables" as v;
 @use "mixins" as m;
-
-.page {
-  max-width: map.get(v.$breakpoints, xl) * 1px;
-  margin: 0 auto;
-
-  &--fluid {
-    margin: 0;
-    max-width: 100%;
-  }
-}
-
-.content {
-  padding: 5%;
-}
 
 .row {
   display: flex;
