@@ -1,16 +1,18 @@
-import { useDirectus } from "~/composables";
+import { useDirectusApi } from "~/clients/useDirectusApi";
 
-export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig(event);
+export default defineEventHandler(async () => {
+  const client = useDirectusApi();
 
-  const directusClient = useDirectus({
-    url: config.baseUrl,
-    clientId: config.cfAccessClientId,
-    clientSecret: config.cfAccessClientSecret,
-  });
+  const { data, error } = await client.getIngredientUnitSingularPluralMapping();
 
-  const mappingEntries = await directusClient.getIngredientUnitSingularPluralMapping();
-  return mappingEntries.map((m) => {
+  if (error) {
+    return createError({
+      status: 500,
+      data: error,
+    });
+  }
+
+  return data.data!.map((m) => {
     return {
       singularForm: m.singular_form,
       pluralForm: m.plural_form,

@@ -1,7 +1,7 @@
-export interface Recipe {
+export type Recipe = {
   title: string;
-  description?: string;
-  descriptionPlainText?: string;
+  description: string;
+  descriptionPlainText: string;
   descriptionSnippet: string;
   cuisine?: string;
   course?: string;
@@ -17,24 +17,32 @@ export interface Recipe {
   customDuration?: number;
   tags: string[];
   slug: string;
-}
+};
 
-export interface RecipePreview {
+export type RecipePreview = {
   title: string;
   descriptionSnippet: string;
+  coverImage: Image;
+  cuisine?: string;
+  course?: string;
   tags: string[];
   featuredTag?: string;
+  preparationDuration?: number;
+  cookingDuration?: number;
+  customDurationName?: string;
+  customDuration?: number;
   totalDuration?: string;
-  coverImage: Image;
   slug: string;
-}
+  date_created: string;
+  favourite?: boolean;
+};
 
-export interface IngredientGroup {
+export type IngredientGroup = {
   name?: string;
   ingredients: Ingredient[];
-}
+};
 
-export interface Ingredient {
+export type Ingredient = {
   amount?: number;
   unit?: string;
   name: {
@@ -42,23 +50,23 @@ export interface Ingredient {
     plural: string;
   };
   note?: string;
-  inlineOnly: boolean;
-}
+  inlineOnly?: boolean;
+};
 
-export interface Image {
+export type Image = {
   id: string;
   title: string;
   height: number;
   width: number;
   modifyDate: string;
-}
+};
 
-export interface InstructionGroup {
+export type InstructionGroup = {
   name?: string;
   instructions: Array<Instruction>;
-}
+};
 
-export interface Instruction {
+export type Instruction = {
   text: string;
   image?: Image;
-}
+};
