@@ -1,23 +1,22 @@
-import dayjs from "dayjs";
-import duration, { type Duration } from "dayjs/plugin/duration";
+import type { Duration } from "dayjs/plugin/duration";
 import type Fraction from "fraction.js";
 import type { Recipe } from "~/types/recipe";
 
-function formatIngredient(ingredient: { amount?: Fraction; name: string; unit?: string; note?: string }) {
+export const formatIngredient = (ingredient: { amount?: Fraction; name: string; unit?: string; note?: string }) => {
   const amountFraction = ingredient.amount ? formatIngredientAmount(ingredient.amount) : "";
   const unit = ingredient.unit?.toString() ?? "";
   const note = ingredient.note ?? "";
 
   const value = `${amountFraction} ${unit} ${ingredient.name} ${note}`;
   return value.trim();
-}
+};
 
 /**
  * Format the recipe ingredient in a consistent way
  * @param amount The ingredient amount
  * @returns The ingredient amount, rounded to avoid excessively accurate fractions
  */
-function formatIngredientAmount(amount: Fraction) {
+export const formatIngredientAmount = (amount: Fraction) => {
   const decimalAmount = amount.valueOf();
 
   // Round numbers relative to their size
@@ -46,15 +45,9 @@ function formatIngredientAmount(amount: Fraction) {
   }
 
   return amount.toFraction(true).trim();
-}
+};
 
-function secondsToDuration(seconds: number): Duration {
-  dayjs.extend(duration);
-
-  return dayjs.duration(seconds, "seconds");
-}
-
-const formatDuration = (duration: Duration): string | undefined => {
+export const formatDuration = (duration: Duration): string | undefined => {
   if (duration.asSeconds() === 0) {
     return undefined;
   }
@@ -73,19 +66,7 @@ const formatDuration = (duration: Duration): string | undefined => {
   return duration.format(formatStrings.join(" "));
 };
 
-type RecipeDuration = {
-  preparationDuration?: number;
-  cookingDuration?: number;
-  customDuration?: number;
-};
-
-const recipeTotalDuration = (recipe: RecipeDuration) => {
-  const sumDuration = (recipe.preparationDuration ?? 0) + (recipe.cookingDuration ?? 0) + (recipe.customDuration ?? 0);
-
-  return secondsToDuration(sumDuration);
-};
-
-const formatRecipeDurations = (recipe: Recipe) => {
+export const formatRecipeDurations = (recipe: Recipe) => {
   return {
     preparation: recipe.preparationDuration ? formatDuration(secondsToDuration(recipe.preparationDuration)) : undefined,
     cooking: recipe.cookingDuration ? formatDuration(secondsToDuration(recipe.cookingDuration)) : undefined,
@@ -96,14 +77,3 @@ const formatRecipeDurations = (recipe: Recipe) => {
     total: formatDuration(recipeTotalDuration(recipe)),
   };
 };
-
-export function useRecipeFormatter() {
-  return {
-    formatRecipeDurations,
-    formatIngredient,
-    formatIngredientAmount,
-    secondsToDuration,
-    formatDuration,
-    recipeTotalDuration,
-  };
-}

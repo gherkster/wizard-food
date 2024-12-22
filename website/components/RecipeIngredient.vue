@@ -31,14 +31,12 @@ const multipliedAmount = computed(() => {
   return amount.value.mul(props.ingredientMultiplier).div(props.originalNumberOfServings);
 });
 
-const formatter = useRecipeFormatter();
-
 const formattedAmount = computed(() => {
   if (!multipliedAmount.value) {
     return "";
   }
 
-  return formatter.formatIngredientAmount(multipliedAmount.value);
+  return formatIngredientAmount(multipliedAmount.value);
 });
 
 const unitVariant = computed(() => {

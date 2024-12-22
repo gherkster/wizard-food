@@ -118,7 +118,6 @@
 </template>
 
 <script setup lang="ts">
-import { useRecipeFormatter } from "~/composables";
 import type { Recipe } from "~/types/recipe";
 import type { RouteLocationRaw } from "#vue-router";
 import logoLight from "~icons/custom/logo-light";
@@ -147,8 +146,7 @@ if (!recipesResponse.data.value) {
 }
 const recipe = ref(recipesResponse.data.value);
 
-const formatter = useRecipeFormatter();
-const durationLabels = computed(() => formatter.formatRecipeDurations(recipe.value));
+const durationLabels = computed(() => formatRecipeDurations(recipe.value));
 
 const image = useImage();
 useServerSeoMeta({
@@ -184,7 +182,7 @@ useJsonld({
       ? `${recipe.value.servings} ${recipe.value.servingsType}`
       : undefined,
   keywords: recipe.value.tags.filter((t) => t !== recipe.value.course && t !== recipe.value.cuisine).join(", "),
-  totalTime: formatter.recipeTotalDuration(recipe.value).toISOString(),
+  totalTime: recipeTotalDuration(recipe.value).toISOString(),
 });
 
 const servings = ref<number>(recipe.value.servings && recipe.value.servings > 0 ? recipe.value.servings : 1);

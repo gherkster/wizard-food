@@ -1,19 +1,13 @@
 import prand from "pure-rand";
-import { useRecipeFormatter } from "./useRecipeFormatter";
 import type { InlineIngredient, ServerImage, ServerRecipe } from "common/types/serverRecipe";
 import type { IngredientGroup, Instruction, InstructionGroup, Image, Recipe, RecipePreview } from "~/types/recipe";
+import { formatDuration } from "~/utils/formatting";
+import { recipeTotalDuration } from "~/utils/duration";
 import { generateText, type JSONContent } from "@tiptap/core";
 import { generateHTML } from "@tiptap/html";
 import extensions from "~/server/content/extensions";
 
-export function useMapper() {
-  return {
-    toRecipePreview,
-    toRecipe,
-  };
-}
-
-function toRecipe(serverRecipe: ServerRecipe): Recipe {
+export const mapToRecipe = (serverRecipe: ServerRecipe): Recipe => {
   assertCoverImageExists(serverRecipe.coverImage);
   assertCoverImageHasValue(serverRecipe.coverImage);
 
@@ -112,9 +106,9 @@ function toRecipe(serverRecipe: ServerRecipe): Recipe {
       method: serverRecipe.method,
     }),
   };
-}
+};
 
-function insertRelationDataIntoContent(content: JSONContent, inlineIngredients: InlineIngredient[]) {
+const insertRelationDataIntoContent = (content: JSONContent, inlineIngredients: InlineIngredient[]) => {
   if (content.type === "inline-ingredient" && content.attrs?.id) {
     const ingredient = inlineIngredients.find((i) => i.id === content.attrs!.id);
     content.attrs.data = ingredient?.ingredient_id;
@@ -122,9 +116,9 @@ function insertRelationDataIntoContent(content: JSONContent, inlineIngredients: 
 
   content.content?.forEach((con) => insertRelationDataIntoContent(con, inlineIngredients));
   return content;
-}
+};
 
-function toRecipePreview(serverRecipe: ServerRecipe): RecipePreview {
+export const mapToRecipePreview = (serverRecipe: ServerRecipe): RecipePreview => {
   assertCoverImageExists(serverRecipe.coverImage);
   assertCoverImageHasValue(serverRecipe.coverImage);
 
@@ -148,12 +142,18 @@ function toRecipePreview(serverRecipe: ServerRecipe): RecipePreview {
     cookingDuration: serverRecipe.cookingDuration ?? undefined,
     customDurationName: serverRecipe.customDurationName ?? undefined,
     customDuration: serverRecipe.customDuration ?? undefined,
-    totalDuration: getTotalDuration(serverRecipe),
+    totalDuration: formatDuration(
+      recipeTotalDuration({
+        cookingDuration: serverRecipe.cookingDuration ?? undefined,
+        preparationDuration: serverRecipe.preparationDuration ?? undefined,
+        customDuration: serverRecipe.customDuration ?? undefined,
+      }),
+    ),
     coverImage: mapImage(serverRecipe.coverImage),
     slug: serverRecipe.slug,
     tags: tags,
   };
-}
+};
 
 function assertCoverImageExists(coverImage: (string | ServerImage) | null | undefined): asserts coverImage {
   if (!coverImage) {
@@ -167,7 +167,7 @@ function assertCoverImageHasValue(coverImage: string | ServerImage): asserts cov
   }
 }
 
-function mapImage(serverImage: ServerImage): Image {
+const mapImage = (serverImage: ServerImage): Image => {
   if (!serverImage.id) {
     throw new Error(`Image has no ID, ${serverImage}`);
   }
@@ -180,9 +180,9 @@ function mapImage(serverImage: ServerImage): Image {
     height: serverImage.height ?? throwExpression("Image height must be provided"),
     modifyDate: serverImage.modified_on ?? throwExpression("Image modified_on must be provided"),
   };
-}
+};
 
-function getRandomTag(tags: string[], recipeId: number) {
+const getRandomTag = (tags: string[], recipeId: number) => {
   if (tags.length === 0) {
     return undefined;
   }
@@ -191,18 +191,7 @@ function getRandomTag(tags: string[], recipeId: number) {
   const randomness = prand.xoroshiro128plus(recipeId);
   const [randomIndex] = prand.uniformIntDistribution(0, tags.length - 1, randomness);
   return tags[randomIndex];
-}
-
-const formatter = useRecipeFormatter();
-function getTotalDuration(recipe: ServerRecipe) {
-  const totalDuration =
-    (recipe.preparationDuration ?? 0) + (recipe.cookingDuration ?? 0) + (recipe.customDuration ?? 0);
-  if (totalDuration === 0) {
-    return "";
-  }
-
-  return formatter.formatDuration(formatter.secondsToDuration(totalDuration));
-}
+};
 
 type RecipeCategories = {
   cuisine?: string | null;

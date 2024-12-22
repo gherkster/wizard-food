@@ -1,6 +1,6 @@
 import createClient, { type Middleware } from "openapi-fetch";
 import type { paths } from "../../common/types/directus-schema";
-import { useMapper } from "~/composables";
+import { mapToRecipe, mapToRecipePreview } from "./mapping/directusRecipeMapper";
 
 const client = createClient<paths>({ baseUrl: process.env.NUXT_BASE_URL ?? useRuntimeConfig().baseUrl });
 
@@ -65,8 +65,7 @@ export const useDirectusApi = () => {
         return { error };
       }
 
-      const mapper = useMapper();
-      return { data: data.data?.map((r) => mapper.toRecipePreview(r)) };
+      return { data: data.data?.map((r) => mapToRecipePreview(r)) };
     },
     getRecipe: async (slug: string) => {
       const { data, error } = await client.GET("/items/recipes", {
@@ -87,14 +86,25 @@ export const useDirectusApi = () => {
         return { error };
       }
 
-      const mapper = useMapper();
-      return { data: mapper.toRecipe(data.data![0]) };
+      return { data: mapToRecipe(data.data![0]) };
     },
     getHomePageContent: async () => {
-      return await client.GET("/items/home_page");
+      return await client.GET("/items/home_page/{id}", {
+        params: {
+          path: {
+            id: "1", // This collection is a singleton
+          },
+        },
+      });
     },
     getRecipesPageContent: async () => {
-      return await client.GET("/items/recipes_page");
+      return await client.GET("/items/recipes_page/{id}", {
+        params: {
+          path: {
+            id: "1", // This collection is a singleton
+          },
+        },
+      });
     },
     getIngredientUnitSingularPluralMapping: async () => {
       return await client.GET("/items/ingredient_unit_forms");
