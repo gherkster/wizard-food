@@ -1,28 +1,31 @@
-import { useDirectus, useMapper, useRecipeFormatter } from "~/composables";
+import { useDirectusApi } from "~/clients/useDirectusApi";
+import { useRecipeFormatter } from "~/composables";
 
-export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig(event);
+export default defineEventHandler(async () => {
+  const client = useDirectusApi();
 
-  const directusClient = useDirectus({
-    url: config.baseUrl,
-    clientId: config.cfAccessClientId,
-    clientSecret: config.cfAccessClientSecret,
-  });
+  const { data: recipes, error } = await client.getRecipes();
 
-  const recipes = await directusClient.getAllRecipes();
+  if (error) {
+    throw error;
+  }
+
+  if (!recipes) {
+    throw new Error("Failed to get recipes from API");
+  }
 
   // Track the recipes that have already been picked so far so that duplicates are not displayed
-  const alreadyShownRecipes = new Set<number>();
+  const alreadyShownRecipes = new Set<string>();
 
   const latestRecipes = recipes
     .sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime())
     .slice(0, 3);
-  latestRecipes.forEach((r) => alreadyShownRecipes.add(r.id));
+  latestRecipes.forEach((r) => alreadyShownRecipes.add(r.slug));
 
   const favouriteRecipes = shuffle(recipes)
-    .filter((r) => !alreadyShownRecipes.has(r.id) && r.favourite)
+    .filter((r) => !alreadyShownRecipes.has(r.slug) && r.favourite)
     .slice(0, 4);
-  favouriteRecipes.forEach((r) => alreadyShownRecipes.add(r.id));
+  favouriteRecipes.forEach((r) => alreadyShownRecipes.add(r.slug));
 
   const formatter = useRecipeFormatter();
 
@@ -30,30 +33,28 @@ export default defineEventHandler(async (event) => {
     .filter((r) => {
       const totalDuration = formatter.recipeTotalDuration(r);
       return (
-        !alreadyShownRecipes.has(r.id) &&
+        !alreadyShownRecipes.has(r.slug) &&
         r.course?.toLowerCase().startsWith("main") &&
         totalDuration.asMinutes() > 0 &&
         totalDuration.asMinutes() <= 45
       );
     })
     .slice(0, 4);
-  quickRecipes.forEach((r) => alreadyShownRecipes.add(r.id));
+  quickRecipes.forEach((r) => alreadyShownRecipes.add(r.slug));
 
   // TODO: Probably needs to cover more cuisines
-  const worldCuisines = shuffle(recipes)
+  const worldCuisineRecipes = shuffle(recipes)
     .filter(
       (r) =>
-        !alreadyShownRecipes.has(r.id) && r.cuisine && !["american", "australian"].includes(r.cuisine.toLowerCase()),
+        !alreadyShownRecipes.has(r.slug) && r.cuisine && !["american", "australian"].includes(r.cuisine.toLowerCase()),
     )
     .slice(0, 4);
 
-  const mapper = useMapper();
-
   return {
-    latestRecipes: latestRecipes.map(mapper.toRecipePreview),
-    favouriteRecipes: favouriteRecipes.map(mapper.toRecipePreview),
-    quickRecipes: quickRecipes.map(mapper.toRecipePreview),
-    worldCuisineRecipes: worldCuisines.map(mapper.toRecipePreview),
+    latestRecipes,
+    favouriteRecipes,
+    quickRecipes,
+    worldCuisineRecipes,
   };
 });
 

@@ -1,13 +1,16 @@
-import { useDirectus } from "~/composables";
+import { useDirectusApi } from "~/clients/useDirectusApi";
 
-export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig(event);
+export default defineEventHandler(async () => {
+  const client = useDirectusApi();
 
-  const directusClient = useDirectus({
-    url: config.baseUrl,
-    clientId: config.cfAccessClientId,
-    clientSecret: config.cfAccessClientSecret,
-  });
+  const { data, error } = await client.getRecipesPageContent();
 
-  return await directusClient.getRecipesPageContent();
+  if (error) {
+    throw createError({
+      status: 500,
+      data: error,
+    });
+  }
+
+  return data.data![0];
 });

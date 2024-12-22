@@ -1,12 +1,12 @@
 import MiniSearch from "minisearch";
 import { defineNuxtModule } from "nuxt/kit";
-import { useDirectus, useMapper } from "../../composables";
 import type { RecipePreview } from "../../types/recipe";
 import { searchIndexSettings, type SearchIndexIndexed } from "../../types/searchIndex";
 import * as fs from "fs/promises";
 import * as crypto from "crypto";
 import type { Nuxt } from "nuxt/schema";
 import type { Version } from "~/types/version";
+import { useDirectusApi } from "~/clients/useDirectusApi";
 
 export default defineNuxtModule({
   async setup(options, nuxt) {
@@ -34,15 +34,19 @@ export default defineNuxtModule({
 
 async function getAllRecipes(): Promise<RecipePreview[]> {
   console.log(`Loading recipes from ${process.env.NUXT_BASE_URL}`);
-  const client = useDirectus({
-    url: process.env.NUXT_BASE_URL!,
-    clientId: process.env.NUXT_CF_ACCESS_CLIENT_ID!,
-    clientSecret: process.env.NUXT_CF_ACCESS_CLIENT_SECRET!,
-  });
+  const client = useDirectusApi();
 
-  const remoteRecipes = await client.getAllRecipes();
+  const { data: recipes, error } = await client.getRecipes();
 
-  remoteRecipes.forEach((r) => {
+  if (error) {
+    throw error;
+  }
+
+  if (!recipes || recipes.length === 0) {
+    throw new Error(`No recipes were retrieved from ${process.env.NUXT_BASE_URL}`);
+  }
+
+  recipes.forEach((r) => {
     console.log(r.slug);
     if (!r.slug) {
       throw new Error(`Recipe ${r.title} not in the expected format: ${r}`);
@@ -54,12 +58,7 @@ async function getAllRecipes(): Promise<RecipePreview[]> {
     }
   });
 
-  if (remoteRecipes.length === 0) {
-    throw new Error(`No recipes were retrieved from ${process.env.NUXT_BASE_URL}`);
-  }
-
-  const mapper = useMapper();
-  return remoteRecipes.map(mapper.toRecipePreview);
+  return recipes;
 }
 
 function generateRecipeSearchIndex(recipes: RecipePreview[]) {

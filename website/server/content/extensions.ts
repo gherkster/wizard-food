@@ -101,7 +101,7 @@ const inlineIngredientSerializer = Node.create({
         },
         recipeFormatter.formatIngredient({
           amount: htmlAttributes.data.amount ? new Fraction(htmlAttributes.data.amount) : undefined,
-          unit: htmlAttributes.data.unit,
+          unit: htmlAttributes.data.unit ?? undefined,
           /*
             This is only relevant on page load before the component starts creating the name based on data attributes
             So we can assume if an amount is specified <= 1 that it should show the singular form,

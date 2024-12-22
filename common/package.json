@@ -1,7 +1,11 @@
 {
   "name": "common",
   "version": "1.0.0",
+  "scripts": {
+    "openapi": "npx openapi-typescript ../openapi/directus.json -o ./types/directus-schema.d.ts"
+  },
   "devDependencies": {
-    "@tiptap/core": "^2.2.4"
+    "@tiptap/core": "^2.2.4",
+    "openapi-typescript": "^7.4.4"
   }
 }

@@ -17,5 +17,5 @@ module.exports = {
     "max-len": ["warn", { code: 120 }],
     "vue/multi-word-component-names": "off",
   },
-  ignorePatterns: ["dist"],
+  ignorePatterns: ["dist", "directus-schema.*"],
 };

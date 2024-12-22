@@ -68,6 +68,9 @@ export default defineNuxtConfig({
   alias: {
     common: fileURLToPath(new URL("../common", import.meta.url)),
   },
+  imports: {
+    dirs: ["clients"],
+  },
   fonts: {
     defaults: {
       weights: [400],

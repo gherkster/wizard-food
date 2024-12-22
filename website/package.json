@@ -53,6 +53,7 @@
     "eslint": "^8.57.0 || ^9.0.0",
     "nuxt": "^3.14.1592",
     "nuxt-jsonld": "^2.1.0",
+    "openapi-fetch": "^0.13.3",
     "pure-rand": "^6.1.0",
     "sass": "^1.64.1",
     "tiptap-render-view": "^1.0.2",
