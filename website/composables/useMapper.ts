@@ -17,106 +17,101 @@ function toRecipe(serverRecipe: ServerRecipe): Recipe {
   assertCoverImageExists(serverRecipe.coverImage);
   assertCoverImageHasValue(serverRecipe.coverImage);
 
-  try {
-    return {
-      title: serverRecipe.title,
-      description: serverRecipe.description ? generateHTML(serverRecipe.description, extensions) : "",
-      descriptionPlainText: serverRecipe.description ? generateText(serverRecipe.description, extensions) : "",
-      descriptionSnippet: serverRecipe.description_snippet,
-      cuisine: serverRecipe.cuisine ?? undefined,
-      course: serverRecipe.course ?? undefined,
-      note: serverRecipe.note ? generateHTML(serverRecipe.note, extensions) : "",
-      coverImage: mapImage(serverRecipe.coverImage),
-      ingredientGroups:
-        serverRecipe.ingredientGroups?.map<IngredientGroup>((ig) => {
-          if (typeof ig === "number") {
-            throw new Error("Ingredient group only has an identifier, the data fields have not been retrieved.");
-          }
+  return {
+    title: serverRecipe.title,
+    description: serverRecipe.description ? generateHTML(serverRecipe.description, extensions) : "",
+    descriptionPlainText: serverRecipe.description ? generateText(serverRecipe.description, extensions) : "",
+    descriptionSnippet: serverRecipe.description_snippet,
+    cuisine: serverRecipe.cuisine ?? undefined,
+    course: serverRecipe.course ?? undefined,
+    note: serverRecipe.note ? generateHTML(serverRecipe.note, extensions) : "",
+    coverImage: mapImage(serverRecipe.coverImage),
+    ingredientGroups:
+      serverRecipe.ingredientGroups?.map<IngredientGroup>((ig) => {
+        if (typeof ig === "number") {
+          throw new Error("Ingredient group only has an identifier, the data fields have not been retrieved.");
+        }
 
-          return {
-            name: ig.name ?? undefined,
-            ingredients:
-              ig.ingredients?.map((i) => {
-                if (typeof i === "number") {
-                  throw new Error("Ingredient only has an identifier, the data fields have not been retrieved.");
-                }
+        return {
+          name: ig.name ?? undefined,
+          ingredients:
+            ig.ingredients?.map((i) => {
+              if (typeof i === "number") {
+                throw new Error("Ingredient only has an identifier, the data fields have not been retrieved.");
+              }
 
-                if (!i.name_singular) {
-                  throw new Error(
-                    `Recipe ${serverRecipe.title} includes a ingredient with no singular form name. Ingredient: ${i.id}`,
-                  );
-                }
-                if (!i.name_plural) {
-                  throw new Error(
-                    `Recipe ${serverRecipe.title} includes a ingredient with no plural form name. Ingredient: ${i.id}`,
-                  );
-                }
+              if (!i.name_singular) {
+                throw new Error(
+                  `Recipe ${serverRecipe.title} includes a ingredient with no singular form name. Ingredient: ${i.id}`,
+                );
+              }
+              if (!i.name_plural) {
+                throw new Error(
+                  `Recipe ${serverRecipe.title} includes a ingredient with no plural form name. Ingredient: ${i.id}`,
+                );
+              }
 
-                return {
-                  amount: i.amount ?? undefined,
-                  unit: i.unit ?? undefined,
-                  name: {
-                    singular: generateHTML(i.name_singular, extensions),
-                    plural: generateHTML(i.name_plural, extensions),
-                  },
-                  note: i.note ?? undefined,
-                  inlineOnly: i.inline_only,
-                };
-              }) ?? [],
-          };
-        }) ?? [],
-      instructionGroups:
-        serverRecipe.instructionGroups?.map<InstructionGroup>((ig) => {
-          if (typeof ig === "number") {
-            throw new Error("Instruction group only has an identifier, the data fields have not been retrieved.");
-          }
+              return {
+                amount: i.amount ?? undefined,
+                unit: i.unit ?? undefined,
+                name: {
+                  singular: generateHTML(i.name_singular, extensions),
+                  plural: generateHTML(i.name_plural, extensions),
+                },
+                note: i.note ?? undefined,
+                inlineOnly: i.inline_only,
+              };
+            }) ?? [],
+        };
+      }) ?? [],
+    instructionGroups:
+      serverRecipe.instructionGroups?.map<InstructionGroup>((ig) => {
+        if (typeof ig === "number") {
+          throw new Error("Instruction group only has an identifier, the data fields have not been retrieved.");
+        }
 
-          return {
-            name: ig.name ?? undefined,
-            instructions:
-              ig.instructions?.map<Instruction>((i) => {
-                if (typeof i === "number") {
-                  throw new Error("Instruction only has an identifier, the data fields have not been retrieved.");
-                }
+        return {
+          name: ig.name ?? undefined,
+          instructions:
+            ig.instructions?.map<Instruction>((i) => {
+              if (typeof i === "number") {
+                throw new Error("Instruction only has an identifier, the data fields have not been retrieved.");
+              }
 
-                if (i.inline_ingredients?.some((inline) => typeof inline === "string")) {
-                  throw new Error(
-                    "Instruction inline_ingredients is only an identifier, the data fields have not been retrieved.",
-                  );
-                }
+              if (i.inline_ingredients?.some((inline) => typeof inline === "string")) {
+                throw new Error(
+                  "Instruction inline_ingredients is only an identifier, the data fields have not been retrieved.",
+                );
+              }
 
-                // TODO: Pick/delete so that the unused fields are not delivered to the client
-                return {
-                  text: generateHTML(
-                    insertRelationDataIntoContent(
-                      i.text as JSONContent,
-                      (i.inline_ingredients ?? []) as InlineIngredient[],
-                    ),
-                    extensions,
+              // TODO: Pick/delete so that the unused fields are not delivered to the client
+              return {
+                text: generateHTML(
+                  insertRelationDataIntoContent(
+                    i.text as JSONContent,
+                    (i.inline_ingredients ?? []) as InlineIngredient[],
                   ),
-                };
-              }) ?? [],
-          };
-        }) ?? [],
-      preparationDuration: serverRecipe.preparationDuration ?? undefined,
-      cookingDuration: serverRecipe.cookingDuration ?? undefined,
-      customDurationName: serverRecipe.customDurationName ?? undefined,
-      customDuration: serverRecipe.customDuration ?? undefined,
-      servings: serverRecipe.servings ?? undefined,
-      servingsType: serverRecipe.servings_type ?? undefined,
-      slug: serverRecipe.slug,
-      tags: buildTagList({
-        course: serverRecipe.course,
-        cuisine: serverRecipe.cuisine,
-        diets: serverRecipe.diets as string[] | undefined, // The multiselect JSON type is an optional string array
-        main_ingredients: serverRecipe.main_ingredients as string[] | undefined, // The multiselect JSON type is an optional string array
-        method: serverRecipe.method,
-      }),
-    };
-  } catch (e) {
-    console.error(e);
-    throw e;
-  }
+                  extensions,
+                ),
+              };
+            }) ?? [],
+        };
+      }) ?? [],
+    preparationDuration: serverRecipe.preparationDuration ?? undefined,
+    cookingDuration: serverRecipe.cookingDuration ?? undefined,
+    customDurationName: serverRecipe.customDurationName ?? undefined,
+    customDuration: serverRecipe.customDuration ?? undefined,
+    servings: serverRecipe.servings ?? undefined,
+    servingsType: serverRecipe.servings_type ?? undefined,
+    slug: serverRecipe.slug,
+    tags: buildTagList({
+      course: serverRecipe.course,
+      cuisine: serverRecipe.cuisine,
+      diets: serverRecipe.diets as string[] | undefined, // The multiselect JSON type is an optional string array
+      main_ingredients: serverRecipe.main_ingredients as string[] | undefined, // The multiselect JSON type is an optional string array
+      method: serverRecipe.method,
+    }),
+  };
 }
 
 function insertRelationDataIntoContent(content: JSONContent, inlineIngredients: InlineIngredient[]) {
