@@ -1,5 +1,4 @@
 <template>
-  <!-- eslint-disable-next-line vue/no-v-html -->
   <div ref="inlineIngredientsRef" class="instruction" v-html="content" />
 </template>
 

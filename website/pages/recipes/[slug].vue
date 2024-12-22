@@ -3,7 +3,6 @@
     <blurrable-image :img="recipe.coverImage" purpose="cover" aspect-ratio="portrait" />
     <div class="recipe__summary">
       <h1 class="recipe__title">{{ recipe.title }}</h1>
-      <!-- eslint-disable-next-line vue/no-v-html -->
       <div v-if="recipe.description" class="recipe__description" v-html="recipe.description" />
       <div class="recipe__tags">
         <nuxt-link v-for="tag in recipe.tags" :key="tag" :to="createSearchLink(tag)" class="concealed">
@@ -107,7 +106,6 @@
     </div>
     <div v-if="recipe.note" class="recipe__notes">
       <h2>Notes</h2>
-      <!-- eslint-disable-next-line vue/no-v-html -->
       <div v-html="recipe.note" />
     </div>
     <footer class="footer">
