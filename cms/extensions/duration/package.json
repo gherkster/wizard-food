@@ -17,14 +17,14 @@
 	},
 	"scripts": {
 		"build": "directus-extension build",
-		"build-remote": "directus-extension build && npm run push-remote",
+		"build-remote": "directus-extension build && pnpm run push-remote",
 		"push-remote": "scp dist/index.js oracle:~/docker-cloud/directus/extensions/directus-extension-duration/dist/index.js",
 		"dev": "directus-extension build -w --no-minify",
 		"link": "directus-extension link"
 	},
 	"devDependencies": {
-		"@directus/extensions-sdk": "^11.0.4",
-		"typescript": "^5.2.2",
-		"vue": "^3.3.4"
+		"@directus/extensions-sdk": "^11.0.10",
+		"typescript": "^5.7.3",
+		"vue": "^3.5.13"
 	}
 }
