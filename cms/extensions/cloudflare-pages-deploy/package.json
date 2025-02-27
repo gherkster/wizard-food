@@ -1,0 +1,46 @@
+{
+	"name": "cloudflare-pages-deploy",
+	"description": "Please enter a description for your extension",
+	"icon": "extension",
+	"version": "1.0.0",
+	"keywords": [
+		"directus",
+		"directus-extension",
+		"directus-extension-operation"
+	],
+	"type": "module",
+	"files": [
+		"dist"
+	],
+	"directus:extension": {
+		"type": "operation",
+		"path": {
+			"app": "dist/app.js",
+			"api": "dist/api.js"
+		},
+		"source": {
+			"app": "src/app.ts",
+			"api": "src/api.ts"
+		},
+		"host": "^10.10.0"
+	},
+	"scripts": {
+		"build": "directus-extension build",
+		"dev": "directus-extension build -w --no-minify",
+		"build-remote": "directus-extension build && pnpm run push-remote",
+		"push-remote": "pnpm run push-app && pnpm run push-api",
+		"push-app": "scp dist/app.js oracle:~/docker-cloud/directus/extensions/cloudflare-pages-deploy/dist/app.js",
+		"push-api": "scp dist/api.js oracle:~/docker-cloud/directus/extensions/cloudflare-pages-deploy/dist/api.js",
+		"link": "directus-extension link",
+		"validate": "directus-extension validate"
+	},
+	"devDependencies": {
+		"@directus/extensions-sdk": "13.0.2",
+		"@types/node": "^22.13.5",
+		"typescript": "^5.7.3",
+		"vue": "^3.5.13"
+	},
+	"dependencies": {
+		"cloudflare": "^4.1.0"
+	}
+}
