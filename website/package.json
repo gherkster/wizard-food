@@ -7,8 +7,8 @@
     "generate": "nuxt generate",
     "preview": "wrangler pages dev .output/public",
     "postinstall": "nuxt prepare",
-    "pages:dev": "wrangler pages dev --compatibility-date=2023-10-09 --proxy 3000 -- npm run dev",
-    "pages:deploy": "npm run build && wrangler pages deploy ./dist",
+    "pages:dev": "wrangler pages dev --compatibility-date=2023-10-09 --proxy 3000 -- pnpm run dev",
+    "pages:deploy": "pnpm run build && wrangler pages deploy ./dist",
     "bundle:analyze": "npx nuxi analyze"
   },
   "dependencies": {

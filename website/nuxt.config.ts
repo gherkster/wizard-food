@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 
 export default defineNuxtConfig({
   ssr: true,
+
   routeRules: {
     /*
       Force all routes to prerender.
@@ -12,6 +13,7 @@ export default defineNuxtConfig({
     */
     "/**": { prerender: true },
   },
+
   nitro: {
     prerender: {
       // Disable to prevent unnecessary trailing slash redirects
@@ -19,9 +21,11 @@ export default defineNuxtConfig({
       autoSubfolderIndex: false,
     },
   },
+
   appConfig: {
     externalBaseUrl: "", // Overridden by recipe module
   },
+
   runtimeConfig: {
     baseUrl: "", // Overridden by .env NUXT_BASE_URL
     cfAccessClientId: "", // Overridden by .env NUXT_CF_ACCESS_CLIENT_ID
@@ -34,10 +38,12 @@ export default defineNuxtConfig({
       searchIndexHash: "",
     },
   },
+
   typescript: {
     // Enable build-time type checking, only currently enabled in local development due to pipeline issues
     typeCheck: import.meta.dev,
   },
+
   vite: {
     build: {
       rollupOptions: {
@@ -64,18 +70,23 @@ export default defineNuxtConfig({
       },
     },
   },
+
   modules: ["unplugin-icons/nuxt", "@nuxt/fonts", "@nuxtjs/sitemap", "@nuxt/eslint", "nuxt-jsonld"],
+
   alias: {
     common: fileURLToPath(new URL("../common", import.meta.url)),
   },
+
   imports: {
     dirs: ["clients"],
   },
+
   fonts: {
     defaults: {
       weights: [400],
     },
   },
+
   app: {
     head: {
       meta: [
@@ -89,4 +100,6 @@ export default defineNuxtConfig({
       },
     },
   },
+
+  compatibilityDate: "2025-02-27",
 });
