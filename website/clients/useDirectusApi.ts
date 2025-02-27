@@ -52,7 +52,7 @@ export const useDirectusApi = () => {
           query: {
             fields: searchFields,
             filter: `{"status":{"_eq":"published"}}`,
-            sort: ["-date_created"],
+            sort: ["-date_published"],
           },
         },
         querySerializer: {
@@ -66,7 +66,14 @@ export const useDirectusApi = () => {
       }
 
       const mapper = useMapper();
-      return { data: data.data?.map((r) => mapper.toRecipePreview(r)) };
+      const now = new Date();
+
+      return {
+        data: data.data
+          ?.map((r) => mapper.toRecipePreview(r))
+          // A missing date_published value means the recipe is brand new and the publish date has not been set in the record yet, so use the current time.
+          .sort((a, b) => (b.date_published ?? now).getTime() - (a.date_published ?? now).getTime()),
+      };
     },
     getRecipe: async (slug: string) => {
       const { data, error } = await client.GET("/items/recipes", {

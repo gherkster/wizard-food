@@ -141,7 +141,7 @@ function toRecipePreview(serverRecipe: ServerRecipe): RecipePreview {
     descriptionSnippet: serverRecipe.description_snippet,
     course: serverRecipe.course ?? undefined,
     cuisine: serverRecipe.cuisine ?? undefined,
-    date_created: serverRecipe.date_created!,
+    date_published: serverRecipe.date_published ? new Date(serverRecipe.date_published) : undefined,
     favourite: serverRecipe.favourite ?? undefined,
     featuredTag: getRandomTag(tags, serverRecipe.id!),
     preparationDuration: serverRecipe.preparationDuration ?? undefined,

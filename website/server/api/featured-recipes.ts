@@ -17,8 +17,11 @@ export default defineEventHandler(async () => {
   // Track the recipes that have already been picked so far so that duplicates are not displayed
   const alreadyShownRecipes = new Set<string>();
 
+  const now = new Date();
+
   const latestRecipes = recipes
-    .sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime())
+    // A missing date_published value means the recipe is brand new and the publish date has not been set in the record yet, so use the current time.
+    .sort((a, b) => (b.date_published ?? now).getTime() - (a.date_published ?? now).getTime())
     .slice(0, 3);
   latestRecipes.forEach((r) => alreadyShownRecipes.add(r.slug));
 

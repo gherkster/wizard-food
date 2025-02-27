@@ -33,7 +33,7 @@ export type RecipePreview = {
   customDuration?: number;
   totalDuration?: string;
   slug: string;
-  date_created: string;
+  date_published?: Date;
   favourite?: boolean;
 };
 
