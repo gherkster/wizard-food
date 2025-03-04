@@ -1,8 +1,10 @@
 import createClient, { type Middleware } from "openapi-fetch";
 import type { paths } from "../../common/types/directus-schema";
-import { useMapper } from "~/composables";
+import { useMapper } from "./mapping/directusRecipeMapper";
 
-const client = createClient<paths>({ baseUrl: process.env.NUXT_BASE_URL ?? useRuntimeConfig().baseUrl });
+const client = createClient<paths>({
+  baseUrl: process.env.NUXT_BASE_URL ?? useRuntimeConfig().baseUrl,
+});
 
 const authMiddleware: Middleware = {
   async onRequest({ request }) {
@@ -72,7 +74,9 @@ export const useDirectusApi = () => {
         data: data.data
           ?.map((r) => mapper.toRecipePreview(r))
           // A missing date_published value means the recipe is brand new and the publish date has not been set in the record yet, so use the current time.
-          .sort((a, b) => (b.date_published ?? now).getTime() - (a.date_published ?? now).getTime()),
+          .sort(
+            (a, b) => (b.date_published ?? now).getTime() - (a.date_published ?? now).getTime(),
+          ),
       };
     },
     getRecipe: async (slug: string) => {

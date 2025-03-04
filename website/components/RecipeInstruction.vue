@@ -1,11 +1,9 @@
 <template>
-  <!-- eslint-disable-next-line vue/no-v-html -->
   <div ref="inlineIngredientsRef" class="instruction" v-html="content" />
 </template>
 
 <script setup lang="ts">
 import Fraction from "fraction.js";
-import { useRecipeFormatter } from "~/composables";
 import type { IngredientUnitForm } from "~/types/mapping";
 
 interface InlineIngredientMarkup {
@@ -55,19 +53,20 @@ watch(
   (newMultiplier) => multiplyInlineIngredients(newMultiplier),
 );
 
-const formatter = useRecipeFormatter();
-
 function multiplyInlineIngredients(multiplicationFactor: number) {
   inlineIngredients.value.forEach((ingredient) => {
     if (!ingredient.data.amount) {
       return;
     }
 
-    const currentAmount = ingredient.data.amount.mul(multiplicationFactor).div(props.originalNumberOfServings);
+    const currentAmount = ingredient.data.amount
+      .mul(multiplicationFactor)
+      .div(props.originalNumberOfServings);
 
-    const displayedIngredient = formatter.formatIngredient({
+    const displayedIngredient = formatIngredient({
       amount: currentAmount,
-      name: currentAmount.valueOf() <= 1 ? ingredient.data.name.singular : ingredient.data.name.plural,
+      name:
+        currentAmount.valueOf() <= 1 ? ingredient.data.name.singular : ingredient.data.name.plural,
       unit: getUnitLabel(ingredient.data.unit, currentAmount.valueOf()),
       note: "",
     });
@@ -84,7 +83,9 @@ function getUnitLabel(unit?: string, currentAmount?: number) {
     return unit;
   }
 
-  const multipleFormsUnit = props.unitForms.find((m) => m.singularForm === unit || m.pluralForm === unit);
+  const multipleFormsUnit = props.unitForms.find(
+    (m) => m.singularForm === unit || m.pluralForm === unit,
+  );
   if (!multipleFormsUnit) {
     return unit;
   }

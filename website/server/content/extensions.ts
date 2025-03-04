@@ -19,9 +19,9 @@ import { TableHeader } from "@tiptap/extension-table-header";
 import { TableRow } from "@tiptap/extension-table-row";
 import { TableCell } from "@tiptap/extension-table-cell";
 import { Node, generateText } from "@tiptap/core";
-import { useRecipeFormatter } from "~/composables";
 import type { ServerIngredient } from "common/types/serverRecipe";
 import Fraction from "fraction.js";
+import { formatIngredient } from "~/utils/formatting";
 
 interface InlineIngredientAttributes {
   collection: string;
@@ -83,8 +83,6 @@ const inlineIngredientSerializer = Node.create({
     };
   },
   renderHTML(props) {
-    const recipeFormatter = useRecipeFormatter();
-
     // Cast type since tiptap uses any here
     const htmlAttributes = props.HTMLAttributes as InlineIngredientAttributes;
 
@@ -99,7 +97,7 @@ const inlineIngredientSerializer = Node.create({
           "data-name-plural": generateText(htmlAttributes.data.name_plural ?? {}, extensions),
           "data-note": htmlAttributes.data.note,
         },
-        recipeFormatter.formatIngredient({
+        formatIngredient({
           amount: htmlAttributes.data.amount ? new Fraction(htmlAttributes.data.amount) : undefined,
           unit: htmlAttributes.data.unit ?? undefined,
           /*
@@ -109,8 +107,8 @@ const inlineIngredientSerializer = Node.create({
           */
           name: generateText(
             htmlAttributes.data.amount && htmlAttributes.data.amount <= 1
-              ? htmlAttributes.data.name_singular ?? {}
-              : htmlAttributes.data.name_plural ?? {},
+              ? (htmlAttributes.data.name_singular ?? {})
+              : (htmlAttributes.data.name_plural ?? {}),
             extensions,
           ),
         }),
