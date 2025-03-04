@@ -7,7 +7,7 @@
     "generate": "nuxt generate",
     "preview": "wrangler pages dev .output/public",
     "postinstall": "nuxt prepare",
-    "pages:dev": "wrangler pages dev --compatibility-date=2023-10-09 --proxy 3000 -- pnpm run dev",
+    "pages:dev": "wrangler pages dev --compatibility-date=2025-02-14 --proxy 3000 -- pnpm run dev",
     "pages:deploy": "pnpm run build && wrangler pages deploy ./dist",
     "bundle:analyze": "npx nuxi analyze"
   },
@@ -22,6 +22,7 @@
     "@iconify-json/gravity-ui": "^1.2.5",
     "@nuxt/eslint": "0.7.2",
     "@nuxt/fonts": "^0.6.1",
+    "@nuxtjs/robots": "5.2.4",
     "@nuxtjs/sitemap": "^5.3.5",
     "@tiptap/core": "^2.11.5",
     "@tiptap/extension-blockquote": "^2.11.5",

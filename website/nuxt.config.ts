@@ -71,7 +71,7 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ["unplugin-icons/nuxt", "@nuxt/fonts", "@nuxtjs/sitemap", "@nuxt/eslint", "nuxt-jsonld"],
+  modules: ["unplugin-icons/nuxt", "@nuxt/fonts", "@nuxtjs/sitemap", "@nuxt/eslint", "nuxt-jsonld", "@nuxtjs/robots"],
 
   alias: {
     common: fileURLToPath(new URL("../common", import.meta.url)),
