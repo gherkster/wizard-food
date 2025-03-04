@@ -26,6 +26,19 @@ useHead({
     },
   ],
 });
+
+const appConfig = useAppConfig();
+const route = useRoute();
+
+useServerHead({
+  link: [
+    {
+      rel: "canonical",
+      // Specify the URL without the query or hash as the canonical URL, to avoid duplicate page crawling issues with search query params.
+      href: `${appConfig.externalBaseUrl}${route.path}`,
+    },
+  ],
+});
 </script>
 
 <style lang="scss">
