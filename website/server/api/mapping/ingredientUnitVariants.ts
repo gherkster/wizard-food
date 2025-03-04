@@ -1,4 +1,5 @@
 import { useDirectusApi } from "~/clients/useDirectusApi";
+import type { IngredientUnitForm } from "~/types/mapping";
 
 export default defineEventHandler(async () => {
   const client = useDirectusApi();
@@ -6,16 +7,18 @@ export default defineEventHandler(async () => {
   const { data, error } = await client.getIngredientUnitSingularPluralMapping();
 
   if (error) {
-    return createError({
+    throw createError({
       status: 500,
       data: error,
     });
   }
 
-  return data.data!.map((m) => {
+  const unitVariants: IngredientUnitForm[] = data.data!.map((m) => {
     return {
-      singularForm: m.singular_form,
-      pluralForm: m.plural_form,
+      singularForm: m.singular_form ?? "",
+      pluralForm: m.plural_form ?? "",
     };
   });
+
+  return unitVariants;
 });
