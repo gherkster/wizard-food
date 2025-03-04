@@ -1,5 +1,5 @@
 import { useDirectusApi } from "~/clients/useDirectusApi";
-import { useRecipeFormatter } from "~/composables";
+import { recipeTotalDuration } from "~/utils/formatting";
 
 export default defineEventHandler(async () => {
   const client = useDirectusApi();
@@ -30,11 +30,9 @@ export default defineEventHandler(async () => {
     .slice(0, 4);
   favouriteRecipes.forEach((r) => alreadyShownRecipes.add(r.slug));
 
-  const formatter = useRecipeFormatter();
-
   const quickRecipes = shuffle(recipes)
     .filter((r) => {
-      const totalDuration = formatter.recipeTotalDuration(r);
+      const totalDuration = recipeTotalDuration(r);
       return (
         !alreadyShownRecipes.has(r.slug) &&
         r.course?.toLowerCase().startsWith("main") &&

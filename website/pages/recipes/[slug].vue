@@ -3,10 +3,14 @@
     <blurrable-image :img="recipe.coverImage" purpose="cover" aspect-ratio="portrait" />
     <div class="recipe__summary">
       <h1 class="recipe__title">{{ recipe.title }}</h1>
-      <!-- eslint-disable-next-line vue/no-v-html -->
       <div v-if="recipe.description" class="recipe__description" v-html="recipe.description" />
       <div class="recipe__tags">
-        <nuxt-link v-for="tag in recipe.tags" :key="tag" :to="createSearchLink(tag)" class="concealed">
+        <nuxt-link
+          v-for="tag in recipe.tags"
+          :key="tag"
+          :to="createSearchLink(tag)"
+          class="concealed"
+        >
           <v-tag :icon="magnifier">{{ tag }}</v-tag>
         </nuxt-link>
       </div>
@@ -54,7 +58,10 @@
       <div class="recipe__ingredients-title">
         <h2>Ingredients</h2>
       </div>
-      <div v-for="ingredientSection in recipe.ingredientGroups" :key="JSON.stringify(ingredientSection)">
+      <div
+        v-for="ingredientSection in recipe.ingredientGroups"
+        :key="JSON.stringify(ingredientSection)"
+      >
         <p v-if="ingredientSection.name">
           <b>{{ ingredientSection.name }}</b>
         </p>
@@ -107,7 +114,6 @@
     </div>
     <div v-if="recipe.note" class="recipe__notes">
       <h2>Notes</h2>
-      <!-- eslint-disable-next-line vue/no-v-html -->
       <div v-html="recipe.note" />
     </div>
     <footer class="footer">
@@ -118,17 +124,15 @@
 </template>
 
 <script setup lang="ts">
-import { useRecipeFormatter } from "~/composables";
-import type { Recipe } from "~/types/recipe";
 import type { RouteLocationRaw } from "#vue-router";
 import logoLight from "~icons/custom/logo-light";
 import logoDark from "~icons/custom/logo-dark";
 import magnifier from "~icons/gravity-ui/magnifier";
-import type { IngredientUnitForm } from "~/types/mapping";
+import Fraction from "fraction.js";
 
 const route = useRoute();
 const recipesResponse = await useAsyncData(route.params.slug.toString(), async () => {
-  const { data: recipe } = await useFetch<Recipe>(`/api/recipes/${route.params.slug.toString()}`);
+  const { data: recipe } = await useFetch(`/api/recipes/${route.params.slug.toString()}`);
   return recipe.value;
 });
 
@@ -147,8 +151,7 @@ if (!recipesResponse.data.value) {
 }
 const recipe = ref(recipesResponse.data.value);
 
-const formatter = useRecipeFormatter();
-const durationLabels = computed(() => formatter.formatRecipeDurations(recipe.value));
+const durationLabels = computed(() => formatRecipeDurations(recipe.value));
 
 const image = useImage();
 useServerSeoMeta({
@@ -177,17 +180,38 @@ useJsonld({
     purpose: "cover",
     aspectRatio: "square",
   }),
+  recipeIngredient: recipe.value.ingredientGroups.flatMap((ig) =>
+    ig.ingredients.map((i) =>
+      formatIngredient({
+        amount: i.amount ? new Fraction(i.amount) : undefined,
+        unit: i.unit,
+        name: i.amount && i.amount <= 1 ? i.name.singular : i.name.plural,
+      }),
+    ),
+  ),
+  recipeInstructions: recipe.value.instructionGroups.flatMap((ig) =>
+    ig.instructions.map((i) => {
+      return {
+        "@type": "HowToStep",
+        text: i.text,
+      };
+    }),
+  ),
   recipeCategory: recipe.value.course,
   recipeCuisine: recipe.value.cuisine,
   recipeYield:
     recipe.value.servings && recipe.value.servingsType
       ? `${recipe.value.servings} ${recipe.value.servingsType}`
       : undefined,
-  keywords: recipe.value.tags.filter((t) => t !== recipe.value.course && t !== recipe.value.cuisine).join(", "),
-  totalTime: formatter.recipeTotalDuration(recipe.value).toISOString(),
+  keywords: recipe.value.tags
+    .filter((t) => t !== recipe.value.course && t !== recipe.value.cuisine)
+    .join(", "),
+  totalTime: recipeTotalDuration(recipe.value).toISOString(),
 });
 
-const servings = ref<number>(recipe.value.servings && recipe.value.servings > 0 ? recipe.value.servings : 1);
+const servings = ref<number>(
+  recipe.value.servings && recipe.value.servings > 0 ? recipe.value.servings : 1,
+);
 const originalNumberOfServings = servings.value;
 
 function updateNumberOfServings(newServings: number) {
@@ -195,7 +219,7 @@ function updateNumberOfServings(newServings: number) {
 }
 
 const unitFormsResponse = await useAsyncData("ingredientUnitVariants", async () => {
-  const { data: mapping } = await useFetch<IngredientUnitForm[]>("/api/mapping/ingredientUnitVariants");
+  const { data: mapping } = await useFetch("/api/mapping/ingredientUnitVariants");
   return mapping.value;
 });
 const unitForms = unitFormsResponse.data.value ?? [];

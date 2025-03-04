@@ -1,10 +1,17 @@
 import prand from "pure-rand";
-import { useRecipeFormatter } from "./useRecipeFormatter";
 import type { InlineIngredient, ServerImage, ServerRecipe } from "common/types/serverRecipe";
-import type { IngredientGroup, Instruction, InstructionGroup, Image, Recipe, RecipePreview } from "~/types/recipe";
+import type {
+  IngredientGroup,
+  Instruction,
+  InstructionGroup,
+  Image,
+  Recipe,
+  RecipePreview,
+} from "~/types/recipe";
 import { generateText, type JSONContent } from "@tiptap/core";
 import { generateHTML } from "@tiptap/html";
 import extensions from "~/server/content/extensions";
+import { formatDuration, secondsToDuration } from "~/utils/formatting";
 
 export function useMapper() {
   return {
@@ -13,14 +20,16 @@ export function useMapper() {
   };
 }
 
-function toRecipe(serverRecipe: ServerRecipe): Recipe {
+const toRecipe = (serverRecipe: ServerRecipe): Recipe => {
   assertCoverImageExists(serverRecipe.coverImage);
   assertCoverImageHasValue(serverRecipe.coverImage);
 
   return {
     title: serverRecipe.title,
     description: serverRecipe.description ? generateHTML(serverRecipe.description, extensions) : "",
-    descriptionPlainText: serverRecipe.description ? generateText(serverRecipe.description, extensions) : "",
+    descriptionPlainText: serverRecipe.description
+      ? generateText(serverRecipe.description, extensions)
+      : "",
     descriptionSnippet: serverRecipe.description_snippet,
     cuisine: serverRecipe.cuisine ?? undefined,
     course: serverRecipe.course ?? undefined,
@@ -29,7 +38,9 @@ function toRecipe(serverRecipe: ServerRecipe): Recipe {
     ingredientGroups:
       serverRecipe.ingredientGroups?.map<IngredientGroup>((ig) => {
         if (typeof ig === "number") {
-          throw new Error("Ingredient group only has an identifier, the data fields have not been retrieved.");
+          throw new Error(
+            "Ingredient group only has an identifier, the data fields have not been retrieved.",
+          );
         }
 
         return {
@@ -37,7 +48,9 @@ function toRecipe(serverRecipe: ServerRecipe): Recipe {
           ingredients:
             ig.ingredients?.map((i) => {
               if (typeof i === "number") {
-                throw new Error("Ingredient only has an identifier, the data fields have not been retrieved.");
+                throw new Error(
+                  "Ingredient only has an identifier, the data fields have not been retrieved.",
+                );
               }
 
               if (!i.name_singular) {
@@ -67,7 +80,9 @@ function toRecipe(serverRecipe: ServerRecipe): Recipe {
     instructionGroups:
       serverRecipe.instructionGroups?.map<InstructionGroup>((ig) => {
         if (typeof ig === "number") {
-          throw new Error("Instruction group only has an identifier, the data fields have not been retrieved.");
+          throw new Error(
+            "Instruction group only has an identifier, the data fields have not been retrieved.",
+          );
         }
 
         return {
@@ -75,7 +90,9 @@ function toRecipe(serverRecipe: ServerRecipe): Recipe {
           instructions:
             ig.instructions?.map<Instruction>((i) => {
               if (typeof i === "number") {
-                throw new Error("Instruction only has an identifier, the data fields have not been retrieved.");
+                throw new Error(
+                  "Instruction only has an identifier, the data fields have not been retrieved.",
+                );
               }
 
               if (i.inline_ingredients?.some((inline) => typeof inline === "string")) {
@@ -112,9 +129,12 @@ function toRecipe(serverRecipe: ServerRecipe): Recipe {
       method: serverRecipe.method,
     }),
   };
-}
+};
 
-function insertRelationDataIntoContent(content: JSONContent, inlineIngredients: InlineIngredient[]) {
+function insertRelationDataIntoContent(
+  content: JSONContent,
+  inlineIngredients: InlineIngredient[],
+) {
   if (content.type === "inline-ingredient" && content.attrs?.id) {
     const ingredient = inlineIngredients.find((i) => i.id === content.attrs!.id);
     content.attrs.data = ingredient?.ingredient_id;
@@ -124,7 +144,7 @@ function insertRelationDataIntoContent(content: JSONContent, inlineIngredients: 
   return content;
 }
 
-function toRecipePreview(serverRecipe: ServerRecipe): RecipePreview {
+const toRecipePreview = (serverRecipe: ServerRecipe): RecipePreview => {
   assertCoverImageExists(serverRecipe.coverImage);
   assertCoverImageHasValue(serverRecipe.coverImage);
 
@@ -153,17 +173,23 @@ function toRecipePreview(serverRecipe: ServerRecipe): RecipePreview {
     slug: serverRecipe.slug,
     tags: tags,
   };
-}
+};
 
-function assertCoverImageExists(coverImage: (string | ServerImage) | null | undefined): asserts coverImage {
+function assertCoverImageExists(
+  coverImage: (string | ServerImage) | null | undefined,
+): asserts coverImage {
   if (!coverImage) {
     throw new Error("Recipe image not provided");
   }
 }
 
-function assertCoverImageHasValue(coverImage: string | ServerImage): asserts coverImage is ServerImage {
+function assertCoverImageHasValue(
+  coverImage: string | ServerImage,
+): asserts coverImage is ServerImage {
   if (typeof coverImage === "string") {
-    throw new Error("Recipe image only has an identifier, the data fields have not been retrieved.");
+    throw new Error(
+      "Recipe image only has an identifier, the data fields have not been retrieved.",
+    );
   }
 }
 
@@ -187,21 +213,21 @@ function getRandomTag(tags: string[], recipeId: number) {
     return undefined;
   }
 
-  // TODO: Is this randomness enough with incrementing integers?
   const randomness = prand.xoroshiro128plus(recipeId);
   const [randomIndex] = prand.uniformIntDistribution(0, tags.length - 1, randomness);
   return tags[randomIndex];
 }
 
-const formatter = useRecipeFormatter();
 function getTotalDuration(recipe: ServerRecipe) {
   const totalDuration =
-    (recipe.preparationDuration ?? 0) + (recipe.cookingDuration ?? 0) + (recipe.customDuration ?? 0);
+    (recipe.preparationDuration ?? 0) +
+    (recipe.cookingDuration ?? 0) +
+    (recipe.customDuration ?? 0);
   if (totalDuration === 0) {
     return "";
   }
 
-  return formatter.formatDuration(formatter.secondsToDuration(totalDuration));
+  return formatDuration(secondsToDuration(totalDuration));
 }
 
 type RecipeCategories = {

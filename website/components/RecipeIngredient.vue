@@ -21,7 +21,9 @@ const props = defineProps<{
   unitForms: IngredientUnitForm[];
 }>();
 
-const amount = computed(() => (props.ingredient.amount ? new Fraction(props.ingredient.amount) : undefined));
+const amount = computed(() =>
+  props.ingredient.amount ? new Fraction(props.ingredient.amount) : undefined,
+);
 
 const multipliedAmount = computed(() => {
   if (!amount.value) {
@@ -31,14 +33,12 @@ const multipliedAmount = computed(() => {
   return amount.value.mul(props.ingredientMultiplier).div(props.originalNumberOfServings);
 });
 
-const formatter = useRecipeFormatter();
-
 const formattedAmount = computed(() => {
   if (!multipliedAmount.value) {
     return "";
   }
 
-  return formatter.formatIngredientAmount(multipliedAmount.value);
+  return formatIngredientAmount(multipliedAmount.value);
 });
 
 const unitVariant = computed(() => {
@@ -57,7 +57,9 @@ const unitVariant = computed(() => {
     return props.ingredient.unit;
   }
 
-  return multipliedAmount.value.valueOf() <= 1 ? multipleFormsUnit.singularForm : multipleFormsUnit.pluralForm;
+  return multipliedAmount.value.valueOf() <= 1
+    ? multipleFormsUnit.singularForm
+    : multipleFormsUnit.pluralForm;
 });
 
 const nameVariant = computed(() => {
@@ -67,6 +69,8 @@ const nameVariant = computed(() => {
     return props.ingredient.name.plural;
   }
 
-  return multipliedAmount.value.valueOf() <= 1 ? props.ingredient.name.singular : props.ingredient.name.plural;
+  return multipliedAmount.value.valueOf() <= 1
+    ? props.ingredient.name.singular
+    : props.ingredient.name.plural;
 });
 </script>
