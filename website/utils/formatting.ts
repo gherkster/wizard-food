@@ -1,19 +1,26 @@
 import dayjs from "dayjs";
 import duration, { type Duration } from "dayjs/plugin/duration";
-import type Fraction from "fraction.js";
+import Fraction from "fraction.js";
 import type { Recipe } from "~/types/recipe";
 
+/**
+ * Formats an ingredient into a single line label
+ * @param ingredient The amount, name, units and note of an ingredient.
+ */
 export const formatIngredient = (ingredient: {
-  amount?: Fraction;
+  amount?: Fraction | number;
   name: string;
   unit?: string;
   note?: string;
 }) => {
-  const amountFraction = ingredient.amount ? formatIngredientAmount(ingredient.amount) : "";
+  const amountFraction =
+    typeof ingredient.amount === "number" ? new Fraction(ingredient.amount) : ingredient.amount;
+  const formattedAmount = amountFraction ? formatIngredientAmount(amountFraction) : "";
+
   const unit = ingredient.unit?.toString() ?? "";
   const note = ingredient.note ?? "";
 
-  const value = `${amountFraction} ${unit} ${ingredient.name} ${note}`;
+  const value = `${formattedAmount} ${unit} ${ingredient.name} ${note}`;
   return value.trim();
 };
 
@@ -80,11 +87,12 @@ export const formatDuration = (duration: Duration): string | undefined => {
 };
 
 type RecipeDuration = {
-  preparationDuration?: number;
-  cookingDuration?: number;
-  customDuration?: number;
+  preparationDuration?: number | null;
+  cookingDuration?: number | null;
+  customDuration?: number | null;
 };
 
+/** Adds the duration fields within a recipe and returns a total Duration */
 export const recipeTotalDuration = (recipe: RecipeDuration) => {
   const sumDuration =
     (recipe.preparationDuration ?? 0) +

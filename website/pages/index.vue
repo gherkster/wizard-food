@@ -3,7 +3,11 @@
     <section v-if="latestRecipes.length > 0">
       <div class="section-header">
         <h2>Latest Recipes</h2>
-        <nuxt-link to="/recipes" class="section-header__link concealed" aria-label="See all recipes">
+        <nuxt-link
+          to="/recipes"
+          class="section-header__link concealed"
+          aria-label="See all recipes"
+        >
           <span>See more</span>
           <v-icon :icon="circleChevronRight" :size="24" />
         </nuxt-link>
@@ -17,7 +21,7 @@
           :link="`/recipes/${recipe.slug}`"
           :image="recipe.coverImage"
           :tag="recipe.featuredTag"
-          :duration="recipe.totalDuration"
+          :duration="recipe.totalDurationLabel"
           :variant="index === 0 ? 'promo' : 'preview'"
         />
       </div>
@@ -38,7 +42,7 @@
           :image="recipe.coverImage"
           :link="`/recipes/${recipe.slug}`"
           :tag="recipe.featuredTag"
-          :duration="recipe.totalDuration"
+          :duration="recipe.totalDurationLabel"
           lazy-load-image
         />
       </div>
@@ -59,7 +63,7 @@
           :image="recipe.coverImage"
           :link="`/recipes/${recipe.slug}`"
           :tag="recipe.featuredTag"
-          :duration="recipe.totalDuration"
+          :duration="recipe.totalDurationLabel"
           lazy-load-image
         />
       </div>
@@ -80,7 +84,7 @@
           :image="recipe.coverImage"
           :link="`/recipes/${recipe.slug}`"
           :tag="recipe.featuredTag"
-          :duration="recipe.totalDuration"
+          :duration="recipe.totalDurationLabel"
           lazy-load-image
         />
       </div>

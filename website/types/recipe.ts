@@ -31,7 +31,7 @@ export type RecipePreview = {
   cookingDuration?: number;
   customDurationName?: string;
   customDuration?: number;
-  totalDuration?: string;
+  totalDurationLabel?: string;
   slug: string;
   date_published?: Date;
   favourite?: boolean;
