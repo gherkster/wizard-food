@@ -26,7 +26,7 @@ $tag-size: 12px;
   line-height: $tag-size;
   border-radius: v.$border-radius-md;
   text-align: center;
-  font-size: 16px;
+  font-size: 1rem;
   padding: 8px;
 
   @include m.spacing("gx", "xxs");

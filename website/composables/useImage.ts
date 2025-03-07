@@ -29,14 +29,17 @@ export function useImage() {
     aspectRatio: AspectRatio;
     thumbnail?: boolean;
   }) {
-    // TODO: Build URL properly
-    let src = `/api/images/${imageId}?modifyDate=${modifyDate}&purpose=${purpose}&aspectRatio=${aspectRatio}`;
+    const params = new URLSearchParams({
+      modifyDate: modifyDate,
+      purpose: purpose,
+      aspectRatio: aspectRatio,
+    });
 
     if (thumbnail) {
-      src += "&thumbnail=true";
+      params.set("thumbnail", "true");
     }
 
-    return src;
+    return `/api/images/${imageId}?${params}`;
   }
 
   function buildExternalUrl({

@@ -48,7 +48,6 @@ watch(
       return;
     }
 
-    // TODO: Need to use a loader if search index is still downloading
     const searchResults = await searchClient.search(route.query.search);
     recipes.value = searchResults;
   },
