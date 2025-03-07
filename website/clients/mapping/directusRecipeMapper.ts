@@ -11,7 +11,7 @@ import type {
 import { generateText, type JSONContent } from "@tiptap/core";
 import { generateHTML } from "@tiptap/html";
 import extensions from "~/server/content/extensions";
-import { formatDuration, secondsToDuration } from "~/utils/formatting";
+import { formatDuration, recipeTotalDuration } from "~/utils/formatting";
 
 export function useMapper() {
   return {
@@ -168,7 +168,7 @@ const toRecipePreview = (serverRecipe: ServerRecipe): RecipePreview => {
     cookingDuration: serverRecipe.cookingDuration ?? undefined,
     customDurationName: serverRecipe.customDurationName ?? undefined,
     customDuration: serverRecipe.customDuration ?? undefined,
-    totalDuration: getTotalDuration(serverRecipe),
+    totalDurationLabel: formatDuration(recipeTotalDuration(serverRecipe)),
     coverImage: mapImage(serverRecipe.coverImage),
     slug: serverRecipe.slug,
     tags: tags,
@@ -216,18 +216,6 @@ function getRandomTag(tags: string[], recipeId: number) {
   const randomness = prand.xoroshiro128plus(recipeId);
   const [randomIndex] = prand.uniformIntDistribution(0, tags.length - 1, randomness);
   return tags[randomIndex];
-}
-
-function getTotalDuration(recipe: ServerRecipe) {
-  const totalDuration =
-    (recipe.preparationDuration ?? 0) +
-    (recipe.cookingDuration ?? 0) +
-    (recipe.customDuration ?? 0);
-  if (totalDuration === 0) {
-    return "";
-  }
-
-  return formatDuration(secondsToDuration(totalDuration));
 }
 
 type RecipeCategories = {

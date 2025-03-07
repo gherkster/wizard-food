@@ -128,7 +128,6 @@ import type { RouteLocationRaw } from "#vue-router";
 import logoLight from "~icons/custom/logo-light";
 import logoDark from "~icons/custom/logo-dark";
 import magnifier from "~icons/gravity-ui/magnifier";
-import Fraction from "fraction.js";
 
 const route = useRoute();
 const recipesResponse = await useAsyncData(route.params.slug.toString(), async () => {
@@ -183,9 +182,9 @@ useJsonld({
   recipeIngredient: recipe.value.ingredientGroups.flatMap((ig) =>
     ig.ingredients.map((i) =>
       formatIngredient({
-        amount: i.amount ? new Fraction(i.amount) : undefined,
+        amount: i.amount,
         unit: i.unit,
-        name: i.amount && i.amount <= 1 ? i.name.singular : i.name.plural,
+        name: i.amount && i.amount.valueOf() <= 1 ? i.name.singular : i.name.plural,
       }),
     ),
   ),
