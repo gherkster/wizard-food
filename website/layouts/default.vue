@@ -7,7 +7,12 @@
         <nuxt-link to="/recipes" class="concealed">Recipes</nuxt-link>
         <div class="nav-header-search">
           <v-icon :icon="LogoHead" :size="44" class="nav-header-search__logo" />
-          <v-search :value="query" class="nav-header-search__input" @input="search" @search="search" />
+          <v-search
+            :value="query"
+            class="nav-header-search__input"
+            @input="search"
+            @search="search"
+          />
         </div>
       </div>
     </header>
@@ -30,7 +35,8 @@ searchClient.ensureIndex();
 
 const route = useRoute();
 
-const initialQuery = route.query.search && typeof route.query.search === "string" ? route.query.search : null;
+const initialQuery =
+  route.query.search && typeof route.query.search === "string" ? route.query.search : null;
 
 // Prefill the search box with the previously searched for query if one exists
 // This is only relevant for a page reload or following a search link
@@ -47,6 +53,9 @@ watch(
     query.value = urlSearch?.toString() ?? "";
   },
 );
+
+/** Debounce value for the search input, can be quite short since it is in-memory */
+const debounceMs = 200;
 
 const search = debounce(async (value: string) => {
   query.value = value;
@@ -71,7 +80,7 @@ const search = debounce(async (value: string) => {
     },
   });
   return;
-}, 300);
+}, debounceMs);
 </script>
 
 <style lang="scss" scoped>
