@@ -15,7 +15,8 @@ const props = defineProps<{
 const errorMessage = computed(() =>
   props.error.statusCode === 404 ? "Page not found! 🙃" : "Something went wrong! 😤",
 );
-// TODO: Does this need to be logged on the server?
+
 console.error(props.error);
+
 const handleError = () => clearError({ redirect: "/" });
 </script>

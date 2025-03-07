@@ -31,18 +31,15 @@ const emit = defineEmits<{
 </script>
 
 <style lang="scss" scoped>
-// TODO: Use font size variable
 @use "@/styles/mixins" as m;
 @use "@/styles/variables" as v;
-
-$button-size: 16px;
 
 .v-button {
   width: fit-content;
   border-style: none;
   border-radius: v.$border-radius-sm;
-  font-size: $button-size;
-  line-height: $button-size;
+  font-size: 1rem;
+  line-height: 1rem;
 
   @include m.spacing("px", "sm");
   @include m.spacing("py", "xs");

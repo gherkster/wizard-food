@@ -14,7 +14,8 @@ $badge-size: 18px;
   box-sizing: content-box;
   border-radius: 50%;
   text-align: center;
-  font-size: 16px;
+  font-size: 0.9rem;
+  font-weight: v.$font-weight-bold;
   border: var(--theme-border-primary);
   padding: 4px;
 }
