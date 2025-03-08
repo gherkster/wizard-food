@@ -74,14 +74,19 @@ export default defineNuxtConfig({
     },
   },
 
+  /**
+   * The recipe module is explicity included in this list instead of auto importing
+   * since it relies on the output of nuxt-prepare
+   */
   modules: [
+    "nuxt-prepare",
     "unplugin-icons/nuxt",
     "@nuxt/fonts",
     "@nuxtjs/sitemap",
     "@nuxt/eslint",
     "nuxt-jsonld",
     "@nuxtjs/robots",
-    "nuxt-prepare",
+    "./modules/recipe",
   ],
 
   alias: {

@@ -3,7 +3,6 @@ import { defineNuxtModule, useLogger } from "nuxt/kit";
 import * as fs from "fs/promises";
 import * as crypto from "crypto";
 import type { Nuxt } from "nuxt/schema";
-import { recipes } from "~~/.nuxt/module/nuxt-prepare";
 import { formatDuration, recipeTotalDuration } from "~~/shared/utils/formatting";
 import { searchIndexSettings } from "~~/shared/utils/searchIndex";
 
@@ -21,6 +20,9 @@ export default defineNuxtModule({
     nuxt.options.appConfig.externalBaseUrl = process.env.NUXT_PUBLIC_SITE_URL ?? "";
 
     nuxt.hook("prerender:routes", async ({ routes }) => {
+      // Import dynamically, as this won't exist at the start of a clean build so it cannot be top level imported, and would otherwise result in a build error
+      const recipes = (await import("~~/.nuxt/module/nuxt-prepare")).recipes;
+
       const recipeRoutes = recipes.map((recipe) => `/recipes/${recipe.slug}`);
       recipeRoutes.forEach((s) => routes.add(s));
 
@@ -29,6 +31,9 @@ export default defineNuxtModule({
     });
 
     nuxt.hooks.hook("nitro:build:public-assets", async () => {
+      // Import dynamically, as this won't exist at the start of a clean build so it cannot be top level imported, and would otherwise result in a build error
+      const recipes = (await import("~~/.nuxt/module/nuxt-prepare")).recipes;
+
       const searchIndex = generateRecipeSearchIndex(recipes.map((r) => mapToSearchIndexRecipe(r)));
       await saveRecipeSearchIndex(searchIndex, nuxt);
     });
