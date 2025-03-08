@@ -21,6 +21,7 @@ import { TableCell } from "@tiptap/extension-table-cell";
 import { Node, generateText } from "@tiptap/core";
 import Fraction from "fraction.js";
 import type { ServerIngredient } from "../../../common/types/serverRecipe";
+import { formatIngredient } from "../../shared/utils/formatting";
 
 interface InlineIngredientAttributes {
   collection: string;

@@ -54,6 +54,7 @@
     "eslint": "^9.22.0",
     "nuxt": "^3.16.0",
     "nuxt-jsonld": "^2.1.0",
+    "nuxt-prepare": "2.3.1",
     "openapi-fetch": "^0.13.4",
     "pure-rand": "^6.1.0",
     "sass": "^1.85.1",
@@ -61,7 +62,7 @@
     "typescript": "5.6.3",
     "unplugin-icons": "^0.19.3",
     "vue-tsc": "^2.2.8",
-    "wrangler": "3.111.0"
+    "wrangler": "3.114.0"
   },
   "packageManager": "pnpm@8.9.0"
 }

@@ -1,14 +1,7 @@
-export default defineEventHandler(async (event) => {
-  let recipes: RecipePreview[] = [];
+import { recipes as recipePayloads } from "~~/.nuxt/module/nuxt-prepare";
 
-  const client = useDirectusApi();
-
-  const { data, error } = await client.getRecipes();
-  if (error) {
-    throw error;
-  }
-
-  recipes = data?.map((r) => mapToRecipePreview(r)) ?? [];
+export default defineEventHandler(async () => {
+  const recipes = recipePayloads.map((r) => mapToRecipePreview(r)) ?? [];
 
   if (!recipes || recipes.length === 0) {
     throw new Error("Failed to retrieve recipes");

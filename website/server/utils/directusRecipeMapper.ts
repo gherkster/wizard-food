@@ -6,6 +6,7 @@ import type {
   InlineIngredient,
   ServerImage,
 } from "../../../common/types/serverRecipe";
+import extensions from "./extensions";
 
 export function useMapper() {
   return {
