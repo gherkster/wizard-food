@@ -125,6 +125,7 @@ const toRecipePayload = (serverRecipe: ServerRecipe): RecipePayload => {
     slug: serverRecipe.slug,
     tags: tags,
     featuredTag: getRandomTag(tags, serverRecipe.id!),
+    favourite: serverRecipe.favourite,
     date_published: serverRecipe.date_published ?? undefined,
   };
 };
