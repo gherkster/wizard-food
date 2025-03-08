@@ -1,5 +1,3 @@
-import { useDirectusApi } from "~/clients/useDirectusApi";
-
 export default defineEventHandler(async () => {
   const client = useDirectusApi();
 
@@ -12,5 +10,5 @@ export default defineEventHandler(async () => {
     });
   }
 
-  return data.data![0];
+  return data.data!;
 });

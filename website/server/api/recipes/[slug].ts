@@ -1,6 +1,4 @@
-import { useDirectusApi } from "~/clients/useDirectusApi";
-
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<RecipePayload> => {
   const slug = getRouterParam(event, "slug");
 
   const client = useDirectusApi();

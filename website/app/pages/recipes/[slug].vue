@@ -130,10 +130,20 @@ import logoDark from "~icons/custom/logo-dark";
 import magnifier from "~icons/gravity-ui/magnifier";
 
 const route = useRoute();
-const recipesResponse = await useAsyncData(route.params.slug.toString(), async () => {
-  const { data: recipe } = await useFetch(`/api/recipes/${route.params.slug.toString()}`);
-  return recipe.value;
-});
+
+const recipesResponse = await useAsyncData(
+  route.params.slug!.toString(),
+  async () => {
+    const slug = route.params.slug?.toString();
+
+    const { data: recipe } = await useFetch(`/api/recipes/${slug}`);
+    return recipe.value;
+  },
+  {
+    transform: (recipe) =>
+      recipe ? mapToRecipe(recipe) : throwExpression(`Recipe ${route.params.slug} not found`),
+  },
+);
 
 if (recipesResponse.error.value) {
   throw createError({

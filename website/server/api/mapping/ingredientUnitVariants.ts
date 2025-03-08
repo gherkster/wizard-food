@@ -1,6 +1,3 @@
-import { useDirectusApi } from "~/clients/useDirectusApi";
-import type { IngredientUnitForm } from "~/types/mapping";
-
 export default defineEventHandler(async () => {
   const client = useDirectusApi();
 

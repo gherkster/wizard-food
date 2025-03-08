@@ -3,6 +3,9 @@ import { FileSystemIconLoader } from "unplugin-icons/loaders";
 import { fileURLToPath } from "url";
 
 export default defineNuxtConfig({
+  future: {
+    compatibilityVersion: 4,
+  },
   ssr: true,
 
   routeRules: {
@@ -58,7 +61,7 @@ export default defineNuxtConfig({
         defaultClass: "icon",
         autoInstall: true,
         customCollections: {
-          custom: FileSystemIconLoader("./assets/icons"),
+          custom: FileSystemIconLoader("./app/assets/icons"),
         },
       }),
     ],
@@ -71,7 +74,14 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ["unplugin-icons/nuxt", "@nuxt/fonts", "@nuxtjs/sitemap", "@nuxt/eslint", "nuxt-jsonld", "@nuxtjs/robots"],
+  modules: [
+    "unplugin-icons/nuxt",
+    "@nuxt/fonts",
+    "@nuxtjs/sitemap",
+    "@nuxt/eslint",
+    "nuxt-jsonld",
+    "@nuxtjs/robots",
+  ],
 
   alias: {
     common: fileURLToPath(new URL("../common", import.meta.url)),

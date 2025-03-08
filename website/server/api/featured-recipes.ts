@@ -1,17 +1,17 @@
-import { useDirectusApi } from "~/clients/useDirectusApi";
-import { recipeTotalDuration } from "~/utils/formatting";
+export default defineEventHandler(async (event) => {
+  let recipes: RecipePreview[] = [];
 
-export default defineEventHandler(async () => {
   const client = useDirectusApi();
 
-  const { data: recipes, error } = await client.getRecipes();
-
+  const { data, error } = await client.getRecipes();
   if (error) {
     throw error;
   }
 
-  if (!recipes) {
-    throw new Error("Failed to get recipes from API");
+  recipes = data?.map((r) => mapToRecipePreview(r)) ?? [];
+
+  if (!recipes || recipes.length === 0) {
+    throw new Error("Failed to retrieve recipes");
   }
 
   // Track the recipes that have already been picked so far so that duplicates are not displayed
@@ -21,7 +21,11 @@ export default defineEventHandler(async () => {
 
   const latestRecipes = recipes
     // A missing date_published value means the recipe is brand new and the publish date has not been set in the record yet, so use the current time.
-    .sort((a, b) => (b.date_published ?? now).getTime() - (a.date_published ?? now).getTime())
+    .sort(
+      (a, b) =>
+        (b.date_published ? new Date(b.date_published) : now).getTime() -
+        (a.date_published ? new Date(a.date_published) : now).getTime(),
+    )
     .slice(0, 3);
   latestRecipes.forEach((r) => alreadyShownRecipes.add(r.slug));
 
@@ -47,7 +51,9 @@ export default defineEventHandler(async () => {
   const worldCuisineRecipes = shuffle(recipes)
     .filter(
       (r) =>
-        !alreadyShownRecipes.has(r.slug) && r.cuisine && !["american", "australian"].includes(r.cuisine.toLowerCase()),
+        !alreadyShownRecipes.has(r.slug) &&
+        r.cuisine &&
+        !["american", "australian"].includes(r.cuisine.toLowerCase()),
     )
     .slice(0, 4);
 
