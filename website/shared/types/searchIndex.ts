@@ -1,12 +1,12 @@
 import type { Options } from "minisearch";
-import type { RecipePreview } from "./recipe";
+import type { SearchIndexRecipe } from "./recipe";
 
-export type SearchIndexIndexed = Pick<RecipePreview, "title" | "tags">;
+export type SearchIndexSearchFields = Pick<SearchIndexRecipe, "title" | "tags">;
 
 // Type safe property name extraction
-const searchIndexIdField: keyof RecipePreview = "slug";
+const searchIndexIdField: keyof SearchIndexRecipe = "slug";
 
-const emptySearchIndexIndexedFields: SearchIndexIndexed = {
+const emptySearchIndexIndexedFields: SearchIndexSearchFields = {
   title: "",
   tags: [],
 };

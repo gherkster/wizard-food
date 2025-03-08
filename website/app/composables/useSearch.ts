@@ -1,9 +1,7 @@
-import type { ServerRecipe } from "common/types/serverRecipe";
 import MiniSearch, { type SearchResult } from "minisearch";
-import { searchIndexSettings, type SearchIndexStoredFields } from "~/types/searchIndex";
 
 // Store these outside the function in the global scope for re-use
-const miniSearch = ref<MiniSearch<ServerRecipe>>();
+const miniSearch = ref<MiniSearch<SearchIndexSearchFields>>();
 
 export interface RecipeSearchResult extends SearchResult, SearchIndexStoredFields {}
 

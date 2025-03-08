@@ -19,9 +19,8 @@ import { TableHeader } from "@tiptap/extension-table-header";
 import { TableRow } from "@tiptap/extension-table-row";
 import { TableCell } from "@tiptap/extension-table-cell";
 import { Node, generateText } from "@tiptap/core";
-import type { ServerIngredient } from "common/types/serverRecipe";
 import Fraction from "fraction.js";
-import { formatIngredient } from "~/utils/formatting";
+import type { ServerIngredient } from "../../../common/types/serverRecipe";
 
 interface InlineIngredientAttributes {
   collection: string;

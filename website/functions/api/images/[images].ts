@@ -1,5 +1,5 @@
-import { useImage } from "../../../composables/useImage";
-import type { AspectRatio, ImagePurpose } from "../../../types/image";
+import { useImage } from "../../../app/composables/useImage";
+import type { AspectRatio, ImagePurpose } from "../../../shared/types/image";
 
 interface Env {
   BUCKET: R2Bucket;
@@ -31,7 +31,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     }
     case "instruction":
     case "preview": {
-      transformations = thumbnail ? `ar_${x}:${y},c_thumb,w_48/` : `ar_${x}:${y},c_crop/ar_${x}:${y},c_fit,h_480/`;
+      transformations = thumbnail
+        ? `ar_${x}:${y},c_thumb,w_48/`
+        : `ar_${x}:${y},c_crop/ar_${x}:${y},c_fit,h_480/`;
       break;
     }
     default: {
@@ -57,7 +59,10 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
  * https://cloudinary.com/documentation/advanced_url_delivery_options#generating_delivery_url_signatures
  */
 async function generateCloudinaryDeliverySignature(env: Env, urlSlug: string) {
-  const hash = await crypto.subtle.digest("SHA-1", new TextEncoder().encode(`${urlSlug}${env.CLOUDINARY_API_KEY}`));
+  const hash = await crypto.subtle.digest(
+    "SHA-1",
+    new TextEncoder().encode(`${urlSlug}${env.CLOUDINARY_API_KEY}`),
+  );
   const bytes = new Uint8Array(hash);
   const base64Secret = btoa(String.fromCharCode(...bytes));
 

@@ -1,30 +1,32 @@
 import prand from "pure-rand";
-import type { InlineIngredient, ServerImage, ServerRecipe } from "common/types/serverRecipe";
-import type {
-  IngredientGroup,
-  Instruction,
-  InstructionGroup,
-  Image,
-  Recipe,
-  RecipePreview,
-} from "~/types/recipe";
 import { generateText, type JSONContent } from "@tiptap/core";
 import { generateHTML } from "@tiptap/html";
-import extensions from "~/server/content/extensions";
-import { formatDuration, recipeTotalDuration } from "~/utils/formatting";
+import type {
+  ServerRecipe,
+  InlineIngredient,
+  ServerImage,
+} from "../../../common/types/serverRecipe";
 
 export function useMapper() {
   return {
-    toRecipePreview,
-    toRecipe,
+    toRecipePayload,
   };
 }
 
-const toRecipe = (serverRecipe: ServerRecipe): Recipe => {
+const toRecipePayload = (serverRecipe: ServerRecipe): RecipePayload => {
   assertCoverImageExists(serverRecipe.coverImage);
   assertCoverImageHasValue(serverRecipe.coverImage);
 
+  const tags = buildTagList({
+    course: serverRecipe.course,
+    cuisine: serverRecipe.cuisine,
+    diets: serverRecipe.diets as string[] | undefined, // The multiselect JSON type is an optional string array
+    main_ingredients: serverRecipe.main_ingredients as string[] | undefined, // The multiselect JSON type is an optional string array
+    method: serverRecipe.method,
+  });
+
   return {
+    id: serverRecipe.id!,
     title: serverRecipe.title,
     description: serverRecipe.description ? generateHTML(serverRecipe.description, extensions) : "",
     descriptionPlainText: serverRecipe.description
@@ -101,7 +103,6 @@ const toRecipe = (serverRecipe: ServerRecipe): Recipe => {
                 );
               }
 
-              // TODO: Pick/delete so that the unused fields are not delivered to the client
               return {
                 text: generateHTML(
                   insertRelationDataIntoContent(
@@ -121,13 +122,20 @@ const toRecipe = (serverRecipe: ServerRecipe): Recipe => {
     servings: serverRecipe.servings ?? undefined,
     servingsType: serverRecipe.servings_type ?? undefined,
     slug: serverRecipe.slug,
-    tags: buildTagList({
-      course: serverRecipe.course,
-      cuisine: serverRecipe.cuisine,
-      diets: serverRecipe.diets as string[] | undefined, // The multiselect JSON type is an optional string array
-      main_ingredients: serverRecipe.main_ingredients as string[] | undefined, // The multiselect JSON type is an optional string array
-      method: serverRecipe.method,
-    }),
+    tags: tags,
+    featuredTag: getRandomTag(tags, serverRecipe.id!),
+    date_published: serverRecipe.date_published ?? undefined,
+  };
+};
+
+const mapImage = (serverImage: ServerImage): Image => {
+  return {
+    // Assert that all the required fields have been provided, for an image this should always be the case.
+    id: serverImage.id ?? throwExpression("Image ID must be provided"),
+    title: serverImage.title ?? throwExpression("Image title must be provided"),
+    width: serverImage.width ?? throwExpression("Image width must be provided"),
+    height: serverImage.height ?? throwExpression("Image height must be provided"),
+    modifyDate: serverImage.modified_on ?? throwExpression("Image modified_on must be provided"),
   };
 };
 
@@ -142,70 +150,6 @@ function insertRelationDataIntoContent(
 
   content.content?.forEach((con) => insertRelationDataIntoContent(con, inlineIngredients));
   return content;
-}
-
-const toRecipePreview = (serverRecipe: ServerRecipe): RecipePreview => {
-  assertCoverImageExists(serverRecipe.coverImage);
-  assertCoverImageHasValue(serverRecipe.coverImage);
-
-  const tags = buildTagList({
-    course: serverRecipe.course,
-    cuisine: serverRecipe.cuisine,
-    diets: serverRecipe.diets as string[] | undefined, // The multiselect JSON type is an optional string array
-    main_ingredients: serverRecipe.main_ingredients as string[] | undefined, // The multiselect JSON type is an optional string array
-    method: serverRecipe.method,
-  });
-
-  return {
-    title: serverRecipe.title,
-    descriptionSnippet: serverRecipe.description_snippet,
-    course: serverRecipe.course ?? undefined,
-    cuisine: serverRecipe.cuisine ?? undefined,
-    date_published: serverRecipe.date_published ? new Date(serverRecipe.date_published) : undefined,
-    favourite: serverRecipe.favourite ?? undefined,
-    featuredTag: getRandomTag(tags, serverRecipe.id!),
-    preparationDuration: serverRecipe.preparationDuration ?? undefined,
-    cookingDuration: serverRecipe.cookingDuration ?? undefined,
-    customDurationName: serverRecipe.customDurationName ?? undefined,
-    customDuration: serverRecipe.customDuration ?? undefined,
-    totalDurationLabel: formatDuration(recipeTotalDuration(serverRecipe)),
-    coverImage: mapImage(serverRecipe.coverImage),
-    slug: serverRecipe.slug,
-    tags: tags,
-  };
-};
-
-function assertCoverImageExists(
-  coverImage: (string | ServerImage) | null | undefined,
-): asserts coverImage {
-  if (!coverImage) {
-    throw new Error("Recipe image not provided");
-  }
-}
-
-function assertCoverImageHasValue(
-  coverImage: string | ServerImage,
-): asserts coverImage is ServerImage {
-  if (typeof coverImage === "string") {
-    throw new Error(
-      "Recipe image only has an identifier, the data fields have not been retrieved.",
-    );
-  }
-}
-
-function mapImage(serverImage: ServerImage): Image {
-  if (!serverImage.id) {
-    throw new Error(`Image has no ID, ${serverImage}`);
-  }
-
-  return {
-    // Assert that all the required fields have been provided, for an image this should always be the case.
-    id: serverImage.id ?? throwExpression("Image ID must be provided"),
-    title: serverImage.title ?? throwExpression("Image title must be provided"),
-    width: serverImage.width ?? throwExpression("Image width must be provided"),
-    height: serverImage.height ?? throwExpression("Image height must be provided"),
-    modifyDate: serverImage.modified_on ?? throwExpression("Image modified_on must be provided"),
-  };
 }
 
 function getRandomTag(tags: string[], recipeId: number) {
@@ -244,4 +188,22 @@ function buildTagList(categories: RecipeCategories): string[] {
     tags.push(...categories.main_ingredients);
   }
   return tags.sort();
+}
+
+function assertCoverImageExists(
+  coverImage: (string | ServerImage) | null | undefined,
+): asserts coverImage {
+  if (!coverImage) {
+    throw new Error("Recipe image not provided");
+  }
+}
+
+function assertCoverImageHasValue(
+  coverImage: string | ServerImage,
+): asserts coverImage is ServerImage {
+  if (typeof coverImage === "string") {
+    throw new Error(
+      "Recipe image only has an identifier, the data fields have not been retrieved.",
+    );
+  }
 }

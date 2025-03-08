@@ -1,7 +1,6 @@
 import dayjs from "dayjs";
 import duration, { type Duration } from "dayjs/plugin/duration";
 import Fraction from "fraction.js";
-import type { Recipe } from "~/types/recipe";
 
 /**
  * Formats an ingredient into a single line label

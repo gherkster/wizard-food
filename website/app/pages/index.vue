@@ -123,16 +123,31 @@ const contentResponse = await useAsyncData(async () => {
   const { data: response } = await useFetch("/api/content/home");
   return response.value;
 });
+
+if (contentResponse.error.value) {
+  throw createError({
+    statusCode: 500,
+    statusMessage: recipesResponse.error.value,
+  });
+}
+
+if (!contentResponse.data.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: "Content not found!",
+  });
+}
+
 const content = contentResponse.data.value;
 
 useServerSeoMeta({
-  title: content?.title,
-  ogTitle: content?.title,
-  description: content?.description,
-  ogDescription: content?.openGraphDescription,
+  title: content.title,
+  ogTitle: content.title,
+  description: content.description,
+  ogDescription: content.openGraphDescription,
 });
 useHead({
-  title: content?.title,
+  title: content.title,
 });
 </script>
 
