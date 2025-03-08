@@ -28,11 +28,6 @@ export default defineNuxtModule({
 
       logger.info(`Added ${recipeRoutes.length} routes to prerender`);
       logger.info(recipeRoutes);
-    });
-
-    nuxt.hooks.hook("nitro:build:public-assets", async () => {
-      // Import dynamically, as this won't exist at the start of a clean build so it cannot be top level imported, and would otherwise result in a build error
-      const recipes = (await import("~~/.nuxt/module/nuxt-prepare")).recipes;
 
       const searchIndex = generateRecipeSearchIndex(recipes.map((r) => mapToSearchIndexRecipe(r)));
       await saveRecipeSearchIndex(searchIndex, nuxt);
@@ -67,7 +62,9 @@ async function saveRecipeSearchIndex(index: string, nuxt: Nuxt) {
     Store the current versions of assets in /public to allow the client to periodically check for newer content.
     The documentation for why this is required is in the versioning global middleware.
   */
-  await fs.writeFile(`${publicFolderPath}/version.json`, JSON.stringify(currentVersion), "utf8");
+  const versionJson = JSON.stringify(currentVersion);
+  await fs.writeFile(`${publicFolderPath}/version.json`, versionJson, "utf8");
+  logger.info("Generated version.json", versionJson);
 }
 
 const mapToSearchIndexRecipe = (serverRecipe: RecipePayload): SearchIndexRecipe => {
