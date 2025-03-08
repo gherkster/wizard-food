@@ -1,73 +1,43 @@
 import MiniSearch from "minisearch";
 import { defineNuxtModule, useLogger } from "nuxt/kit";
-import type { RecipePreview } from "../../types/recipe";
-import { searchIndexSettings, type SearchIndexIndexed } from "../../types/searchIndex";
 import * as fs from "fs/promises";
 import * as crypto from "crypto";
 import type { Nuxt } from "nuxt/schema";
-import type { Version } from "~/types/version";
-import { useDirectusApi } from "~/clients/useDirectusApi";
+import { recipes } from "~~/.nuxt/module/nuxt-prepare";
+import { formatDuration, recipeTotalDuration } from "~~/shared/utils/formatting";
+import { searchIndexSettings } from "~~/shared/utils/searchIndex";
 
 const logger = useLogger();
 
 export default defineNuxtModule({
   async setup(options, nuxt) {
     if (!process.env.CF_PAGES_COMMIT_SHA) {
-      throw new Error("CF_PAGES_COMMIT_SHA environment variable is undefined. A build ID cannot be determined.");
+      throw new Error(
+        "CF_PAGES_COMMIT_SHA environment variable is undefined. A build ID cannot be determined.",
+      );
     }
-
-    const recipes = await getAllRecipes();
-
-    const searchIndex = generateRecipeSearchIndex(recipes);
 
     // Populate external URL injected automatically in Cloudflare pipeline
     nuxt.options.appConfig.externalBaseUrl = process.env.NUXT_PUBLIC_SITE_URL ?? "";
 
-    await saveRecipeSearchIndex(searchIndex, nuxt);
-
     nuxt.hook("prerender:routes", async ({ routes }) => {
-      // TODO: This should be more efficient to avoid retrieving all recipes upfront,
-      // then again retrieving all recipes one by one when statically generating in useAsyncData
-      const slugs = recipes.map((r) => `/recipes/${r.slug}`);
-      slugs.forEach((s) => routes.add(s));
+      const recipeRoutes = recipes.map((recipe) => `/recipes/${recipe.slug}`);
+      recipeRoutes.forEach((s) => routes.add(s));
+
+      logger.info(`Added ${recipeRoutes.length} routes to prerender`);
+      logger.info(recipeRoutes);
+    });
+
+    nuxt.hooks.hook("nitro:build:public-assets", async () => {
+      const searchIndex = generateRecipeSearchIndex(recipes.map((r) => mapToSearchIndexRecipe(r)));
+      await saveRecipeSearchIndex(searchIndex, nuxt);
     });
   },
 });
 
-async function getAllRecipes(): Promise<RecipePreview[]> {
-  logger.info(`Loading recipes from ${process.env.NUXT_BASE_URL}`);
-
-  const client = useDirectusApi();
-  const { data: recipes, error } = await client.getRecipes();
-
-  if (error) {
-    throw error;
-  }
-
-  if (!recipes || recipes.length === 0) {
-    throw new Error(`No recipes were retrieved from ${process.env.NUXT_BASE_URL}`);
-  }
-
-  logger.info(`${recipes.length} recipes found`);
-  logger.info(recipes.map((r) => r.slug).join(", "));
-
-  recipes.forEach((r) => {
-    if (!r.slug) {
-      throw new Error(`Recipe ${r.title} not in the expected format: ${r}`);
-    }
-
-    // Cover images are optional in the CMS to make drafting recipes easier, but they must be populated when published.
-    if (!r.coverImage?.id) {
-      throw new Error(`Recipe ${r.title} is missing a cover image`);
-    }
-  });
-
-  return recipes;
-}
-
-function generateRecipeSearchIndex(recipes: RecipePreview[]) {
+function generateRecipeSearchIndex(recipes: SearchIndexRecipe[]) {
   logger.info("Generating recipe search index");
-  const miniSearch = new MiniSearch<SearchIndexIndexed>(searchIndexSettings);
+  const miniSearch = new MiniSearch<SearchIndexSearchFields>(searchIndexSettings);
 
   miniSearch.addAll(recipes);
   return JSON.stringify(miniSearch);
@@ -94,3 +64,14 @@ async function saveRecipeSearchIndex(index: string, nuxt: Nuxt) {
   */
   await fs.writeFile(`${publicFolderPath}/version.json`, JSON.stringify(currentVersion), "utf8");
 }
+
+const mapToSearchIndexRecipe = (serverRecipe: RecipePayload): SearchIndexRecipe => {
+  return {
+    title: serverRecipe.title,
+    coverImage: serverRecipe.coverImage,
+    totalDurationLabel: formatDuration(recipeTotalDuration(serverRecipe)),
+    tags: serverRecipe.tags,
+    featuredTag: serverRecipe.featuredTag,
+    slug: serverRecipe.slug,
+  };
+};

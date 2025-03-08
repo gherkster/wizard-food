@@ -1,5 +1,5 @@
 import type { Options } from "minisearch";
-import type { SearchIndexRecipe } from "./recipe";
+import type { SearchIndexRecipe } from "../types/recipe";
 
 export type SearchIndexSearchFields = Pick<SearchIndexRecipe, "title" | "tags">;
 

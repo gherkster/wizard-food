@@ -131,17 +131,21 @@ import magnifier from "~icons/gravity-ui/magnifier";
 
 const route = useRoute();
 
-const recipesResponse = await useAsyncData(
-  route.params.slug!.toString(),
-  async () => {
-    const slug = route.params.slug?.toString();
+const slug = route.params.slug!.toString();
 
+const recipesResponse = await useAsyncData(
+  slug,
+  async () => {
     const { data: recipe } = await useFetch(`/api/recipes/${slug}`);
+
+    if (!recipe.value) {
+      throw `Recipe ${slug} could not be retrieved`;
+    }
+
     return recipe.value;
   },
   {
-    transform: (recipe) =>
-      recipe ? mapToRecipe(recipe) : throwExpression(`Recipe ${route.params.slug} not found`),
+    transform: mapToRecipe,
   },
 );
 

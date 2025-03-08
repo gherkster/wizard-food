@@ -81,6 +81,7 @@ export default defineNuxtConfig({
     "@nuxt/eslint",
     "nuxt-jsonld",
     "@nuxtjs/robots",
+    "nuxt-prepare",
   ],
 
   alias: {
