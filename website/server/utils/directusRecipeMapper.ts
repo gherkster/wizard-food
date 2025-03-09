@@ -7,6 +7,7 @@ import type {
   ServerImage,
 } from "../../../common/types/serverRecipe";
 import extensions from "./extensions";
+import { throwExpression } from "../../shared/utils/error";
 
 export function useMapper() {
   return {
@@ -138,6 +139,11 @@ const mapImage = (serverImage: ServerImage): Image => {
     width: serverImage.width ?? throwExpression("Image width must be provided"),
     height: serverImage.height ?? throwExpression("Image height must be provided"),
     modifyDate: serverImage.modified_on ?? throwExpression("Image modified_on must be provided"),
+    metadata: {
+      base64Url:
+        serverImage.metadata?.base64Url ??
+        throwExpression("Image base64 thumbnail URL must be provided"),
+    },
   };
 };
 

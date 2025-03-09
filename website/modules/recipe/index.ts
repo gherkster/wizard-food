@@ -70,7 +70,12 @@ async function saveRecipeSearchIndex(index: string, nuxt: Nuxt) {
 const mapToSearchIndexRecipe = (serverRecipe: RecipePayload): SearchIndexRecipe => {
   return {
     title: serverRecipe.title,
-    coverImage: serverRecipe.coverImage,
+    coverImage: {
+      id: serverRecipe.coverImage.id,
+      height: serverRecipe.coverImage.height,
+      width: serverRecipe.coverImage.width,
+      modifyDate: serverRecipe.coverImage.modifyDate,
+    },
     totalDurationLabel: formatDuration(recipeTotalDuration(serverRecipe)),
     tags: serverRecipe.tags,
     featuredTag: serverRecipe.featuredTag,

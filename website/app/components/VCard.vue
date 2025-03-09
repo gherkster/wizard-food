@@ -29,7 +29,6 @@
 </template>
 
 <script setup lang="ts">
-import type { Image } from "~/types/recipe";
 import clock from "~icons/gravity-ui/clock";
 
 withDefaults(

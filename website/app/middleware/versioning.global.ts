@@ -1,5 +1,3 @@
-import type { Version } from "~/types/version";
-
 let searchIndexDownload: Promise<void> | null = null;
 let isBuildStale = false;
 
@@ -74,7 +72,7 @@ export default defineNuxtRouteMiddleware((to) => {
   localStorage.setItem(lastCheckTimeStorageKey, Date.now().toString());
 });
 
-async function getLatestVersionNumbers(): Promise<Version | null> {
+async function getLatestVersionNumbers(): Promise<Version | undefined> {
   const { data: data } = await useFetch<Version>("/version.json");
   return data.value;
 }

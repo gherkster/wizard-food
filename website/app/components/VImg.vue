@@ -1,26 +1,40 @@
 <template>
-  <img :src="src" :alt="img.title" :width="props.img.width" :height="adjustedHeight" />
+  <img
+    ref="imgRef"
+    :src="src"
+    :alt="img.title"
+    :width="props.img.width"
+    :height="adjustedHeight"
+    :loading="lazy ? 'lazy' : undefined"
+  />
 </template>
 
 <script setup lang="ts">
-import type { Image } from "~/types/recipe";
-import type { AspectRatio, ImagePurpose } from "~/types/image";
-
 const props = defineProps<{
   img: Image;
   purpose: ImagePurpose;
   aspectRatio: AspectRatio;
   thumbnail?: boolean;
+  lazy?: boolean;
 }>();
 
-const image = useImage();
-const src = image.buildRelativeUrl({
-  imageId: props.img.id,
-  modifyDate: props.img.modifyDate,
-  purpose: props.purpose,
-  aspectRatio: props.aspectRatio,
-  thumbnail: props.thumbnail,
+const imgRef = useTemplateRef("imgRef");
+
+defineExpose({
+  img: imgRef,
 });
+
+const image = useImage();
+
+const src =
+  props.thumbnail && props.img.metadata?.base64Url
+    ? props.img.metadata.base64Url
+    : image.buildRelativeUrl({
+        imageId: props.img.id,
+        modifyDate: props.img.modifyDate,
+        purpose: props.purpose,
+        aspectRatio: props.aspectRatio,
+      });
 
 /*
 Set the height based on the final image aspect ratio to avoid CLS issues when loading
@@ -32,6 +46,7 @@ const adjustedHeight = Math.round((props.img.width * y) / x);
 
 <style lang="scss" scoped>
 @use "@/styles/variables" as v;
+
 img {
   display: block;
 }

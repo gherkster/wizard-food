@@ -73,7 +73,16 @@ export type RecipePreview = {
 /** The minimal fields that are stored inside the recipe search index. */
 export type SearchIndexRecipe = {
   title: string;
-  coverImage: Image;
+  coverImage: {
+    id: string;
+    height: number;
+    width: number;
+    modifyDate: string;
+
+    // Assign to never so these properties are not accidentally included in the search index, as they are not needed and bloat the size of the client side index
+    title?: never;
+    metadata?: never;
+  };
   slug: string;
   tags: string[];
   featuredTag?: string;
@@ -102,6 +111,9 @@ export type Image = {
   height: number;
   width: number;
   modifyDate: string;
+  metadata?: {
+    base64Url: string;
+  };
 };
 
 export type InstructionGroup = {

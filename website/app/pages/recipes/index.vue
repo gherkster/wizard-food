@@ -15,7 +15,7 @@
           v-for="(recipe, index) in recipes"
           :key="recipe.slug"
           :title="recipe.title"
-          :image="recipe.coverImage"
+          :image="{ ...recipe.coverImage, title: `Picture of ${recipe.title}` }"
           :link="`/recipes/${recipe.slug}`"
           :tag="recipe.featuredTag"
           :duration="recipe.totalDuration"
