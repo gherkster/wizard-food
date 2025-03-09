@@ -33,6 +33,7 @@ const getImageFields = (path: string) => [
   `${path}.height`,
   `${path}.title`,
   `${path}.modified_on`,
+  `${path}.metadata`,
 ];
 
 const searchFields = [
@@ -58,6 +59,7 @@ export const useDirectusApi = () => {
           fields: searchFields,
           filter: `{"status":{"_eq":"published"}}`,
           sort: ["-date_published"],
+          limit: -1,
         },
       },
       querySerializer: {
@@ -83,27 +85,6 @@ export const useDirectusApi = () => {
             (a.date_published ? new Date(a.date_published) : now).getTime(),
         ),
     };
-  };
-
-  const getRecipeSlugs = async () => {
-    const { data, error } = await client.GET("/items/recipes", {
-      params: {
-        query: {
-          fields: ["slug"],
-          filter: `{"status":{"_eq":"published"}}`,
-        },
-      },
-      querySerializer: {
-        // Don't percent encode query parameters, as directus won't accept them
-        allowReserved: true,
-      },
-    });
-
-    if (error) {
-      return { error };
-    }
-
-    return { data: data.data!.map((r) => r.slug) };
   };
 
   const getHomePageContent = async () => {
@@ -132,7 +113,6 @@ export const useDirectusApi = () => {
 
   return {
     getRecipes,
-    getRecipeSlugs,
     getHomePageContent,
     getRecipesPageContent,
     getIngredientUnitSingularPluralMapping,

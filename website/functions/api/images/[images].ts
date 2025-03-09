@@ -17,8 +17,6 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const purpose = searchParams.get("purpose") as ImagePurpose;
   const aspectRatio = searchParams.get("aspectRatio") as AspectRatio;
 
-  const thumbnail = searchParams.get("thumbnail") === "true";
-
   const image = useImage();
   const { x, y } = image.getAspectRatio(aspectRatio);
 
@@ -26,14 +24,12 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   let transformations = "";
   switch (purpose) {
     case "cover": {
-      transformations = thumbnail ? `c_thumb,w_48,ar_${x}:${y}/` : `c_fill,w_720,ar_${x}:${y}/`;
+      transformations = `c_fill,w_720,ar_${x}:${y}/`;
       break;
     }
     case "instruction":
     case "preview": {
-      transformations = thumbnail
-        ? `ar_${x}:${y},c_thumb,w_48/`
-        : `ar_${x}:${y},c_crop/ar_${x}:${y},c_fit,h_480/`;
+      transformations = `ar_${x}:${y},c_crop/ar_${x}:${y},c_fit,h_480/`;
       break;
     }
     default: {
@@ -41,7 +37,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     }
   }
 
-  const fileName = `v1/recipes/${imageId}.webp`;
+  const fileName = `v1/recipes/${imageId}.avif`;
   const signingParameters = `${transformations}${fileName}`;
 
   if (!transformations) {

@@ -1,5 +1,3 @@
-import type { AspectRatio, ImagePurpose } from "~/types/image";
-
 export function useImage() {
   function getAspectRatio(aspectRatio: AspectRatio): { x: number; y: number } {
     switch (aspectRatio) {
@@ -21,23 +19,17 @@ export function useImage() {
     modifyDate,
     purpose,
     aspectRatio,
-    thumbnail = false,
   }: {
     imageId: string;
     modifyDate: string;
     purpose: ImagePurpose;
     aspectRatio: AspectRatio;
-    thumbnail?: boolean;
   }) {
     const params = new URLSearchParams({
       modifyDate: modifyDate,
       purpose: purpose,
       aspectRatio: aspectRatio,
     });
-
-    if (thumbnail) {
-      params.set("thumbnail", "true");
-    }
 
     return `/api/images/${imageId}?${params}`;
   }

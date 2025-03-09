@@ -16,10 +16,12 @@ export type SearchIndexStoredFields = {
   title: string;
   coverImage: {
     id: string;
-    title: string;
     height: number;
     width: number;
     modifyDate: string;
+    // Assign to never so these properties are not accidentally included in the search index, as they are not needed and bloat the size of the client side index
+    title?: never;
+    metadata?: never;
   };
   slug: string;
   tags: string[];
@@ -31,7 +33,6 @@ const emptySearchIndexStoredFields: SearchIndexStoredFields = {
   title: "",
   coverImage: {
     id: "",
-    title: "",
     height: 0,
     width: 0,
     modifyDate: "",
