@@ -166,22 +166,27 @@ const recipe = ref(recipesResponse.data.value);
 
 const durationLabels = computed(() => formatRecipeDurations(recipe.value));
 
-const image = useImage();
-useServerSeoMeta({
-  title: recipe.value.title,
-  ogTitle: recipe.value.title,
-  description: recipe.value.descriptionPlainText,
-  ogDescription: recipe.value.descriptionSnippet,
-  ogImage: image.buildExternalUrl({
-    imageId: recipe.value.coverImage.id,
-    modifyDate: recipe.value.coverImage.modifyDate,
-    purpose: "cover",
-    aspectRatio: "square",
-  }),
-});
 useHead({
   title: recipe.value.title,
 });
+
+const image = useImage();
+
+if (import.meta.server) {
+  useSeoMeta({
+    title: recipe.value.title,
+    ogTitle: recipe.value.title,
+    description: recipe.value.descriptionPlainText,
+    ogDescription: recipe.value.descriptionSnippet,
+    ogImage: image.buildExternalUrl({
+      imageId: recipe.value.coverImage.id,
+      modifyDate: recipe.value.coverImage.modifyDate,
+      purpose: "cover",
+      aspectRatio: "square",
+    }),
+  });
+}
+
 useJsonld({
   "@context": "https://schema.org",
   "@type": "Recipe",
@@ -193,23 +198,24 @@ useJsonld({
     purpose: "cover",
     aspectRatio: "square",
   }),
-  recipeIngredient: recipe.value.ingredientGroups.flatMap((ig) =>
-    ig.ingredients.map((i) =>
-      formatIngredient({
-        amount: i.amount,
-        unit: i.unit,
-        name: i.amount && i.amount.valueOf() <= 1 ? i.name.singular : i.name.plural,
-      }),
-    ),
-  ),
-  recipeInstructions: recipe.value.instructionGroups.flatMap((ig) =>
-    ig.instructions.map((i) => {
-      return {
-        "@type": "HowToStep",
-        text: i.text,
-      };
-    }),
-  ),
+  // TODO: Rich text needs to be run through tiptap plain text converter first
+  // recipeIngredient: recipe.value.ingredientGroups.flatMap((ig) =>
+  //   ig.ingredients.map((i) =>
+  //     formatIngredient({
+  //       amount: i.amount,
+  //       unit: i.unit,
+  //       name: i.amount && i.amount.valueOf() <= 1 ? i.name.singular : i.name.plural,
+  //     }),
+  //   ),
+  // ),
+  // recipeInstructions: recipe.value.instructionGroups.flatMap((ig) =>
+  //   ig.instructions.map((i) => {
+  //     return {
+  //       "@type": "HowToStep",
+  //       text: i.text,
+  //     };
+  //   }),
+  // ),
   recipeCategory: recipe.value.course,
   recipeCuisine: recipe.value.cuisine,
   recipeYield:
