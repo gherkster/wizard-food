@@ -185,48 +185,32 @@ if (import.meta.server) {
       aspectRatio: "square",
     }),
   });
-}
 
-useJsonld({
-  "@context": "https://schema.org",
-  "@type": "Recipe",
-  name: recipe.value.title,
-  description: recipe.value.descriptionSnippet,
-  image: image.buildExternalUrl({
-    imageId: recipe.value.coverImage.id,
-    modifyDate: recipe.value.coverImage.modifyDate,
-    purpose: "cover",
-    aspectRatio: "square",
-  }),
-  // TODO: Rich text needs to be run through tiptap plain text converter first
-  // recipeIngredient: recipe.value.ingredientGroups.flatMap((ig) =>
-  //   ig.ingredients.map((i) =>
-  //     formatIngredient({
-  //       amount: i.amount,
-  //       unit: i.unit,
-  //       name: i.amount && i.amount.valueOf() <= 1 ? i.name.singular : i.name.plural,
-  //     }),
-  //   ),
-  // ),
-  // recipeInstructions: recipe.value.instructionGroups.flatMap((ig) =>
-  //   ig.instructions.map((i) => {
-  //     return {
-  //       "@type": "HowToStep",
-  //       text: i.text,
-  //     };
-  //   }),
-  // ),
-  recipeCategory: recipe.value.course,
-  recipeCuisine: recipe.value.cuisine,
-  recipeYield:
-    recipe.value.servings && recipe.value.servingsType
-      ? `${recipe.value.servings} ${recipe.value.servingsType}`
-      : undefined,
-  keywords: recipe.value.tags
-    .filter((t) => t !== recipe.value.course && t !== recipe.value.cuisine)
-    .join(", "),
-  totalTime: recipeTotalDuration(recipe.value).toISOString(),
-});
+  useJsonld({
+    "@context": "https://schema.org",
+    "@type": "Recipe",
+    name: recipe.value.title,
+    description: recipe.value.descriptionSnippet,
+    image: image.buildExternalUrl({
+      imageId: recipe.value.coverImage.id,
+      modifyDate: recipe.value.coverImage.modifyDate,
+      purpose: "cover",
+      aspectRatio: "square",
+    }),
+    // Ingredients and instructions are not included, as that would require including both rich text and plain text variants of strings,
+    // which is not worth increasing the payload size over a minimal feature
+    recipeCategory: recipe.value.course,
+    recipeCuisine: recipe.value.cuisine,
+    recipeYield:
+      recipe.value.servings && recipe.value.servingsType
+        ? `${recipe.value.servings} ${recipe.value.servingsType}`
+        : undefined,
+    keywords: recipe.value.tags
+      .filter((t) => t !== recipe.value.course && t !== recipe.value.cuisine)
+      .join(", "),
+    totalTime: recipeTotalDuration(recipe.value).toISOString(),
+  });
+}
 
 const servings = ref<number>(
   recipe.value.servings && recipe.value.servings > 0 ? recipe.value.servings : 1,
@@ -237,6 +221,7 @@ function updateNumberOfServings(newServings: number) {
   servings.value = newServings;
 }
 
+// TODO: Populate the singular and plural forms server side, instead of pulling them all into the client
 const unitFormsResponse = await useAsyncData("ingredientUnitVariants", async () => {
   const { data: mapping } = await useFetch("/api/mapping/ingredientUnitVariants");
   return mapping.value;

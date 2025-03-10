@@ -124,9 +124,6 @@ devDependencies:
   nuxt:
     specifier: ^3.16.0
     version: 3.16.0(@types/node@18.19.79)(eslint@9.22.0)(sass@1.85.1)(typescript@5.6.3)(vite@6.2.1)(vue-tsc@2.2.8)
-  nuxt-jsonld:
-    specifier: ^2.1.0
-    version: 2.1.0
   nuxt-prepare:
     specifier: 2.3.1
     version: 2.3.1
@@ -139,6 +136,9 @@ devDependencies:
   sass:
     specifier: ^1.85.1
     version: 1.85.1
+  schema-dts:
+    specifier: ^1.1.5
+    version: 1.1.5
   tiptap-render-view:
     specifier: ^1.0.2
     version: 1.0.2(@tiptap/pm@2.11.5)
@@ -6698,13 +6698,6 @@ packages:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
     dependencies:
       boolbase: 1.0.0
-    dev: true
-
-  /nuxt-jsonld@2.1.0:
-    resolution: {integrity: sha512-DN737T3t/xzI+NP0Fwyet3Bm94fn7m9TIQMIgBcBzLxg/eszQSgxXVXzumcuCiX5VA4mVoBHyGjgbIwMzS1H2w==}
-    dependencies:
-      pathe: 1.1.2
-      schema-dts: 1.1.5
     dev: true
 
   /nuxt-prepare@2.3.1:

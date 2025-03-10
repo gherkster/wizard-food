@@ -11,6 +11,7 @@ export default defineEventHandler(async (event): Promise<RecipePayload> => {
     });
   }
 
+  // The final mapping occurs in the consuming component in useAsyncData transform, to allow values that can't be serialised to be hydrated (like fractions)
   return findRecipe(recipes, slug);
 });
 

@@ -84,7 +84,6 @@ export default defineNuxtConfig({
     "@nuxt/fonts",
     "@nuxtjs/sitemap",
     "@nuxt/eslint",
-    "nuxt-jsonld",
     "@nuxtjs/robots",
     "./modules/recipe",
   ],
