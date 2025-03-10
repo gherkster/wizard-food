@@ -60,14 +60,14 @@
       </div>
       <div
         v-for="ingredientSection in recipe.ingredientGroups"
-        :key="JSON.stringify(ingredientSection)"
+        :key="`${ingredientSection.name}-${ingredientSection.ingredients.length}`"
       >
         <p v-if="ingredientSection.name">
           <b>{{ ingredientSection.name }}</b>
         </p>
         <ul>
           <template v-for="ingredient in ingredientSection.ingredients">
-            <li v-if="!ingredient.inlineOnly" :key="JSON.stringify(ingredient)">
+            <li v-if="!ingredient.inlineOnly" :key="ingredient.name.singular">
               <recipe-ingredient
                 :ingredient="ingredient"
                 :ingredient-multiplier="servings"
@@ -83,7 +83,7 @@
       <h2>Instructions</h2>
       <div
         v-for="instructionSection in recipe.instructionGroups"
-        :key="JSON.stringify(instructionSection)"
+        :key="`${instructionSection.name}-${instructionSection.instructions.length}`"
         class="instruction-section"
       >
         <p v-if="instructionSection.name">
@@ -92,7 +92,7 @@
         <div class="instruction-group">
           <div
             v-for="(instruction, index) in instructionSection.instructions"
-            :key="JSON.stringify(instruction)"
+            :key="instruction.text"
             class="instruction"
           >
             <v-badge>{{ index + 1 }}</v-badge>

@@ -9,7 +9,8 @@
     "postinstall": "nuxt prepare",
     "pages:dev": "wrangler pages dev --compatibility-date=2025-02-14 --proxy 3000 -- pnpm run dev",
     "pages:deploy": "pnpm run build && wrangler pages deploy ./dist",
-    "bundle:analyze": "npx nuxi analyze"
+    "bundle:analyze": "nuxi analyze",
+    "typecheck": "nuxi typecheck"
   },
   "dependencies": {
     "dayjs": "^1.11.13",

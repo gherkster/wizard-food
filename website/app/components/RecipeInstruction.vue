@@ -4,7 +4,6 @@
 
 <script setup lang="ts">
 import Fraction from "fraction.js";
-import type { IngredientUnitForm } from "~/types/mapping";
 
 interface InlineIngredientMarkup {
   element: HTMLElement;
