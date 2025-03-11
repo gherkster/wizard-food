@@ -57,7 +57,7 @@ onMounted(() => {
 
     setTimeout(() => {
       // Check again after 5ms, which should be long enough for the browser disk cache to have completed.
-      if (fullSizeImageRef.value.img.complete) {
+      if (!fullSizeImageRef.value?.img || fullSizeImageRef.value.img.complete) {
         return;
       }
 
