@@ -50,16 +50,23 @@ const fullSizeImageRef = useTemplateRef("fullSizeImageRef");
 
 onMounted(() => {
   if (props.img.metadata?.base64Url && fullSizeImageRef.value?.img) {
-    // If the image is already complete when mounting then don't show the animation. This likely means the image was already in the browser cache.
+    // If the image is already complete when mounting then don't show the animation. This likely means the image was already in the browser memory cache.
     if (fullSizeImageRef.value.img.complete) {
       return;
     }
 
-    // Transition smoothly to the full size image when it has finished loading
-    fullSizeImageRef.value.img.classList.add("hidden");
-    fullSizeImageRef.value.img.onload = () => {
-      fullSizeImageRef.value?.img?.classList.remove("hidden");
-    };
+    setTimeout(() => {
+      // Check again after 5ms, which should be long enough for the browser disk cache to have completed.
+      if (!fullSizeImageRef.value?.img || fullSizeImageRef.value.img.complete) {
+        return;
+      }
+
+      // If the image still isn't ready by now, either because it's a fresh image or slower cache, then hide the image while it loads to display the blurred thumbnail preview.
+      fullSizeImageRef.value.img.classList.add("hidden");
+      fullSizeImageRef.value.img.onload = () => {
+        fullSizeImageRef.value?.img?.classList.remove("hidden");
+      };
+    }, 5);
   }
 });
 
