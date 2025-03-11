@@ -75,6 +75,7 @@ export type SearchIndexRecipe = {
   title: string;
   coverImage: {
     id: string;
+    fileName: string;
     height: number;
     width: number;
     modifyDate: string;
@@ -106,12 +107,20 @@ export type Ingredient = {
 };
 
 export type Image = {
+  /** The ID of the image */
   id: string;
+  /** The image title or alt text */
   title: string;
+  /** The file name, excluding the file extension */
+  fileName: string;
+  /** The height in pixels of the image */
   height: number;
+  /** The width in pixels of the image */
   width: number;
+  /** The modify date of the image for cache busting purposes */
   modifyDate: string;
   metadata?: {
+    /** The base64 encoded thumbnail of this image */
     base64Url: string;
   };
 };

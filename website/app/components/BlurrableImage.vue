@@ -48,15 +48,6 @@ const props = withDefaults(
 
 const fullSizeImageRef = useTemplateRef("fullSizeImageRef");
 
-const imageBuilder = useImage();
-
-const src = imageBuilder.buildRelativeUrl({
-  imageId: props.img.id,
-  modifyDate: props.img.modifyDate,
-  aspectRatio: props.aspectRatio,
-  purpose: props.purpose,
-});
-
 onMounted(() => {
   if (props.img.metadata?.base64Url && fullSizeImageRef.value?.img) {
     // If the image is already complete when mounting then don't show the animation. This likely means the image was already in the browser cache.

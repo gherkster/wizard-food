@@ -3,7 +3,7 @@
     <h3>
       No recipes found for <b>{{ searchTerm }}</b>
     </h3>
-    <v-button size="large" @click="showAllRecipes">See all recipes</v-button>
+    <v-button size="large" @click="navigateTo('/recipes')">See all recipes</v-button>
   </div>
   <div v-else>
     <h2>
@@ -15,10 +15,13 @@
           v-for="(recipe, index) in recipes"
           :key="recipe.slug"
           :title="recipe.title"
-          :image="{ ...recipe.coverImage, title: `Picture of ${recipe.title}` }"
+          :image="{
+            ...recipe.coverImage,
+            title: `Picture of ${recipe.title}`,
+          }"
           :link="`/recipes/${recipe.slug}`"
           :tag="recipe.featuredTag"
-          :duration="recipe.totalDuration"
+          :duration="recipe.totalDurationLabel"
           :lazy-load-image="index > 8"
         />
       </client-only>
@@ -38,7 +41,7 @@ const searchTerm = computed(() => {
 
 const searchClient = useSearch();
 
-const recipes = ref<RecipeSearchResult[]>([]);
+const recipes = ref<SearchIndexRecipe[]>([]);
 
 watch(
   () => route.query,
@@ -92,18 +95,17 @@ if (!contentResponse.data.value) {
 
 const content = contentResponse.data.value;
 
-useServerSeoMeta({
-  title: content.title,
-  ogTitle: content.title,
-  description: content.description,
-  ogDescription: content.openGraphDescription,
-});
 useHead({
   title: content.title,
 });
 
-async function showAllRecipes() {
-  await navigateTo("/recipes");
+if (import.meta.server) {
+  useSeoMeta({
+    title: content.title,
+    ogTitle: content.title,
+    description: content.description,
+    ogDescription: content.openGraphDescription,
+  });
 }
 </script>
 

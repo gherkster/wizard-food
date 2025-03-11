@@ -32,16 +32,26 @@ export default defineNuxtModule({
       const searchIndex = generateRecipeSearchIndex(recipes.map((r) => mapToSearchIndexRecipe(r)));
       await saveRecipeSearchIndex(searchIndex, nuxt);
     });
+
+    // Regenerate it each time in local dev
+    if (process.env.NODE_ENV === "development") {
+      logger.info("Refreshing search index for local development");
+
+      const recipes = (await import("~~/.nuxt/module/nuxt-prepare")).recipes;
+
+      const searchIndex = generateRecipeSearchIndex(recipes.map((r) => mapToSearchIndexRecipe(r)));
+      await saveRecipeSearchIndex(searchIndex, nuxt);
+    }
   },
 });
 
-function generateRecipeSearchIndex(recipes: SearchIndexRecipe[]) {
+const generateRecipeSearchIndex = (recipes: SearchIndexRecipe[]) => {
   logger.info("Generating recipe search index");
   const miniSearch = new MiniSearch<SearchIndexSearchFields>(searchIndexSettings);
 
   miniSearch.addAll(recipes);
   return JSON.stringify(miniSearch);
-}
+};
 
 async function saveRecipeSearchIndex(index: string, nuxt: Nuxt) {
   // Store recipe search index in public folder for client retrieval
@@ -72,6 +82,7 @@ const mapToSearchIndexRecipe = (serverRecipe: RecipePayload): SearchIndexRecipe 
     title: serverRecipe.title,
     coverImage: {
       id: serverRecipe.coverImage.id,
+      fileName: serverRecipe.coverImage.fileName,
       height: serverRecipe.coverImage.height,
       width: serverRecipe.coverImage.width,
       modifyDate: serverRecipe.coverImage.modifyDate,

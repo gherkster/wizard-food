@@ -3,7 +3,7 @@ import MiniSearch, { type SearchResult } from "minisearch";
 // Store these outside the function in the global scope for re-use
 const miniSearch = ref<MiniSearch<SearchIndexSearchFields>>();
 
-export interface RecipeSearchResult extends SearchResult, SearchIndexStoredFields {}
+export type RecipeSearchResult = SearchResult & SearchIndexRecipe;
 
 export function useSearch() {
   async function ensureIndex() {
