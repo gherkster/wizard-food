@@ -179,7 +179,8 @@ if (import.meta.server) {
     description: recipe.value.descriptionPlainText,
     ogDescription: recipe.value.descriptionSnippet,
     ogImage: image.buildExternalUrl({
-      imageId: recipe.value.coverImage.id,
+      id: recipe.value.coverImage.id,
+      fileName: recipe.value.coverImage.fileName,
       modifyDate: recipe.value.coverImage.modifyDate,
       purpose: "cover",
       aspectRatio: "square",
@@ -192,7 +193,8 @@ if (import.meta.server) {
     name: recipe.value.title,
     description: recipe.value.descriptionSnippet,
     image: image.buildExternalUrl({
-      imageId: recipe.value.coverImage.id,
+      id: recipe.value.coverImage.id,
+      fileName: recipe.value.coverImage.fileName,
       modifyDate: recipe.value.coverImage.modifyDate,
       purpose: "cover",
       aspectRatio: "square",

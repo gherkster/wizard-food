@@ -1,5 +1,6 @@
 import { useImage } from "../../../app/composables/useImage";
 import type { AspectRatio, ImagePurpose } from "../../../shared/types/image";
+import { imageFileExtension } from "../../../shared/constants/images";
 
 interface Env {
   BUCKET: R2Bucket;
@@ -11,7 +12,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     throw new Error("Cloudinary API key environment variable not defined");
   }
 
-  const imageId = context.params.images;
+  const imageIdParams = context.params.images;
+  const imageId = typeof imageIdParams === "object" ? imageIdParams[0] : imageIdParams;
 
   const { searchParams } = new URL(context.request.url);
   const purpose = searchParams.get("purpose") as ImagePurpose;
@@ -37,7 +39,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     }
   }
 
-  const fileName = `v1/recipes/${imageId}.avif`;
+  const fileName = `v1/recipes/${imageId}.${imageFileExtension}`;
   const signingParameters = `${transformations}${fileName}`;
 
   if (!transformations) {

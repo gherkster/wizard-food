@@ -3,7 +3,7 @@
     ref="imgRef"
     :src="src"
     :alt="img.title"
-    :width="props.img.width"
+    :width="img.width"
     :height="adjustedHeight"
     :loading="lazy ? 'lazy' : undefined"
   />
@@ -30,7 +30,8 @@ const src =
   props.thumbnail && props.img.metadata?.base64Url
     ? props.img.metadata.base64Url
     : image.buildRelativeUrl({
-        imageId: props.img.id,
+        id: props.img.id,
+        fileName: props.img.fileName,
         modifyDate: props.img.modifyDate,
         purpose: props.purpose,
         aspectRatio: props.aspectRatio,

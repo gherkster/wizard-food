@@ -8,6 +8,7 @@ import type {
 } from "../../../common/types/serverRecipe";
 import extensions from "./extensions";
 import { throwExpression } from "../../shared/utils/error";
+import * as path from "path";
 
 export function useMapper() {
   return {
@@ -136,6 +137,10 @@ const mapImage = (serverImage: ServerImage): Image => {
     // Assert that all the required fields have been provided, for an image this should always be the case.
     id: serverImage.id ?? throwExpression("Image ID must be provided"),
     title: serverImage.title ?? throwExpression("Image title must be provided"),
+    fileName: serverImage.filename_download
+      ? // Remove the file extension, as it the file extension of the uploaded file, not the transformed one the client will receive
+        path.parse(serverImage.filename_download).name
+      : throwExpression("Image filename_download must be provided"),
     width: serverImage.width ?? throwExpression("Image width must be provided"),
     height: serverImage.height ?? throwExpression("Image height must be provided"),
     modifyDate: serverImage.modified_on ?? throwExpression("Image modified_on must be provided"),

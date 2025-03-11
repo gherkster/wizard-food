@@ -27,18 +27,9 @@ const authMiddleware: Middleware = {
 
 client.use(authMiddleware);
 
-const getImageFields = (path: string) => [
-  `${path}.id`,
-  `${path}.width`,
-  `${path}.height`,
-  `${path}.title`,
-  `${path}.modified_on`,
-  `${path}.metadata`,
-];
-
 const searchFields = [
   "*",
-  ...getImageFields("coverImage"),
+  "coverImage.*",
   "ingredientGroups.name",
   "ingredientGroups.ingredients.*",
   "instructionGroups.name",
@@ -48,7 +39,7 @@ const searchFields = [
   // Gets the inline_ingredient relationships from the instruction to the specified ingredient
   "instructionGroups.instructions.inline_ingredients.*",
   "instructionGroups.instructions.inline_ingredients.ingredient_id.*",
-  ...getImageFields("instructionGroups.instructions.image"),
+  "instructionGroups.instructions.image.*",
 ];
 
 export const useDirectusApi = () => {
