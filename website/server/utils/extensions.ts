@@ -18,15 +18,11 @@ import { Table } from "@tiptap/extension-table";
 import { TableHeader } from "@tiptap/extension-table-header";
 import { TableRow } from "@tiptap/extension-table-row";
 import { TableCell } from "@tiptap/extension-table-cell";
-import { Node, generateText } from "@tiptap/core";
+import { Node } from "@tiptap/core";
 import Fraction from "fraction.js";
-import type { ServerIngredient } from "../../../common/types/serverRecipe";
 import { formatIngredient } from "../../shared/utils/formatting";
-
-interface InlineIngredientAttributes {
-  collection: string;
-  data?: ServerIngredient;
-}
+import type { InlineIngredient, InlineIngredientHTMLElementDataset } from "~~/shared/types/recipe";
+import type { KebabCaseDataAttributes } from "~~/shared/types/casing";
 
 const extensions = [
   Document,
@@ -64,8 +60,14 @@ const extensions = [
   TableCell,
 ];
 
+type InlineIngredientAttributes = {
+  collection: string;
+  data?: InlineIngredient;
+};
+
 const inlineIngredientSerializer = Node.create({
   name: "inline-ingredient",
+  // Include the editor attributes, so that the below renderHTML call can check the collection and data properties
   addAttributes() {
     return {
       id: {
@@ -87,35 +89,38 @@ const inlineIngredientSerializer = Node.create({
     const htmlAttributes = props.HTMLAttributes as InlineIngredientAttributes;
 
     if (htmlAttributes.collection === "ingredients" && htmlAttributes.data) {
+      // Data attributes have to be specified in tiptap extensions using HTML format (kebab case)
+      const inlineIngredientAttributes: KebabCaseDataAttributes<InlineIngredientHTMLElementDataset> =
+        {
+          "data-ingredient": JSON.stringify(htmlAttributes.data),
+        };
+
+      /*
+        This is only relevant on page load before the component starts creating the name based on data attributes
+        So we can assume if an amount is specified <= 1 that it should show the singular form,
+        since on page load the servings multiplier is in the default state
+      */
+      const isSingularForm = htmlAttributes.data.amount && Number(htmlAttributes.data.amount) <= 1;
+
       return [
         "span",
         {
           class: "inline-ingredient",
-          "data-amount": htmlAttributes.data.amount,
-          "data-unit": htmlAttributes.data.unit,
-          "data-name-singular": generateText(htmlAttributes.data.name_singular ?? {}, extensions),
-          "data-name-plural": generateText(htmlAttributes.data.name_plural ?? {}, extensions),
-          "data-note": htmlAttributes.data.note,
+          ...inlineIngredientAttributes,
         },
         formatIngredient({
           amount: htmlAttributes.data.amount ? new Fraction(htmlAttributes.data.amount) : undefined,
-          unit: htmlAttributes.data.unit ?? undefined,
-          /*
-            This is only relevant on page load before the component starts creating the name based on data attributes
-            So we can assume if an amount is specified <= 1 that it should show the singular form,
-            since on page load the servings multiplier is in the default state
-          */
-          name: generateText(
-            htmlAttributes.data.amount && htmlAttributes.data.amount <= 1
-              ? (htmlAttributes.data.name_singular ?? {})
-              : (htmlAttributes.data.name_plural ?? {}),
-            extensions,
-          ),
+          unit: isSingularForm
+            ? htmlAttributes.data.unit?.singular
+            : htmlAttributes.data.unit?.plural,
+          name: isSingularForm
+            ? htmlAttributes.data.name.singular
+            : htmlAttributes.data.name.plural,
         }),
       ];
     }
 
-    return [props.node.type.name, htmlAttributes, 0];
+    return [props.node.type.name, htmlAttributes];
   },
 });
 

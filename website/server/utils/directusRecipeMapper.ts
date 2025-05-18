@@ -3,27 +3,41 @@ import { generateText, type JSONContent } from "@tiptap/core";
 import { generateHTML } from "@tiptap/html";
 import type {
   ServerRecipe,
-  InlineIngredient,
   ServerImage,
+  ServerIngredient,
+  ServerIngredientGroup,
+  ServerInstructionGroup,
+  ServerInstruction,
+  ServerInlineIngredient,
 } from "../../../common/types/serverRecipe";
 import extensions from "./extensions";
+import { assertIsHydrated } from "./asserts";
 import { throwExpression } from "../../shared/utils/error";
 import * as path from "path";
-import type { IngredientUnit } from "~~/shared/types/recipe";
+import type {
+  Ingredient,
+  IngredientGroup,
+  InlineIngredient,
+  Instruction,
+  InstructionGroup,
+  SingularPluralPair,
+} from "~~/shared/types/recipe";
 
 /**
  * Maps the recipe output from Directus into a more usable payload to be provided to the serverside functionality.
  * @param serverRecipe The recipe list output from the Directus API
- * @param getUnitSingularPluralPair The callback function to retrieve a singular and plural pair for a given ingredient unit
+ * @param getUnitNames The callback function to retrieve the singular and plural names for a given ingredient unit
  */
 export const toRecipePayload = (
   serverRecipe: ServerRecipe,
   getters: {
-    getUnitSingularPluralPair: (unit: string) => IngredientUnit;
+    getUnitNames: (unit: string) => SingularPluralPair;
   },
 ): RecipePayload => {
-  assertCoverImageExists(serverRecipe.coverImage);
-  assertCoverImageHasValue(serverRecipe.coverImage);
+  if (!serverRecipe.coverImage) {
+    throw new Error("Recipe image not provided");
+  }
+  assertIsHydrated(serverRecipe.coverImage);
 
   const tags = buildTagList({
     course: serverRecipe.course,
@@ -32,6 +46,103 @@ export const toRecipePayload = (
     main_ingredients: serverRecipe.main_ingredients as string[] | undefined, // The multiselect JSON type is an optional string array
     method: serverRecipe.method,
   });
+
+  const mapIngredientGroup = (ingredientGroup: ServerIngredientGroup): IngredientGroup => {
+    return {
+      name: ingredientGroup.name ?? undefined,
+      ingredients:
+        ingredientGroup.ingredients?.map<Ingredient>((i) => {
+          assertIsHydrated(i);
+
+          if (!i.name_singular) {
+            throw new Error(
+              `Ingredient group ${ingredientGroup.id} includes a ingredient with no singular form name. Ingredient: ${i.id}`,
+            );
+          }
+          if (!i.name_plural) {
+            throw new Error(
+              `Ingredient group ${ingredientGroup.id} includes a ingredient with no plural form name. Ingredient: ${i.id}`,
+            );
+          }
+
+          return mapIngredient(i);
+        }) ?? [],
+    };
+  };
+
+  const mapIngredient = (ingredient: ServerIngredient): Ingredient => {
+    return {
+      amount: ingredient.amount ?? undefined,
+      unit: ingredient.unit ? getters.getUnitNames(ingredient.unit) : undefined,
+      name: {
+        singular: generateHTML(ingredient.name_singular ?? {}, extensions),
+        plural: generateHTML(ingredient.name_plural ?? {}, extensions),
+      },
+      note: ingredient.note ?? undefined,
+      inlineOnly: ingredient.inline_only,
+    };
+  };
+
+  const mapInstructionGroup = (instructionGroup: ServerInstructionGroup): InstructionGroup => {
+    return {
+      name: instructionGroup.name ?? undefined,
+      instructions:
+        instructionGroup.instructions?.map<Instruction>((i) => {
+          assertIsHydrated(i);
+
+          if (i.inline_ingredients?.some((inline) => typeof inline === "string")) {
+            throw new Error(
+              "Instruction inline_ingredients is only an identifier, the data fields have not been retrieved.",
+            );
+          }
+
+          return mapInstruction(i);
+        }) ?? [],
+    };
+  };
+
+  const mapInstruction = (serverInstruction: ServerInstruction): Instruction => {
+    return {
+      text: generateHTML(
+        insertRelationDataIntoContent(
+          serverInstruction.text as JSONContent,
+          (serverInstruction.inline_ingredients ?? []) as ServerInlineIngredient[],
+        ),
+        extensions,
+      ),
+    };
+  };
+
+  function insertRelationDataIntoContent(
+    content: JSONContent,
+    inlineIngredients: ServerInlineIngredient[],
+  ) {
+    if (content.type === "inline-ingredient" && content.attrs?.id) {
+      const serverIngredient = inlineIngredients.find(
+        (i) => i.id === content.attrs!.id,
+      )?.ingredient_id;
+
+      if (serverIngredient) {
+        assertIsHydrated(serverIngredient);
+
+        // Set the tiptap data attribute with the recipe data, which is used when rendering to HTML to populate the HTML data attributes
+        const ingredient = mapIngredient(serverIngredient);
+
+        content.attrs.data = {
+          amount: ingredient.amount,
+          unit: ingredient.unit,
+          // Use plain text for inline ingredient properties
+          name: {
+            singular: generateText(serverIngredient.name_singular ?? {}, extensions),
+            plural: generateText(serverIngredient.name_plural ?? {}, extensions),
+          },
+        } satisfies InlineIngredient;
+      }
+    }
+
+    content.content?.forEach((con) => insertRelationDataIntoContent(con, inlineIngredients));
+    return content;
+  }
 
   return {
     id: serverRecipe.id!,
@@ -47,81 +158,15 @@ export const toRecipePayload = (
     coverImage: mapImage(serverRecipe.coverImage),
     ingredientGroups:
       serverRecipe.ingredientGroups?.map<IngredientGroup>((ig) => {
-        if (typeof ig === "number") {
-          throw new Error(
-            "Ingredient group only has an identifier, the data fields have not been retrieved.",
-          );
-        }
+        assertIsHydrated(ig);
 
-        return {
-          name: ig.name ?? undefined,
-          ingredients:
-            ig.ingredients?.map<Ingredient>((i) => {
-              if (typeof i === "number") {
-                throw new Error(
-                  "Ingredient only has an identifier, the data fields have not been retrieved.",
-                );
-              }
-
-              if (!i.name_singular) {
-                throw new Error(
-                  `Recipe ${serverRecipe.title} includes a ingredient with no singular form name. Ingredient: ${i.id}`,
-                );
-              }
-              if (!i.name_plural) {
-                throw new Error(
-                  `Recipe ${serverRecipe.title} includes a ingredient with no plural form name. Ingredient: ${i.id}`,
-                );
-              }
-
-              return {
-                amount: i.amount ?? undefined,
-                unit: i.unit ? getters.getUnitSingularPluralPair(i.unit) : undefined,
-                name: {
-                  singular: generateHTML(i.name_singular, extensions),
-                  plural: generateHTML(i.name_plural, extensions),
-                },
-                note: i.note ?? undefined,
-                inlineOnly: i.inline_only,
-              };
-            }) ?? [],
-        };
+        return mapIngredientGroup(ig);
       }) ?? [],
     instructionGroups:
       serverRecipe.instructionGroups?.map<InstructionGroup>((ig) => {
-        if (typeof ig === "number") {
-          throw new Error(
-            "Instruction group only has an identifier, the data fields have not been retrieved.",
-          );
-        }
+        assertIsHydrated(ig);
 
-        return {
-          name: ig.name ?? undefined,
-          instructions:
-            ig.instructions?.map<Instruction>((i) => {
-              if (typeof i === "number") {
-                throw new Error(
-                  "Instruction only has an identifier, the data fields have not been retrieved.",
-                );
-              }
-
-              if (i.inline_ingredients?.some((inline) => typeof inline === "string")) {
-                throw new Error(
-                  "Instruction inline_ingredients is only an identifier, the data fields have not been retrieved.",
-                );
-              }
-
-              return {
-                text: generateHTML(
-                  insertRelationDataIntoContent(
-                    i.text as JSONContent,
-                    (i.inline_ingredients ?? []) as InlineIngredient[],
-                  ),
-                  extensions,
-                ),
-              };
-            }) ?? [],
-        };
+        return mapInstructionGroup(ig);
       }) ?? [],
     preparationDuration: serverRecipe.preparationDuration ?? undefined,
     cookingDuration: serverRecipe.cookingDuration ?? undefined,
@@ -157,20 +202,7 @@ const mapImage = (serverImage: ServerImage): Image => {
   };
 };
 
-function insertRelationDataIntoContent(
-  content: JSONContent,
-  inlineIngredients: InlineIngredient[],
-) {
-  if (content.type === "inline-ingredient" && content.attrs?.id) {
-    const ingredient = inlineIngredients.find((i) => i.id === content.attrs!.id);
-    content.attrs.data = ingredient?.ingredient_id;
-  }
-
-  content.content?.forEach((con) => insertRelationDataIntoContent(con, inlineIngredients));
-  return content;
-}
-
-function getRandomTag(tags: string[], recipeId: number) {
+const getRandomTag = (tags: string[], recipeId: number) => {
   if (tags.length === 0) {
     return undefined;
   }
@@ -178,7 +210,7 @@ function getRandomTag(tags: string[], recipeId: number) {
   const randomness = prand.xoroshiro128plus(recipeId);
   const [randomIndex] = prand.uniformIntDistribution(0, tags.length - 1, randomness);
   return tags[randomIndex];
-}
+};
 
 type RecipeCategories = {
   cuisine?: string | null;
@@ -188,7 +220,7 @@ type RecipeCategories = {
   main_ingredients?: string[];
 };
 
-function buildTagList(categories: RecipeCategories): string[] {
+const buildTagList = (categories: RecipeCategories): string[] => {
   const tags: string[] = [];
   if (categories.cuisine) {
     tags.push(categories.cuisine);
@@ -206,22 +238,4 @@ function buildTagList(categories: RecipeCategories): string[] {
     tags.push(...categories.main_ingredients);
   }
   return tags.sort();
-}
-
-function assertCoverImageExists(
-  coverImage: (string | ServerImage) | null | undefined,
-): asserts coverImage {
-  if (!coverImage) {
-    throw new Error("Recipe image not provided");
-  }
-}
-
-function assertCoverImageHasValue(
-  coverImage: string | ServerImage,
-): asserts coverImage is ServerImage {
-  if (typeof coverImage === "string") {
-    throw new Error(
-      "Recipe image only has an identifier, the data fields have not been retrieved.",
-    );
-  }
-}
+};
