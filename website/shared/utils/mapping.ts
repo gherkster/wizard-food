@@ -15,10 +15,10 @@ export const mapToRecipe = (payload: RecipePayload): Recipe => {
     customDurationName: payload.customDurationName,
     customDuration: payload.customDuration,
     servings: payload.servings,
-    servingsType: payload.servings_type,
+    servingsType: payload.servingsType,
     slug: payload.slug,
     tags: payload.tags,
-    date_published: payload.date_published ? new Date(payload.date_published) : undefined,
+    datePublished: payload.datePublished ? new Date(payload.datePublished) : undefined,
   };
 };
 
@@ -28,7 +28,7 @@ export const mapToRecipePreview = (serverRecipe: RecipePayload): RecipePreview =
     descriptionSnippet: serverRecipe.descriptionSnippet,
     course: serverRecipe.course ?? undefined,
     cuisine: serverRecipe.cuisine ?? undefined,
-    date_published: serverRecipe.date_published ? new Date(serverRecipe.date_published) : undefined,
+    datePublished: serverRecipe.datePublished ? new Date(serverRecipe.datePublished) : undefined,
     favourite: serverRecipe.favourite ?? undefined,
     featuredTag: serverRecipe.featuredTag,
     preparationDuration: serverRecipe.preparationDuration ?? undefined,

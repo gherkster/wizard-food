@@ -1,7 +1,7 @@
 <template>
   <span>
     <span v-if="formattedAmount">{{ formattedAmount }}&nbsp;</span>
-    <span v-if="unitVariant">{{ unitVariant }}&nbsp;</span>
+    <span v-if="ingredientUnit">{{ ingredientUnit }}&nbsp;</span>
     <span class="recipe__ingredient__name" v-html="nameVariant" />
     <span v-if="ingredient.note" class="text-muted"
       ><i>&nbsp;{{ ingredient.note }}</i></span
@@ -16,7 +16,6 @@ const props = defineProps<{
   ingredient: Ingredient;
   ingredientMultiplier: number;
   originalNumberOfServings: number;
-  unitForms: IngredientUnitForm[];
 }>();
 
 const amount = computed(() =>
@@ -39,7 +38,8 @@ const formattedAmount = computed(() => {
   return formatIngredientAmount(multipliedAmount.value);
 });
 
-const unitVariant = computed(() => {
+/** Get the ingredient unit label, displaying the singular or plural form depending on the current recipe multiplier. */
+const ingredientUnit = computed(() => {
   if (!props.ingredient.unit) {
     return "";
   }
@@ -48,16 +48,9 @@ const unitVariant = computed(() => {
     return props.ingredient.unit ?? "";
   }
 
-  const multipleFormsUnit = props.unitForms.find(
-    (m) => m.singularForm === props.ingredient.unit || m.pluralForm === props.ingredient.unit,
-  );
-  if (!multipleFormsUnit) {
-    return props.ingredient.unit;
-  }
-
   return multipliedAmount.value.valueOf() <= 1
-    ? multipleFormsUnit.singularForm
-    : multipleFormsUnit.pluralForm;
+    ? props.ingredient.unit.singular
+    : props.ingredient.unit.plural;
 });
 
 const nameVariant = computed(() => {

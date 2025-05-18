@@ -18,14 +18,13 @@ export type RecipePayload = {
   customDurationName?: string;
   customDuration?: number;
   diets?: unknown;
-  servings_type?: string;
   main_ingredients?: unknown;
   favourite?: boolean;
   method?: string;
   tags: string[];
   featuredTag?: string;
   slug: string;
-  date_published?: string;
+  datePublished?: string;
 };
 
 /** The fields to display the full recipe view. */
@@ -48,7 +47,7 @@ export type Recipe = {
   customDuration?: number;
   tags: string[];
   slug: string;
-  date_published?: Date;
+  datePublished?: Date;
 };
 
 /** The fields to display recipe preview cards. */
@@ -66,7 +65,7 @@ export type RecipePreview = {
   customDuration?: number;
   totalDurationLabel?: string;
   slug: string;
-  date_published?: Date;
+  datePublished?: Date;
   favourite?: boolean;
 };
 
@@ -97,13 +96,22 @@ export type IngredientGroup = {
 
 export type Ingredient = {
   amount?: number;
-  unit?: string;
+  /**
+   * The singular and plural forms of an ingredient
+   * @example { singular: "clove", plural: "cloves" }
+   */
+  unit?: IngredientUnit;
   name: {
     singular: string;
     plural: string;
   };
   note?: string;
   inlineOnly?: boolean;
+};
+
+export type IngredientUnit = {
+  singular: string;
+  plural: string;
 };
 
 export type Image = {
