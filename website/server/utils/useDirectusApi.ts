@@ -1,6 +1,5 @@
 import createClient, { type Middleware } from "openapi-fetch";
 import type { paths } from "../../../common/types/directus-schema";
-import { useMapper } from "./directusRecipeMapper";
 
 const client = createClient<paths>({
   baseUrl: process.env.NUXT_BASE_URL ?? useRuntimeConfig().baseUrl,
@@ -43,6 +42,9 @@ const searchFields = [
 ];
 
 export const useDirectusApi = () => {
+  /**
+   * Get all published recipes from Directus
+   */
   const getRecipes = async () => {
     const { data, error } = await client.GET("/items/recipes", {
       params: {
@@ -63,18 +65,15 @@ export const useDirectusApi = () => {
       return { error };
     }
 
-    const mapper = useMapper();
     const now = new Date();
 
     return {
-      data: data.data
-        ?.map((r) => mapper.toRecipePayload(r))
-        // A missing date_published value means the recipe is brand new and the publish date has not been set in the record yet, so use the current time.
-        .sort(
-          (a, b) =>
-            (b.date_published ? new Date(b.date_published) : now).getTime() -
-            (a.date_published ? new Date(a.date_published) : now).getTime(),
-        ),
+      // A missing date_published value means the recipe is brand new and the publish date has not been set in the record yet, so use the current time.
+      data: data.data?.sort(
+        (a, b) =>
+          (b.date_published ? new Date(b.date_published) : now).getTime() -
+          (a.date_published ? new Date(a.date_published) : now).getTime(),
+      ),
     };
   };
 
@@ -98,14 +97,29 @@ export const useDirectusApi = () => {
     });
   };
 
-  const getIngredientUnitSingularPluralMapping = async () => {
-    return await client.GET("/items/ingredient_unit_forms");
+  /**
+   * Get the singular and plural forms of ingredient units
+   * @example
+   * {
+   *    id: 1,
+   *    singular_form: "clove",
+   *    plural_form: "cloves"
+   * }
+   */
+  const getIngredientUnitForms = async () => {
+    const { data, error } = await client.GET("/items/ingredient_unit_forms");
+
+    if (error) {
+      return { error };
+    }
+
+    return { data: data.data };
   };
 
   return {
     getRecipes,
     getHomePageContent,
     getRecipesPageContent,
-    getIngredientUnitSingularPluralMapping,
+    getIngredientUnitForms,
   };
 };

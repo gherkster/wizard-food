@@ -9,14 +9,19 @@ import type {
 import extensions from "./extensions";
 import { throwExpression } from "../../shared/utils/error";
 import * as path from "path";
+import type { IngredientUnit } from "~~/shared/types/recipe";
 
-export function useMapper() {
-  return {
-    toRecipePayload,
-  };
-}
-
-const toRecipePayload = (serverRecipe: ServerRecipe): RecipePayload => {
+/**
+ * Maps the recipe output from Directus into a more usable payload to be provided to the serverside functionality.
+ * @param serverRecipe The recipe list output from the Directus API
+ * @param getUnitSingularPluralPair The callback function to retrieve a singular and plural pair for a given ingredient unit
+ */
+export const toRecipePayload = (
+  serverRecipe: ServerRecipe,
+  getters: {
+    getUnitSingularPluralPair: (unit: string) => IngredientUnit;
+  },
+): RecipePayload => {
   assertCoverImageExists(serverRecipe.coverImage);
   assertCoverImageHasValue(serverRecipe.coverImage);
 
@@ -51,7 +56,7 @@ const toRecipePayload = (serverRecipe: ServerRecipe): RecipePayload => {
         return {
           name: ig.name ?? undefined,
           ingredients:
-            ig.ingredients?.map((i) => {
+            ig.ingredients?.map<Ingredient>((i) => {
               if (typeof i === "number") {
                 throw new Error(
                   "Ingredient only has an identifier, the data fields have not been retrieved.",
@@ -71,7 +76,7 @@ const toRecipePayload = (serverRecipe: ServerRecipe): RecipePayload => {
 
               return {
                 amount: i.amount ?? undefined,
-                unit: i.unit ?? undefined,
+                unit: i.unit ? getters.getUnitSingularPluralPair(i.unit) : undefined,
                 name: {
                   singular: generateHTML(i.name_singular, extensions),
                   plural: generateHTML(i.name_plural, extensions),
@@ -128,7 +133,7 @@ const toRecipePayload = (serverRecipe: ServerRecipe): RecipePayload => {
     tags: tags,
     featuredTag: getRandomTag(tags, serverRecipe.id!),
     favourite: serverRecipe.favourite,
-    date_published: serverRecipe.date_published ?? undefined,
+    datePublished: serverRecipe.date_published ?? undefined,
   };
 };
 

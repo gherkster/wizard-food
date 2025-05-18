@@ -72,7 +72,6 @@
                 :ingredient="ingredient"
                 :ingredient-multiplier="servings"
                 :original-number-of-servings="originalNumberOfServings"
-                :unit-forms="unitForms"
               />
             </li>
           </template>
@@ -100,7 +99,6 @@
               :content="instruction.text"
               :ingredient-multiplier="servings"
               :original-number-of-servings="originalNumberOfServings"
-              :unit-forms="unitForms"
             />
             <blurrable-image
               v-if="instruction.image"
@@ -222,13 +220,6 @@ const originalNumberOfServings = servings.value;
 function updateNumberOfServings(newServings: number) {
   servings.value = newServings;
 }
-
-// TODO: Populate the singular and plural forms server side, instead of pulling them all into the client
-const unitFormsResponse = await useAsyncData("ingredientUnitVariants", async () => {
-  const { data: mapping } = await useFetch("/api/mapping/ingredientUnitVariants");
-  return mapping.value;
-});
-const unitForms = unitFormsResponse.data.value ?? [];
 
 function createSearchLink(term: string): RouteLocationRaw {
   return {
