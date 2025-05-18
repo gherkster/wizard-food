@@ -1,11 +1,19 @@
 import type { components } from "./directus-schema";
 
-export type ServerRecipe = components["schemas"]["ItemsRecipes"];
+type Schemas = components["schemas"];
 
-export type ServerIngredient = components["schemas"]["ItemsIngredients"];
+export type ServerRecipe = Schemas["ItemsRecipes"];
 
-export type InlineIngredient = components["schemas"]["ItemsInlineIngredients"];
+export type ServerIngredientGroup = Schemas["ItemsIngredientGroups"];
 
-export type IngredientUnitForms = components["schemas"]["ItemsIngredientUnitForms"];
+export type ServerIngredient = Schemas["ItemsIngredients"];
 
-export type ServerImage = components["schemas"]["Files"];
+export type ServerInlineIngredient = Schemas["ItemsInlineIngredients"];
+
+export type ServerInstructionGroup = Schemas["ItemsInstructionGroups"];
+
+export type ServerInstruction = Schemas["ItemsInstructions"];
+
+export type IngredientUnitForms = Schemas["ItemsIngredientUnitForms"];
+
+export type ServerImage = Schemas["Files"];

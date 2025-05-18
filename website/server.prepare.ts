@@ -39,7 +39,7 @@ export default defineNuxtPrepareHandler(async () => {
 
   const recipes = recipesResponse.map((recipe) =>
     toRecipePayload(recipe, {
-      getUnitSingularPluralPair: (unit) => {
+      getUnitNames: (unit) => {
         return getSingularPluralMapping(unit, unitSingularPluralMap, recipe);
       },
     }),

@@ -4,44 +4,47 @@
 
 <script setup lang="ts">
 import Fraction from "fraction.js";
+import type {
+  InlineIngredient,
+  InlineIngredientHTMLElement,
+  SingularPluralPair,
+} from "~~/shared/types/recipe";
 
-interface InlineIngredientMarkup {
+type InlineIngredientMarkup = {
   element: HTMLElement;
   data: {
     amount?: Fraction;
-    unit?: string;
-    name: {
-      singular: string;
-      plural: string;
-    };
-    note?: string;
+    unit?: SingularPluralPair;
+    name: SingularPluralPair;
   };
-}
+};
 
 const props = defineProps<{
   content: string;
   ingredientMultiplier: number;
   originalNumberOfServings: number;
-  unitForms: IngredientUnitForm[];
 }>();
 
 const inlineIngredientsRef = ref<HTMLDivElement>();
 
 const inlineIngredients = ref<InlineIngredientMarkup[]>([]);
+
 onMounted(() => {
-  const elements = inlineIngredientsRef.value?.querySelectorAll<HTMLElement>(".inline-ingredient");
+  const elements =
+    inlineIngredientsRef.value?.querySelectorAll<InlineIngredientHTMLElement>(".inline-ingredient");
+
   elements?.forEach((elem) => {
-    const amount = Number(elem.dataset.amount);
+    const ingredient = tryParseInlineIngredient(elem);
+    if (!ingredient) {
+      return;
+    }
+
     inlineIngredients.value.push({
       element: elem,
       data: {
-        amount: isNaN(amount) ? undefined : new Fraction(amount),
-        unit: elem.dataset.unit,
-        name: {
-          singular: elem.dataset.nameSingular ?? "",
-          plural: elem.dataset.namePlural ?? "",
-        },
-        note: elem.dataset.note,
+        amount: ingredient.amount ? new Fraction(ingredient.amount) : undefined,
+        unit: ingredient.unit,
+        name: ingredient.name,
       },
     });
   });
@@ -52,7 +55,7 @@ watch(
   (newMultiplier) => multiplyInlineIngredients(newMultiplier),
 );
 
-function multiplyInlineIngredients(multiplicationFactor: number) {
+const multiplyInlineIngredients = (multiplicationFactor: number) => {
   inlineIngredients.value.forEach((ingredient) => {
     if (!ingredient.data.amount) {
       return;
@@ -71,26 +74,35 @@ function multiplyInlineIngredients(multiplicationFactor: number) {
     });
     ingredient.element.textContent = displayedIngredient;
   });
-}
+};
 
-function getUnitLabel(unit?: string, currentAmount?: number) {
+const getUnitLabel = (unit: SingularPluralPair | undefined, currentAmount: number) => {
   if (!unit) {
     return undefined;
   }
+
   // We can't switch between a singular and plural form if there's no number to use as a threshold
   if (!currentAmount) {
-    return unit;
+    return undefined;
   }
 
-  const multipleFormsUnit = props.unitForms.find(
-    (m) => m.singularForm === unit || m.pluralForm === unit,
-  );
-  if (!multipleFormsUnit) {
-    return unit;
-  }
+  return currentAmount <= 1 ? unit.singular : unit.plural;
+};
 
-  return currentAmount <= 1 ? multipleFormsUnit.singularForm : multipleFormsUnit.pluralForm;
-}
+const tryParseInlineIngredient = (
+  element: InlineIngredientHTMLElement,
+): InlineIngredient | undefined => {
+  try {
+    // Inline ingredients are rendered by the tiptap extension as a JSON string in the ingredient data attribute
+    return JSON.parse(element.dataset.ingredient) as InlineIngredient;
+  } catch (error) {
+    console.error(error);
+    console.info({
+      content: element.textContent,
+      dataset: element.dataset.ingredient,
+    });
+  }
+};
 </script>
 
 <style lang="scss" scoped>

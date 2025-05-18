@@ -97,22 +97,53 @@ export type IngredientGroup = {
 export type Ingredient = {
   amount?: number;
   /**
-   * The singular and plural forms of an ingredient
+   * The singular and plural forms of an ingredient unit
    * @example { singular: "clove", plural: "cloves" }
    */
-  unit?: IngredientUnit;
-  name: {
-    singular: string;
-    plural: string;
-  };
+  unit?: SingularPluralPair;
+
+  /**
+   * The rich text singular and plural forms of an ingredient name
+   * @example { singular: "<p>chicken thigh</p>", plural: "<p>chicken thighs</p>" }
+   */
+  name: SingularPluralPair;
   note?: string;
   inlineOnly?: boolean;
 };
 
-export type IngredientUnit = {
+export type SingularPluralPair = {
   singular: string;
   plural: string;
 };
+
+export type InlineIngredient = {
+  amount?: number;
+  /**
+   * The singular and plural forms of an ingredient unit
+   * @example { singular: "clove", plural: "cloves" }
+   */
+  unit?: SingularPluralPair;
+
+  /**
+   * The plain text singular and plural forms of an ingredient name
+   * @example { singular: "chicken thigh", plural: "chicken thighs" }
+   */
+  name: SingularPluralPair;
+};
+
+/** The HTML dataset attributes of an inline ingredient HTML element */
+export interface InlineIngredientHTMLElementDataset extends DOMStringMap {
+  /**
+   * The JSON content of an inline ingredient
+   * @see {@link InlineIngredient}
+   */
+  ingredient: string;
+}
+
+/** The structure of an inline ingredient HTML element */
+export interface InlineIngredientHTMLElement extends HTMLSpanElement {
+  dataset: InlineIngredientHTMLElementDataset;
+}
 
 export type Image = {
   /** The ID of the image */
