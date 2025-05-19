@@ -6,12 +6,17 @@
         <nuxt-link to="/" class="concealed"> Home </nuxt-link>
         <nuxt-link to="/recipes" class="concealed">Recipes</nuxt-link>
         <div class="nav-header-search">
-          <v-icon :icon="LogoHead" :size="44" class="nav-header-search__logo" />
+          <v-icon
+            :icon="LogoHead"
+            :size="48"
+            class="nav-header-search__logo"
+            :class="{ excited: isTyping }"
+          />
           <v-search
             :value="query"
             class="nav-header-search__input"
-            @input="search"
-            @search="search"
+            @input="onInput"
+            @search="onInput"
           />
         </div>
       </div>
@@ -54,12 +59,23 @@ watch(
   },
 );
 
+const isTyping = ref(false);
+
+const onInput = (value: string) => {
+  isTyping.value = true;
+  search(value);
+
+  // Finish typing after a debounce, ending the logo animation
+  finishTyping();
+};
+
 /** Debounce value for the search input, can be quite short since it is in-memory */
-const debounceMs = 200;
+const searchDebounceMs = 200;
 
 const search = debounce(async (value: string) => {
   query.value = value;
   const trimmedQuery = query.value.trim();
+
   /*
   navigateTo.replace is used below so that each keystroke of a search does not push a new entry into the browser history
   The initial navigation to the search results is considered part of the history if the user was not searching before,
@@ -80,7 +96,14 @@ const search = debounce(async (value: string) => {
     },
   });
   return;
-}, debounceMs);
+}, searchDebounceMs);
+
+/** Debounce value for the typing animation, should be longer to reduce jumping */
+const typingDebounceMs = 1000;
+
+const finishTyping = debounce(() => {
+  isTyping.value = false;
+}, typingDebounceMs);
 </script>
 
 <style lang="scss" scoped>
@@ -115,6 +138,7 @@ const search = debounce(async (value: string) => {
     > a {
       @include m.spacing("p", "xxs");
     }
+
     .nav-header-search {
       display: flex;
       position: relative;
@@ -124,9 +148,11 @@ const search = debounce(async (value: string) => {
       @include m.breakpoint("sm", "max") {
         width: 100%;
       }
+
       &__input {
         width: 100%;
       }
+
       &__logo {
         top: 0;
         right: 0;
@@ -147,5 +173,26 @@ const search = debounce(async (value: string) => {
 <style lang="scss">
 .nuxt-loading-indicator {
   background-color: var(--theme-color-primary);
+}
+</style>
+
+<style lang="scss">
+// Display different logo faces
+.nav-header-search__logo {
+  #face-excited {
+    opacity: 0 !important;
+  }
+  #face-naughty {
+    opacity: 1 !important;
+  }
+}
+
+.nav-header-search__logo.excited {
+  #face-excited {
+    opacity: 1 !important;
+  }
+  #face-naughty {
+    opacity: 0 !important;
+  }
 }
 </style>
