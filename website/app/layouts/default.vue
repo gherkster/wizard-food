@@ -8,7 +8,7 @@
         <div class="nav-header-search">
           <v-icon
             :icon="LogoHead"
-            :size="48"
+            :size="54"
             class="nav-header-search__logo"
             :class="{ excited: isTyping }"
           />
