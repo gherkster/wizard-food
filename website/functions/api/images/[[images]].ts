@@ -3,7 +3,6 @@ import type { AspectRatio, ImagePurpose } from "../../../shared/types/image";
 import { imageFileExtension } from "../../../shared/constants/images";
 
 interface Env {
-  BUCKET: R2Bucket;
   CLOUDINARY_API_KEY: string;
 }
 
