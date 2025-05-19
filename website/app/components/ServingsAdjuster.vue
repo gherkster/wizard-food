@@ -1,14 +1,24 @@
 <template>
   <div class="servings-adjuster">
     <div class="servings-adjuster__control">
-      <v-icon :icon="minus" :size="32" :class="{ disabled: servings <= 1 }" @click="decrementServings" />
+      <v-button
+        :disabled="servings <= 1"
+        size="inline"
+        aria-label="Decrease servings"
+        transparent
+        @click="decrementServings"
+      >
+        <v-icon :icon="minus" :size="32" />
+      </v-button>
       <span>
         <span class="servings-adjuster__amount"
           ><b>{{ servings }}&nbsp;</b></span
         >
-        <span>{{ label }}</span>
+        <span class="servings-adjuster__servings">{{ label }}</span>
       </span>
-      <v-icon :icon="plus" :size="32" @click="incrementServings" />
+      <v-button size="inline" aria-label="Increase servings" transparent @click="incrementServings">
+        <v-icon :icon="plus" :size="32" />
+      </v-button>
     </div>
   </div>
 </template>
@@ -55,16 +65,7 @@ function incrementServings() {
     align-items: center;
     user-select: none;
     .icon {
-      cursor: pointer;
       color: var(--theme-color-primary);
-    }
-    > span:not(.icon) {
-      // Match extra space on the left side reserved for larger numbers
-      margin-right: 0.7em;
-    }
-    > .disabled {
-      cursor: not-allowed;
-      opacity: 50%;
     }
   }
   &__amount {
@@ -72,6 +73,10 @@ function incrementServings() {
     display: inline-block;
     // Reserve space for larger numbers to avoid minus icon jumping around
     min-width: 1.7em;
+  }
+  &__servings {
+    // Match extra space on the left side reserved for larger numbers
+    margin-right: 0.7em;
   }
 }
 </style>

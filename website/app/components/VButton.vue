@@ -1,6 +1,6 @@
 <template>
-  <button class="control v-button" :class="classes" @click="emit('click')">
-    <span class="control__label"><slot /></span>
+  <button class="control v-button" :class="classes" :disabled="disabled" @click="onClick">
+    <slot />
   </button>
 </template>
 
@@ -9,7 +9,8 @@ const props = withDefaults(
   defineProps<{
     primary?: boolean;
     transparent?: boolean;
-    size?: "small" | "medium" | "large";
+    disabled?: boolean;
+    size?: "inline" | "small" | "medium" | "large";
   }>(),
   {
     primary: true,
@@ -18,8 +19,10 @@ const props = withDefaults(
 );
 
 const classes = computed(() => {
+  const isVisuallyPrimary = props.primary && !props.transparent;
+
   return {
-    "btn-primary": props.primary,
+    "btn-primary": isVisuallyPrimary,
     "btn-transparent": props.transparent,
     [props.size]: props.size,
   };
@@ -28,6 +31,12 @@ const classes = computed(() => {
 const emit = defineEmits<{
   click: [];
 }>();
+
+const onClick = () => {
+  if (!props.disabled) {
+    emit("click");
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -44,22 +53,29 @@ const emit = defineEmits<{
   @include m.spacing("px", "sm");
   @include m.spacing("py", "xs");
 
-  &:hover {
+  &:hover:not(:disabled) {
     cursor: pointer;
+    filter: brightness(85%);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.97) translateY(1px);
+    filter: brightness(80%); // Darker than hover to simulate depth
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    filter: none;
+    transform: none;
   }
 
   &.btn-primary {
     background-color: var(--theme-color-primary);
-    &:hover {
-      background-color: var(--theme-color-active);
-    }
   }
 
   &.btn-transparent {
     background-color: transparent;
-    &:hover {
-      background-color: transparent;
-    }
   }
 
   &.large {
@@ -68,6 +84,11 @@ const emit = defineEmits<{
 
   &.small {
     @include m.spacing("p", "xxs");
+  }
+
+  &.inline {
+    padding: 0;
+    line-height: inherit;
   }
 }
 </style>
