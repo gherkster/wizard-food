@@ -2,3 +2,12 @@
 img {
   font-size: 0;
 }
+
+input,
+textarea,
+button,
+select,
+a {
+  // Disable the blue rectangle button highlight on webkit mobile
+  -webkit-tap-highlight-color: transparent;
+}
