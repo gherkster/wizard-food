@@ -10,7 +10,8 @@
             :icon="LogoHead"
             :size="54"
             class="nav-header-search__logo"
-            :class="{ excited: isTyping }"
+            :class="{ excited: isAnimated }"
+            @click="animateLogo"
           />
           <v-search
             :value="query"
@@ -59,14 +60,9 @@ watch(
   },
 );
 
-const isTyping = ref(false);
-
 const onInput = (value: string) => {
-  isTyping.value = true;
   search(value);
-
-  // Finish typing after a debounce, ending the logo animation
-  finishTyping();
+  animateLogo();
 };
 
 /** Debounce value for the search input, can be quite short since it is in-memory */
@@ -98,12 +94,20 @@ const search = debounce(async (value: string) => {
   return;
 }, searchDebounceMs);
 
-/** Debounce value for the typing animation, should be longer to reduce jumping */
-const typingDebounceMs = 1000;
+const isAnimated = ref(false);
 
-const finishTyping = debounce(() => {
-  isTyping.value = false;
-}, typingDebounceMs);
+const animateLogo = () => {
+  isAnimated.value = true;
+  // Finish animation after a debounced delay
+  finishAnimating();
+};
+
+/** Debounce value for the typing animation, should be longer to reduce jumping */
+const animationDebounceMs = 1000;
+
+const finishAnimating = debounce(() => {
+  isAnimated.value = false;
+}, animationDebounceMs);
 </script>
 
 <style lang="scss" scoped>
