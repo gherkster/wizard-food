@@ -9,7 +9,12 @@
       @click="isVisible = !isVisible"
     >
       <slot name="trigger" />
-      <v-icon class="popover__icon" :class="{ open: isVisible }" :icon="chevron" :size="20" />
+      <icon
+        name="mynaui:chevron-down"
+        class="popover__icon"
+        :class="{ open: isVisible }"
+        :size="24"
+      />
     </button>
     <div
       v-if="isVisible"
@@ -25,8 +30,6 @@
 </template>
 
 <script setup lang="ts">
-import chevron from "~icons/gravity-ui/chevron-down";
-
 const isVisible = ref(false);
 
 const popoverTriggerRef = useTemplateRef("popoverTrigger");

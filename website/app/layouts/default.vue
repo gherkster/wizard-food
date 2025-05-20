@@ -6,12 +6,11 @@
         <nuxt-link to="/" class="concealed"> Home </nuxt-link>
         <nuxt-link to="/recipes" class="concealed">Recipes</nuxt-link>
         <div class="nav-header-search">
-          <v-icon
-            :icon="LogoHead"
+          <v-mascot
+            :excited="isAnimated"
             :size="54"
-            class="nav-header-search__logo"
-            :class="{ excited: isAnimated }"
-            @click="animateLogo"
+            class="nav-header-search__mascot"
+            @click="animateMascot"
           />
           <v-search
             :value="query"
@@ -29,8 +28,6 @@
 </template>
 
 <script setup lang="ts">
-import LogoHead from "~icons/custom/head";
-
 const searchClient = useSearch();
 /*
   Kick off a background download of the search index if it hasn't been downloaded yet.
@@ -62,7 +59,7 @@ watch(
 
 const onInput = (value: string) => {
   search(value);
-  animateLogo();
+  animateMascot();
 };
 
 /** Debounce value for the search input, can be quite short since it is in-memory */
@@ -96,7 +93,7 @@ const search = debounce(async (value: string) => {
 
 const isAnimated = ref(false);
 
-const animateLogo = () => {
+const animateMascot = () => {
   isAnimated.value = true;
   // Finish animation after a debounced delay
   finishAnimating();
@@ -157,7 +154,8 @@ const finishAnimating = debounce(() => {
         width: 100%;
       }
 
-      &__logo {
+      &__mascot {
+        // Display different logo faces
         top: 0;
         right: 0;
         transform: translateY(-100%);
@@ -177,26 +175,5 @@ const finishAnimating = debounce(() => {
 <style lang="scss">
 .nuxt-loading-indicator {
   background-color: var(--theme-color-primary);
-}
-</style>
-
-<style lang="scss">
-// Display different logo faces
-.nav-header-search__logo {
-  #face-excited {
-    opacity: 0 !important;
-  }
-  #face-naughty {
-    opacity: 1 !important;
-  }
-}
-
-.nav-header-search__logo.excited {
-  #face-excited {
-    opacity: 1 !important;
-  }
-  #face-naughty {
-    opacity: 0 !important;
-  }
 }
 </style>

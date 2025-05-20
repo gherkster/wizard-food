@@ -7,7 +7,7 @@
     "generate": "nuxt generate",
     "preview": "wrangler pages dev .output/public",
     "postinstall": "nuxt prepare",
-    "pages:dev": "wrangler pages dev --compatibility-date=2025-02-14 --proxy 3000 -- pnpm run dev",
+    "pages:dev": "wrangler pages dev --compatibility-date=2025-02-14 -- pnpm run dev",
     "pages:deploy": "pnpm run build && wrangler pages deploy ./dist",
     "bundle:analyze": "nuxi analyze",
     "typecheck": "nuxi typecheck"
@@ -20,9 +20,10 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250311.0",
     "@directus/sdk": "^18.0.3",
-    "@iconify-json/gravity-ui": "^1.2.5",
+    "@iconify-json/mynaui": "^1.2.9",
     "@nuxt/eslint": "0.7.2",
     "@nuxt/fonts": "^0.6.1",
+    "@nuxt/icon": "1.13.0",
     "@nuxtjs/robots": "5.2.4",
     "@nuxtjs/sitemap": "^5.3.5",
     "@tiptap/core": "^2.11.5",
@@ -61,7 +62,6 @@
     "schema-dts": "^1.1.5",
     "tiptap-render-view": "^1.0.2",
     "typescript": "5.6.3",
-    "unplugin-icons": "^0.19.3",
     "vue-tsc": "^2.2.8",
     "wrangler": "4.15.2"
   },

@@ -17,7 +17,7 @@
             </small>
           </span>
           <span v-if="duration" class="card__label card__duration no-underline">
-            <v-icon :icon="clock" :size="18" />
+            <icon name="mynaui:clock-four" :size="18" />
             <small
               ><span>{{ duration }}</span></small
             >
@@ -29,8 +29,6 @@
 </template>
 
 <script setup lang="ts">
-import clock from "~icons/gravity-ui/clock";
-
 withDefaults(
   defineProps<{
     title: string;
@@ -78,7 +76,7 @@ withDefaults(
   &__duration {
     display: inline-flex;
     align-items: center;
-    > svg {
+    .icon {
       margin-right: 4px;
     }
   }
