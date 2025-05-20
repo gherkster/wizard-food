@@ -8,7 +8,7 @@
         transparent
         @click="decrementServings"
       >
-        <v-icon :icon="minus" :size="32" />
+        <v-icon :icon="minus" :size="36" />
       </v-button>
       <span>
         <span class="servings-adjuster__amount"
@@ -17,7 +17,7 @@
         <span class="servings-adjuster__servings">{{ label }}</span>
       </span>
       <v-button size="inline" aria-label="Increase servings" transparent @click="incrementServings">
-        <v-icon :icon="plus" :size="32" />
+        <v-icon :icon="plus" :size="36" />
       </v-button>
     </div>
   </div>

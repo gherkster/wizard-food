@@ -85,8 +85,10 @@ withDefaults(
   small {
     text-wrap: nowrap;
   }
-  &:hover {
-    top: -2px;
+  @media (hover: hover) {
+    &:hover {
+      top: -2px;
+    }
   }
 }
 .card.promo {

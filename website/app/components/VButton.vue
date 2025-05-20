@@ -53,9 +53,11 @@ const onClick = () => {
   @include m.spacing("px", "sm");
   @include m.spacing("py", "xs");
 
-  &:hover:not(:disabled) {
-    cursor: pointer;
-    filter: brightness(85%);
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      cursor: pointer;
+      filter: brightness(90%);
+    }
   }
 
   &:active:not(:disabled) {
