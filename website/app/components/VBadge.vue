@@ -6,8 +6,11 @@
 
 <style lang="scss">
 @use "@/styles/variables" as v;
-$badge-size: 18px;
+$badge-size: 20px;
 .badge {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: $badge-size;
   height: $badge-size;
   line-height: $badge-size;
