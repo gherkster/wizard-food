@@ -8,7 +8,7 @@
         transparent
         @click="decrementServings"
       >
-        <v-icon :icon="minus" :size="36" />
+        <icon name="mynaui:minus-square" :size="40" />
       </v-button>
       <span>
         <span class="servings-adjuster__amount"
@@ -17,16 +17,13 @@
         <span class="servings-adjuster__servings">{{ label }}</span>
       </span>
       <v-button size="inline" aria-label="Increase servings" transparent @click="incrementServings">
-        <v-icon :icon="plus" :size="36" />
+        <icon name="mynaui:plus-square" :size="40" />
       </v-button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import minus from "~icons/gravity-ui/circle-minus";
-import plus from "~icons/gravity-ui/circle-plus";
-
 const props = withDefaults(
   defineProps<{
     servings: number;

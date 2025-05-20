@@ -11,7 +11,7 @@
           :to="createSearchLink(tag)"
           class="concealed"
         >
-          <v-tag :icon="magnifier">{{ tag }}</v-tag>
+          <v-tag icon-name="mynaui:search">{{ tag }}</v-tag>
         </nuxt-link>
       </div>
       <div class="recipe__details highlight-container">
@@ -115,17 +115,14 @@
       <div v-html="recipe.note" />
     </div>
     <footer class="footer">
-      <v-icon :icon="logoLight" :size="140" class="light-theme-only" />
-      <v-icon :icon="logoDark" :size="140" class="dark-theme-only" />
+      <icon name="wf:logo-light" :size="140" class="light-theme-only" />
+      <icon name="wf:logo-dark" :size="140" class="dark-theme-only" />
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { RouteLocationRaw } from "#vue-router";
-import logoLight from "~icons/custom/logo-light";
-import logoDark from "~icons/custom/logo-dark";
-import magnifier from "~icons/gravity-ui/magnifier";
 
 const route = useRoute();
 

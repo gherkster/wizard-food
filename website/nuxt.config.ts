@@ -1,5 +1,3 @@
-import Icons from "unplugin-icons/vite";
-import { FileSystemIconLoader } from "unplugin-icons/loaders";
 import { fileURLToPath } from "url";
 
 export default defineNuxtConfig({
@@ -55,16 +53,6 @@ export default defineNuxtConfig({
         },
       },
     },
-    plugins: [
-      Icons({
-        defaultStyle: "font-size: 24px",
-        defaultClass: "icon",
-        autoInstall: true,
-        customCollections: {
-          custom: FileSystemIconLoader("./app/assets/icons"),
-        },
-      }),
-    ],
     css: {
       preprocessorOptions: {
         scss: {
@@ -80,12 +68,12 @@ export default defineNuxtConfig({
    */
   modules: [
     "nuxt-prepare",
-    "unplugin-icons/nuxt",
     "@nuxt/fonts",
     "@nuxtjs/sitemap",
     "@nuxt/eslint",
     "@nuxtjs/robots",
     "./modules/recipe",
+    "@nuxt/icon",
   ],
 
   alias: {
@@ -100,6 +88,27 @@ export default defineNuxtConfig({
     defaults: {
       weights: [400],
     },
+  },
+
+  icon: {
+    class: "icon",
+    provider: "none",
+    clientBundle: {
+      // scan all components in the project and include icons
+      scan: true,
+
+      // include all custom collections in the client bundle
+      includeCustomCollections: true,
+
+      // guard for uncompressed bundle size, will fail the build if exceeds
+      sizeLimitKb: 256,
+    },
+    customCollections: [
+      {
+        prefix: "wf",
+        dir: "./app/assets/icons",
+      },
+    ],
   },
 
   app: {

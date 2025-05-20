@@ -9,7 +9,7 @@
           aria-label="See all recipes"
         >
           <span>See more</span>
-          <v-icon :icon="circleChevronRight" :size="24" />
+          <icon name="mynaui:chevron-right" :size="24" />
         </nuxt-link>
       </div>
       <div class="recipe-list promo">
@@ -93,8 +93,6 @@
 </template>
 
 <script setup lang="ts">
-import circleChevronRight from "~icons/gravity-ui/circle-chevron-right";
-
 const recipesResponse = await useAsyncData(async () => {
   const { data: response } = await useFetch("/api/featured-recipes");
   return response.value;

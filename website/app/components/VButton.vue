@@ -90,7 +90,7 @@ const onClick = () => {
 
   &.inline {
     padding: 0;
-    line-height: inherit;
+    line-height: 0;
   }
 }
 </style>
