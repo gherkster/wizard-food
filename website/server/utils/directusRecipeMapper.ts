@@ -172,8 +172,11 @@ export const toRecipePayload = (
     cookingDuration: serverRecipe.cookingDuration ?? undefined,
     customDurationName: serverRecipe.customDurationName ?? undefined,
     customDuration: serverRecipe.customDuration ?? undefined,
-    servings: serverRecipe.servings ?? undefined,
-    servingsType: serverRecipe.servings_type ?? undefined,
+    servings: serverRecipe.servings,
+    servingsType: {
+      singular: serverRecipe.serving_type,
+      plural: serverRecipe.servings_type,
+    },
     slug: serverRecipe.slug,
     tags: tags,
     featuredTag: getRandomTag(tags, serverRecipe.id!),

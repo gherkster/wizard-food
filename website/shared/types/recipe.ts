@@ -12,7 +12,7 @@ export type RecipePayload = {
   ingredientGroups: IngredientGroup[];
   instructionGroups: InstructionGroup[];
   servings?: number;
-  servingsType?: string;
+  servingsType: SingularPluralPair;
   preparationDuration?: number;
   cookingDuration?: number;
   customDurationName?: string;
@@ -40,7 +40,7 @@ export type Recipe = {
   ingredientGroups: IngredientGroup[];
   instructionGroups: InstructionGroup[];
   servings?: number;
-  servingsType?: string;
+  servingsType?: SingularPluralPair;
   preparationDuration?: number;
   cookingDuration?: number;
   customDurationName?: string;

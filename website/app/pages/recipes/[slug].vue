@@ -46,8 +46,9 @@
         </div>
         <div class="recipe__options">
           <servings-adjuster
-            :label="recipe.servingsType"
             :servings="servings"
+            :singular-label="recipe.servingsType?.singular"
+            :plural-label="recipe.servingsType?.plural"
             class="recipe__multiplier"
             @input="updateNumberOfServings"
           />

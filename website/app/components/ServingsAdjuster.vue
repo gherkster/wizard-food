@@ -27,16 +27,20 @@
 const props = withDefaults(
   defineProps<{
     servings: number;
-    label?: string;
+    singularLabel: string | undefined;
+    pluralLabel: string | undefined;
   }>(),
   {
-    label: "servings",
+    singularLabel: "serving",
+    pluralLabel: "servings",
   },
 );
 
 const emit = defineEmits<{
   input: [value: number];
 }>();
+
+const label = computed(() => (props.servings > 1 ? props.pluralLabel : props.singularLabel));
 
 function decrementServings() {
   if (props.servings > 1) {
