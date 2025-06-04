@@ -50,9 +50,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const imageUrl = `https://res.cloudinary.com/dork0lbv9/image/upload/${signature}/${transformations}${fileName}`;
 
   return fetch(imageUrl, {
-    cf: {
-      cacheTtl: 5,
-    },
+    cache: "no-store",
   });
 };
 
