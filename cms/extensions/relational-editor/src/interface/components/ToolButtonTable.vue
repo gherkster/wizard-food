@@ -1,7 +1,14 @@
 <template>
   <v-menu show-arrow placement="bottom-start">
     <template #activator="{ toggle }">
-      <ToolButton :title="title" :icon="icon" :action="toggle" :active="active" :disabled="disabled" :editor="editor" />
+      <ToolButton
+        :title="title"
+        :icon="icon"
+        :action="toggle"
+        :active="active"
+        :disabled="disabled"
+        :editor="editor"
+      />
     </template>
     <v-list>
       <v-list-item clickable @click="action">
@@ -12,7 +19,8 @@
 
       <v-list-group
         :disabled="
-          !editor.can().chain().focus().mergeOrSplit().run() && !editor.can().chain().focus().toggleHeaderCell().run()
+          !editor.can().chain().focus().mergeOrSplit().run() &&
+          !editor.can().chain().focus().toggleHeaderCell().run()
         "
       >
         <template #activator>

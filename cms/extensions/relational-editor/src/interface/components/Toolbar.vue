@@ -114,9 +114,13 @@ props.tools.forEach((tool) => {
 
   buttonTools.value.push(tool);
 });
-const formatToolsDisabled = computed(() => formatTools.value.every((tool) => tool.disabled?.(props.editor)));
+const formatToolsDisabled = computed(() =>
+  formatTools.value.every((tool) => tool.disabled?.(props.editor)),
+);
 const formatToolsDisplay = computed(() => {
-  const activeFormat: Tool[] = formatTools.value.filter((tool: Tool) => tool.active?.(props.editor));
+  const activeFormat: Tool[] = formatTools.value.filter((tool: Tool) =>
+    tool.active?.(props.editor),
+  );
 
   if (activeFormat.length) return activeFormat.map((tool) => tool.name)[0];
 
@@ -124,7 +128,8 @@ const formatToolsDisplay = computed(() => {
 });
 
 function translateShortcut(keys: string[]): string {
-  const isMac = navigator.platform.toLowerCase().startsWith("mac") || navigator.platform.startsWith("iP");
+  const isMac =
+    navigator.platform.toLowerCase().startsWith("mac") || navigator.platform.startsWith("iP");
 
   if (isMac) {
     return keys
@@ -171,7 +176,9 @@ const toolAction = (tool: Tool) => tool.action?.(props.editor, { dialog });
 
 .toolbar-dropdown-button :deep(.button) {
   --v-button-min-width: 0;
-  padding-left: calc(var(--theme--form--field--input--padding, var(--input-padding)) - var(--toolbar-dropdown-p) * 2);
+  padding-left: calc(
+    var(--theme--form--field--input--padding, var(--input-padding)) - var(--toolbar-dropdown-p) * 2
+  );
   padding-right: 4px;
 }
 
@@ -180,7 +187,8 @@ const toolAction = (tool: Tool) => tool.action?.(props.editor, { dialog });
 }
 
 .toolbar {
-  border-bottom: var(--theme--border-width, var(--border-width)) solid var(--theme--border-color, var(--border-normal));
+  border-bottom: var(--theme--border-width, var(--border-width)) solid
+    var(--theme--border-color, var(--border-normal));
   padding: var(--toolbar-item-m);
 }
 

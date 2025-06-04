@@ -7,7 +7,7 @@
           <div>
             <p>{{ t("validation_errors_notice") }}</p>
             <ul>
-              <li v-for="error in validationErrors">{{ error }}</li>
+              <li v-for="error in validationErrors" :key="error">{{ error }}</li>
             </ul>
           </div>
         </v-notice>
@@ -22,7 +22,12 @@
         </div>
         <div class="field">
           <div class="type-label">{{ t("open_link_in") }}</div>
-          <v-checkbox v-model="modelValues.newTab" :label="t('new_tab')" :disabled="disableTarget" block></v-checkbox>
+          <v-checkbox
+            v-model="modelValues.newTab"
+            :label="t('new_tab')"
+            :disabled="disableTarget"
+            block
+          ></v-checkbox>
         </div>
       </div>
     </v-card-text>
@@ -38,7 +43,7 @@
 import isEmail from "validator/lib/isEmail";
 import isURL from "validator/lib/isURL";
 import isSlug from "validator/lib/isSlug";
-import { ref, computed, watch, watchEffect } from "vue";
+import { ref, computed, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useI18nFallback } from "../composables/use-i18n-fallback";
 
@@ -101,7 +106,7 @@ const getDisplayValues = (old: Record<string, any>) => {
   let href = old.href ? old.href : "";
   let newTab: boolean | null = null;
 
-  if (old.hasOwnProperty("target")) {
+  if (Object.hasOwn(old, "target")) {
     newTab = old.target === null ? false : true;
   }
 
@@ -234,7 +239,9 @@ const disableTarget = computed(() => {
 });
 
 // Disable buttons if href is empty
-const linkIsEmpty = computed(() => modelValues.value.href === "" || modelValues.value.href === null);
+const linkIsEmpty = computed(
+  () => modelValues.value.href === "" || modelValues.value.href === null,
+);
 const oldLinkIsEmpty = computed(() => !oldValues.hasOwnProperty("href"));
 
 // Actions
@@ -272,7 +279,8 @@ const onAdd = () => {
 .grid {
   display: grid;
   grid-template-columns: [start] minmax(0, 1fr) [half] minmax(0, 1fr) [full];
-  gap: var(--theme--form--row-gap, var(--form-vertical-gap)) var(--theme--form--column-gap, var(--form-horizontal-gap));
+  gap: var(--theme--form--row-gap, var(--form-vertical-gap))
+    var(--theme--form--column-gap, var(--form-horizontal-gap));
 }
 
 .grid .type-label {

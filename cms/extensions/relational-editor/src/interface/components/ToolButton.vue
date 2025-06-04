@@ -44,4 +44,3 @@ const small = computed(() => props.icon || props.display);
   background-color: var(--v-button-background-color-active);
 }
 </style>
-../../common/types/types

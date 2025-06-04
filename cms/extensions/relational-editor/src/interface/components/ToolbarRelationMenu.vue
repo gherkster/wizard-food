@@ -37,21 +37,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, inject, watch, computed, toRef } from "vue";
 import ToolButton from "./ToolButton.vue";
 import type { Editor } from "@tiptap/vue-3";
 import { v4 as uuidv4 } from "uuid";
 import { useRelation } from "../composables/useRelation";
-import { useRelationItems } from "../composables/useRelationItems";
 import { useRelationStore } from "../stores/relationStore";
 import { Configuration, configurationInjectionKey } from "../config/configuration";
-import { inject } from "vue";
 import { useApi, useItems } from "@directus/extensions-sdk";
-import { watch } from "vue";
 import { useToolStore } from "../stores/toolStore";
 import type { Item, Filter } from "@directus/types";
-import { computed } from "vue";
-import { toRef } from "vue";
 
 const props = defineProps<{
   editor: Editor;
@@ -63,11 +58,11 @@ const selectModalActive = ref(false);
 
 const { relation } = useRelation();
 
-// TODO: This should probably sit somewhere else
-const relationItems = useRelationItems();
+const relationStore = useRelationStore();
 
-const { items } = relationItems.getItems(
-  relation.value!.junctionCollection.collection,
+// TODO: This should probably sit somewhere else
+const { items: junctionItems } = relationStore.getItems(
+  relation.value!.junctionCollection.collection, // E.g. inline_ingredients
   config!.relation.limitToCurrentItem.value
     ? {
         id: config!.relation.primaryKey.value,
@@ -75,6 +70,26 @@ const { items } = relationItems.getItems(
       }
     : undefined,
 );
+
+// Directus getItems is not async, so watch the result to process results
+watch(junctionItems, (loadedItems: Item[]) => {
+  if (loadedItems && loadedItems.length > 0) {
+    relationStore.preExistingRelations = loadedItems.map((i) => {
+      return {
+        id: i.id,
+        relatedItem: {
+          id: i[relation.value!.junctionField.field].id,
+          junctionFieldName: relation.value!.junctionField.field,
+          data: i[relation.value!.junctionField.field],
+        },
+        parentItem: {
+          id: i[relation.value!.reverseJunctionField.field].id,
+          junctionFieldName: relation.value!.reverseJunctionField.field,
+        },
+      };
+    });
+  }
+});
 
 // Hacky way to extract the recipe ID from the URL,
 // this is necessary while Directus doesn't provide the current form values for sub-forms
@@ -139,27 +154,6 @@ if (recipeId.value && config!.relation.limitToCurrentItem) {
   );
 }
 
-// TODO: Remove any
-watch(items, (loadedItems: Item[]) => {
-  if (loadedItems && loadedItems.length > 0) {
-    store.preExistingRelations = loadedItems.map((i) => {
-      return {
-        id: i.id,
-        relatedItem: {
-          id: i[relation.value!.junctionField.field].id,
-          junctionFieldName: relation.value!.junctionField.field,
-          data: i[relation.value!.junctionField.field],
-        },
-        parentItem: {
-          id: i[relation.value!.reverseJunctionField.field].id,
-          junctionFieldName: relation.value!.reverseJunctionField.field,
-        },
-      };
-    });
-  }
-});
-
-const store = useRelationStore();
 const api = useApi();
 
 function selectItem() {
@@ -171,10 +165,12 @@ const toolStore = useToolStore();
 async function stageSelects(items: [string | number]) {
   const nodeId = uuidv4();
 
-  const relatedItemResponse = await api.get(`items/${relation.value!.relatedCollection.collection}/${items[0]}`);
+  const relatedItemResponse = await api.get(
+    `items/${relation.value!.relatedCollection.collection}/${items[0]}`,
+  );
 
   // TODO: Remove any
-  store.stagedChanges.create.push({
+  relationStore.stagedChanges.create.push({
     id: nodeId,
     relatedItem: {
       id: relatedItemResponse.data.data.id,
