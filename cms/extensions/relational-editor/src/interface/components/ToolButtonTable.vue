@@ -135,9 +135,17 @@
 import ToolButton from "./ToolButton.vue";
 import { useI18n } from "vue-i18n";
 import { useI18nFallback } from "../composables/use-i18n-fallback";
-import { ToolButtonProps } from "../../common/types/tools";
+import { Tool } from "../../common/types/tools";
+import { Editor } from "@tiptap/vue-3";
 
-defineProps<ToolButtonProps>();
+defineProps<{
+  title: string;
+  icon?: string;
+  action: Tool["action"];
+  active: boolean;
+  disabled: boolean;
+  editor: Editor;
+}>();
 
 const { t } = useI18nFallback(useI18n());
 </script>

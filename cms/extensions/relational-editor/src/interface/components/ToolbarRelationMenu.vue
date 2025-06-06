@@ -3,18 +3,18 @@
     <v-menu show-arrow placement="bottom-start" :full-height="true">
       <template #activator="{ toggle }">
         <ToolButton
-          v-if="toolStore.relationBlockTool && !loading"
-          :title="toolStore.relationBlockTool!.name"
-          :icon="toolStore.relationBlockTool!.icon"
+          v-if="toolStore.inlineRelationTool && !loading"
+          :title="toolStore.inlineRelationTool.name"
+          :icon="toolStore.inlineRelationTool.icon"
           :action="toggle"
         />
       </template>
-      <v-list v-if="relation">
+      <v-list v-if="relation && toolStore.inlineRelationTool">
         <v-list-item
           clickable
-          :active="toolStore.relationBlockTool!.active?.(editor)"
-          :aria-pressed="toolStore.relationBlockTool!.active?.(editor)"
-          :disabled="toolStore.relationBlockTool!.disabled?.(editor)"
+          :active="toolStore.inlineRelationTool.active?.(editor)"
+          :aria-pressed="toolStore.inlineRelationTool!.active?.(editor)"
+          :disabled="toolStore.inlineRelationTool!.disabled?.(editor)"
           @click="selectItem()"
         >
           <v-list-item-icon>
@@ -183,11 +183,13 @@ async function stageSelects(items: [string | number]) {
     },
   });
 
-  toolStore.relationBlockTool!.action?.(props.editor, {
-    id: nodeId,
-    junction: relation.value!.junctionCollection.collection,
-    collection: relation.value!.relatedCollection.collection,
-  });
+  if (toolStore.inlineRelationTool?.action) {
+    toolStore.inlineRelationTool.action(props.editor, {
+      id: nodeId,
+      junction: relation.value!.junctionCollection.collection,
+      collection: relation.value!.relatedCollection.collection,
+    });
+  }
 }
 </script>
 

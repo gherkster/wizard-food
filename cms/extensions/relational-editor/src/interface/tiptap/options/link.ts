@@ -2,10 +2,9 @@
 
 import Link from "@tiptap/extension-link";
 import customMessages from "../../i18n/custom-messages";
-import DialogLink from "../../components/DialogLink.vue";
-import type { Ref } from "vue";
 import type { Editor } from "@tiptap/core";
-import { Dialog, LinkAttributes, Tool } from "../../../common/types/tools";
+import { Tool } from "../../../common/types/tools";
+import { useLinkStore } from "../../stores/useLinkStore";
 
 const add: Tool = {
   // https://tiptap.dev/api/marks/link
@@ -13,14 +12,8 @@ const add: Tool = {
   name: customMessages.tools.link,
   icon: "link",
   extension: [linkExtensionConfig],
-  action: (editor: Editor, { dialog }: { dialog: Ref<Dialog> }) => {
-    dialog.value = {
-      component: DialogLink,
-      get: () => editor.getAttributes("link"),
-      set: (attrs: LinkAttributes) =>
-        editor.chain().focus().extendMarkRange("link").setLink(attrs).run(),
-      unset: () => editor.chain().focus().extendMarkRange("link").unsetLink().run(),
-    };
+  action: (editor) => {
+    useLinkStore().openLinkModal(editor);
   },
   disabled: (editor: Editor) => !editor.can().chain().focus().toggleLink({ href: "" }).run(),
   active: (editor: Editor) => editor.isActive("link"),

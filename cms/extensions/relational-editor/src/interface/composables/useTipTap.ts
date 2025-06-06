@@ -1,8 +1,8 @@
 import { Editor, mergeAttributes, Node } from "@tiptap/core";
 import { VueNodeViewRenderer } from "@tiptap/vue-3";
 import InlineRelation from "../../interface/components/InlineRelation.vue";
-import { RelationBlockAttrs } from "../../../../../../../common/types/relations";
-import { Tool } from "../../common/types/tools";
+import { RelationBlockAttrs } from "../../../../../../common/types/relations";
+import type { InlineRelationTool } from "../../common/types/tools";
 import customMessages from "../i18n/custom-messages";
 
 declare module "@tiptap/core" {
@@ -71,7 +71,7 @@ export function useTipTap() {
     });
   }
 
-  function createInlineNodeTool(inlineTagName: string) {
+  const createInlineNodeTool = (inlineTagName: string): InlineRelationTool => {
     return {
       // Custom
       key: inlineTagName,
@@ -96,8 +96,8 @@ export function useTipTap() {
       },
       disabled: (editor: Editor) => !editor.can().chain().focus().setRelationBlock().run(),
       active: (editor: Editor) => editor.isActive(inlineTagName),
-    } as Tool;
-  }
+    };
+  };
 
   return {
     createInlineNode,

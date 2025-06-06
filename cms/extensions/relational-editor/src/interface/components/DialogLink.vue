@@ -46,10 +46,11 @@ import isSlug from "validator/lib/isSlug";
 import { ref, computed, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useI18nFallback } from "../composables/use-i18n-fallback";
+import { LinkAttributes } from "../../common/types/tools";
 
 // Props
 interface Props {
-  get: Function;
+  get: () => LinkAttributes;
 }
 const props = defineProps<Props>();
 
@@ -101,7 +102,7 @@ const linkTypes: LinkType[] = [
 ];
 
 // Display old values
-const getDisplayValues = (old: Record<string, any>) => {
+const getDisplayValues = (old: LinkAttributes) => {
   let type = old.href ? null : "external_link";
   let href = old.href ? old.href : "";
   let newTab: boolean | null = null;
@@ -131,7 +132,9 @@ const modelValues = ref(getDisplayValues(oldValues));
 
 // Prepare values for inserting
 const getSaveableValues = () => {
-  let { type, href, newTab } = modelValues.value;
+  const { type, newTab } = modelValues.value;
+  let href = modelValues.value.href;
+
   let target = newTab ? "_blank" : null;
 
   if (newTab) target = "_blank";
