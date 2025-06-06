@@ -49,8 +49,6 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const signature = await generateCloudinaryDeliverySignature(context.env, signingParameters);
   const imageUrl = `https://res.cloudinary.com/dork0lbv9/image/upload/${signature}/${transformations}${fileName}`;
 
-  console.log(imageUrl);
-
   return fetch(imageUrl);
 };
 
