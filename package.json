@@ -1,16 +1,13 @@
 {
   "name": "recipes",
   "version": "1.0.0",
+  "type": "module",
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "@vue/eslint-config-prettier": "^8.0.0",
-    "@vue/eslint-config-typescript": "^11.0.3",
-    "eslint": "^8.57.1",
-    "eslint-config-prettier": "^8.10.0",
-    "eslint-plugin-prettier": "^5.2.3",
-    "eslint-plugin-vue": "^9.33.0",
-    "prettier": "^3.5.3"
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-vue": "^10.1.0",
+    "jiti": "^2.4.2",
+    "typescript-eslint": "^8.33.1"
   },
   "packageManager": "pnpm@8.9.0"
 }
