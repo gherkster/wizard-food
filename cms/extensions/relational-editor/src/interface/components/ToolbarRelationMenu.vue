@@ -3,18 +3,18 @@
     <v-menu show-arrow placement="bottom-start" :full-height="true">
       <template #activator="{ toggle }">
         <ToolButton
-          v-if="toolStore.relationBlockTool && !loading"
-          :title="toolStore.relationBlockTool!.name"
-          :icon="toolStore.relationBlockTool!.icon"
+          v-if="toolStore.inlineRelationTool && !loading"
+          :title="toolStore.inlineRelationTool.name"
+          :icon="toolStore.inlineRelationTool.icon"
           :action="toggle"
         />
       </template>
-      <v-list v-if="relation">
+      <v-list v-if="relation && toolStore.inlineRelationTool">
         <v-list-item
           clickable
-          :active="toolStore.relationBlockTool!.active?.(editor)"
-          :aria-pressed="toolStore.relationBlockTool!.active?.(editor)"
-          :disabled="toolStore.relationBlockTool!.disabled?.(editor)"
+          :active="toolStore.inlineRelationTool.active?.(editor)"
+          :aria-pressed="toolStore.inlineRelationTool!.active?.(editor)"
+          :disabled="toolStore.inlineRelationTool!.disabled?.(editor)"
           @click="selectItem()"
         >
           <v-list-item-icon>
@@ -37,21 +37,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, inject, watch, computed, toRef } from "vue";
 import ToolButton from "./ToolButton.vue";
 import type { Editor } from "@tiptap/vue-3";
 import { v4 as uuidv4 } from "uuid";
 import { useRelation } from "../composables/useRelation";
-import { useRelationItems } from "../composables/useRelationItems";
 import { useRelationStore } from "../stores/relationStore";
 import { Configuration, configurationInjectionKey } from "../config/configuration";
-import { inject } from "vue";
 import { useApi, useItems } from "@directus/extensions-sdk";
-import { watch } from "vue";
 import { useToolStore } from "../stores/toolStore";
 import type { Item, Filter } from "@directus/types";
-import { computed } from "vue";
-import { toRef } from "vue";
 
 const props = defineProps<{
   editor: Editor;
@@ -63,11 +58,11 @@ const selectModalActive = ref(false);
 
 const { relation } = useRelation();
 
-// TODO: This should probably sit somewhere else
-const relationItems = useRelationItems();
+const relationStore = useRelationStore();
 
-const { items } = relationItems.getItems(
-  relation.value!.junctionCollection.collection,
+// TODO: This should probably sit somewhere else
+const { items: junctionItems, getItems } = relationStore.getItems(
+  relation.value!.junctionCollection.collection, // E.g. inline_ingredients
   config!.relation.limitToCurrentItem.value
     ? {
         id: config!.relation.primaryKey.value,
@@ -75,6 +70,25 @@ const { items } = relationItems.getItems(
       }
     : undefined,
 );
+
+getItems().then(() => {
+  if (junctionItems.value.length > 0) {
+    relationStore.preExistingRelations = junctionItems.value.map((i) => {
+      return {
+        id: i.id,
+        relatedItem: {
+          id: i[relation.value!.junctionField.field].id,
+          junctionFieldName: relation.value!.junctionField.field,
+          data: i[relation.value!.junctionField.field],
+        },
+        parentItem: {
+          id: i[relation.value!.reverseJunctionField.field].id,
+          junctionFieldName: relation.value!.reverseJunctionField.field,
+        },
+      };
+    });
+  }
+});
 
 // Hacky way to extract the recipe ID from the URL,
 // this is necessary while Directus doesn't provide the current form values for sub-forms
@@ -106,60 +120,33 @@ interface RecipeQueryResult {
 
 if (recipeId.value && config!.relation.limitToCurrentItem) {
   loading.value = true;
-  const { items } = useItems(toRef("recipes"), {
+  const { items, getItems } = useItems(toRef("recipes"), {
     fields: ref(["*"]),
     filter: ref({
       id: {
         _eq: recipeId.value,
       },
     }),
-    limit: ref(-1),
+    limit: ref(1),
     page: ref(1),
     search: ref(null),
     sort: ref(null),
   });
 
-  watch(
-    () => items.value,
-    (loadedItems) => {
-      if (loadedItems && loadedItems.length > 0) {
-        const recipe = items.value[0] as RecipeQueryResult;
-        filter.value = {
-          ingredientGroup_id: {
-            _in: recipe.ingredientGroups,
-          },
-        };
-
-        loading.value = false;
-      }
-    },
-    {
-      immediate: true,
-    },
-  );
-}
-
-// TODO: Remove any
-watch(items, (loadedItems: Item[]) => {
-  if (loadedItems && loadedItems.length > 0) {
-    store.preExistingRelations = loadedItems.map((i) => {
-      return {
-        id: i.id,
-        relatedItem: {
-          id: i[relation.value!.junctionField.field].id,
-          junctionFieldName: relation.value!.junctionField.field,
-          data: i[relation.value!.junctionField.field],
-        },
-        parentItem: {
-          id: i[relation.value!.reverseJunctionField.field].id,
-          junctionFieldName: relation.value!.reverseJunctionField.field,
+  getItems().then(() => {
+    if (items.value.length > 0) {
+      const recipe = items.value[0] as RecipeQueryResult;
+      filter.value = {
+        ingredientGroup_id: {
+          _in: recipe.ingredientGroups,
         },
       };
-    });
-  }
-});
 
-const store = useRelationStore();
+      loading.value = false;
+    }
+  });
+}
+
 const api = useApi();
 
 function selectItem() {
@@ -171,10 +158,12 @@ const toolStore = useToolStore();
 async function stageSelects(items: [string | number]) {
   const nodeId = uuidv4();
 
-  const relatedItemResponse = await api.get(`items/${relation.value!.relatedCollection.collection}/${items[0]}`);
+  const relatedItemResponse = await api.get(
+    `items/${relation.value!.relatedCollection.collection}/${items[0]}`,
+  );
 
   // TODO: Remove any
-  store.stagedChanges.create.push({
+  relationStore.stagedChanges.create.push({
     id: nodeId,
     relatedItem: {
       id: relatedItemResponse.data.data.id,
@@ -187,7 +176,7 @@ async function stageSelects(items: [string | number]) {
     },
   });
 
-  toolStore.relationBlockTool!.action?.(props.editor, {
+  toolStore.inlineRelationTool?.action(props.editor, {
     id: nodeId,
     junction: relation.value!.junctionCollection.collection,
     collection: relation.value!.relatedCollection.collection,

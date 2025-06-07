@@ -1,13 +1,11 @@
 import { defineStore } from "pinia";
-import { Tool } from "../../common/types/tools";
+import { Tool, type InlineRelationTool } from "../../common/types/tools";
 import heading from "../tiptap/options/heading";
 import history from "../tiptap/options/history";
 import paragraph from "../tiptap/options/paragraph";
-import codeBlock from "../tiptap/options/code-block";
 import bold from "../tiptap/options/bold";
 import italic from "../tiptap/options/italic";
 import strike from "../tiptap/options/strike";
-import code from "../tiptap/options/code";
 import link from "../tiptap/options/link";
 import hardBreak from "../tiptap/options/hard-break";
 import horizontalRule from "../tiptap/options/horizontal-rule";
@@ -23,9 +21,8 @@ import { computed, ref } from "vue";
 export const useToolStore = defineStore("tool-store", () => {
   const tiptap = useTipTap();
 
-  const tools = ref<Tool[]>([
+  const basicTools = ref<Tool[]>([
     paragraph,
-    codeBlock,
     heading(1),
     heading(2),
     heading(3),
@@ -35,10 +32,6 @@ export const useToolStore = defineStore("tool-store", () => {
     bold,
     italic,
     strike,
-    code,
-    link.add,
-    link.remove,
-    link.auto,
     hardBreak,
     horizontalRule,
     bulletList,
@@ -47,22 +40,36 @@ export const useToolStore = defineStore("tool-store", () => {
     table,
     history.undo,
     history.redo,
+    link.add,
+    link.remove,
+    link.auto,
   ]);
+
+  const inlineRelationTool = ref<InlineRelationTool>();
+
+  const tools = computed(() => {
+    if (inlineRelationTool.value) {
+      return [...basicTools.value, inlineRelationTool.value];
+    }
+
+    return [...basicTools.value];
+  });
 
   const tagName = ref<string>();
 
   function setInlineNodeTool(nameOfTag: string) {
     tagName.value = nameOfTag;
-    tools.value.push(tiptap.createInlineNodeTool(nameOfTag));
+    inlineRelationTool.value = tiptap.createInlineNodeTool(nameOfTag);
   }
 
-  const selectedToolOptions = ref<string[]>([]);
+  const selectedToolNames = ref<string[]>([]);
+
   function pickSelectedTools(selection: ToolSelection): AnyExtension[] {
     const toolsExtensions: AnyExtension[] = [];
     const uniqueNames: string[] = [];
-    selectedToolOptions.value = selection;
+    selectedToolNames.value = selection;
 
-    selectedTools.value.forEach(({ extension }) =>
+    selectedBasicTools.value.forEach(({ extension }) => {
       extension.forEach((item) => {
         const extensionItem = typeof item === "function" ? item(selection) : item;
         const extensionNotExists = uniqueNames.indexOf(extensionItem.name) < 0;
@@ -71,40 +78,37 @@ export const useToolStore = defineStore("tool-store", () => {
           uniqueNames.push(extensionItem.name);
           toolsExtensions.push(extensionItem);
         }
-      }),
-    );
+      });
+    });
 
     return toolsExtensions;
   }
 
-  const selectedTools = computed(() => {
-    return tools.value.filter(({ key }) => selectedToolOptions.value.indexOf(key) >= 0);
+  const selectedBasicTools = computed(() => {
+    return basicTools.value.filter(({ key }) => selectedToolNames.value.includes(key));
   });
 
-  const optionalTools = computed(() => {
+  const pickableTools = computed(() => {
     return tools.value.filter((tool) => !tool.excludeFromOptions);
   });
 
   const interfaceOptions = computed(() => {
-    return optionalTools.value.map(({ key, name }) => ({ text: name, value: key }));
+    return pickableTools.value.map(({ key, name }) => ({ text: name, value: key }));
   });
 
-  const interfaceOptionsDefault = optionalTools.value.map(({ key }) => key);
+  const interfaceOptionsDefault = pickableTools.value.map(({ key }) => key);
 
-  const defaultSelectedTools = computed(() => optionalTools.value.map(({ key }) => key));
-
-  const relationBlockTool = computed(() => tools.value.find(({ key }) => key === tagName.value));
+  const defaultSelectedTools = computed(() => pickableTools.value.map(({ key }) => key));
 
   return {
-    tools,
+    selectedBasicTools,
+    inlineRelationTool,
     tagName,
     setInlineNodeTool,
     pickSelectedTools,
-    selectedTools,
-    optionalTools,
+    selectedToolNames,
     interfaceOptions,
     interfaceOptionsDefault,
     defaultSelectedTools,
-    relationBlockTool,
   };
 });

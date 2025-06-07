@@ -1,6 +1,5 @@
 <template>
   <v-button
-    v-tooltip="tooltip"
     tabindex="-1"
     :aria-label="title"
     :disabled="disabled"
@@ -12,28 +11,24 @@
     :x-small="!small"
     @click="action"
   >
-    <template v-if="icon === false">{{ display ? display : title }}</template>
-    <v-icon v-if="icon !== false" :name="icon" />
+    <v-icon v-if="icon" :name="icon" />
+    <template v-else>{{ display ? display : title }}</template>
   </v-button>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { ToolButtonProps } from "../../common/types/tools";
+import { Tool } from "../../common/types/tools";
 
-const props = withDefaults(defineProps<ToolButtonProps>(), {
-  icon: false,
-  display: false,
-  shortcut: () => [],
-  active: false,
-  disabled: false,
-});
-
-const tooltip = computed(() => {
-  if (!props.shortcut.length) return props.title;
-
-  return `${props.title} ${props.shortcut}`;
-});
+const props = defineProps<{
+  title: string;
+  icon?: string;
+  display?: string;
+  action: Tool["action"];
+  shortcut?: Tool["shortcut"];
+  active?: boolean;
+  disabled?: boolean;
+}>();
 
 const small = computed(() => props.icon || props.display);
 </script>
@@ -44,4 +39,3 @@ const small = computed(() => props.icon || props.display);
   background-color: var(--v-button-background-color-active);
 }
 </style>
-../../common/types/types

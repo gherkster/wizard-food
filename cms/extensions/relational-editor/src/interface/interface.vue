@@ -1,8 +1,8 @@
 <template>
   <div v-if="editor" :class="{ disabled }" class="field">
     <toolbar
-      v-if="toolStore.selectedTools.length > 0"
-      :tools="toolStore.selectedTools"
+      v-if="toolStore.selectedToolNames.length > 0"
+      :basic-tools="toolStore.selectedBasicTools"
       :editor="editor"
       :display-format="displayFormat"
       :single-line-mode="singleLineMode"
@@ -84,14 +84,13 @@ const emit = defineEmits<{
   setFieldValue: [value: { field: string; value: EmittedRelationUpdate }];
 }>();
 
-// TODO: Do mapping somewhere else
 function emitRelationChanges(change: RelationDelta) {
   if (!props.m2mField) {
     return;
   }
+
   const emittedValue: EmittedRelationUpdate = {
     create: change.create.map((create) => {
-      // TODO: Don't hardcode
       return {
         id: create.id,
         [create.relatedItem.junctionFieldName]: create.relatedItem.id,
@@ -101,6 +100,7 @@ function emitRelationChanges(change: RelationDelta) {
     update: [], // Updates are not required for this interface
     delete: change.delete,
   };
+
   emit("setFieldValue", {
     field: props.m2mField,
     value: emittedValue,
@@ -138,7 +138,7 @@ const tiptap = useTipTap();
 
 const toolStore = useToolStore();
 
-const mappedTools = toolStore.pickSelectedTools(props.tools);
+const selectedTools = toolStore.pickSelectedTools(props.tools);
 
 const singleLineMode = computed(() => props.inputMode === "single");
 
@@ -149,7 +149,7 @@ const extensions = [
   Placeholder.configure({ placeholder: props.placeholder }),
   Dropcursor,
   Gapcursor,
-  ...mappedTools,
+  ...selectedTools,
 ];
 
 if (props.tagName) {
@@ -230,7 +230,10 @@ watch(
 
 .field:focus-within {
   border-color: var(--theme--form--field--input--border-color-focus, var(--primary));
-  box-shadow: var(--theme--form--field--input--box-shadow-focus, 0 0 16px -8px var(--v-input-box-shadow-color-focus));
+  box-shadow: var(
+    --theme--form--field--input--box-shadow-focus,
+    0 0 16px -8px var(--v-input-box-shadow-color-focus)
+  );
 }
 
 .disabled {
@@ -260,10 +263,14 @@ watch(
   /* --editor-height = --editor-lineheight * 7 */
   --editor-height: calc(11.2em + var(--editor-input-padding) + var(--editor-input-padding));
   /* --editor-height = --editor-lineheight * 1 */
-  --editor-height-single-line: calc(1.6em + var(--editor-input-padding) + var(--editor-input-padding));
+  --editor-height-single-line: calc(
+    1.6em + var(--editor-input-padding) + var(--editor-input-padding)
+  );
   --editor-overflow-height: calc(
-    100vh - var(--header-bar-height) - var(--header-bar-height) - var(--theme--form--row-gap, var(--form-vertical-gap)) -
-      var(--theme--form--row-gap, var(--form-vertical-gap)) - var(--editor-input-padding) - var(--editor-input-padding)
+    100vh - var(--header-bar-height) - var(--header-bar-height) -
+      var(--theme--form--row-gap, var(--form-vertical-gap)) -
+      var(--theme--form--row-gap, var(--form-vertical-gap)) - var(--editor-input-padding) -
+      var(--editor-input-padding)
   );
 }
 
@@ -359,7 +366,8 @@ watch(
 }
 
 .flexible-editor :deep(blockquote) {
-  border-left: var(--theme--border-width, var(--border-width)) solid var(--theme--border-color, var(--border-normal));
+  border-left: var(--theme--border-width, var(--border-width)) solid
+    var(--theme--border-color, var(--border-normal));
   padding-left: var(--theme--form--field--input--padding, var(--input-padding));
 }
 

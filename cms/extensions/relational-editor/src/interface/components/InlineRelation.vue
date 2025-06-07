@@ -1,16 +1,26 @@
 <template>
   <node-view-wrapper class="relation-block">
-    <!-- Add loading functionality -->
-    <v-skeleton-loader v-if="false" type="block-list-item" />
+    <v-skeleton-loader v-if="relationStore.isLoadingItems" type="block-list-item" />
     <div v-else-if="element" class="v-list-item link block clickable">
-      <v-icon data-drag-handle class="drag-handle" name="drag_handle" draggable="true" left @click.stop />
+      <v-icon
+        data-drag-handle
+        class="drag-handle"
+        name="drag_handle"
+        draggable="true"
+        left
+        @click.stop
+      />
       <render-template
         :collection="relation?.junctionCollection.collection"
         :template="templateWithDefaults"
         :item="element"
+        @click="isEditDialogOpen = true"
       />
       <div class="spacer" />
       <v-icon class="clear-icon" name="delete" @click.stop="deleteNode" />
+      <v-dialog v-model="isEditDialogOpen"
+        ><v-card>{{ element }}</v-card></v-dialog
+      >
     </div>
     <v-notice v-else type="warning">
       <span>{{ t("related_item_missing") }}</span>
@@ -23,7 +33,7 @@
 <script setup lang="ts">
 import { NodeViewProps, NodeViewWrapper } from "@tiptap/vue-3";
 import { useRelationStore } from "../stores/relationStore";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useRelation } from "../composables/useRelation";
 import { useI18nFallback } from "../composables/use-i18n-fallback";
 import { useI18n } from "vue-i18n";
@@ -34,15 +44,16 @@ const { t } = useI18nFallback(useI18n());
 
 const { templateWithDefaults, relation } = useRelation();
 
-const store = useRelationStore();
+const relationStore = useRelationStore();
 
 const element = computed(() => {
-  const junctionItem = store.allRelations.find((item) => props.node.attrs.id === item.id);
+  const junctionItem = relationStore.allRelations.find((item) => props.node.attrs.id === item.id);
   if (!junctionItem) {
     return null;
   }
 
-  // These look like they need to be in the format item_id: itemData to render properly in the Directus render-template
+  // These look like they need to be in the format item_id: itemData
+  // to render properly in the Directus render-template
   // E.g. ingredient_id: ServerIngredient, otherwise the render template will not work
   // and the inline text in the editor will be missing
   return {
@@ -50,10 +61,15 @@ const element = computed(() => {
     [junctionItem.relatedItem.junctionFieldName]: junctionItem.relatedItem.data,
   };
 });
+
+const isEditDialogOpen = ref(false);
 </script>
 
 <style scoped>
-/* Based on the styles of https://github.com/directus/directus/blob/main/app/src/components/v-list-item.vue */
+/* 
+Based on the styles of
+https://github.com/directus/directus/blob/main/app/src/components/v-list-item.vue
+*/
 .v-list-item {
   position: relative;
   display: flex;
@@ -82,7 +98,10 @@ const element = computed(() => {
 
 .v-list-item.link:not(.disabled):not(.block):hover {
   color: var(--v-list-item-color-hover);
-  background-color: var(--theme--form--field--input--background, var(--v-list-item-background-color-hover));
+  background-color: var(
+    --theme--form--field--input--background,
+    var(--v-list-item-background-color-hover)
+  );
 }
 
 .v-list-item.link:not(.disabled):not(.block):active {
@@ -102,8 +121,14 @@ const element = computed(() => {
 
 .v-list-item.block {
   --v-list-item-border-color: var(--theme--form--field--input--border-color, var(--border-subdued));
-  --v-list-item-background-color: var(--theme--form--field--input--background, var(--background-page));
-  --v-list-item-background-color-hover: var(--theme--form--field--input--background, var(--card-face-color));
+  --v-list-item-background-color: var(
+    --theme--form--field--input--background,
+    var(--background-page)
+  );
+  --v-list-item-background-color-hover: var(
+    --theme--form--field--input--background,
+    var(--card-face-color)
+  );
   --v-icon-color: var(--theme--foreground-subdued, var(--foreground-subdued));
 
   position: relative;
@@ -134,13 +159,17 @@ const element = computed(() => {
 }
 
 .v-list-item.block.clickable:hover {
-  background-color: var(--theme--form--field--input--background, var(--v-list-item-background-color-hover));
+  background-color: var(
+    --theme--form--field--input--background,
+    var(--v-list-item-background-color-hover)
+  );
   border: var(--theme--border-width, var(--border-width)) solid
     var(--theme--form--field--input--border-color-hover, var(--v-list-item-border-color-hover));
 }
 
 .v-list-item.block.sortable-chosen {
-  border: var(--theme--border-width, var(--border-width)) solid var(--theme--primary, var(--primary)) !important;
+  border: var(--theme--border-width, var(--border-width)) solid
+    var(--theme--primary, var(--primary)) !important;
 }
 
 .v-list-item.block.sortable-ghost {
@@ -161,7 +190,8 @@ const element = computed(() => {
 
 .v-list-item:active {
   /* Alternative to sortable-chosen */
-  border: var(--theme--border-width, var(--border-width)) solid var(--theme--primary, var(--primary)) !important;
+  border: var(--theme--border-width, var(--border-width)) solid
+    var(--theme--primary, var(--primary)) !important;
 }
 
 .spacer {

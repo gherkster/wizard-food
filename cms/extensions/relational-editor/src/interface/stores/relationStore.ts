@@ -1,5 +1,6 @@
+import { useItems } from "@directus/extensions-sdk";
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { computed, ref, toRef, watch } from "vue";
 
 /**
  * Contains the new and removed relationships in the junction collection
@@ -31,6 +32,14 @@ interface JunctionItemData {
   };
 }
 
+interface ParentCollection {
+  id: string | number;
+  /**
+   * e.g. instruction_id
+   */
+  fieldName: string;
+}
+
 export const useRelationStore = defineStore("custom-extension-relation", () => {
   const stagedChanges = ref<RelationDelta>({
     create: [],
@@ -48,6 +57,41 @@ export const useRelationStore = defineStore("custom-extension-relation", () => {
     return [...preExistingRelations.value, ...stagedChanges.value.create];
   });
 
+  const isLoadingItems = ref(false);
+
+  const getItems = (collection: string, parentCollection?: ParentCollection) => {
+    const query = {
+      // TODO Only get required fields
+      fields: ref(["*.*"]),
+      filter: ref(
+        parentCollection
+          ? {
+              [parentCollection.fieldName]: {
+                id: {
+                  _eq: parentCollection.id,
+                },
+              },
+            }
+          : null,
+      ),
+      limit: ref(-1),
+      page: ref(1),
+      search: ref(null),
+      sort: ref(null),
+    };
+
+    const result = useItems(toRef(collection), query);
+
+    watch(
+      () => result.loading,
+      (isLoading) => {
+        isLoadingItems.value = isLoading.value;
+      },
+    );
+
+    return result;
+  };
+
   function $resetStaging() {
     stagedChanges.value = {
       create: [],
@@ -57,6 +101,8 @@ export const useRelationStore = defineStore("custom-extension-relation", () => {
   }
 
   return {
+    getItems,
+    isLoadingItems,
     stagedChanges,
     preExistingRelations,
     allRelations,

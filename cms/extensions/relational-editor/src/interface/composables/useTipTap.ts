@@ -1,14 +1,17 @@
 import { Editor, mergeAttributes, Node } from "@tiptap/core";
 import { VueNodeViewRenderer } from "@tiptap/vue-3";
 import InlineRelation from "../../interface/components/InlineRelation.vue";
-import { RelationBlockAttrs } from "../../../../../../../common/types/relations";
-import { Tool } from "../../common/types/tools";
+import {
+  RelationBlockAttrs,
+  type EditorDefaultAttributes,
+} from "../../../../../../common/types/relations";
+import type { InlineRelationTool } from "../../common/types/tools";
 import customMessages from "../i18n/custom-messages";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     anything: {
-      setRelationBlock: (attrs?: RelationBlockAttrs) => ReturnType;
+      setRelationBlock: (attrs: RelationBlockAttrs) => ReturnType;
     };
   }
 }
@@ -34,7 +37,7 @@ export function useTipTap() {
           collection: {
             default: null,
           },
-        };
+        } satisfies EditorDefaultAttributes<RelationBlockAttrs>;
       },
 
       parseHTML() {
@@ -56,13 +59,7 @@ export function useTipTap() {
       addCommands() {
         return {
           setRelationBlock:
-            (
-              attrs = {
-                id: null,
-                junction: null,
-                collection: null,
-              },
-            ) =>
+            (attrs) =>
             ({ commands }) => {
               return commands.insertContent({ type: inlineTagName, attrs });
             },
@@ -71,7 +68,7 @@ export function useTipTap() {
     });
   }
 
-  function createInlineNodeTool(inlineTagName: string) {
+  const createInlineNodeTool = (inlineTagName: string): InlineRelationTool => {
     return {
       // Custom
       key: inlineTagName,
@@ -94,10 +91,17 @@ export function useTipTap() {
             .run();
         }
       },
-      disabled: (editor: Editor) => !editor.can().chain().focus().setRelationBlock().run(),
+      disabled: (editor: Editor) =>
+        !editor
+          .can()
+          .chain()
+          .focus()
+          // Pass in any object as .can() does not actually execute the function
+          .setRelationBlock({ id: "", collection: "", junction: "" })
+          .run(),
       active: (editor: Editor) => editor.isActive(inlineTagName),
-    } as Tool;
-  }
+    };
+  };
 
   return {
     createInlineNode,

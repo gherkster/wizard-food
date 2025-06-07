@@ -1,7 +1,14 @@
 <template>
   <v-menu show-arrow placement="bottom-start">
     <template #activator="{ toggle }">
-      <ToolButton :title="title" :icon="icon" :action="toggle" :active="active" :disabled="disabled" :editor="editor" />
+      <ToolButton
+        :title="title"
+        :icon="icon"
+        :action="toggle"
+        :active="active"
+        :disabled="disabled"
+        :editor="editor"
+      />
     </template>
     <v-list>
       <v-list-item clickable @click="action">
@@ -12,7 +19,8 @@
 
       <v-list-group
         :disabled="
-          !editor.can().chain().focus().mergeOrSplit().run() && !editor.can().chain().focus().toggleHeaderCell().run()
+          !editor.can().chain().focus().mergeOrSplit().run() &&
+          !editor.can().chain().focus().toggleHeaderCell().run()
         "
       >
         <template #activator>
@@ -127,9 +135,17 @@
 import ToolButton from "./ToolButton.vue";
 import { useI18n } from "vue-i18n";
 import { useI18nFallback } from "../composables/use-i18n-fallback";
-import { ToolButtonProps } from "../../common/types/tools";
+import { Tool } from "../../common/types/tools";
+import { Editor } from "@tiptap/vue-3";
 
-defineProps<ToolButtonProps>();
+defineProps<{
+  title: string;
+  icon?: string;
+  action: Tool["action"];
+  active: boolean;
+  disabled: boolean;
+  editor: Editor;
+}>();
 
 const { t } = useI18nFallback(useI18n());
 </script>

@@ -1,8 +1,8 @@
 <template>
   <div class="toolbar">
-    <toolbar-relation-menu v-if="!singleLineMode && useRelations" :editor="editor" />
+    <ToolbarRelationMenu v-if="!singleLineMode && useRelations" :editor="editor" />
 
-    <v-menu v-if="formatTools.length" show-arrow placement="bottom-start" :full-height="true">
+    <v-menu v-if="formatTools.length > 0" show-arrow placement="bottom-start" full-height>
       <template #activator="{ toggle }">
         <v-button
           v-if="displayFormat"
@@ -34,7 +34,7 @@
           :active="tool.active?.(editor)"
           :aria-pressed="tool.active?.(editor)"
           :disabled="tool.disabled?.(editor) || (singleLineMode && tool.disabledInSingleLineMode)"
-          @click="tool.action?.(editor)"
+          @click="tool.action(editor, undefined)"
         >
           <v-list-item-icon v-if="tool.icon">
             <v-icon :name="tool.icon" />
@@ -55,19 +55,19 @@
       :icon="tool.icon"
       :display="tool.display"
       :shortcut="tool.shortcut"
-      :action="() => toolAction(tool)"
+      :action="() => tool.action(editor, undefined)"
       :active="tool.active?.(editor)"
       :disabled="tool.disabled?.(editor) || (singleLineMode && tool.disabledInSingleLineMode)"
       :editor="editor"
     />
 
-    <v-dialog v-model="showDialog">
+    <v-dialog v-model="isDialogOpen">
       <component
         :is="dialog!.component"
         :get="dialog!.get"
         @set="dialog!.set"
         @unset="dialog!.unset"
-        @close-dialog="dialog = null"
+        @close-dialog="linkStore.closeLinkModal()"
       ></component>
     </v-dialog>
   </div>
@@ -79,79 +79,69 @@ import ToolButton from "./ToolButton.vue";
 import ToolbarRelationMenu from "./ToolbarRelationMenu.vue";
 import { useI18n } from "vue-i18n";
 import { useI18nFallback } from "../composables/use-i18n-fallback";
-import type { Tool, Dialog } from "../../common/types/tools";
+import type { Tool } from "../../common/types/tools";
 import type { Editor } from "@tiptap/vue-3";
 import { capitalize } from "lodash";
+import { useLinkStore } from "../stores/useLinkStore";
+import { storeToRefs } from "pinia";
 
 // Props
 interface Props {
-  tools: Tool[];
+  basicTools: Tool[];
   editor: Editor;
   singleLineMode: boolean;
-  displayFormat: boolean;
+  displayFormat?: boolean;
   useRelations: boolean;
 }
-const props = withDefaults(defineProps<Props>(), {
-  displayFormat: false,
-});
+const props = defineProps<Props>();
 
 const { t, $t } = useI18nFallback(useI18n());
 
 // Split up tools to types
 const buttonTools = ref<Tool[]>([]);
+
 const formatTools = ref<Tool[]>([]);
-props.tools.forEach((tool) => {
+
+props.basicTools.forEach((tool) => {
   if (tool.excludeFromToolbar) {
     return;
   }
 
   tool.name = $t(tool.name);
 
-  if (tool.groups && tool.groups.indexOf("format") >= 0) {
+  if (tool.isFormatTool) {
     formatTools.value.push(tool);
     return;
   }
 
   buttonTools.value.push(tool);
 });
-const formatToolsDisabled = computed(() => formatTools.value.every((tool) => tool.disabled?.(props.editor)));
+
+const formatToolsDisabled = computed(() =>
+  formatTools.value.every((tool) => tool.disabled?.(props.editor)),
+);
+
 const formatToolsDisplay = computed(() => {
-  const activeFormat: Tool[] = formatTools.value.filter((tool: Tool) => tool.active?.(props.editor));
+  const activeFormat: Tool[] = formatTools.value.filter((tool: Tool) =>
+    tool.active?.(props.editor),
+  );
 
   if (activeFormat.length) return activeFormat.map((tool) => tool.name)[0];
 
   return t("tools.paragraph");
 });
 
+const linkStore = useLinkStore();
+const { dialog, isDialogOpen } = storeToRefs(linkStore);
+
 function translateShortcut(keys: string[]): string {
-  const isMac = navigator.platform.toLowerCase().startsWith("mac") || navigator.platform.startsWith("iP");
-
-  if (isMac) {
-    return keys
-      .map((key) => {
-        if (key === "meta") return "⌘";
-        if (key === "option") return "⌥";
-        if (key === "shift") return "⇧";
-        if (key === "alt") return "⌥";
-        return capitalize(key);
-      })
-      .join("");
-  } else {
-    return keys
-      .map((key) => {
-        if (key === "meta") return "Ctrl";
-        return capitalize(key);
-      })
-      .join("+");
-  }
+  return keys
+    .map((key) => {
+      if (key === "meta") return "Ctrl";
+      return capitalize(key);
+    })
+    .join("+");
 }
-
-// Dialog
-const dialog = ref<Dialog | null>(null);
-const showDialog = computed(() => dialog.value !== null);
-
-// Action (click) method
-const toolAction = (tool: Tool) => tool.action?.(props.editor, { dialog });
 </script>
 
 <style scoped>
@@ -171,7 +161,9 @@ const toolAction = (tool: Tool) => tool.action?.(props.editor, { dialog });
 
 .toolbar-dropdown-button :deep(.button) {
   --v-button-min-width: 0;
-  padding-left: calc(var(--theme--form--field--input--padding, var(--input-padding)) - var(--toolbar-dropdown-p) * 2);
+  padding-left: calc(
+    var(--theme--form--field--input--padding, var(--input-padding)) - var(--toolbar-dropdown-p) * 2
+  );
   padding-right: 4px;
 }
 
@@ -180,7 +172,8 @@ const toolAction = (tool: Tool) => tool.action?.(props.editor, { dialog });
 }
 
 .toolbar {
-  border-bottom: var(--theme--border-width, var(--border-width)) solid var(--theme--border-color, var(--border-normal));
+  border-bottom: var(--theme--border-width, var(--border-width)) solid
+    var(--theme--border-color, var(--border-normal));
   padding: var(--toolbar-item-m);
 }
 
@@ -190,4 +183,3 @@ const toolAction = (tool: Tool) => tool.action?.(props.editor, { dialog });
   vertical-align: middle;
 }
 </style>
-../../common/types/types

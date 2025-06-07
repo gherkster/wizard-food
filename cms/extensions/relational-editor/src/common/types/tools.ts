@@ -1,8 +1,9 @@
 import { AnyExtension, Editor } from "@tiptap/core";
 import { Component } from "vue";
 import { ToolSelection } from "./relation-nodes";
+import { RelationBlockAttrs } from "../../../../../../common/types/relations";
 
-export type Tool = {
+export type Tool<TAttrs = unknown | undefined> = {
   key: string;
   name: string;
   icon?: string;
@@ -10,25 +11,16 @@ export type Tool = {
   excludeFromOptions?: boolean;
   excludeFromToolbar?: boolean;
   extension: Array<AnyExtension | ExtensionFunction>;
-  groups?: string[];
+  isFormatTool?: boolean;
   shortcut?: string[];
   toolbarButton?: Component;
   disabledInSingleLineMode?: boolean;
-  action?: (editor: Editor, attrs?: any) => void;
+  action: (editor: Editor, attrs: TAttrs) => void;
   disabled?: (editor: Editor) => void;
   active?: (editor: Editor) => void;
 };
 
-export type ToolButtonProps = {
-  title: string;
-  icon: string | boolean;
-  display: string | boolean;
-  action: Tool["action"];
-  shortcut: Tool["shortcut"];
-  active: boolean;
-  disabled: boolean;
-  editor: Editor;
-};
+export type InlineRelationTool = Tool<RelationBlockAttrs>;
 
 type ExtensionFunction = (selection: ToolSelection) => AnyExtension;
 

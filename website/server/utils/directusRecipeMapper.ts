@@ -17,11 +17,11 @@ import * as path from "path";
 import type {
   Ingredient,
   IngredientGroup,
-  InlineIngredient,
   Instruction,
   InstructionGroup,
   SingularPluralPair,
 } from "~~/shared/types/recipe";
+import type { JSONRecipeIngredientContent } from "~~/shared/types/editor";
 
 /**
  * Maps the recipe output from Directus into a more usable payload to be provided to the serverside functionality.
@@ -118,6 +118,8 @@ export const toRecipePayload = (
     inlineIngredients: ServerInlineIngredient[],
   ) {
     if (content.type === "inline-ingredient" && content.attrs?.id) {
+      const ingredientContent = content as JSONRecipeIngredientContent;
+
       const serverIngredient = inlineIngredients.find(
         (i) => i.id === content.attrs!.id,
       )?.ingredient_id;
@@ -128,7 +130,7 @@ export const toRecipePayload = (
         // Set the tiptap data attribute with the recipe data, which is used when rendering to HTML to populate the HTML data attributes
         const ingredient = mapIngredient(serverIngredient);
 
-        content.attrs.data = {
+        ingredientContent.attrs.data = {
           amount: ingredient.amount,
           unit: ingredient.unit,
           // Use plain text for inline ingredient properties
@@ -136,7 +138,7 @@ export const toRecipePayload = (
             singular: generateText(serverIngredient.name_singular ?? {}, extensions),
             plural: generateText(serverIngredient.name_plural ?? {}, extensions),
           },
-        } satisfies InlineIngredient;
+        };
       }
     }
 

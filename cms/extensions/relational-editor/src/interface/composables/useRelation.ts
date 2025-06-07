@@ -8,7 +8,10 @@ export function useRelation(configuration?: Configuration) {
     throw new Error("Configuration was not provided");
   }
 
-  const { relationInfo } = useRelationM2M(config.relation.parentCollection, config.relation.junctionField);
+  const { relationInfo } = useRelationM2M(
+    config.relation.parentCollection,
+    config.relation.junctionField,
+  );
 
   const templateWithDefaults = computed(() => {
     if (!relationInfo.value) return null;

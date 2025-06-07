@@ -18,7 +18,7 @@ export default {
   // Because we want “Paragraph” selectable from the formats menu, we don’t `excludeFromOptions: true`
   // Already imported
   extension: [],
-  groups: ["format"],
+  isFormatTool: true,
   shortcut: ["meta", "alt", "0"],
   action: (editor: Editor) => editor.chain().focus().setParagraph().run(),
   disabled: (editor: Editor) => !editor.can().chain().focus().setParagraph().run(),

@@ -23,6 +23,7 @@ import Fraction from "fraction.js";
 import { formatIngredient } from "../../shared/utils/formatting";
 import type { InlineIngredient, InlineIngredientHTMLElementDataset } from "~~/shared/types/recipe";
 import type { KebabCaseDataAttributes } from "~~/shared/types/casing";
+import type { EditorDefaultAttributes, RelationBlockAttrs } from "../../../common/types/relations";
 
 const extensions = [
   Document,
@@ -60,8 +61,8 @@ const extensions = [
   TableCell,
 ];
 
-type InlineIngredientAttributes = {
-  collection: string;
+type InlineIngredientAttributes = RelationBlockAttrs & {
+  /** The hydrated ingredient data */
   data?: InlineIngredient;
 };
 
@@ -82,7 +83,7 @@ const inlineIngredientSerializer = Node.create({
       data: {
         default: null,
       },
-    };
+    } satisfies EditorDefaultAttributes<InlineIngredientAttributes>;
   },
   renderHTML(props) {
     // Cast type since tiptap uses any here
