@@ -66,7 +66,7 @@ const props = withDefaults(
     collection: null,
     primaryKey: null,
     limitToCurrentItem: false,
-  }
+  },
 );
 
 // TODO: Throw error if junction collection primary key is not uuid
@@ -84,14 +84,13 @@ const emit = defineEmits<{
   setFieldValue: [value: { field: string; value: EmittedRelationUpdate }];
 }>();
 
-// TODO: Do mapping somewhere else
 function emitRelationChanges(change: RelationDelta) {
   if (!props.m2mField) {
     return;
   }
+
   const emittedValue: EmittedRelationUpdate = {
     create: change.create.map((create) => {
-      // TODO: Don't hardcode
       return {
         id: create.id,
         [create.relatedItem.junctionFieldName]: create.relatedItem.id,
@@ -101,6 +100,7 @@ function emitRelationChanges(change: RelationDelta) {
     update: [], // Updates are not required for this interface
     delete: change.delete,
   };
+
   emit("setFieldValue", {
     field: props.m2mField,
     value: emittedValue,
@@ -116,7 +116,7 @@ watch(
   },
   {
     deep: true,
-  }
+  },
 );
 
 // TODO: Required props shouldn't be allowed to be empty strings
@@ -190,7 +190,7 @@ watch(
       return;
     }
     editor.value?.commands.setContent(value, false);
-  }
+  },
 );
 </script>
 

@@ -3,7 +3,7 @@ import { Component } from "vue";
 import { ToolSelection } from "./relation-nodes";
 import { RelationBlockAttrs } from "../../../../../../common/types/relations";
 
-export type Tool<T = unknown | undefined> = {
+export type Tool<TAttrs = unknown | undefined> = {
   key: string;
   name: string;
   icon?: string;
@@ -15,7 +15,7 @@ export type Tool<T = unknown | undefined> = {
   shortcut?: string[];
   toolbarButton?: Component;
   disabledInSingleLineMode?: boolean;
-  action?: (editor: Editor, attrs: T) => void;
+  action: (editor: Editor, attrs: TAttrs) => void;
   disabled?: (editor: Editor) => void;
   active?: (editor: Editor) => void;
 };

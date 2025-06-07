@@ -8,10 +8,13 @@ import { generateText } from "@tiptap/core";
 import extensions from "./extensions";
 import type { JSONContent } from "@tiptap/vue-3";
 
-const props = withDefaults(defineProps<{ value: JSONContent | null }>(), { value: null });
+const props = defineProps<{ value: JSONContent }>();
 
 const plainText = computed(() => {
-  if (!props.value) return "";
+  if (!props.value) {
+    return "";
+  }
+
   return generateText(props.value, extensions);
 });
 </script>

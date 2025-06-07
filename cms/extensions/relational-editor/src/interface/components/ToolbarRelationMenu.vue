@@ -61,7 +61,7 @@ const { relation } = useRelation();
 const relationStore = useRelationStore();
 
 // TODO: This should probably sit somewhere else
-const { items: junctionItems } = relationStore.getItems(
+const { items: junctionItems, getItems } = relationStore.getItems(
   relation.value!.junctionCollection.collection, // E.g. inline_ingredients
   config!.relation.limitToCurrentItem.value
     ? {
@@ -71,10 +71,9 @@ const { items: junctionItems } = relationStore.getItems(
     : undefined,
 );
 
-// Directus getItems is not async, so watch the result to process results
-watch(junctionItems, (loadedItems: Item[]) => {
-  if (loadedItems && loadedItems.length > 0) {
-    relationStore.preExistingRelations = loadedItems.map((i) => {
+getItems().then(() => {
+  if (junctionItems.value.length > 0) {
+    relationStore.preExistingRelations = junctionItems.value.map((i) => {
       return {
         id: i.id,
         relatedItem: {
@@ -121,37 +120,31 @@ interface RecipeQueryResult {
 
 if (recipeId.value && config!.relation.limitToCurrentItem) {
   loading.value = true;
-  const { items } = useItems(toRef("recipes"), {
+  const { items, getItems } = useItems(toRef("recipes"), {
     fields: ref(["*"]),
     filter: ref({
       id: {
         _eq: recipeId.value,
       },
     }),
-    limit: ref(-1),
+    limit: ref(1),
     page: ref(1),
     search: ref(null),
     sort: ref(null),
   });
 
-  watch(
-    () => items.value,
-    (loadedItems) => {
-      if (loadedItems && loadedItems.length > 0) {
-        const recipe = items.value[0] as RecipeQueryResult;
-        filter.value = {
-          ingredientGroup_id: {
-            _in: recipe.ingredientGroups,
-          },
-        };
+  getItems().then(() => {
+    if (items.value.length > 0) {
+      const recipe = items.value[0] as RecipeQueryResult;
+      filter.value = {
+        ingredientGroup_id: {
+          _in: recipe.ingredientGroups,
+        },
+      };
 
-        loading.value = false;
-      }
-    },
-    {
-      immediate: true,
-    },
-  );
+      loading.value = false;
+    }
+  });
 }
 
 const api = useApi();
@@ -183,13 +176,11 @@ async function stageSelects(items: [string | number]) {
     },
   });
 
-  if (toolStore.inlineRelationTool?.action) {
-    toolStore.inlineRelationTool.action(props.editor, {
-      id: nodeId,
-      junction: relation.value!.junctionCollection.collection,
-      collection: relation.value!.relatedCollection.collection,
-    });
-  }
+  toolStore.inlineRelationTool?.action(props.editor, {
+    id: nodeId,
+    junction: relation.value!.junctionCollection.collection,
+    collection: relation.value!.relatedCollection.collection,
+  });
 }
 </script>
 

@@ -34,7 +34,7 @@
           :active="tool.active?.(editor)"
           :aria-pressed="tool.active?.(editor)"
           :disabled="tool.disabled?.(editor) || (singleLineMode && tool.disabledInSingleLineMode)"
-          @click="tool.action?.(editor, undefined)"
+          @click="tool.action(editor, undefined)"
         >
           <v-list-item-icon v-if="tool.icon">
             <v-icon :name="tool.icon" />
@@ -55,7 +55,7 @@
       :icon="tool.icon"
       :display="tool.display"
       :shortcut="tool.shortcut"
-      :action="() => toolAction(tool)"
+      :action="() => tool.action(editor, undefined)"
       :active="tool.active?.(editor)"
       :disabled="tool.disabled?.(editor) || (singleLineMode && tool.disabledInSingleLineMode)"
       :editor="editor"
@@ -142,8 +142,6 @@ function translateShortcut(keys: string[]): string {
     })
     .join("+");
 }
-
-const toolAction = (tool: Tool) => tool.action?.(props.editor, undefined);
 </script>
 
 <style scoped>

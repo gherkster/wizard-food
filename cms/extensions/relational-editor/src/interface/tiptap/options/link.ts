@@ -37,6 +37,9 @@ const auto: Tool = {
   name: customMessages.tools.autolink,
   excludeFromToolbar: true,
   extension: [linkExtensionConfig],
+  action: () => {
+    return;
+  },
 };
 
 function linkExtensionConfig(selection: string[]) {
