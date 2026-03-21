@@ -63,7 +63,7 @@ const onInput = (value: string) => {
 };
 
 /** Debounce value for the search input, can be quite short since it is in-memory */
-const searchDebounceMs = 200;
+const searchDebounceMs = 150;
 
 const search = debounce(async (value: string) => {
   query.value = value;

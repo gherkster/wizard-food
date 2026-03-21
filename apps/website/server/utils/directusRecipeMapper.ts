@@ -20,10 +20,13 @@ import * as path from "path";
 import type {
   Ingredient,
   IngredientGroup,
+  Image,
   Instruction,
   InstructionGroup,
+  RecipePayload,
   SingularPluralPair,
 } from "~~/shared/types/recipe";
+import { buildSignedImageVariants } from "./cloudinaryImage";
 
 /**
  * Maps the recipe output from Directus into a more usable payload to be provided to the serverside functionality.
@@ -190,9 +193,16 @@ export const toRecipePayload = (
 };
 
 const mapImage = (serverImage: ServerImage): Image => {
+  const imageId = serverImage.id ?? throwExpression("Image ID must be provided");
+  const modifyDate = serverImage.modified_on ?? throwExpression("Image modified_on must be provided");
+  const signedVariants = buildSignedImageVariants({
+    id: imageId,
+    modifiedOn: modifyDate,
+  });
+
   return {
     // Assert that all the required fields have been provided, for an image this should always be the case.
-    id: serverImage.id ?? throwExpression("Image ID must be provided"),
+    id: imageId,
     title: serverImage.title ?? throwExpression("Image title must be provided"),
     fileName: serverImage.filename_download
       ? // Remove the file extension, as it the file extension of the uploaded file, not the transformed one the client will receive
@@ -200,7 +210,9 @@ const mapImage = (serverImage: ServerImage): Image => {
       : throwExpression("Image filename_download must be provided"),
     width: serverImage.width ?? throwExpression("Image width must be provided"),
     height: serverImage.height ?? throwExpression("Image height must be provided"),
-    modifyDate: serverImage.modified_on ?? throwExpression("Image modified_on must be provided"),
+    modifyDate,
+    cloudinaryVersion: signedVariants.cloudinaryVersion,
+    variants: signedVariants.variants,
     metadata: {
       base64Url:
         serverImage.metadata?.base64Url ??

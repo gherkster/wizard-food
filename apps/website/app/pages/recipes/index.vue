@@ -15,10 +15,7 @@
           v-for="(recipe, index) in recipes"
           :key="recipe.slug"
           :title="recipe.title"
-          :image="{
-            ...recipe.coverImage,
-            title: `Picture of ${recipe.title}`,
-          }"
+          :image="toCardImage(recipe)"
           :link="`/recipes/${recipe.slug}`"
           :tag="recipe.featuredTag"
           :duration="recipe.totalDurationLabel"
@@ -42,6 +39,34 @@ const searchTerm = computed(() => {
 const searchClient = useSearch();
 
 const recipes = ref<SearchIndexRecipe[]>([]);
+
+const toCardImage = (recipe: SearchIndexRecipe): Image => {
+  const previewSquare = recipe.coverImage.previewSquare;
+
+  return {
+    id: recipe.slug,
+    title: `Picture of ${recipe.title}`,
+    fileName: recipe.slug,
+    width: recipe.coverImage.width,
+    height: recipe.coverImage.height,
+    modifyDate: "",
+    cloudinaryVersion: 1,
+    variants: {
+      cover: {
+        portrait: previewSquare,
+        square: previewSquare,
+      },
+      preview: {
+        portrait: previewSquare,
+        square: previewSquare,
+      },
+      instruction: {
+        portrait: previewSquare,
+        square: previewSquare,
+      },
+    },
+  };
+};
 
 watch(
   () => route.query,

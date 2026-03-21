@@ -2,7 +2,7 @@ import { defineNuxtPrepareHandler } from "nuxt-prepare/config";
 import { useDirectusApi } from "./server/utils/useDirectusApi";
 import { toRecipePayload } from "./server/utils/directusRecipeMapper";
 import type { IngredientUnitForms, ServerRecipe } from "@wizard/openapi";
-import type { RecipePayload } from "~~/shared/types/recipe";
+import type { RecipePayload } from "./shared/types/recipe";
 
 export default defineNuxtPrepareHandler(async () => {
   if (process.env.NUXT_PREPARE_SKIP === "1") {
