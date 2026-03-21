@@ -1,5 +1,3 @@
-import { fileURLToPath } from "url";
-
 export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4,
@@ -75,10 +73,6 @@ export default defineNuxtConfig({
     "./modules/recipe",
     "@nuxt/icon",
   ],
-
-  alias: {
-    "@wizard/types": fileURLToPath(new URL("../../packages/types/src", import.meta.url)),
-  },
 
   imports: {
     dirs: ["clients"],

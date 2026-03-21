@@ -1,3 +1,4 @@
+import { Node } from "@tiptap/core";
 import Document from "@tiptap/extension-document";
 import Text from "@tiptap/extension-text";
 import Paragraph from "@tiptap/extension-paragraph";
@@ -18,14 +19,17 @@ import { Table } from "@tiptap/extension-table";
 import { TableHeader } from "@tiptap/extension-table-header";
 import { TableRow } from "@tiptap/extension-table-row";
 import { TableCell } from "@tiptap/extension-table-cell";
-import { Node } from "@tiptap/core";
 import Fraction from "fraction.js";
-import { formatIngredient } from "../../shared/utils/formatting";
-import type { InlineIngredient, InlineIngredientHTMLElementDataset } from "~~/shared/types/recipe";
-import type { KebabCaseDataAttributes } from "~~/shared/types/casing";
-import type { EditorDefaultAttributes, RelationBlockAttrs } from "@wizard/types/types/relations";
+import { formatIngredient } from "../shared/formatting";
+import type {
+  EditorDefaultAttributes,
+  InlineIngredient,
+  InlineIngredientHTMLElementDataset,
+  KebabCaseDataAttributes,
+  RelationBlockAttrs,
+} from "../shared/index";
 
-const extensions = [
+export const recipeRenderExtensions = [
   Document,
   Text,
   Paragraph.extend({
@@ -62,11 +66,10 @@ const extensions = [
 ];
 
 type InlineIngredientAttributes = RelationBlockAttrs & {
-  /** The hydrated ingredient data */
   data?: InlineIngredient;
 };
 
-const inlineIngredientSerializer = Node.create({
+export const inlineIngredientSerializer = Node.create({
   name: "inline-ingredient",
   // Include the editor attributes, so that the below renderHTML call can check the collection and data properties
   addAttributes() {
@@ -125,6 +128,4 @@ const inlineIngredientSerializer = Node.create({
   },
 });
 
-extensions.push(inlineIngredientSerializer);
-
-export default extensions;
+recipeRenderExtensions.push(inlineIngredientSerializer);

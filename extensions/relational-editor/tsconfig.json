@@ -6,15 +6,7 @@
 		"moduleResolution": "node",
 		"alwaysStrict": true,
 		"resolveJsonModule": false,
-		"rootDir": "src",
-		"paths": {
-			"@wizard/types/*": ["../../packages/types/src/*"]
-		}
+		"rootDir": "src"
 	},
-	"include": ["src/**/*.ts"],
-	"references": [
-		{
-			"path": "../../packages/types"
-		}
-	]
+	"include": ["src/**/*.ts"]
 }

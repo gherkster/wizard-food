@@ -1,5 +1,5 @@
 import createClient, { type Middleware } from "openapi-fetch";
-import type { paths } from "@wizard/types";
+import type { paths } from "@wizard/openapi";
 import { throwExpression } from "../../shared/utils/error";
 
 const searchFields = [

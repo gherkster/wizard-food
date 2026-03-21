@@ -1,7 +1,7 @@
 import { AnyExtension, Editor } from "@tiptap/core";
 import { Component } from "vue";
 import { ToolSelection } from "./relation-nodes";
-import { RelationBlockAttrs } from "@wizard/types/types/relations";
+import { RelationBlockAttrs } from "@wizard/content";
 
 export type Tool<TAttrs = unknown | undefined> = {
   key: string;

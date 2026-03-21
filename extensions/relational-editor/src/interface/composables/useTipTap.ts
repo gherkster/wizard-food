@@ -4,7 +4,7 @@ import InlineRelation from "../../interface/components/InlineRelation.vue";
 import {
   RelationBlockAttrs,
   type EditorDefaultAttributes,
-} from "@wizard/types/types/relations";
+} from "@wizard/content";
 import type { InlineRelationTool } from "../../common/types/tools";
 import customMessages from "../i18n/custom-messages";
 

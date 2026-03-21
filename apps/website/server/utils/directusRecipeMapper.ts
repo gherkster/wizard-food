@@ -1,6 +1,10 @@
 import prand from "pure-rand";
-import { generateText, type JSONContent } from "@tiptap/core";
-import { generateHTML } from "@tiptap/html";
+import type { RichTextContent } from "@wizard/content";
+import {
+  hydrateInlineIngredientData,
+  renderRichTextHtml,
+  renderRichTextText,
+} from "@wizard/content/server";
 import type {
   ServerRecipe,
   ServerImage,
@@ -9,8 +13,7 @@ import type {
   ServerInstructionGroup,
   ServerInstruction,
   ServerInlineIngredient,
-} from "@wizard/types/types/serverRecipe";
-import extensions from "./extensions";
+} from "@wizard/openapi";
 import { assertIsHydrated } from "./asserts";
 import { throwExpression } from "../../shared/utils/error";
 import * as path from "path";
@@ -21,7 +24,6 @@ import type {
   InstructionGroup,
   SingularPluralPair,
 } from "~~/shared/types/recipe";
-import type { JSONRecipeIngredientContent } from "~~/shared/types/editor";
 
 /**
  * Maps the recipe output from Directus into a more usable payload to be provided to the serverside functionality.
@@ -75,8 +77,8 @@ export const toRecipePayload = (
       amount: ingredient.amount ?? undefined,
       unit: ingredient.unit ? getters.getUnitNames(ingredient.unit) : undefined,
       name: {
-        singular: generateHTML(ingredient.name_singular ?? {}, extensions),
-        plural: generateHTML(ingredient.name_plural ?? {}, extensions),
+        singular: renderRichTextHtml((ingredient.name_singular ?? {}) as RichTextContent),
+        plural: renderRichTextHtml((ingredient.name_plural ?? {}) as RichTextContent),
       },
       note: ingredient.note ?? undefined,
       inlineOnly: ingredient.inline_only,
@@ -102,61 +104,61 @@ export const toRecipePayload = (
   };
 
   const mapInstruction = (serverInstruction: ServerInstruction): Instruction => {
+    const instructionText = (serverInstruction.text ?? {}) as RichTextContent;
+
     return {
-      text: generateHTML(
-        insertRelationDataIntoContent(
-          serverInstruction.text as JSONContent,
-          (serverInstruction.inline_ingredients ?? []) as ServerInlineIngredient[],
+      text: renderRichTextHtml(
+        hydrateInlineIngredientData(
+          instructionText,
+          (inlineIngredientId) =>
+            getInlineIngredientData(
+              inlineIngredientId,
+              (serverInstruction.inline_ingredients ?? []) as ServerInlineIngredient[],
+            ),
         ),
-        extensions,
       ),
     };
   };
 
-  function insertRelationDataIntoContent(
-    content: JSONContent,
+  const getInlineIngredientData = (
+    inlineIngredientId: string,
     inlineIngredients: ServerInlineIngredient[],
-  ) {
-    if (content.type === "inline-ingredient" && content.attrs?.id) {
-      const ingredientContent = content as JSONRecipeIngredientContent;
+  ) => {
+    const serverIngredient = inlineIngredients.find(
+      (inlineIngredient) => inlineIngredient.id === inlineIngredientId,
+    )?.ingredient_id;
 
-      const serverIngredient = inlineIngredients.find(
-        (i) => i.id === content.attrs!.id,
-      )?.ingredient_id;
-
-      if (serverIngredient) {
-        assertIsHydrated(serverIngredient);
-
-        // Set the tiptap data attribute with the recipe data, which is used when rendering to HTML to populate the HTML data attributes
-        const ingredient = mapIngredient(serverIngredient);
-
-        ingredientContent.attrs.data = {
-          amount: ingredient.amount,
-          unit: ingredient.unit,
-          // Use plain text for inline ingredient properties
-          name: {
-            singular: generateText(serverIngredient.name_singular ?? {}, extensions),
-            plural: generateText(serverIngredient.name_plural ?? {}, extensions),
-          },
-        };
-      }
+    if (!serverIngredient) {
+      return undefined;
     }
 
-    content.content?.forEach((con) => insertRelationDataIntoContent(con, inlineIngredients));
-    return content;
-  }
+    assertIsHydrated(serverIngredient);
+    const ingredient = mapIngredient(serverIngredient);
+
+    return {
+      amount: ingredient.amount,
+      unit: ingredient.unit,
+      // Use plain text for inline ingredient properties.
+      name: {
+        singular: renderRichTextText((serverIngredient.name_singular ?? {}) as RichTextContent),
+        plural: renderRichTextText((serverIngredient.name_plural ?? {}) as RichTextContent),
+      },
+    };
+  };
 
   return {
     id: serverRecipe.id!,
     title: serverRecipe.title,
-    description: serverRecipe.description ? generateHTML(serverRecipe.description, extensions) : "",
+    description: serverRecipe.description
+      ? renderRichTextHtml(serverRecipe.description as RichTextContent)
+      : "",
     descriptionPlainText: serverRecipe.description
-      ? generateText(serverRecipe.description, extensions)
+      ? renderRichTextText(serverRecipe.description as RichTextContent)
       : "",
     descriptionSnippet: serverRecipe.description_snippet,
     cuisine: serverRecipe.cuisine ?? undefined,
     course: serverRecipe.course ?? undefined,
-    note: serverRecipe.note ? generateHTML(serverRecipe.note, extensions) : "",
+    note: serverRecipe.note ? renderRichTextHtml(serverRecipe.note as RichTextContent) : "",
     coverImage: mapImage(serverRecipe.coverImage),
     ingredientGroups:
       serverRecipe.ingredientGroups?.map<IngredientGroup>((ig) => {
