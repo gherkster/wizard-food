@@ -1,3 +1,5 @@
+import type { ImageVariant, ImageVariants } from "./image";
+
 /** The shared recipe payload fields, which contains all the data that may be displayed in the client. */
 export type RecipePayload = {
   id: number;
@@ -73,15 +75,9 @@ export type RecipePreview = {
 export type SearchIndexRecipe = {
   title: string;
   coverImage: {
-    id: string;
-    fileName: string;
     height: number;
     width: number;
-    modifyDate: string;
-
-    // Assign to never so these properties are not accidentally included in the search index, as they are not needed and bloat the size of the client side index
-    title?: never;
-    metadata?: never;
+    previewSquare: ImageVariant;
   };
   slug: string;
   tags: string[];
@@ -158,6 +154,10 @@ export type Image = {
   width: number;
   /** The modify date of the image for cache busting purposes */
   modifyDate: string;
+  /** The Cloudinary version, generated from the Directus modify date */
+  cloudinaryVersion: number;
+  /** The fixed set of allowed transformed image variants */
+  variants: ImageVariants;
   metadata?: {
     /** The base64 encoded thumbnail of this image */
     base64Url: string;

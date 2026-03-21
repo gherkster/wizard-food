@@ -1,4 +1,5 @@
-import { imageFileExtension } from "~~/shared/constants/images";
+import type { Image } from "~~/shared/types/recipe";
+import type { AspectRatio, ImagePurpose } from "~~/shared/types/image";
 
 export function useImage() {
   function getAspectRatio(aspectRatio: AspectRatio): { x: number; y: number } {
@@ -16,37 +17,12 @@ export function useImage() {
     }
   }
 
-  type ImageUrlParams = {
-    id: string;
-    fileName: string;
-    modifyDate: string;
-    purpose: ImagePurpose;
-    aspectRatio: AspectRatio;
-  };
-
-  function buildRelativeUrl(image: ImageUrlParams) {
-    const params = new URLSearchParams({
-      modifyDate: image.modifyDate,
-      purpose: image.purpose,
-      aspectRatio: image.aspectRatio,
-    });
-
-    return `/api/images/${image.id}/${image.fileName}.${imageFileExtension}?${params}`;
+  function getVariant(image: Image, purpose: ImagePurpose, aspectRatio: AspectRatio) {
+    return image.variants[purpose][aspectRatio];
   }
 
-  function buildExternalUrl(image: ImageUrlParams) {
-    const appConfig = useAppConfig();
-    if (!appConfig.externalBaseUrl) {
-      throw new Error("NUXT_PUBLIC_SITE_URL environment variable is not defined");
-    }
-
-    const relativeUrl = buildRelativeUrl(image);
-
-    return `${appConfig.externalBaseUrl}${relativeUrl}`;
-  }
   return {
-    buildRelativeUrl,
-    buildExternalUrl,
     getAspectRatio,
+    getVariant,
   };
 }

@@ -166,21 +166,13 @@ useHead({
   title: recipe.value.title,
 });
 
-const image = useImage();
-
 if (import.meta.server) {
   useSeoMeta({
     title: recipe.value.title,
     ogTitle: recipe.value.title,
     description: recipe.value.descriptionPlainText,
     ogDescription: recipe.value.descriptionSnippet,
-    ogImage: image.buildExternalUrl({
-      id: recipe.value.coverImage.id,
-      fileName: recipe.value.coverImage.fileName,
-      modifyDate: recipe.value.coverImage.modifyDate,
-      purpose: "cover",
-      aspectRatio: "square",
-    }),
+    ogImage: recipe.value.coverImage.variants.cover.square.src,
   });
 
   useJsonld({
@@ -188,13 +180,7 @@ if (import.meta.server) {
     "@type": "Recipe",
     name: recipe.value.title,
     description: recipe.value.descriptionSnippet,
-    image: image.buildExternalUrl({
-      id: recipe.value.coverImage.id,
-      fileName: recipe.value.coverImage.fileName,
-      modifyDate: recipe.value.coverImage.modifyDate,
-      purpose: "cover",
-      aspectRatio: "square",
-    }),
+    image: recipe.value.coverImage.variants.cover.square.src,
     // Ingredients and instructions are not included, as that would require including both rich text and plain text variants of strings,
     // which is not worth increasing the payload size over a minimal feature
     recipeCategory: recipe.value.course,

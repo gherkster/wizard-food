@@ -2,7 +2,11 @@
   <img
     ref="imgRef"
     :src="src"
-    :alt="img.title"
+    :srcset="thumbnail ? undefined : variant.srcSet"
+    :sizes="thumbnail ? undefined : variant.sizes"
+    :alt="alt"
+    :aria-hidden="ariaHidden"
+    :role="role"
     :width="img.width"
     :height="adjustedHeight"
     :loading="lazy ? 'lazy' : undefined"
@@ -10,12 +14,18 @@
 </template>
 
 <script setup lang="ts">
+import type { AspectRatio, ImagePurpose } from "~~/shared/types/image";
+import type { Image } from "~~/shared/types/recipe";
+
 const props = defineProps<{
   img: Image;
   purpose: ImagePurpose;
   aspectRatio: AspectRatio;
   thumbnail?: boolean;
   lazy?: boolean;
+  alt?: string;
+  role?: string;
+  ariaHidden?: boolean | "true" | "false";
 }>();
 
 const imgRef = useTemplateRef("imgRef");
@@ -25,17 +35,14 @@ defineExpose({
 });
 
 const image = useImage();
+const variant = image.getVariant(props.img, props.purpose, props.aspectRatio);
 
 const src =
   props.thumbnail && props.img.metadata?.base64Url
     ? props.img.metadata.base64Url
-    : image.buildRelativeUrl({
-        id: props.img.id,
-        fileName: props.img.fileName,
-        modifyDate: props.img.modifyDate,
-        purpose: props.purpose,
-        aspectRatio: props.aspectRatio,
-      });
+    : variant.src;
+
+const alt = props.alt ?? (props.thumbnail ? "" : props.img.title);
 
 /*
 Set the height based on the final image aspect ratio to avoid CLS issues when loading

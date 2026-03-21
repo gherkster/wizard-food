@@ -7,10 +7,22 @@
       :purpose="purpose"
       :aspect-ratio="aspectRatio"
       thumbnail
+      alt=""
+      aria-hidden="true"
+      role="presentation"
     />
     <!-- noscript always results in hydration mismatch with Vue SSR -->
     <noscript data-allow-mismatch>
-      <v-img class="image" :lazy="lazy" :img="img" :purpose="purpose" :aspect-ratio="aspectRatio" />
+      <v-img
+        class="image"
+        :lazy="lazy"
+        :img="img"
+        :purpose="purpose"
+        :aspect-ratio="aspectRatio"
+        :alt="alt"
+        :aria-hidden="ariaHidden"
+        :role="role"
+      />
     </noscript>
     <v-img
       class="image"
@@ -18,7 +30,9 @@
       :purpose="purpose"
       :aspect-ratio="aspectRatio"
       :lazy="lazy"
-      :title="img.title"
+      :alt="alt"
+      :aria-hidden="ariaHidden"
+      :role="role"
     />
   </div>
 </template>
@@ -39,9 +53,15 @@ const props = withDefaults(
     purpose: ImagePurpose;
     aspectRatio: AspectRatio;
     lazy?: boolean;
+    alt?: string;
+    role?: string;
+    ariaHidden?: boolean | "true" | "false";
   }>(),
   {
     lazy: false,
+    alt: "",
+    role: "",
+    ariaHidden: false,
   },
 );
 

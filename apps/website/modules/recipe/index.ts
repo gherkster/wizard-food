@@ -3,9 +3,10 @@ import { defineNuxtModule, useLogger } from "nuxt/kit";
 import * as fs from "fs/promises";
 import * as crypto from "crypto";
 import type { Nuxt } from "nuxt/schema";
-import { formatDuration, recipeTotalDuration } from "~~/shared/utils/formatting";
-import { searchIndexSettings } from "~~/shared/utils/searchIndex";
-import type { RecipePayload } from "~~/shared/types/recipe";
+import { formatDuration, recipeTotalDuration } from "../../shared/utils/formatting";
+import { SearchIndexSearchFields, searchIndexSettings } from "../../shared/utils/searchIndex";
+import type { RecipePayload, SearchIndexRecipe } from "../../shared/types/recipe";
+import type { Version } from "../../shared/types/version";
 
 const logger = useLogger();
 
@@ -24,7 +25,7 @@ export default defineNuxtModule({
 
     nuxt.hook("prerender:routes", async ({ routes }) => {
       // Import dynamically, as this won't exist at the start of a clean build so it cannot be top level imported, and would otherwise result in a build error
-      const recipes = (await import("~~/.nuxt/module/nuxt-prepare")).recipes;
+      const recipes = (await import("../../.nuxt/module/nuxt-prepare")).recipes as RecipePayload[];
 
       const recipeRoutes = recipes.map((recipe) => `/recipes/${recipe.slug}`);
       recipeRoutes.forEach((s) => routes.add(s));
@@ -42,7 +43,7 @@ export default defineNuxtModule({
     if (process.env.NODE_ENV === "development") {
       logger.info("Refreshing search index for local development");
 
-      const recipes = (await import("~~/.nuxt/module/nuxt-prepare")).recipes;
+      const recipes = (await import("../../.nuxt/module/nuxt-prepare")).recipes as RecipePayload[];
 
       const searchIndex = generateRecipeSearchIndex(
         recipes.map((r) => mapToSearchIndexRecipe(r)),
@@ -88,11 +89,9 @@ const mapToSearchIndexRecipe = (serverRecipe: RecipePayload): SearchIndexRecipe 
   return {
     title: serverRecipe.title,
     coverImage: {
-      id: serverRecipe.coverImage.id,
-      fileName: serverRecipe.coverImage.fileName,
       height: serverRecipe.coverImage.height,
       width: serverRecipe.coverImage.width,
-      modifyDate: serverRecipe.coverImage.modifyDate,
+      previewSquare: serverRecipe.coverImage.variants.preview.square,
     },
     totalDurationLabel: formatDuration(recipeTotalDuration(serverRecipe)),
     tags: serverRecipe.tags,

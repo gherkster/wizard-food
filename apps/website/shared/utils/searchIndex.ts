@@ -6,27 +6,15 @@ export type SearchIndexSearchFields = Pick<SearchIndexRecipe, "title" | "tags">;
 // Type safe property name extraction
 const searchIndexIdField: keyof SearchIndexRecipe = "slug";
 
-const emptySearchIndexIndexedFields: SearchIndexSearchFields = {
-  title: "",
-  tags: [],
-};
-const searchIndexIndexedFields = Object.keys(emptySearchIndexIndexedFields);
-
-const emptySearchIndexStoredFields: SearchIndexRecipe = {
-  title: "",
-  coverImage: {
-    id: "",
-    fileName: "",
-    height: 0,
-    width: 0,
-    modifyDate: "",
-  },
-  slug: "",
-  tags: [],
-  featuredTag: "",
-  totalDurationLabel: "",
-};
-const searchIndexStoredFields = Object.keys(emptySearchIndexStoredFields);
+const searchIndexIndexedFields: Array<keyof SearchIndexSearchFields> = ["title", "tags"];
+const searchIndexStoredFields: Array<keyof SearchIndexRecipe> = [
+  "slug",
+  "title",
+  "tags",
+  "featuredTag",
+  "totalDurationLabel",
+  "coverImage",
+];
 
 export const searchIndexSettings: Options = {
   idField: searchIndexIdField,

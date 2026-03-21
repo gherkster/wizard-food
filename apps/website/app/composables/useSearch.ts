@@ -24,13 +24,7 @@ export function useSearch() {
     if (import.meta.client) {
       const storedIndex = localStorage.getItem("search-index");
       if (storedIndex) {
-        try {
-          miniSearch.value = MiniSearch.loadJSON(storedIndex, searchIndexSettings);
-          miniSearch.value.search("a"); // Do a search to validate this is a valid search index
-        } catch (error) {
-          miniSearch.value = undefined;
-          console.error(error);
-        }
+        loadIndex(storedIndex);
       }
     }
   }
@@ -43,7 +37,7 @@ export function useSearch() {
     const { data: index } = await useFetch<JSON>("/search-index.json");
     if (index.value) {
       const jsonString = JSON.stringify(index.value);
-      miniSearch.value = MiniSearch.loadJSON(jsonString, searchIndexSettings);
+      loadIndex(jsonString);
 
       localStorage.setItem("search-index", jsonString);
     }
@@ -51,7 +45,7 @@ export function useSearch() {
 
   async function search(query: string) {
     if (!miniSearch.value) {
-      await refreshIndex();
+      await ensureIndex();
     }
 
     if (!miniSearch.value) {
@@ -68,7 +62,7 @@ export function useSearch() {
 
   async function allItems() {
     if (!miniSearch.value) {
-      await refreshIndex();
+      await ensureIndex();
     }
 
     if (!miniSearch.value) {
@@ -76,6 +70,16 @@ export function useSearch() {
     }
 
     return miniSearch.value.search(MiniSearch.wildcard) as RecipeSearchResult[];
+  }
+
+  function loadIndex(jsonString: string) {
+    try {
+      miniSearch.value = MiniSearch.loadJSON(jsonString, searchIndexSettings);
+      miniSearch.value.search("a"); // Do a search to validate this is a valid search index
+    } catch (error) {
+      miniSearch.value = undefined;
+      console.error(error);
+    }
   }
 
   return {

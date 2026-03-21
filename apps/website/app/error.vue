@@ -9,9 +9,11 @@
 
 <script setup lang="ts">
 import type { NuxtError } from "#app";
+
 const props = defineProps<{
   error: NuxtError;
 }>();
+
 const errorMessage = computed(() =>
   props.error.statusCode === 404 ? "Page not found! 🙃" : "Something went wrong! 😤",
 );
