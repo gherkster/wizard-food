@@ -1,0 +1,20 @@
+{
+	"extends": ["../../tsconfig.base.json"],
+	"compilerOptions": {
+		"target": "ES2019",
+		"lib": ["ES2019", "DOM"],
+		"moduleResolution": "node",
+		"alwaysStrict": true,
+		"resolveJsonModule": false,
+		"rootDir": "src",
+		"paths": {
+			"@wizard/types/*": ["../../packages/types/src/*"]
+		}
+	},
+	"include": ["src/**/*.ts"],
+	"references": [
+		{
+			"path": "../../packages/types"
+		}
+	]
+}

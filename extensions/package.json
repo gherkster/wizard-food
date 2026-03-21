@@ -1,0 +1,10 @@
+{
+  "name": "@wizard/extensions",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build": "pnpm -r --filter './*' --if-present build",
+    "dev": "pnpm -r --filter './*' --if-present dev",
+    "typecheck": "pnpm -r --filter './*' --if-present typecheck"
+  }
+}

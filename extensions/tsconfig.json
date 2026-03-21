@@ -1,0 +1,10 @@
+{
+  "extends": ["../tsconfig.base.json"],
+  "files": [],
+  "references": [
+    { "path": "./base64-image" },
+    { "path": "./cloudflare-pages-deploy" },
+    { "path": "./duration" },
+    { "path": "./relational-editor" }
+  ]
+}
