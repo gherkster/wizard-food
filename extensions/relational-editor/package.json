@@ -1,0 +1,87 @@
+{
+	"name": "@wizard/relational-editor",
+	"description": "Please enter a description for your extension",
+	"icon": "extension",
+	"version": "1.0.0",
+	"keywords": [
+		"directus",
+		"directus-extension"
+	],
+	"type": "module",
+	"files": [
+		"dist",
+		"common"
+	],
+	"directus:extension": {
+		"type": "bundle",
+		"host": "^10.10.0",
+		"path": {
+			"app": "dist/app.js",
+			"api": "dist/api.js"
+		},
+		"entries": [
+			{
+				"type": "interface",
+				"name": "interface",
+				"source": "src/interface/index.ts"
+			},
+			{
+				"type": "display",
+				"name": "display",
+				"source": "src/display/index.ts"
+			}
+		]
+	},
+	"scripts": {
+		"build": "directus-extension build",
+		"build-remote": "directus-extension build && pnpm run push-remote",
+		"dev": "directus-extension build -w --no-minify",
+		"link": "directus-extension link",
+		"push-remote": "pnpm run push-app && pnpm run push-api",
+		"push-app": "scp dist/app.js oracle:~/docker-cloud/directus/extensions/directus-extension-relational-editor/dist/app.js",
+		"push-api": "scp dist/api.js oracle:~/docker-cloud/directus/extensions/directus-extension-relational-editor/dist/api.js"
+	},
+	"devDependencies": {
+		"@directus/extensions-sdk": "^13.1.1",
+		"@tiptap/pm": "^2.11.5",
+		"@tiptap/vue-3": "^2.11.5",
+		"@types/lodash": "^4.17.15",
+		"@types/uuid": "^9.0.8",
+		"lodash": "^4.17.21",
+		"pinia": "2.1.7",
+		"typescript": "^5.7.3",
+		"uuid": "^9.0.1",
+		"validator": "^13.12.0",
+		"vue": "3.5.13",
+		"vue-i18n": "^9.14.2"
+	},
+	"dependencies": {
+		"@wizard/types": "workspace:*",
+		"@tiptap/core": "^2.11.5",
+		"@tiptap/extension-blockquote": "^2.11.5",
+		"@tiptap/extension-bold": "^2.11.5",
+		"@tiptap/extension-bullet-list": "^2.11.5",
+		"@tiptap/extension-code": "^2.11.5",
+		"@tiptap/extension-code-block": "^2.11.5",
+		"@tiptap/extension-document": "^2.11.5",
+		"@tiptap/extension-dropcursor": "^2.11.5",
+		"@tiptap/extension-gapcursor": "^2.11.5",
+		"@tiptap/extension-hard-break": "^2.11.5",
+		"@tiptap/extension-heading": "^2.11.5",
+		"@tiptap/extension-history": "^2.11.5",
+		"@tiptap/extension-horizontal-rule": "^2.11.5",
+		"@tiptap/extension-italic": "^2.11.5",
+		"@tiptap/extension-link": "^2.11.5",
+		"@tiptap/extension-list-item": "^2.11.5",
+		"@tiptap/extension-ordered-list": "^2.11.5",
+		"@tiptap/extension-paragraph": "^2.11.5",
+		"@tiptap/extension-placeholder": "^2.11.5",
+		"@tiptap/extension-strike": "^2.11.5",
+		"@tiptap/extension-table": "^2.11.5",
+		"@tiptap/extension-table-cell": "^2.11.5",
+		"@tiptap/extension-table-header": "^2.11.5",
+		"@tiptap/extension-table-row": "^2.11.5",
+		"@tiptap/extension-text": "^2.11.5",
+		"tiptap-render-view": "^1.0.2"
+	}
+}

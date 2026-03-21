@@ -1,7 +1,14 @@
 {
-  "name": "recipes",
+  "name": "wizard-food",
+  "private": true,
   "version": "1.0.0",
   "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter @wizard/website dev",
+    "build": "pnpm -r --if-present build",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "lint": "pnpm -r --if-present lint"
+  },
   "devDependencies": {
     "eslint": "^9.28.0",
     "eslint-config-prettier": "^10.1.5",
