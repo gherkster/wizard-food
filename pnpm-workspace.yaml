@@ -56,6 +56,8 @@ catalog:
   "lodash": "^4.17.21"
   "minisearch": "^6.3.0"
   "nuxt": "4.4.2"
+  "oxfmt": "0.41.0"
+  "oxlint": "1.56.0"
   "openapi-fetch": "^0.13.8"
   "openapi-typescript": "^7.13.0"
   "pinia": "2.1.7"

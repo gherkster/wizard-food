@@ -5,6 +5,7 @@
     "build": "pnpm run content:sync && nuxt build",
     "dev": "pnpm run content:sync && nuxt dev",
     "generate": "pnpm run content:sync && nuxt generate",
+    "prepare": "pnpm exec nuxt prepare",
     "content:sync": "pnpm --filter @wizard/content-pipeline run content:sync sync --site $PWD --dotenv-file .env --content-dir .content",
     "bundle:analyze": "nuxi analyze",
     "typecheck": "nuxi typecheck"
@@ -16,14 +17,12 @@
   },
   "devDependencies": {
     "@iconify-json/mynaui": "catalog:",
-    "@nuxt/eslint": "catalog:",
     "@nuxt/fonts": "catalog:",
     "@nuxt/icon": "catalog:",
     "@nuxtjs/robots": "catalog:",
     "@nuxtjs/sitemap": "catalog:",
     "@types/node": "catalog:",
     "@wizard/content": "workspace:*",
-    "eslint": "catalog:",
     "nuxt": "catalog:",
     "sass": "catalog:",
     "schema-dts": "catalog:",
