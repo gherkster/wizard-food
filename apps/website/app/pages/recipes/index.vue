@@ -27,6 +27,8 @@
 </template>
 
 <script setup lang="ts">
+import type { WebsitePageContent } from "@wizard/content/store";
+
 const route = useRoute();
 const searchTerm = computed(() => {
   if (!route.query.search || typeof route.query.search !== "string") {
@@ -98,9 +100,21 @@ const searchResultsPrefix = computed(() => {
   return "Recipes";
 });
 
-const contentResponse = await useAsyncData(async () => {
-  const { data: response } = await useFetch("/api/content/recipes");
-  return response.value;
+const contentResponse = await useAsyncData<WebsitePageContent>("content-recipes", async () => {
+  if (import.meta.server) {
+    const { recipesPageContent } = await import("#content");
+    return recipesPageContent;
+  }
+
+  if (import.meta.dev) {
+    const { data: response } = await useFetch("/api/content/recipes");
+    if (!response.value) {
+      throw new Error("Recipes page content is unavailable");
+    }
+    return response.value as WebsitePageContent;
+  }
+
+  throw new Error("Recipes page content is unavailable");
 });
 
 if (contentResponse.error.value) {

@@ -93,9 +93,23 @@
 </template>
 
 <script setup lang="ts">
-const recipesResponse = await useAsyncData(async () => {
-  const { data: response } = await useFetch("/api/featured-recipes");
-  return response.value;
+import type { FeaturedRecipes, WebsitePageContent } from "@wizard/content/store";
+
+const recipesResponse = await useAsyncData<FeaturedRecipes>("featured-recipes", async () => {
+  if (import.meta.server) {
+    const { featuredRecipes } = await import("#content");
+    return featuredRecipes;
+  }
+
+  if (import.meta.dev) {
+    const { data: response } = await useFetch("/api/featured-recipes");
+    if (!response.value) {
+      throw new Error("Featured recipes are unavailable");
+    }
+    return response.value as FeaturedRecipes;
+  }
+
+  throw new Error("Featured recipes are unavailable");
 });
 
 if (recipesResponse.error.value) {
@@ -117,9 +131,21 @@ const favouriteRecipes = ref(recipesResponse.data.value.favouriteRecipes);
 const quickRecipes = ref(recipesResponse.data.value.quickRecipes);
 const worldCuisineRecipes = ref(recipesResponse.data.value.worldCuisineRecipes);
 
-const contentResponse = await useAsyncData(async () => {
-  const { data: response } = await useFetch("/api/content/home");
-  return response.value;
+const contentResponse = await useAsyncData<WebsitePageContent>("content-home", async () => {
+  if (import.meta.server) {
+    const { homePageContent } = await import("#content");
+    return homePageContent;
+  }
+
+  if (import.meta.dev) {
+    const { data: response } = await useFetch("/api/content/home");
+    if (!response.value) {
+      throw new Error("Home page content is unavailable");
+    }
+    return response.value as WebsitePageContent;
+  }
+
+  throw new Error("Home page content is unavailable");
 });
 
 if (contentResponse.error.value) {

@@ -1,5 +1,17 @@
-import type { JSONContent } from "@tiptap/core";
-import type { InlineIngredient } from "./recipe";
+import type { InlineIngredient } from "../store/types";
+
+export type JSONContent = {
+  type?: string;
+  attrs?: Record<string, unknown>;
+  content?: JSONContent[];
+  marks?: {
+    [key: string]: unknown;
+    type: string;
+    attrs?: Record<string, unknown> | undefined;
+  }[];
+  text?: string;
+  [key: string]: unknown;
+};
 
 export type RichTextContent = JSONContent;
 

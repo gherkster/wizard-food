@@ -20,14 +20,14 @@ import { TableHeader } from "@tiptap/extension-table-header";
 import { TableRow } from "@tiptap/extension-table-row";
 import { TableCell } from "@tiptap/extension-table-cell";
 import Fraction from "fraction.js";
-import { formatIngredient } from "../shared/formatting";
+import { formatIngredient } from "@wizard/content/shared";
 import type {
   EditorDefaultAttributes,
   InlineIngredient,
   InlineIngredientHTMLElementDataset,
   KebabCaseDataAttributes,
   RelationBlockAttrs,
-} from "../shared/index";
+} from "@wizard/content/shared";
 
 export const recipeRenderExtensions = [
   Document,
@@ -71,7 +71,6 @@ type InlineIngredientAttributes = RelationBlockAttrs & {
 
 export const inlineIngredientSerializer = Node.create({
   name: "inline-ingredient",
-  // Include the editor attributes, so that the below renderHTML call can check the collection and data properties
   addAttributes() {
     return {
       id: {
@@ -89,21 +88,14 @@ export const inlineIngredientSerializer = Node.create({
     } satisfies EditorDefaultAttributes<InlineIngredientAttributes>;
   },
   renderHTML(props) {
-    // Cast type since tiptap uses any here
     const htmlAttributes = props.HTMLAttributes as InlineIngredientAttributes;
 
     if (htmlAttributes.collection === "ingredients" && htmlAttributes.data) {
-      // Data attributes have to be specified in tiptap extensions using HTML format (kebab case)
       const inlineIngredientAttributes: KebabCaseDataAttributes<InlineIngredientHTMLElementDataset> =
         {
           "data-ingredient": JSON.stringify(htmlAttributes.data),
         };
 
-      /*
-        This is only relevant on page load before the component starts creating the name based on data attributes
-        So we can assume if an amount is specified <= 1 that it should show the singular form,
-        since on page load the servings multiplier is in the default state
-      */
       const isSingularForm = htmlAttributes.data.amount && Number(htmlAttributes.data.amount) <= 1;
 
       return [

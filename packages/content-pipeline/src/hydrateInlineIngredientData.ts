@@ -1,4 +1,4 @@
-import type { InlineIngredient, RichTextContent } from "../shared/index";
+import type { InlineIngredient, RichTextContent } from "@wizard/content/shared";
 
 export const hydrateInlineIngredientData = (
   content: RichTextContent,

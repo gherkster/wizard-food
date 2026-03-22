@@ -54,18 +54,16 @@ export default defineNuxtConfig({
     css: {
       preprocessorOptions: {
         scss: {
-          api: "modern-compiler", // or "modern"
         },
       },
     },
   },
 
   /**
-   * The recipe module is explicity included in this list instead of auto importing
-   * since it relies on the output of nuxt-prepare
+   * The recipe module is explicitly included in this list since it handles
+   * prerender route generation, static content injection, and search index output.
    */
   modules: [
-    "nuxt-prepare",
     "@nuxt/fonts",
     "@nuxtjs/sitemap",
     "@nuxt/eslint",

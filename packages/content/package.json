@@ -11,65 +11,25 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
-    "./server": {
-      "types": "./src/server/index.ts",
-      "import": "./dist/server/index.js",
-      "default": "./dist/server/index.js"
+    "./shared": {
+      "types": "./src/shared/index.ts",
+      "import": "./dist/shared/index.js",
+      "default": "./dist/shared/index.js"
+    },
+    "./store": {
+      "types": "./src/store/index.ts",
+      "import": "./dist/store/index.js",
+      "default": "./dist/store/index.js"
     }
   },
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit --project tsconfig.json"
   },
-  "peerDependencies": {
-    "@tiptap/core": "catalog:",
-    "@tiptap/extension-blockquote": "catalog:",
-    "@tiptap/extension-bold": "catalog:",
-    "@tiptap/extension-bullet-list": "catalog:",
-    "@tiptap/extension-code": "catalog:",
-    "@tiptap/extension-code-block": "catalog:",
-    "@tiptap/extension-document": "catalog:",
-    "@tiptap/extension-hard-break": "catalog:",
-    "@tiptap/extension-heading": "catalog:",
-    "@tiptap/extension-horizontal-rule": "catalog:",
-    "@tiptap/extension-italic": "catalog:",
-    "@tiptap/extension-link": "catalog:",
-    "@tiptap/extension-list-item": "catalog:",
-    "@tiptap/extension-ordered-list": "catalog:",
-    "@tiptap/extension-paragraph": "catalog:",
-    "@tiptap/extension-strike": "catalog:",
-    "@tiptap/extension-table": "catalog:",
-    "@tiptap/extension-table-cell": "catalog:",
-    "@tiptap/extension-table-header": "catalog:",
-    "@tiptap/extension-table-row": "catalog:",
-    "@tiptap/extension-text": "catalog:",
-    "@tiptap/html": "catalog:",
+  "dependencies": {
     "fraction.js": "catalog:"
   },
   "devDependencies": {
-    "@tiptap/core": "catalog:",
-    "@tiptap/extension-blockquote": "catalog:",
-    "@tiptap/extension-bold": "catalog:",
-    "@tiptap/extension-bullet-list": "catalog:",
-    "@tiptap/extension-code": "catalog:",
-    "@tiptap/extension-code-block": "catalog:",
-    "@tiptap/extension-document": "catalog:",
-    "@tiptap/extension-hard-break": "catalog:",
-    "@tiptap/extension-heading": "catalog:",
-    "@tiptap/extension-horizontal-rule": "catalog:",
-    "@tiptap/extension-italic": "catalog:",
-    "@tiptap/extension-link": "catalog:",
-    "@tiptap/extension-list-item": "catalog:",
-    "@tiptap/extension-ordered-list": "catalog:",
-    "@tiptap/extension-paragraph": "catalog:",
-    "@tiptap/extension-strike": "catalog:",
-    "@tiptap/extension-table": "catalog:",
-    "@tiptap/extension-table-cell": "catalog:",
-    "@tiptap/extension-table-header": "catalog:",
-    "@tiptap/extension-table-row": "catalog:",
-    "@tiptap/extension-text": "catalog:",
-    "@tiptap/html": "catalog:",
-    "fraction.js": "catalog:",
     "typescript": "catalog:"
   }
 }

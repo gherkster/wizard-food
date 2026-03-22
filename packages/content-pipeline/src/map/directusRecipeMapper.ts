@@ -1,38 +1,29 @@
+import path from "node:path";
 import prand from "pure-rand";
-import type { RichTextContent } from "@wizard/content";
-import {
-  hydrateInlineIngredientData,
-  renderRichTextHtml,
-  renderRichTextText,
-} from "@wizard/content/server";
+import type { RichTextContent } from "@wizard/content/shared";
 import type {
-  ServerRecipe,
-  ServerImage,
-  ServerIngredient,
-  ServerIngredientGroup,
-  ServerInstructionGroup,
-  ServerInstruction,
-  ServerInlineIngredient,
-} from "@wizard/openapi";
-import { assertIsHydrated } from "./asserts";
-import { throwExpression } from "../../shared/utils/error";
-import * as path from "path";
-import type {
+  Image,
   Ingredient,
   IngredientGroup,
-  Image,
   Instruction,
   InstructionGroup,
   RecipePayload,
   SingularPluralPair,
-} from "~~/shared/types/recipe";
+} from "@wizard/content/store";
+import type {
+  ServerImage,
+  ServerIngredient,
+  ServerIngredientGroup,
+  ServerInlineIngredient,
+  ServerInstruction,
+  ServerInstructionGroup,
+  ServerRecipe,
+} from "@wizard/openapi";
+import { assertIsHydrated, throwExpression } from "../utils";
 import { buildSignedImageVariants } from "./cloudinaryImage";
+import { hydrateInlineIngredientData } from "../hydrateInlineIngredientData";
+import { renderRichTextHtml, renderRichTextText } from "../render";
 
-/**
- * Maps the recipe output from Directus into a more usable payload to be provided to the serverside functionality.
- * @param serverRecipe The recipe list output from the Directus API
- * @param getUnitNames The callback function to retrieve the singular and plural names for a given ingredient unit
- */
 export const toRecipePayload = (
   serverRecipe: ServerRecipe,
   getters: {
@@ -47,8 +38,8 @@ export const toRecipePayload = (
   const tags = buildTagList({
     course: serverRecipe.course,
     cuisine: serverRecipe.cuisine,
-    diets: serverRecipe.diets as string[] | undefined, // The multiselect JSON type is an optional string array
-    main_ingredients: serverRecipe.main_ingredients as string[] | undefined, // The multiselect JSON type is an optional string array
+    diets: serverRecipe.diets as string[] | undefined,
+    main_ingredients: serverRecipe.main_ingredients as string[] | undefined,
     method: serverRecipe.method,
   });
 
@@ -120,6 +111,9 @@ export const toRecipePayload = (
             ),
         ),
       ),
+      image: serverInstruction.image
+        ? mapImage(assertHydratedImage(serverInstruction.image))
+        : undefined,
     };
   };
 
@@ -141,7 +135,6 @@ export const toRecipePayload = (
     return {
       amount: ingredient.amount,
       unit: ingredient.unit,
-      // Use plain text for inline ingredient properties.
       name: {
         singular: renderRichTextText((serverIngredient.name_singular ?? {}) as RichTextContent),
         plural: renderRichTextText((serverIngredient.name_plural ?? {}) as RichTextContent),
@@ -192,6 +185,11 @@ export const toRecipePayload = (
   };
 };
 
+const assertHydratedImage = (image: ServerImage | string | number): ServerImage => {
+  assertIsHydrated(image);
+  return image;
+};
+
 const mapImage = (serverImage: ServerImage): Image => {
   const imageId = serverImage.id ?? throwExpression("Image ID must be provided");
   const modifyDate = serverImage.modified_on ?? throwExpression("Image modified_on must be provided");
@@ -201,12 +199,10 @@ const mapImage = (serverImage: ServerImage): Image => {
   });
 
   return {
-    // Assert that all the required fields have been provided, for an image this should always be the case.
     id: imageId,
     title: serverImage.title ?? throwExpression("Image title must be provided"),
     fileName: serverImage.filename_download
-      ? // Remove the file extension, as it the file extension of the uploaded file, not the transformed one the client will receive
-        path.parse(serverImage.filename_download).name
+      ? path.parse(serverImage.filename_download).name
       : throwExpression("Image filename_download must be provided"),
     width: serverImage.width ?? throwExpression("Image width must be provided"),
     height: serverImage.height ?? throwExpression("Image height must be provided"),

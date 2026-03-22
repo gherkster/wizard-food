@@ -123,6 +123,7 @@
 </template>
 
 <script setup lang="ts">
+import type { RecipePayload } from "@wizard/content/store";
 import type { RouteLocationRaw } from "#vue-router";
 
 const route = useRoute();
@@ -131,14 +132,25 @@ const slug = route.params.slug!.toString();
 
 const recipesResponse = await useAsyncData(
   slug,
-  async () => {
-    const { data: recipe } = await useFetch(`/api/recipes/${slug}`);
-
-    if (!recipe.value) {
-      throw `Recipe ${slug} could not be retrieved`;
+  async (): Promise<RecipePayload> => {
+    if (import.meta.server) {
+      const { recipesBySlug } = await import("#content");
+      const recipe = recipesBySlug[slug];
+      if (!recipe) {
+        throw `Recipe ${slug} could not be retrieved`;
+      }
+      return recipe;
     }
 
-    return recipe.value;
+    if (import.meta.dev) {
+      const { data: recipe } = await useFetch(`/api/recipes/${slug}`);
+      if (!recipe.value) {
+        throw `Recipe ${slug} could not be retrieved`;
+      }
+      return recipe.value as RecipePayload;
+    }
+
+    throw `Recipe ${slug} could not be retrieved`;
   },
   {
     transform: mapToRecipe,

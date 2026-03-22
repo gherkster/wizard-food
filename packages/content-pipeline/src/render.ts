@@ -1,7 +1,7 @@
 import { generateText } from "@tiptap/core";
 import { generateHTML } from "@tiptap/html";
-import { recipeRenderExtensions } from "./extensions";
-import type { RichTextContent } from "../shared/index";
+import type { RichTextContent } from "@wizard/content/shared";
+import { recipeRenderExtensions } from "./render-extensions";
 
 export const renderRichTextHtml = (content: RichTextContent) =>
   generateHTML(content, recipeRenderExtensions);
