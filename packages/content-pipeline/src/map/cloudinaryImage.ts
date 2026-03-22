@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+
 import type { AspectRatio, ImagePurpose, ImageVariants } from "@wizard/content/store";
 
 const imageFileExtension = "avif";

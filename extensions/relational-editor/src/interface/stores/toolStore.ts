@@ -1,22 +1,23 @@
-import { defineStore } from "pinia";
-import { Tool, type InlineRelationTool } from "../../common/types/tools";
-import heading from "../tiptap/options/heading";
-import history from "../tiptap/options/history";
-import paragraph from "../tiptap/options/paragraph";
-import bold from "../tiptap/options/bold";
-import italic from "../tiptap/options/italic";
-import strike from "../tiptap/options/strike";
-import link from "../tiptap/options/link";
-import hardBreak from "../tiptap/options/hard-break";
-import horizontalRule from "../tiptap/options/horizontal-rule";
-import bulletList from "../tiptap/options/bullet-list";
-import orderedList from "../tiptap/options/ordered-list";
-import blockquote from "../tiptap/options/blockquote";
-import table from "../tiptap/options/table";
-import { useTipTap } from "../composables/useTipTap";
-import { ToolSelection } from "../../common/types/relation-nodes";
-import { AnyExtension } from "@tiptap/core";
 import { computed, ref } from "vue";
+import { defineStore } from "pinia";
+import { AnyExtension } from "@tiptap/core";
+
+import table from "../tiptap/options/table";
+import strike from "../tiptap/options/strike";
+import paragraph from "../tiptap/options/paragraph";
+import orderedList from "../tiptap/options/ordered-list";
+import link from "../tiptap/options/link";
+import italic from "../tiptap/options/italic";
+import horizontalRule from "../tiptap/options/horizontal-rule";
+import history from "../tiptap/options/history";
+import heading from "../tiptap/options/heading";
+import hardBreak from "../tiptap/options/hard-break";
+import bulletList from "../tiptap/options/bullet-list";
+import bold from "../tiptap/options/bold";
+import blockquote from "../tiptap/options/blockquote";
+import { useTipTap } from "../composables/useTipTap";
+import { Tool, type InlineRelationTool } from "../../common/types/tools";
+import { ToolSelection } from "../../common/types/relation-nodes";
 
 export const useToolStore = defineStore("tool-store", () => {
   const tiptap = useTipTap();

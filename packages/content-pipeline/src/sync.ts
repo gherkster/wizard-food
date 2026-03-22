@@ -1,15 +1,19 @@
 import path from "node:path";
+
 import type { IngredientUnitForms, ServerRecipe } from "@wizard/openapi";
 import type { RecipePayload, RecipePreview, WebsitePagesContent } from "@wizard/content/store";
-import { buildFeaturedRecipes } from "./build/featured";
-import { formatDuration, recipeTotalDuration } from "./build/formatting";
-import type { DirectusRuntimeConfig } from "./directus/client";
-import { useDirectusApi } from "./directus/client";
-import { toRecipePayload } from "./map/directusRecipeMapper";
+
 import { writeContentArtifacts } from "./output/writeArtifacts";
+import { toRecipePayload } from "./map/directusRecipeMapper";
+import { useDirectusApi } from "./directus/client";
+import type { DirectusRuntimeConfig } from "./directus/client";
+import { formatDuration, recipeTotalDuration } from "./build/formatting";
+import { buildFeaturedRecipes } from "./build/featured";
 
 export const resolveContentOutputDir = (contentDir?: string) => {
-  return path.resolve(contentDir ?? process.env.CONTENT_DIR ?? path.join(process.cwd(), ".content"));
+  return path.resolve(
+    contentDir ?? process.env.CONTENT_DIR ?? path.join(process.cwd(), ".content"),
+  );
 };
 
 export type SyncContentOptions = {
@@ -49,7 +53,8 @@ export const syncContent = async (options: SyncContentOptions) => {
     throw homeError ?? new Error("No home page content returned from Directus");
   }
 
-  const { data: recipesPageResponse, error: recipesPageError } = await client.getRecipesPageContent();
+  const { data: recipesPageResponse, error: recipesPageError } =
+    await client.getRecipesPageContent();
   if (recipesPageError || !recipesPageResponse?.data) {
     throw recipesPageError ?? new Error("No recipes page content returned from Directus");
   }
@@ -93,7 +98,7 @@ export const syncContent = async (options: SyncContentOptions) => {
       },
       {
         filename: "recipes.all.json",
-        content: recipePreviews
+        content: recipePreviews,
       },
       {
         filename: "featured-recipes.json",
@@ -101,19 +106,19 @@ export const syncContent = async (options: SyncContentOptions) => {
       },
       {
         filename: "pages-content.json",
-        content: pagesContent
+        content: pagesContent,
       },
       {
         filename: "meta.json",
         content: {
           build: buildId,
           generatedAt: new Date().toISOString(),
-        }
-      }
+        },
+      },
     ],
     {
-      outputDir
-    }
+      outputDir,
+    },
   );
 };
 

@@ -1,11 +1,12 @@
 // https://tiptap.dev/api/nodes/heading
 
-import Heading from "@tiptap/extension-heading";
-import customMessages from "../../i18n/custom-messages";
 import type { Level, HeadingOptions } from "@tiptap/extension-heading";
+import Heading from "@tiptap/extension-heading";
 import type { Editor, AnyExtension } from "@tiptap/core";
-import { ToolSelection } from "../../../common/types/relation-nodes";
+
+import customMessages from "../../i18n/custom-messages";
 import { Tool } from "../../../common/types/tools";
+import { ToolSelection } from "../../../common/types/relation-nodes";
 
 export default (level: Level): Tool => {
   const headingKeys = ["h1", "h2", "h3", "h4", "h5", "h6"];

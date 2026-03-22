@@ -1,7 +1,7 @@
-import type { RecipePayload } from "@wizard/content/store";
-import dayjs from "dayjs";
-import duration, { type Duration } from "dayjs/plugin/duration";
 import Fraction from "fraction.js";
+import duration, { type Duration } from "dayjs/plugin/duration";
+import dayjs from "dayjs";
+import type { RecipePayload } from "@wizard/content/store";
 
 /**
  * Formats an ingredient into a single line label

@@ -1,10 +1,11 @@
-import { Table } from "@tiptap/extension-table";
-import { TableHeader } from "@tiptap/extension-table-header";
 import { TableRow } from "@tiptap/extension-table-row";
+import { TableHeader } from "@tiptap/extension-table-header";
 import { TableCell } from "@tiptap/extension-table-cell";
+import { Table } from "@tiptap/extension-table";
+import type { Editor } from "@tiptap/core";
+
 import customMessages from "../../i18n/custom-messages";
 import ToolButtonTable from "../../components/ToolButtonTable.vue";
-import type { Editor } from "@tiptap/core";
 import { Tool } from "../../../common/types/tools";
 
 export default {

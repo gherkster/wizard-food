@@ -1,7 +1,8 @@
-import { useStores } from "@directus/extensions-sdk";
-import { Field, Relation } from "@directus/types";
-import { Collection } from "../types/collections";
 import { computed, Ref } from "vue";
+import { Field, Relation } from "@directus/types";
+import { useStores } from "@directus/extensions-sdk";
+
+import { Collection } from "../types/collections";
 
 export type RelationM2M = {
   relation: Relation;
@@ -46,7 +47,9 @@ export function useRelationM2M(collection: Ref<string>, field: Ref<string>) {
     if (!junction) return undefined;
 
     const relation = relations.find(
-      (relation) => relation.collection === junction.collection && relation.field === junction.meta?.junction_field,
+      (relation) =>
+        relation.collection === junction.collection &&
+        relation.field === junction.meta?.junction_field,
     );
 
     if (!relation) return undefined;
@@ -54,12 +57,20 @@ export function useRelationM2M(collection: Ref<string>, field: Ref<string>) {
     return {
       relation: relation,
       relatedCollection: collectionsStore.getCollection(relation.related_collection as string),
-      relatedPrimaryKeyField: fieldsStore.getPrimaryKeyFieldForCollection(relation.related_collection as string),
+      relatedPrimaryKeyField: fieldsStore.getPrimaryKeyFieldForCollection(
+        relation.related_collection as string,
+      ),
       sortField: junction.meta?.sort_field ?? undefined,
       junctionCollection: collectionsStore.getCollection(junction.collection),
       junctionPrimaryKeyField: fieldsStore.getPrimaryKeyFieldForCollection(junction.collection),
-      junctionField: fieldsStore.getField(junction.collection, junction.meta?.junction_field as string),
-      reverseJunctionField: fieldsStore.getField(junction.collection, relation.meta?.junction_field as string),
+      junctionField: fieldsStore.getField(
+        junction.collection,
+        junction.meta?.junction_field as string,
+      ),
+      reverseJunctionField: fieldsStore.getField(
+        junction.collection,
+        relation.meta?.junction_field as string,
+      ),
       junction: junction,
       type: "m2m",
     } as RelationM2M;

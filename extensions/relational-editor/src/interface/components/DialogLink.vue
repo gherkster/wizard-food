@@ -40,11 +40,12 @@
 </template>
 
 <script setup lang="ts">
-import isEmail from "validator/lib/isEmail";
+import { useI18n } from "vue-i18n";
+import { ref, computed, watchEffect } from "vue";
 import isURL from "validator/lib/isURL";
 import isSlug from "validator/lib/isSlug";
-import { ref, computed, watchEffect } from "vue";
-import { useI18n } from "vue-i18n";
+import isEmail from "validator/lib/isEmail";
+
 import { useI18nFallback } from "../composables/use-i18n-fallback";
 import { LinkAttributes } from "../../common/types/tools";
 
@@ -54,8 +55,10 @@ interface Props {
 }
 const props = defineProps<Props>();
 
+
 // I18n
 const { t } = useI18nFallback(useI18n());
+
 
 // Types of links
 type LinkType = {
@@ -101,15 +104,18 @@ const linkTypes: LinkType[] = [
   { text: t("link_types.other"), value: null, prefix: [] },
 ];
 
+
 // Display old values
 const getDisplayValues = (old: LinkAttributes) => {
   let type = old.href ? null : "external_link";
   let href = old.href ? old.href : "";
   let newTab: boolean | null = null;
 
+
   if (Object.hasOwn(old, "target")) {
     newTab = old.target === null ? false : true;
   }
+
 
   linkTypes.forEach((linkType) => {
     linkType.prefix.forEach((prefix) => {
@@ -125,19 +131,24 @@ const getDisplayValues = (old: LinkAttributes) => {
     });
   });
 
+
   return { type, href, newTab };
 };
 const oldValues = props.get();
 const modelValues = ref(getDisplayValues(oldValues));
+
 
 // Prepare values for inserting
 const getSaveableValues = () => {
   const { type, newTab } = modelValues.value;
   let href = modelValues.value.href;
 
+
   let target = newTab ? "_blank" : null;
 
+
   if (newTab) target = "_blank";
+
 
   linkTypes.forEach((linkType) => {
     if (linkType.value !== type) return;
@@ -152,15 +163,19 @@ const getSaveableValues = () => {
     });
   });
 
+
   return { href, target };
 };
+
 
 // Error
 const validationErrors = ref<string[]>([]);
 const validateInput = () => {
   const { type, href } = modelValues.value;
 
+
   validationErrors.value = [];
+
 
   const externalLinkOptions = {
     require_protocol: true,
@@ -168,40 +183,49 @@ const validateInput = () => {
     validate_length: false,
   };
 
+
   if (type === "external_link") {
     const protocolExists = linkTypes
       .filter(({ value }) => value === type)[0]
       .prefix.some((prefix) => href.startsWith(prefix));
 
+
     if (!protocolExists) {
       validationErrors.value.push(t("validation_error_link_no_protocol"));
     }
+
 
     if (!isURL(href, externalLinkOptions)) {
       validationErrors.value.push(t("validation_error_link"));
     }
   }
 
+
   if (type === "internal_link") {
     if (!href.startsWith("/")) {
       validationErrors.value.push(t("validation_error_link_no_slash"));
     }
+
 
     if (!isSlug(href)) {
       validationErrors.value.push(t("validation_error_link"));
     }
   }
 
+
   if (type === "email" && !isEmail(href)) {
     validationErrors.value.push(t("validation_error_email"));
   }
 
+
   const regexPhoneNumber = /^[\+]?[\d\s]+$/;
+
 
   if (type === "tel" && !regexPhoneNumber.test(href)) {
     validationErrors.value.push(t("validation_error_phone"));
   }
 };
+
 
 // Href label
 const hrefLabel = computed(() => {
@@ -216,6 +240,7 @@ const hrefLabel = computed(() => {
   return t("url");
 });
 
+
 // Placeholder
 const linkPlaceholder = computed(() => {
   const linkType = linkTypes.find(({ value }) => value === modelValues.value.type);
@@ -225,12 +250,14 @@ const linkPlaceholder = computed(() => {
   return false;
 });
 
+
 // When changing type and if noTarget is set, set newTab to null
 watchEffect(() => {
   const linkType = linkTypes.find(({ value }) => value === modelValues.value.type);
 
   if (linkType?.noTarget) modelValues.value.newTab = null;
 });
+
 
 // disableTarget if noTarget is set
 const disableTarget = computed(() => {
@@ -241,11 +268,13 @@ const disableTarget = computed(() => {
   return false;
 });
 
+
 // Disable buttons if href is empty
 const linkIsEmpty = computed(
   () => modelValues.value.href === "" || modelValues.value.href === null,
 );
 const oldLinkIsEmpty = computed(() => !oldValues.hasOwnProperty("href"));
+
 
 // Actions
 const emit = defineEmits(["get", "set", "unset", "closeDialog"]);
@@ -256,7 +285,9 @@ const onRemove = () => {
 const onAdd = () => {
   validateInput();
 
+
   if (validationErrors.value.length) return;
+
 
   emit("set", getSaveableValues());
   emit("closeDialog");

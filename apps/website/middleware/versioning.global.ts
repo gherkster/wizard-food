@@ -1,5 +1,5 @@
-import { useSearch } from "~/composables/useSearch";
 import type { AppVersion } from "~/types/version";
+import { useSearch } from "~/composables/useSearch";
 
 let searchIndexDownload: Promise<void> | null = null;
 let isBuildStale = false;

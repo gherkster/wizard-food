@@ -1,5 +1,5 @@
-import { useApi, useStores } from "@directus/extensions-sdk";
 import { cloneDeep, set } from "lodash";
+import { useApi, useStores } from "@directus/extensions-sdk";
 
 export const fetchAll = async <T = unknown>(
   url: Parameters<any["get"]>[0],

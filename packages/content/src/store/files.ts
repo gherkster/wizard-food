@@ -8,7 +8,9 @@ export type ContentFileName =
   | "meta.json";
 
 export const resolveContentDir = (contentDir?: string) => {
-  return path.resolve(contentDir ?? process.env.CONTENT_DIR ?? path.join(process.cwd(), ".content"));
+  return path.resolve(
+    contentDir ?? process.env.CONTENT_DIR ?? path.join(process.cwd(), ".content"),
+  );
 };
 
 export const resolveContentFile = (fileName: ContentFileName, contentDir?: string) => {

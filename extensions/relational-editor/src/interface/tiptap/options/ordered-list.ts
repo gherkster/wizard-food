@@ -2,8 +2,9 @@
 
 import OrderedList from "@tiptap/extension-ordered-list";
 import ListItem from "@tiptap/extension-list-item";
-import customMessages from "../../i18n/custom-messages";
 import type { Editor } from "@tiptap/core";
+
+import customMessages from "../../i18n/custom-messages";
 import { Tool } from "../../../common/types/tools";
 
 export default {

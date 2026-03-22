@@ -132,11 +132,12 @@
 </template>
 
 <script setup lang="ts">
-import ToolButton from "./ToolButton.vue";
 import { useI18n } from "vue-i18n";
+import { Editor } from "@tiptap/vue-3";
+
+import ToolButton from "./ToolButton.vue";
 import { useI18nFallback } from "../composables/use-i18n-fallback";
 import { Tool } from "../../common/types/tools";
-import { Editor } from "@tiptap/vue-3";
 
 defineProps<{
   title: string;
@@ -146,6 +147,7 @@ defineProps<{
   disabled: boolean;
   editor: Editor;
 }>();
+
 
 const { t } = useI18nFallback(useI18n());
 </script>

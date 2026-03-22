@@ -39,6 +39,7 @@
 
 <script setup lang="ts">
 import type { AspectRatio, Image, ImagePurpose } from "@wizard/content/store";
+
 import { useImage } from "~/composables/useImage";
 
 /*
@@ -67,6 +68,7 @@ const props = withDefaults(
     ariaHidden: false,
   },
 );
+
 
 const { x, y } = useImage().getAspectRatio(props.aspectRatio);
 </script>

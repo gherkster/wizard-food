@@ -27,10 +27,11 @@
 </template>
 
 <script setup lang="ts">
-import type { WebsitePageContent } from "@wizard/content/store";
 import type { Image } from "@wizard/content/store";
-import { useSearch } from "~/composables/useSearch";
+import type { WebsitePageContent } from "@wizard/content/store";
+
 import type { SearchIndexRecipe } from "~/utils/search";
+import { useSearch } from "~/composables/useSearch";
 
 const route = useRoute();
 const searchTerm = computed(() => {
@@ -41,12 +42,16 @@ const searchTerm = computed(() => {
   return route.query.search.trim();
 });
 
+
 const searchClient = useSearch();
+
 
 const recipes = ref<SearchIndexRecipe[]>([]);
 
+
 const toCardImage = (recipe: SearchIndexRecipe): Image => {
   const previewSquare = recipe.coverImage.previewSquare;
+
 
   return {
     id: recipe.slug,
@@ -72,6 +77,7 @@ const toCardImage = (recipe: SearchIndexRecipe): Image => {
   };
 };
 
+
 watch(
   () => route.query,
   async () => {
@@ -79,6 +85,7 @@ watch(
       recipes.value = await searchClient.allItems();
       return;
     }
+
 
     const searchResults = await searchClient.search(route.query.search);
     recipes.value = searchResults;
@@ -89,7 +96,9 @@ watch(
   },
 );
 
+
 const isEmptySearchResult = computed(() => recipes.value.length === 0 && !!searchTerm.value);
+
 
 const searchResultsPrefix = computed(() => {
   if (isEmptySearchResult.value) {
@@ -102,6 +111,7 @@ const searchResultsPrefix = computed(() => {
 
   return "Recipes";
 });
+
 
 const contentResponse = await useAsyncData<WebsitePageContent>("content-recipes", async () => {
   if (import.meta.server) {
@@ -120,12 +130,14 @@ const contentResponse = await useAsyncData<WebsitePageContent>("content-recipes"
   throw new Error("Recipes page content is unavailable");
 });
 
+
 if (contentResponse.error.value) {
   throw createError({
     statusCode: 500,
     statusMessage: contentResponse.error.value.message,
   });
 }
+
 
 if (!contentResponse.data.value) {
   throw createError({
@@ -134,11 +146,14 @@ if (!contentResponse.data.value) {
   });
 }
 
+
 const content = contentResponse.data.value;
+
 
 useHead({
   title: content.title,
 });
+
 
 if (import.meta.server) {
   useSeoMeta({

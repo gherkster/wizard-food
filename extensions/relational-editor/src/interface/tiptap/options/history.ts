@@ -1,8 +1,9 @@
 // https://tiptap.dev/api/extensions/history
 
 import History from "@tiptap/extension-history";
-import customMessages from "../../i18n/custom-messages";
 import type { Editor } from "@tiptap/core";
+
+import customMessages from "../../i18n/custom-messages";
 import { Tool } from "../../../common/types/tools";
 
 const undo: Tool = {

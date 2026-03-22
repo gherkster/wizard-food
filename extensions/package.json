@@ -1,7 +1,7 @@
 {
   "name": "@wizard/extensions",
-  "private": true,
   "version": "1.0.0",
+  "private": true,
   "scripts": {
     "build": "pnpm -r --filter './*' --if-present build",
     "dev": "pnpm -r --filter './*' --if-present dev",

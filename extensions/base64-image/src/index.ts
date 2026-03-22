@@ -1,6 +1,7 @@
+import type { Readable } from "stream";
+
 import { defineHook } from "@directus/extensions-sdk";
 import * as Services from "@directus/api/dist/services";
-import type { Readable } from "stream";
 
 const base64UrlMetadataKey = "base64Url";
 

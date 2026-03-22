@@ -1,9 +1,10 @@
 // Based on https://github.com/directus/directus/blob/main/app/src/utils/unexpected-error.ts
 
-import { RequestError } from "../types/api";
 import { useI18n } from "vue-i18n";
 import { useStores } from "@directus/extensions-sdk";
+
 import type { APIError } from "../types/error";
+import { RequestError } from "../types/api";
 
 let store: any;
 

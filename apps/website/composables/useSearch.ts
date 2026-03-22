@@ -1,4 +1,5 @@
 import MiniSearch, { type SearchResult } from "minisearch";
+
 import {
   searchIndexSettings,
   type SearchIndexRecipe,

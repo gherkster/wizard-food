@@ -1,6 +1,6 @@
-import { useItems } from "@directus/extensions-sdk";
-import { defineStore } from "pinia";
 import { computed, ref, toRef, watch } from "vue";
+import { defineStore } from "pinia";
+import { useItems } from "@directus/extensions-sdk";
 
 /**
  * Contains the new and removed relationships in the junction collection

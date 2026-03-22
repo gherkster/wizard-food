@@ -1,6 +1,8 @@
 import path from "node:path";
+
 import { config as loadDotEnv } from "dotenv";
 import { Command } from "commander";
+
 import { syncContent } from "./sync";
 
 const requiredEnv = (name: string) => {

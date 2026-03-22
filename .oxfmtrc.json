@@ -2,12 +2,16 @@
   "printWidth": 100,
   "trailingComma": "all",
   "sortPackageJson": false,
+  "sortImports": {
+    "order": "desc"
+  },
   "ignorePatterns": [
     "**/node_modules/**",
     "**/.turbo/**",
     "**/dist/**",
     "**/.nuxt/**",
     "**/.output/**",
-    "pnpm-lock.yaml"
+    "pnpm-lock.yaml",
+    "directus-schema.d.ts"
   ]
 }

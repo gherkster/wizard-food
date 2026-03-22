@@ -82,7 +82,9 @@ export default {
   duplication_warning:
     "Not all nested data could be duplicated, probably because an already saved item was edited before it was duplicated. This can be solved by saving the edited item with the rest of the content before duplicating it.",
   errors: {
-    type_of_junction_primary_key_field_not_uuid: "Primary key of the editors junction collection must be of type UUID!",
-    duplication_fields_not_set: "Duplication fields for the editors junction collection must be set!",
+    type_of_junction_primary_key_field_not_uuid:
+      "Primary key of the editors junction collection must be of type UUID!",
+    duplication_fields_not_set:
+      "Duplication fields for the editors junction collection must be set!",
   },
 };
