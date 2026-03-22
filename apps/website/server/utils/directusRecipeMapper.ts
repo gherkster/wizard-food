@@ -211,7 +211,6 @@ const mapImage = (serverImage: ServerImage): Image => {
     width: serverImage.width ?? throwExpression("Image width must be provided"),
     height: serverImage.height ?? throwExpression("Image height must be provided"),
     modifyDate,
-    cloudinaryVersion: signedVariants.cloudinaryVersion,
     variants: signedVariants.variants,
     metadata: {
       base64Url:

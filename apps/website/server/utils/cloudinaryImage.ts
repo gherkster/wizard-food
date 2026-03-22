@@ -56,7 +56,13 @@ const resolveConfig = (): CloudinaryRuntimeConfig => {
 
 const transformToCloudinaryVersion = (modifiedOn: string): number => {
   const timestamp = Math.floor(new Date(modifiedOn).getTime() / 1000);
-  return Number.isFinite(timestamp) && timestamp > 0 ? timestamp : 1;
+  if (!Number.isFinite(timestamp) || timestamp <= 0) {
+    throw new Error(
+      `Unable to generate Cloudinary cache-busting version from modifiedOn value: ${modifiedOn}`,
+    );
+  }
+
+  return timestamp;
 };
 
 const buildTransformation = (aspectRatio: AspectRatio, width: number): string => {
@@ -83,9 +89,12 @@ const buildSignedUrl = (
   const publicId = `${config.imageFolder}/${imageId}.${imageFileExtension}`;
   const signedSlug = `${transformation}/${versionPath}/${publicId}`;
   const signature = generateCloudinaryDeliverySignature(config.signingKey, signedSlug);
+  const signedUrl = `https://res.cloudinary.com/${config.cloudName}/image/upload/${signature}/${signedSlug}`;
+  const url = new URL(signedUrl);
+  url.searchParams.set("v", String(version));
 
   return {
-    url: `https://res.cloudinary.com/${config.cloudName}/image/upload/${signature}/${signedSlug}`,
+    url: url.toString(),
     version,
   };
 };
@@ -100,12 +109,11 @@ const buildVariant = (
   const widths = imageWidths[purpose][aspectRatio];
   const variants = widths.map((width) => {
     const transformation = buildTransformation(aspectRatio, width);
-    const { url, version } = buildSignedUrl(config, imageId, modifiedOn, transformation);
+    const { url } = buildSignedUrl(config, imageId, modifiedOn, transformation);
 
     return {
       width,
       url,
-      version,
     };
   });
 
@@ -118,7 +126,6 @@ const buildVariant = (
     src: largestVariant.url,
     srcSet: variants.map((v) => `${v.url} ${v.width}w`).join(", "),
     sizes: imageSizes[purpose],
-    cloudinaryVersion: largestVariant.version,
   };
 };
 
@@ -138,47 +145,9 @@ export const buildSignedImageVariants = (image: { id: string; modifiedOn: string
       portrait: buildVariant(config, image.id, image.modifiedOn, "instruction", "portrait"),
       square: buildVariant(config, image.id, image.modifiedOn, "instruction", "square"),
     },
-  } satisfies Record<ImagePurpose, Record<AspectRatio, { src: string; srcSet: string; sizes: string; cloudinaryVersion: number }>>;
+  } satisfies ImageVariants;
 
   return {
-    cloudinaryVersion: variants.cover.square.cloudinaryVersion,
-    variants: {
-      cover: {
-        portrait: {
-          src: variants.cover.portrait.src,
-          srcSet: variants.cover.portrait.srcSet,
-          sizes: variants.cover.portrait.sizes,
-        },
-        square: {
-          src: variants.cover.square.src,
-          srcSet: variants.cover.square.srcSet,
-          sizes: variants.cover.square.sizes,
-        },
-      },
-      preview: {
-        portrait: {
-          src: variants.preview.portrait.src,
-          srcSet: variants.preview.portrait.srcSet,
-          sizes: variants.preview.portrait.sizes,
-        },
-        square: {
-          src: variants.preview.square.src,
-          srcSet: variants.preview.square.srcSet,
-          sizes: variants.preview.square.sizes,
-        },
-      },
-      instruction: {
-        portrait: {
-          src: variants.instruction.portrait.src,
-          srcSet: variants.instruction.portrait.srcSet,
-          sizes: variants.instruction.portrait.sizes,
-        },
-        square: {
-          src: variants.instruction.square.src,
-          srcSet: variants.instruction.square.srcSet,
-          sizes: variants.instruction.square.sizes,
-        },
-      },
-    } satisfies ImageVariants,
+    variants,
   };
 };

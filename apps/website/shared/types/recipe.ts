@@ -154,8 +154,6 @@ export type Image = {
   width: number;
   /** The modify date of the image for cache busting purposes */
   modifyDate: string;
-  /** The Cloudinary version, generated from the Directus modify date */
-  cloudinaryVersion: number;
   /** The fixed set of allowed transformed image variants */
   variants: ImageVariants;
   metadata?: {

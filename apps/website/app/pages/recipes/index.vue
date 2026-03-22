@@ -50,7 +50,6 @@ const toCardImage = (recipe: SearchIndexRecipe): Image => {
     width: recipe.coverImage.width,
     height: recipe.coverImage.height,
     modifyDate: "",
-    cloudinaryVersion: 1,
     variants: {
       cover: {
         portrait: previewSquare,
