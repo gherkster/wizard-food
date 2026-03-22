@@ -4,11 +4,8 @@
 
 <script setup lang="ts">
 import Fraction from "fraction.js";
-import type {
-  InlineIngredient,
-  InlineIngredientHTMLElement,
-  SingularPluralPair,
-} from "~~/shared/types/recipe";
+import { formatIngredient, type InlineIngredient, type SingularPluralPair } from "@wizard/content";
+import type { InlineIngredientHTMLElement } from "@wizard/content/store";
 
 type InlineIngredientMarkup = {
   element: {

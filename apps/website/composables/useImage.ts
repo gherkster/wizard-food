@@ -1,5 +1,4 @@
-import type { Image } from "~~/shared/types/recipe";
-import type { AspectRatio, ImagePurpose } from "~~/shared/types/image";
+import type { AspectRatio, Image, ImagePurpose } from "@wizard/content/store";
 
 export function useImage() {
   function getAspectRatio(aspectRatio: AspectRatio): { x: number; y: number } {

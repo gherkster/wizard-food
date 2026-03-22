@@ -29,6 +29,8 @@
 </template>
 
 <script setup lang="ts">
+import type { Image } from "@wizard/content/store";
+
 withDefaults(
   defineProps<{
     title: string;

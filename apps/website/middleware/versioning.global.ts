@@ -1,3 +1,6 @@
+import { useSearch } from "~/composables/useSearch";
+import type { AppVersion } from "~/types/version";
+
 let searchIndexDownload: Promise<void> | null = null;
 let isBuildStale = false;
 
@@ -72,8 +75,8 @@ export default defineNuxtRouteMiddleware((to) => {
   localStorage.setItem(lastCheckTimeStorageKey, Date.now().toString());
 });
 
-async function getLatestVersionNumbers(): Promise<Version | undefined> {
-  const { data: data } = await useFetch<Version>("/version.json");
+async function getLatestVersionNumbers(): Promise<AppVersion | undefined> {
+  const { data } = await useFetch<AppVersion>("/version.json");
   return data.value;
 }
 

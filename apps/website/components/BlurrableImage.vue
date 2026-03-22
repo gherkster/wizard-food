@@ -38,6 +38,9 @@
 </template>
 
 <script setup lang="ts">
+import type { AspectRatio, Image, ImagePurpose } from "@wizard/content/store";
+import { useImage } from "~/composables/useImage";
+
 /*
 We can use X and Y aspect ratio values for height and width since we are using width 100% globally for img.
 This prevents cumulative layout shift (CLS) because the browser can calculate the area it should reserve

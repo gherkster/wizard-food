@@ -14,8 +14,8 @@
 </template>
 
 <script setup lang="ts">
-import type { AspectRatio, ImagePurpose } from "~~/shared/types/image";
-import type { Image } from "~~/shared/types/recipe";
+import type { AspectRatio, Image, ImagePurpose } from "@wizard/content/store";
+import { useImage } from "~/composables/useImage";
 
 const props = defineProps<{
   img: Image;
@@ -38,9 +38,7 @@ const image = useImage();
 const variant = image.getVariant(props.img, props.purpose, props.aspectRatio);
 
 const src =
-  props.thumbnail && props.img.metadata?.base64Url
-    ? props.img.metadata.base64Url
-    : variant.src;
+  props.thumbnail && props.img.metadata?.base64Url ? props.img.metadata.base64Url : variant.src;
 
 const alt = props.alt ?? (props.thumbnail ? "" : props.img.title);
 

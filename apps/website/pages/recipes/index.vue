@@ -28,6 +28,9 @@
 
 <script setup lang="ts">
 import type { WebsitePageContent } from "@wizard/content/store";
+import type { Image } from "@wizard/content/store";
+import { useSearch } from "~/composables/useSearch";
+import type { SearchIndexRecipe } from "~/utils/search";
 
 const route = useRoute();
 const searchTerm = computed(() => {

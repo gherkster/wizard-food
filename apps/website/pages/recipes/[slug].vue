@@ -125,6 +125,8 @@
 <script setup lang="ts">
 import type { RecipePayload } from "@wizard/content/store";
 import type { RouteLocationRaw } from "#vue-router";
+import { formatRecipeDurations, recipeTotalDuration } from "~/utils/formatting";
+import { useJsonld } from "~/utils/jsonld";
 
 const route = useRoute();
 
@@ -151,9 +153,6 @@ const recipesResponse = await useAsyncData(
     }
 
     throw `Recipe ${slug} could not be retrieved`;
-  },
-  {
-    transform: mapToRecipe,
   },
 );
 
