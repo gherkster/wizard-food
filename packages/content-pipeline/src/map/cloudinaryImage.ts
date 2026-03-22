@@ -40,19 +40,25 @@ const getAspectRatio = (aspectRatio: AspectRatio) => {
 };
 
 const resolveConfig = (): CloudinaryRuntimeConfig => {
-  const cloudName = process.env.CLOUDINARY_CLOUD_NAME ?? "dork0lbv9";
   const signingKey = process.env.CLOUDINARY_API_KEY;
-
   if (!signingKey) {
-    throw new Error(
-      "Cloudinary signing key environment variable not defined. Set CLOUDINARY_API_KEY.",
-    );
+    throw new Error("CLOUDINARY_API_KEY environment variable not defined.");
+  }
+
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+  if (!cloudName) {
+    throw new Error("CLOUDINARY_CLOUD_NAME environment variable not defined.");
+  }
+
+  const imageFolder = process.env.CLOUDINARY_IMAGE_FOLDER;
+  if (!imageFolder) {
+    throw new Error("CLOUDINARY_IMAGE_FOLDER environment variable not defined.");
   }
 
   return {
     cloudName,
     signingKey,
-    imageFolder: process.env.CLOUDINARY_IMAGE_FOLDER ?? "recipes",
+    imageFolder,
   };
 };
 

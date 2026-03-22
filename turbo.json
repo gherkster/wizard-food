@@ -11,6 +11,22 @@
         "apps/website/node_modules/.cache/nuxt/.nuxt/**"
       ]
     },
+    "generate": {
+      "dependsOn": ["content:sync", "^build"],
+      "outputs": [
+        "dist/**",
+        ".output/**",
+        "apps/website/.output/**",
+        "apps/website/.nuxt/**",
+        "apps/website/node_modules/.cache/nuxt/.nuxt/**"
+      ],
+      "passThroughEnv": ["CF_PAGES_COMMIT_SHA"]
+    },
+    "content:sync": {
+      "dependsOn": ["^build"],
+      "outputs": [".content/**"],
+      "passThroughEnv": ["CLOUDINARY_API_KEY", "CLOUDINARY_CLOUD_NAME", "CLOUDINARY_IMAGE_FOLDER"]
+    },
     "typecheck": {
       "dependsOn": ["^build"],
       "outputs": []
