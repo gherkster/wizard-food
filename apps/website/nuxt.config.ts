@@ -4,14 +4,20 @@ export default defineNuxtConfig({
   },
   ssr: true,
 
-  routeRules: {
-    /*
-      Force all routes to prerender.
-      This fixes an issue with calls to /api/recipes/<id> working for a hard reload,
-      but still being made on client side navigation
-    */
-    "/**": { prerender: true },
-  },
+  routeRules:
+    process.env.NODE_ENV === "development"
+      ? {}
+      : {
+          /*
+          Force all routes to prerender.
+          This fixes an issue with calls to /api/recipes/<id> working for a hard reload,
+          but still being made on client side navigation.
+
+          In dev mode this currently causes payload cache key collisions ("/" vs nested routes)
+          and leads to ENOTDIR errors under .nuxt/cache/nuxt/payload.
+        */
+          "/**": { prerender: true },
+        },
 
   nitro: {
     prerender: {
@@ -40,7 +46,7 @@ export default defineNuxtConfig({
 
   typescript: {
     // Enable build-time type checking, only currently enabled in local development due to pipeline issues
-    typeCheck: import.meta.dev,
+    typeCheck: process.env.NODE_ENV === "development",
   },
 
   vite: {
