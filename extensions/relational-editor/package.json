@@ -1,87 +1,87 @@
 {
-	"name": "@wizard/relational-editor",
-	"description": "Please enter a description for your extension",
-	"icon": "extension",
-	"version": "1.0.0",
-	"keywords": [
-		"directus",
-		"directus-extension"
-	],
-	"type": "module",
-	"files": [
-		"dist",
-		"common"
-	],
-	"directus:extension": {
-		"type": "bundle",
-		"host": "^10.10.0",
-		"path": {
-			"app": "dist/app.js",
-			"api": "dist/api.js"
-		},
-		"entries": [
-			{
-				"type": "interface",
-				"name": "interface",
-				"source": "src/interface/index.ts"
-			},
-			{
-				"type": "display",
-				"name": "display",
-				"source": "src/display/index.ts"
-			}
-		]
-	},
-	"scripts": {
-		"build": "directus-extension build",
-		"build-remote": "directus-extension build && pnpm run push-remote",
-		"dev": "directus-extension build -w --no-minify",
-		"link": "directus-extension link",
-		"push-remote": "pnpm run push-app && pnpm run push-api",
-		"push-app": "scp dist/app.js oracle:~/docker-cloud/directus/extensions/directus-extension-relational-editor/dist/app.js",
-		"push-api": "scp dist/api.js oracle:~/docker-cloud/directus/extensions/directus-extension-relational-editor/dist/api.js"
-	},
-	"devDependencies": {
-		"@directus/extensions-sdk": "^13.1.1",
-		"@tiptap/pm": "^2.27.2",
-		"@tiptap/vue-3": "^2.27.2",
-		"@types/lodash": "^4.17.24",
-		"@types/uuid": "^9.0.8",
-		"lodash": "^4.17.23",
-		"pinia": "2.1.7",
-		"typescript": "^5.9.3",
-		"uuid": "^9.0.1",
-		"validator": "^13.15.26",
-		"vue": "3.5.13",
-		"vue-i18n": "^9.14.5"
-	},
-	"dependencies": {
-		"@tiptap/core": "^2.27.2",
-		"@tiptap/extension-blockquote": "^2.27.2",
-		"@tiptap/extension-bold": "^2.27.2",
-		"@tiptap/extension-bullet-list": "^2.27.2",
-		"@tiptap/extension-code": "^2.27.2",
-		"@tiptap/extension-code-block": "^2.27.2",
-		"@tiptap/extension-document": "^2.27.2",
-		"@tiptap/extension-dropcursor": "^2.27.2",
-		"@tiptap/extension-gapcursor": "^2.27.2",
-		"@tiptap/extension-hard-break": "^2.27.2",
-		"@tiptap/extension-heading": "^2.27.2",
-		"@tiptap/extension-history": "^2.27.2",
-		"@tiptap/extension-horizontal-rule": "^2.27.2",
-		"@tiptap/extension-italic": "^2.27.2",
-		"@tiptap/extension-link": "^2.27.2",
-		"@tiptap/extension-list-item": "^2.27.2",
-		"@tiptap/extension-ordered-list": "^2.27.2",
-		"@tiptap/extension-paragraph": "^2.27.2",
-		"@tiptap/extension-placeholder": "^2.27.2",
-		"@tiptap/extension-strike": "^2.27.2",
-		"@tiptap/extension-table": "^2.27.2",
-		"@tiptap/extension-table-cell": "^2.27.2",
-		"@tiptap/extension-table-header": "^2.27.2",
-		"@tiptap/extension-table-row": "^2.27.2",
-		"@tiptap/extension-text": "^2.27.2",
-		"@wizard/content": "workspace:*",
-		"tiptap-render-view": "^1.0.4"
-	}
+  "name": "@wizard/relational-editor",
+  "version": "1.0.0",
+  "description": "Please enter a description for your extension",
+  "keywords": [
+    "directus",
+    "directus-extension"
+  ],
+  "files": [
+    "dist",
+    "common"
+  ],
+  "type": "module",
+  "scripts": {
+    "build": "directus-extension build",
+    "build-remote": "directus-extension build && pnpm run push-remote",
+    "dev": "directus-extension build -w --no-minify",
+    "link": "directus-extension link",
+    "push-remote": "pnpm run push-app && pnpm run push-api",
+    "push-app": "scp dist/app.js oracle:~/docker-cloud/directus/extensions/directus-extension-relational-editor/dist/app.js",
+    "push-api": "scp dist/api.js oracle:~/docker-cloud/directus/extensions/directus-extension-relational-editor/dist/api.js"
+  },
+  "dependencies": {
+    "@tiptap/core": "^2.27.2",
+    "@tiptap/extension-blockquote": "^2.27.2",
+    "@tiptap/extension-bold": "^2.27.2",
+    "@tiptap/extension-bullet-list": "^2.27.2",
+    "@tiptap/extension-code": "^2.27.2",
+    "@tiptap/extension-code-block": "^2.27.2",
+    "@tiptap/extension-document": "^2.27.2",
+    "@tiptap/extension-dropcursor": "^2.27.2",
+    "@tiptap/extension-gapcursor": "^2.27.2",
+    "@tiptap/extension-hard-break": "^2.27.2",
+    "@tiptap/extension-heading": "^2.27.2",
+    "@tiptap/extension-history": "^2.27.2",
+    "@tiptap/extension-horizontal-rule": "^2.27.2",
+    "@tiptap/extension-italic": "^2.27.2",
+    "@tiptap/extension-link": "^2.27.2",
+    "@tiptap/extension-list-item": "^2.27.2",
+    "@tiptap/extension-ordered-list": "^2.27.2",
+    "@tiptap/extension-paragraph": "^2.27.2",
+    "@tiptap/extension-placeholder": "^2.27.2",
+    "@tiptap/extension-strike": "^2.27.2",
+    "@tiptap/extension-table": "^2.27.2",
+    "@tiptap/extension-table-cell": "^2.27.2",
+    "@tiptap/extension-table-header": "^2.27.2",
+    "@tiptap/extension-table-row": "^2.27.2",
+    "@tiptap/extension-text": "^2.27.2",
+    "@wizard/content": "workspace:*",
+    "tiptap-render-view": "^1.0.4"
+  },
+  "devDependencies": {
+    "@directus/extensions-sdk": "^13.1.1",
+    "@tiptap/pm": "^2.27.2",
+    "@tiptap/vue-3": "^2.27.2",
+    "@types/lodash": "^4.17.24",
+    "@types/uuid": "^9.0.8",
+    "lodash": "^4.17.23",
+    "pinia": "2.1.7",
+    "typescript": "^5.9.3",
+    "uuid": "^9.0.1",
+    "validator": "^13.15.26",
+    "vue": "3.5.13",
+    "vue-i18n": "^9.14.5"
+  },
+  "icon": "extension",
+  "directus:extension": {
+    "type": "bundle",
+    "host": "^10.10.0",
+    "path": {
+      "app": "dist/app.js",
+      "api": "dist/api.js"
+    },
+    "entries": [
+      {
+        "type": "interface",
+        "name": "interface",
+        "source": "src/interface/index.ts"
+      },
+      {
+        "type": "display",
+        "name": "display",
+        "source": "src/display/index.ts"
+      }
+    ]
+  }
 }

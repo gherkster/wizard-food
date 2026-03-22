@@ -124,37 +124,38 @@
 
 <script setup lang="ts">
 import type { RecipePayload } from "@wizard/content/store";
-import type { RouteLocationRaw } from "#vue-router";
-import { formatRecipeDurations, recipeTotalDuration } from "~/utils/formatting";
+
 import { useJsonld } from "~/utils/jsonld";
+import { formatRecipeDurations, recipeTotalDuration } from "~/utils/formatting";
+import type { RouteLocationRaw } from "#vue-router";
 
 const route = useRoute();
 
+
 const slug = route.params.slug!.toString();
 
-const recipesResponse = await useAsyncData(
-  slug,
-  async (): Promise<RecipePayload> => {
-    if (import.meta.server) {
-      const { recipesBySlug } = await import("#content");
-      const recipe = recipesBySlug[slug];
-      if (!recipe) {
-        throw `Recipe ${slug} could not be retrieved`;
-      }
-      return recipe;
-    }
 
-    if (import.meta.dev) {
-      const { data: recipe } = await useFetch(`/api/recipes/${slug}`);
-      if (!recipe.value) {
-        throw `Recipe ${slug} could not be retrieved`;
-      }
-      return recipe.value as RecipePayload;
+const recipesResponse = await useAsyncData(slug, async (): Promise<RecipePayload> => {
+  if (import.meta.server) {
+    const { recipesBySlug } = await import("#content");
+    const recipe = recipesBySlug[slug];
+    if (!recipe) {
+      throw `Recipe ${slug} could not be retrieved`;
     }
+    return recipe;
+  }
 
-    throw `Recipe ${slug} could not be retrieved`;
-  },
-);
+  if (import.meta.dev) {
+    const { data: recipe } = await useFetch(`/api/recipes/${slug}`);
+    if (!recipe.value) {
+      throw `Recipe ${slug} could not be retrieved`;
+    }
+    return recipe.value as RecipePayload;
+  }
+
+  throw `Recipe ${slug} could not be retrieved`;
+});
+
 
 if (recipesResponse.error.value) {
   throw createError({
@@ -162,6 +163,7 @@ if (recipesResponse.error.value) {
     statusMessage: recipesResponse.error.value?.message,
   });
 }
+
 
 if (!recipesResponse.data.value) {
   throw createError({
@@ -171,11 +173,14 @@ if (!recipesResponse.data.value) {
 }
 const recipe = ref(recipesResponse.data.value);
 
+
 const durationLabels = computed(() => formatRecipeDurations(recipe.value));
+
 
 useHead({
   title: recipe.value.title,
 });
+
 
 if (import.meta.server) {
   useSeoMeta({
@@ -185,6 +190,7 @@ if (import.meta.server) {
     ogDescription: recipe.value.descriptionSnippet,
     ogImage: recipe.value.coverImage.variants.cover.square.src,
   });
+
 
   useJsonld({
     "@context": "https://schema.org",
@@ -207,14 +213,17 @@ if (import.meta.server) {
   });
 }
 
+
 const servings = ref<number>(
   recipe.value.servings && recipe.value.servings > 0 ? recipe.value.servings : 1,
 );
 const originalNumberOfServings = servings.value;
 
+
 function updateNumberOfServings(newServings: number) {
   servings.value = newServings;
 }
+
 
 function createSearchLink(term: string): RouteLocationRaw {
   return {

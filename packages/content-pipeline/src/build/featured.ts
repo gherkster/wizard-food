@@ -1,4 +1,5 @@
 import type { FeaturedRecipes, RecipePayload, RecipePreview } from "@wizard/content/store";
+
 import { formatDuration, recipeTotalDuration } from "./formatting";
 
 const mapToRecipePreview = (recipe: RecipePayload): RecipePreview => {

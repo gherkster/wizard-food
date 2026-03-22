@@ -1,4 +1,5 @@
 import { defineDisplay } from "@directus/extensions-sdk";
+
 import component from "./display.vue";
 
 export default defineDisplay({

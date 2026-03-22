@@ -19,12 +19,15 @@ const props = defineProps<{
   value: string;
 }>();
 
+
 const query = ref(props.value);
+
 
 watch(
   () => props.value,
   (newValue) => (query.value = newValue),
 );
+
 
 defineEmits<{
   input: [value: string];

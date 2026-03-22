@@ -18,6 +18,7 @@ const props = withDefaults(
   },
 );
 
+
 const classes = computed(() => {
   const isVisuallyPrimary = props.primary && !props.transparent;
 
@@ -28,9 +29,11 @@ const classes = computed(() => {
   };
 });
 
+
 const emit = defineEmits<{
   click: [];
 }>();
+
 
 const onClick = () => {
   if (!props.disabled) {

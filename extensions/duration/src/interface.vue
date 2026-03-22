@@ -14,13 +14,16 @@ const props = defineProps<{
   loading: boolean;
 }>();
 
+
 interface Duration {
   minutes: number;
   hours: number;
   days: number;
 }
 
+
 const internalDuration = ref<Duration>();
+
 
 function init() {
   /**
@@ -30,6 +33,7 @@ function init() {
    */
   const initialValue = toRaw(props.value);
 
+
   internalDuration.value = initialValue
     ? convertSecondsToDuration(initialValue)
     : {
@@ -37,6 +41,7 @@ function init() {
         hours: 0,
         days: 0,
       };
+
 
   const totalDuration = computed<number>(() => {
     return (
@@ -46,10 +51,12 @@ function init() {
     );
   });
 
+
   watch(totalDuration, () => {
     emit("input", totalDuration.value);
   });
 }
+
 
 function convertSecondsToDuration(seconds: number | string) {
   const secondsNumber = typeof seconds === "string" ? parseInt(seconds, 10) : seconds;
@@ -59,6 +66,7 @@ function convertSecondsToDuration(seconds: number | string) {
     minutes: Math.floor((secondsNumber % 3600) / 60),
   };
 }
+
 
 watch(
   () => props.loading,
@@ -72,6 +80,7 @@ watch(
     immediate: true,
   },
 );
+
 
 const emit = defineEmits<{
   (e: "input", v: number): void;

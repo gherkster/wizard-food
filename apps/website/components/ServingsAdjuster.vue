@@ -36,17 +36,21 @@ const props = withDefaults(
   },
 );
 
+
 const emit = defineEmits<{
   input: [value: number];
 }>();
 
+
 const label = computed(() => (props.servings > 1 ? props.pluralLabel : props.singularLabel));
+
 
 function decrementServings() {
   if (props.servings > 1) {
     emit("input", props.servings - 1);
   }
 }
+
 
 function incrementServings() {
   emit("input", props.servings + 1);

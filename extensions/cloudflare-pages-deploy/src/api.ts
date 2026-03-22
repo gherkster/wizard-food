@@ -1,6 +1,6 @@
-import { defineOperationApi } from "@directus/extensions-sdk";
-import Cloudflare from "cloudflare";
 import { sleep } from "cloudflare/core";
+import Cloudflare from "cloudflare";
+import { defineOperationApi } from "@directus/extensions-sdk";
 
 type Options = {
   cloudflareAccountId: string;
@@ -16,9 +16,12 @@ export default defineOperationApi<Options>({
       apiToken: env["CLOUDFLARE_PAGES_DEPLOYMENT_API_TOKEN"],
     });
 
-    const deployment = await cloudflare.pages.projects.deployments.create(options.cloudflareProjectName, {
-      account_id: options.cloudflareAccountId,
-    });
+    const deployment = await cloudflare.pages.projects.deployments.create(
+      options.cloudflareProjectName,
+      {
+        account_id: options.cloudflareAccountId,
+      },
+    );
 
     for (let statusCheckCount = 0; statusCheckCount < 20; statusCheckCount++) {
       // Get the current status of the deployment
@@ -30,7 +33,10 @@ export default defineOperationApi<Options>({
         },
       );
 
-      if (deploymentStatus.latest_stage?.name === "deploy" && deploymentStatus.latest_stage?.status === "success") {
+      if (
+        deploymentStatus.latest_stage?.name === "deploy" &&
+        deploymentStatus.latest_stage?.status === "success"
+      ) {
         logger.info(`Deployment ${deployment.id} completed successfully`);
         return deploymentStatus;
       }

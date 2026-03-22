@@ -15,6 +15,7 @@
 
 <script setup lang="ts">
 import type { AspectRatio, Image, ImagePurpose } from "@wizard/content/store";
+
 import { useImage } from "~/composables/useImage";
 
 const props = defineProps<{
@@ -28,19 +29,25 @@ const props = defineProps<{
   ariaHidden?: boolean | "true" | "false";
 }>();
 
+
 const imgRef = useTemplateRef("imgRef");
+
 
 defineExpose({
   img: imgRef,
 });
 
+
 const image = useImage();
 const variant = image.getVariant(props.img, props.purpose, props.aspectRatio);
+
 
 const src =
   props.thumbnail && props.img.metadata?.base64Url ? props.img.metadata.base64Url : variant.src;
 
+
 const alt = props.alt ?? (props.thumbnail ? "" : props.img.title);
+
 
 /*
 Set the height based on the final image aspect ratio to avoid CLS issues when loading

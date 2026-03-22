@@ -18,22 +18,23 @@
 </template>
 
 <script setup lang="ts">
-import Toolbar from "./components/Toolbar.vue";
-import type { JSONContent } from "@tiptap/vue-3";
+import { computed } from "vue";
+import { provide, toRef, watch } from "vue";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
-import Document from "@tiptap/extension-document";
+import type { JSONContent } from "@tiptap/vue-3";
 import Text from "@tiptap/extension-text";
 import Placeholder from "@tiptap/extension-placeholder";
 import Paragraph from "@tiptap/extension-paragraph";
-import Dropcursor from "@tiptap/extension-dropcursor";
 import Gapcursor from "@tiptap/extension-gapcursor";
-import { provide, toRef, watch } from "vue";
-import { Configuration, configurationInjectionKey } from "./config/configuration";
-import { RelationDelta, useRelationStore } from "./stores/relationStore";
+import Dropcursor from "@tiptap/extension-dropcursor";
+import Document from "@tiptap/extension-document";
+
 import { useToolStore } from "./stores/toolStore";
-import { useEditorStoreSync } from "./composables/useEditorStoreSync";
+import { RelationDelta, useRelationStore } from "./stores/relationStore";
+import { Configuration, configurationInjectionKey } from "./config/configuration";
 import { useTipTap } from "./composables/useTipTap";
-import { computed } from "vue";
+import { useEditorStoreSync } from "./composables/useEditorStoreSync";
+import Toolbar from "./components/Toolbar.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -69,13 +70,16 @@ const props = withDefaults(
   },
 );
 
+
 // TODO: Throw error if junction collection primary key is not uuid
+
 
 interface EmittedRelationUpdate {
   create: unknown[];
   update: unknown[];
   delete: (string | number)[];
 }
+
 
 const emit = defineEmits<{
   /** Editor content JSON */
@@ -84,10 +88,12 @@ const emit = defineEmits<{
   setFieldValue: [value: { field: string; value: EmittedRelationUpdate }];
 }>();
 
+
 function emitRelationChanges(change: RelationDelta) {
   if (!props.m2mField) {
     return;
   }
+
 
   const emittedValue: EmittedRelationUpdate = {
     create: change.create.map((create) => {
@@ -101,13 +107,16 @@ function emitRelationChanges(change: RelationDelta) {
     delete: change.delete,
   };
 
+
   emit("setFieldValue", {
     field: props.m2mField,
     value: emittedValue,
   });
 }
 
+
 const store = useRelationStore();
+
 
 watch(
   () => store.stagedChanges,
@@ -119,7 +128,9 @@ watch(
   },
 );
 
+
 // TODO: Required props shouldn't be allowed to be empty strings
+
 
 const config: Configuration = {
   relation: {
@@ -131,16 +142,22 @@ const config: Configuration = {
   },
 };
 
+
 provide(configurationInjectionKey, config);
+
 
 const editorSync = useEditorStoreSync();
 const tiptap = useTipTap();
 
+
 const toolStore = useToolStore();
+
 
 const selectedTools = toolStore.pickSelectedTools(props.tools);
 
+
 const singleLineMode = computed(() => props.inputMode === "single");
+
 
 const extensions = [
   Document.extend(singleLineMode.value ? { content: "block" } : {}),
@@ -152,10 +169,12 @@ const extensions = [
   ...selectedTools,
 ];
 
+
 if (props.tagName) {
   toolStore.setInlineNodeTool(props.tagName);
   extensions.push(tiptap.createInlineNode(props.tagName));
 }
+
 
 const editor = useEditor({
   content: props.value,
@@ -177,10 +196,12 @@ const editor = useEditor({
   },
 });
 
+
 // Reset staging values when opening the interface
 // This resolves an issue where if nodes are deleted and then the user navigates away,
 // upon returning the nodes would still be staged for removal even after the content has been restored
 store.$resetStaging();
+
 
 watch(
   () => props.value,

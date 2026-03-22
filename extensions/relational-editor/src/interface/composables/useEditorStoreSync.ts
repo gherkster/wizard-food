@@ -1,4 +1,5 @@
 import { Editor, NodeWithPos } from "@tiptap/core";
+
 import { useRelationStore } from "../stores/relationStore";
 
 export function useEditorStoreSync() {
@@ -30,7 +31,9 @@ export function useEditorStoreSync() {
     });
 
     // Items staged for creation just need to be moved from staging to inactive to handle removal
-    const removedStagedItemCreations = store.stagedChanges.create.filter((c) => !currentNodeIds.has(c.id));
+    const removedStagedItemCreations = store.stagedChanges.create.filter(
+      (c) => !currentNodeIds.has(c.id),
+    );
     removedStagedItemCreations.forEach((item) => {
       store.inactiveChanges.set(item.id, item);
     });
@@ -43,7 +46,9 @@ export function useEditorStoreSync() {
     // This is only relevant for preexisting relations which delete was clicked
     // and then afterwards restored using redo/copy paste etc
     // In this scenario the item is retained in the preexisting relation store list so there is nothing else to do
-    const restoredPreExistingNodes = currentNodeIds.filter((id) => store.stagedChanges.delete.includes(id));
+    const restoredPreExistingNodes = currentNodeIds.filter((id) =>
+      store.stagedChanges.delete.includes(id),
+    );
     store.stagedChanges.delete = store.stagedChanges.delete.filter(
       (d) => !restoredPreExistingNodes.includes(d.toString()),
     );
@@ -51,7 +56,9 @@ export function useEditorStoreSync() {
     // Move any new items found in the inactive collection into the item creation staging
     // This is only relevant for newly created relations which were staged, then removed afterwards
     // If the user then hits redo, the previously created relation should be reused
-    const newNodeIds = currentNodeIds.filter((id) => !store.allRelations.map((r) => r.id).includes(id));
+    const newNodeIds = currentNodeIds.filter(
+      (id) => !store.allRelations.map((r) => r.id).includes(id),
+    );
     store.inactiveChanges.forEach((change, id) => {
       if (!newNodeIds.includes(id)) {
         return;

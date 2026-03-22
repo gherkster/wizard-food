@@ -1,7 +1,7 @@
-import inlineNodeTagNames from "../common/inlineNodeTagNames";
-import customMessages from "./i18n/custom-messages";
-import InterfaceComponent from "./interface.vue";
 import { useToolStore } from "./stores/toolStore";
+import InterfaceComponent from "./interface.vue";
+import customMessages from "./i18n/custom-messages";
+import inlineNodeTagNames from "../common/inlineNodeTagNames";
 
 export default {
   id: "custom-instruction-editor",

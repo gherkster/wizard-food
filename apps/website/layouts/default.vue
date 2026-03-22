@@ -28,8 +28,8 @@
 </template>
 
 <script setup lang="ts">
-import { useSearch } from "~/composables/useSearch";
 import { debounce } from "~/utils/debounce";
+import { useSearch } from "~/composables/useSearch";
 
 const searchClient = useSearch();
 /*
@@ -39,14 +39,18 @@ const searchClient = useSearch();
 */
 searchClient.ensureIndex();
 
+
 const route = useRoute();
+
 
 const initialQuery =
   route.query.search && typeof route.query.search === "string" ? route.query.search : null;
 
+
 // Prefill the search box with the previously searched for query if one exists
 // This is only relevant for a page reload or following a search link
 const query = ref(initialQuery ?? "");
+
 
 // Keep input value in sync with the url query param
 watch(
@@ -60,13 +64,16 @@ watch(
   },
 );
 
+
 const onInput = (value: string) => {
   search(value);
   animateMascot();
 };
 
+
 /** Debounce value for the search input, can be quite short since it is in-memory */
 const searchDebounceMs = 150;
+
 
 const search = debounce(async (value: string) => {
   query.value = value;
@@ -94,7 +101,9 @@ const search = debounce(async (value: string) => {
   return;
 }, searchDebounceMs);
 
+
 const isAnimated = ref(false);
+
 
 const animateMascot = () => {
   isAnimated.value = true;
@@ -102,8 +111,10 @@ const animateMascot = () => {
   finishAnimating();
 };
 
+
 /** Debounce value for the typing animation, should be longer to reduce jumping */
 const animationDebounceMs = 1000;
+
 
 const finishAnimating = debounce(() => {
   isAnimated.value = false;

@@ -1,9 +1,9 @@
 {
   "rules": {
-    "no-debugger": "error",
+    "no-debugger": "error"
   },
   "env": {
-    "builtin": true,
+    "builtin": true
   },
   "ignorePatterns": [
     "**/node_modules/**",
@@ -11,6 +11,6 @@
     "**/dist/**",
     "**/.nuxt/**",
     "**/.output/**",
-    "pnpm-lock.yaml",
-  ],
+    "pnpm-lock.yaml"
+  ]
 }

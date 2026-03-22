@@ -32,8 +32,10 @@
 <script setup lang="ts">
 const isVisible = ref(false);
 
+
 const popoverTriggerRef = useTemplateRef("popoverTrigger");
 const popoverContentRef = useTemplateRef("popoverContent");
+
 
 const onOutsideClick = (event: MouseEvent) => {
   if (
@@ -45,6 +47,7 @@ const onOutsideClick = (event: MouseEvent) => {
     isVisible.value = false; // Close the popover if clicked outside
   }
 };
+
 
 onMounted(() => {
   document.addEventListener("mousedown", onOutsideClick);

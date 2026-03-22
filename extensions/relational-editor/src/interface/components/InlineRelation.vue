@@ -31,20 +31,25 @@
 </template>
 
 <script setup lang="ts">
-import { NodeViewProps, NodeViewWrapper } from "@tiptap/vue-3";
-import { useRelationStore } from "../stores/relationStore";
+import { useI18n } from "vue-i18n";
 import { computed, ref } from "vue";
+import { NodeViewProps, NodeViewWrapper } from "@tiptap/vue-3";
+
+import { useRelationStore } from "../stores/relationStore";
 import { useRelation } from "../composables/useRelation";
 import { useI18nFallback } from "../composables/use-i18n-fallback";
-import { useI18n } from "vue-i18n";
 
 const props = defineProps<NodeViewProps>();
 
+
 const { t } = useI18nFallback(useI18n());
+
 
 const { templateWithDefaults, relation } = useRelation();
 
+
 const relationStore = useRelationStore();
+
 
 const element = computed(() => {
   const junctionItem = relationStore.allRelations.find((item) => props.node.attrs.id === item.id);
@@ -61,6 +66,7 @@ const element = computed(() => {
     [junctionItem.relatedItem.junctionFieldName]: junctionItem.relatedItem.data,
   };
 });
+
 
 const isEditDialogOpen = ref(false);
 </script>

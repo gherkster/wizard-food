@@ -112,12 +112,14 @@ const recipesResponse = await useAsyncData<FeaturedRecipes>("featured-recipes", 
   throw new Error("Featured recipes are unavailable");
 });
 
+
 if (recipesResponse.error.value) {
   throw createError({
     statusCode: 500,
     statusMessage: recipesResponse.error.value?.message,
   });
 }
+
 
 if (!recipesResponse.data.value) {
   throw createError({
@@ -126,10 +128,12 @@ if (!recipesResponse.data.value) {
   });
 }
 
+
 const latestRecipes = ref(recipesResponse.data.value.latestRecipes);
 const favouriteRecipes = ref(recipesResponse.data.value.favouriteRecipes);
 const quickRecipes = ref(recipesResponse.data.value.quickRecipes);
 const worldCuisineRecipes = ref(recipesResponse.data.value.worldCuisineRecipes);
+
 
 const contentResponse = await useAsyncData<WebsitePageContent>("content-home", async () => {
   if (import.meta.server) {
@@ -148,12 +152,14 @@ const contentResponse = await useAsyncData<WebsitePageContent>("content-home", a
   throw new Error("Home page content is unavailable");
 });
 
+
 if (contentResponse.error.value) {
   throw createError({
     statusCode: 500,
     statusMessage: recipesResponse.error.value,
   });
 }
+
 
 if (!contentResponse.data.value) {
   throw createError({
@@ -162,7 +168,9 @@ if (!contentResponse.data.value) {
   });
 }
 
+
 const content = contentResponse.data.value;
+
 
 useServerSeoMeta({
   title: content.title,

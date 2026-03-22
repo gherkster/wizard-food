@@ -1,8 +1,9 @@
 // https://tiptap.dev/api/nodes/blockquote
 
 import Blockquote from "@tiptap/extension-blockquote";
-import customMessages from "../../i18n/custom-messages";
 import type { Editor } from "@tiptap/core";
+
+import customMessages from "../../i18n/custom-messages";
 import { Tool } from "../../../common/types/tools";
 
 export default {

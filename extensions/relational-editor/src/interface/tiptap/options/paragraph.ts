@@ -1,7 +1,8 @@
 // https://tiptap.dev/api/nodes/paragraph
 
-import customMessages from "../../i18n/custom-messages";
 import type { Editor } from "@tiptap/core";
+
+import customMessages from "../../i18n/custom-messages";
 import { Tool } from "../../../common/types/tools";
 
 declare module "@tiptap/core" {

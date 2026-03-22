@@ -1,7 +1,7 @@
 {
   "name": "@wizard/content-pipeline",
-  "private": true,
   "version": "1.0.0",
+  "private": true,
   "type": "module",
   "main": "./dist/index.js",
   "types": "./src/index.ts",
@@ -18,8 +18,6 @@
     "content:sync": "tsx ./src/cli.ts"
   },
   "dependencies": {
-    "@wizard/content": "workspace:*",
-    "@wizard/openapi": "workspace:*",
     "@tiptap/core": "catalog:",
     "@tiptap/extension-blockquote": "catalog:",
     "@tiptap/extension-bold": "catalog:",
@@ -42,6 +40,8 @@
     "@tiptap/extension-table-row": "catalog:",
     "@tiptap/extension-text": "catalog:",
     "@tiptap/html": "catalog:",
+    "@wizard/content": "workspace:*",
+    "@wizard/openapi": "workspace:*",
     "commander": "catalog:",
     "dayjs": "catalog:",
     "dotenv": "catalog:",

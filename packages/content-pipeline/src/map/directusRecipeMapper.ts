@@ -1,15 +1,6 @@
 import path from "node:path";
+
 import prand from "pure-rand";
-import type { RichTextContent } from "@wizard/content/shared";
-import type {
-  Image,
-  Ingredient,
-  IngredientGroup,
-  Instruction,
-  InstructionGroup,
-  RecipePayload,
-  SingularPluralPair,
-} from "@wizard/content/store";
 import type {
   ServerImage,
   ServerIngredient,
@@ -19,10 +10,21 @@ import type {
   ServerInstructionGroup,
   ServerRecipe,
 } from "@wizard/openapi";
-import { assertIsHydrated, throwExpression } from "../utils";
+import type {
+  Image,
+  Ingredient,
+  IngredientGroup,
+  Instruction,
+  InstructionGroup,
+  RecipePayload,
+  SingularPluralPair,
+} from "@wizard/content/store";
+import type { RichTextContent } from "@wizard/content/shared";
+
 import { buildSignedImageVariants } from "./cloudinaryImage";
-import { hydrateInlineIngredientData } from "../hydrateInlineIngredientData";
+import { assertIsHydrated, throwExpression } from "../utils";
 import { renderRichTextHtml, renderRichTextText } from "../render";
+import { hydrateInlineIngredientData } from "../hydrateInlineIngredientData";
 
 export const toRecipePayload = (
   serverRecipe: ServerRecipe,
@@ -102,13 +104,11 @@ export const toRecipePayload = (
 
     return {
       text: renderRichTextHtml(
-        hydrateInlineIngredientData(
-          instructionText,
-          (inlineIngredientId) =>
-            getInlineIngredientData(
-              inlineIngredientId,
-              (serverInstruction.inline_ingredients ?? []) as ServerInlineIngredient[],
-            ),
+        hydrateInlineIngredientData(instructionText, (inlineIngredientId) =>
+          getInlineIngredientData(
+            inlineIngredientId,
+            (serverInstruction.inline_ingredients ?? []) as ServerInlineIngredient[],
+          ),
         ),
       ),
       image: serverInstruction.image
@@ -192,7 +192,8 @@ const assertHydratedImage = (image: ServerImage | string | number): ServerImage 
 
 const mapImage = (serverImage: ServerImage): Image => {
   const imageId = serverImage.id ?? throwExpression("Image ID must be provided");
-  const modifyDate = serverImage.modified_on ?? throwExpression("Image modified_on must be provided");
+  const modifyDate =
+    serverImage.modified_on ?? throwExpression("Image modified_on must be provided");
   const signedVariants = buildSignedImageVariants({
     id: imageId,
     modifiedOn: modifyDate,

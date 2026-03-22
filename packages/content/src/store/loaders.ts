@@ -1,5 +1,5 @@
 import * as fs from "node:fs/promises";
-import { resolveContentFile } from "./files";
+
 import type {
   ContentMeta,
   FeaturedRecipes,
@@ -7,8 +7,12 @@ import type {
   RecipePreview,
   WebsitePagesContent,
 } from "./types";
+import { resolveContentFile } from "./files";
 
-async function readJson<T>(fileName: Parameters<typeof resolveContentFile>[0], contentDir?: string) {
+async function readJson<T>(
+  fileName: Parameters<typeof resolveContentFile>[0],
+  contentDir?: string,
+) {
   const filePath = resolveContentFile(fileName, contentDir);
   const content = await fs.readFile(filePath, "utf8");
   return JSON.parse(content) as T;

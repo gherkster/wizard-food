@@ -1,12 +1,12 @@
 {
-	"extends": ["../../tsconfig.base.json"],
-	"compilerOptions": {
-		"target": "ES2019",
-		"lib": ["ES2019", "DOM"],
-		"moduleResolution": "node",
-		"alwaysStrict": true,
-		"resolveJsonModule": false,
-		"rootDir": "src"
-	},
-	"include": ["src/**/*.ts"]
+  "extends": ["../../tsconfig.base.json"],
+  "compilerOptions": {
+    "target": "ES2019",
+    "lib": ["ES2019", "DOM"],
+    "moduleResolution": "node",
+    "alwaysStrict": true,
+    "resolveJsonModule": false,
+    "rootDir": "src"
+  },
+  "include": ["src/**/*.ts"]
 }

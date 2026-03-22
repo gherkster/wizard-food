@@ -4,11 +4,13 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { generateText } from "@tiptap/core";
-import extensions from "./extensions";
 import type { JSONContent } from "@tiptap/vue-3";
+import { generateText } from "@tiptap/core";
+
+import extensions from "./extensions";
 
 const props = defineProps<{ value: JSONContent }>();
+
 
 const plainText = computed(() => {
   if (!props.value) {

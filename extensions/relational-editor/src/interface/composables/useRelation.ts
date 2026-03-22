@@ -1,6 +1,7 @@
 import { computed, inject } from "vue";
-import { Configuration, configurationInjectionKey } from "../config/configuration";
+
 import { useRelationM2M } from "./useRelationM2M";
+import { Configuration, configurationInjectionKey } from "../config/configuration";
 
 export function useRelation(configuration?: Configuration) {
   const config = configuration ?? inject<Configuration>(configurationInjectionKey);

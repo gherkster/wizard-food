@@ -74,16 +74,17 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
 import { ref, computed } from "vue";
+import { storeToRefs } from "pinia";
+import { capitalize } from "lodash";
+import type { Editor } from "@tiptap/vue-3";
+
 import ToolButton from "./ToolButton.vue";
 import ToolbarRelationMenu from "./ToolbarRelationMenu.vue";
-import { useI18n } from "vue-i18n";
+import { useLinkStore } from "../stores/useLinkStore";
 import { useI18nFallback } from "../composables/use-i18n-fallback";
 import type { Tool } from "../../common/types/tools";
-import type { Editor } from "@tiptap/vue-3";
-import { capitalize } from "lodash";
-import { useLinkStore } from "../stores/useLinkStore";
-import { storeToRefs } from "pinia";
 
 // Props
 interface Props {
@@ -95,12 +96,16 @@ interface Props {
 }
 const props = defineProps<Props>();
 
+
 const { t, $t } = useI18nFallback(useI18n());
+
 
 // Split up tools to types
 const buttonTools = ref<Tool[]>([]);
 
+
 const formatTools = ref<Tool[]>([]);
+
 
 props.basicTools.forEach((tool) => {
   if (tool.excludeFromToolbar) {
@@ -117,9 +122,11 @@ props.basicTools.forEach((tool) => {
   buttonTools.value.push(tool);
 });
 
+
 const formatToolsDisabled = computed(() =>
   formatTools.value.every((tool) => tool.disabled?.(props.editor)),
 );
+
 
 const formatToolsDisplay = computed(() => {
   const activeFormat: Tool[] = formatTools.value.filter((tool: Tool) =>
@@ -131,8 +138,10 @@ const formatToolsDisplay = computed(() => {
   return t("tools.paragraph");
 });
 
+
 const linkStore = useLinkStore();
 const { dialog, isDialogOpen } = storeToRefs(linkStore);
+
 
 function translateShortcut(keys: string[]): string {
   return keys

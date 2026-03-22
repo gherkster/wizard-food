@@ -1,10 +1,11 @@
 // https://tiptap.dev/api/marks/link
 
 import Link from "@tiptap/extension-link";
-import customMessages from "../../i18n/custom-messages";
 import type { Editor } from "@tiptap/core";
-import { Tool } from "../../../common/types/tools";
+
 import { useLinkStore } from "../../stores/useLinkStore";
+import customMessages from "../../i18n/custom-messages";
+import { Tool } from "../../../common/types/tools";
 
 const add: Tool = {
   // https://tiptap.dev/api/marks/link

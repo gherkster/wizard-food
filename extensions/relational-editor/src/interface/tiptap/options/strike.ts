@@ -1,9 +1,10 @@
 // https://tiptap.dev/api/marks/strike
 
 import Strike from "@tiptap/extension-strike";
-import customMessages from "../../i18n/custom-messages";
 import type { Editor } from "@tiptap/core";
+
 import { extendMarkRangeIfUnselected } from "../util";
+import customMessages from "../../i18n/custom-messages";
 import { Tool } from "../../../common/types/tools";
 
 export default {

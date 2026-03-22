@@ -1,9 +1,10 @@
 // https://tiptap.dev/api/marks/italic
 
 import Italic from "@tiptap/extension-italic";
-import customMessages from "../../i18n/custom-messages";
 import type { Editor } from "@tiptap/core";
+
 import { extendMarkRangeIfUnselected } from "../util";
+import customMessages from "../../i18n/custom-messages";
 import { Tool } from "../../../common/types/tools";
 
 export default {

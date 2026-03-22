@@ -14,5 +14,6 @@ const props = withDefaults(
   },
 );
 
+
 const iconSize = computed(() => `${props.size}px`);
 </script>

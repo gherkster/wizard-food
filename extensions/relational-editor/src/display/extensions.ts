@@ -1,23 +1,24 @@
-import Document from "@tiptap/extension-document";
 import Text from "@tiptap/extension-text";
+import { TableRow } from "@tiptap/extension-table-row";
+import { TableHeader } from "@tiptap/extension-table-header";
+import { TableCell } from "@tiptap/extension-table-cell";
+import { Table } from "@tiptap/extension-table";
+import Strike from "@tiptap/extension-strike";
 import Paragraph from "@tiptap/extension-paragraph";
-import HardBreak from "@tiptap/extension-hard-break";
-import Heading from "@tiptap/extension-heading";
-import CodeBlock from "@tiptap/extension-code-block";
-import BulletList from "@tiptap/extension-bullet-list";
 import OrderedList from "@tiptap/extension-ordered-list";
 import ListItem from "@tiptap/extension-list-item";
-import Blockquote from "@tiptap/extension-blockquote";
-import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import Link from "@tiptap/extension-link";
-import Bold from "@tiptap/extension-bold";
 import Italic from "@tiptap/extension-italic";
-import Strike from "@tiptap/extension-strike";
+import HorizontalRule from "@tiptap/extension-horizontal-rule";
+import Heading from "@tiptap/extension-heading";
+import HardBreak from "@tiptap/extension-hard-break";
+import Document from "@tiptap/extension-document";
+import CodeBlock from "@tiptap/extension-code-block";
 import Code from "@tiptap/extension-code";
-import { Table } from "@tiptap/extension-table";
-import { TableHeader } from "@tiptap/extension-table-header";
-import { TableRow } from "@tiptap/extension-table-row";
-import { TableCell } from "@tiptap/extension-table-cell";
+import BulletList from "@tiptap/extension-bullet-list";
+import Bold from "@tiptap/extension-bold";
+import Blockquote from "@tiptap/extension-blockquote";
+
 import { useTipTap } from "../interface/composables/useTipTap";
 import inlineNodeTagNames from "../common/inlineNodeTagNames";
 
