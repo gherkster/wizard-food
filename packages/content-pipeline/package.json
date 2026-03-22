@@ -1,0 +1,57 @@
+{
+  "name": "@wizard/content-pipeline",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit --project tsconfig.json",
+    "content:sync": "tsx ./src/cli.ts"
+  },
+  "dependencies": {
+    "@wizard/content": "workspace:*",
+    "@wizard/openapi": "workspace:*",
+    "@tiptap/core": "catalog:",
+    "@tiptap/extension-blockquote": "catalog:",
+    "@tiptap/extension-bold": "catalog:",
+    "@tiptap/extension-bullet-list": "catalog:",
+    "@tiptap/extension-code": "catalog:",
+    "@tiptap/extension-code-block": "catalog:",
+    "@tiptap/extension-document": "catalog:",
+    "@tiptap/extension-hard-break": "catalog:",
+    "@tiptap/extension-heading": "catalog:",
+    "@tiptap/extension-horizontal-rule": "catalog:",
+    "@tiptap/extension-italic": "catalog:",
+    "@tiptap/extension-link": "catalog:",
+    "@tiptap/extension-list-item": "catalog:",
+    "@tiptap/extension-ordered-list": "catalog:",
+    "@tiptap/extension-paragraph": "catalog:",
+    "@tiptap/extension-strike": "catalog:",
+    "@tiptap/extension-table": "catalog:",
+    "@tiptap/extension-table-cell": "catalog:",
+    "@tiptap/extension-table-header": "catalog:",
+    "@tiptap/extension-table-row": "catalog:",
+    "@tiptap/extension-text": "catalog:",
+    "@tiptap/html": "catalog:",
+    "commander": "catalog:",
+    "dayjs": "catalog:",
+    "dotenv": "catalog:",
+    "fraction.js": "catalog:",
+    "openapi-fetch": "catalog:",
+    "pure-rand": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  }
+}

@@ -1,6 +1,7 @@
-import crypto from "crypto";
-import { imageFileExtension } from "../../shared/constants/images";
-import type { AspectRatio, ImagePurpose, ImageVariants } from "../../shared/types/image";
+import crypto from "node:crypto";
+import type { AspectRatio, ImagePurpose, ImageVariants } from "@wizard/content/store";
+
+const imageFileExtension = "avif";
 
 type CloudinaryRuntimeConfig = {
   cloudName: string;
@@ -70,9 +71,6 @@ const buildTransformation = (aspectRatio: AspectRatio, width: number): string =>
   return `c_fill,g_auto,ar_${x}:${y},w_${width},f_${imageFileExtension},q_auto`;
 };
 
-/**
- * https://cloudinary.com/documentation/advanced_url_delivery_options#generating_delivery_url_signatures
- */
 const generateCloudinaryDeliverySignature = (signingKey: string, slug: string) => {
   const hash = crypto.createHash("sha1").update(`${slug}${signingKey}`).digest("base64");
   return `s--${hash.substring(0, 8).replaceAll("+", "-").replaceAll("/", "_")}--`;

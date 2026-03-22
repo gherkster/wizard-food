@@ -11,7 +11,9 @@ import type {
 } from "~~/shared/types/recipe";
 
 type InlineIngredientMarkup = {
-  element: HTMLElement;
+  element: {
+    textContent: string | null;
+  };
   data: {
     amount?: Fraction;
     unit?: SingularPluralPair;

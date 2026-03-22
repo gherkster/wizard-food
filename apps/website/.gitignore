@@ -9,6 +9,7 @@ public/search-index.json
 public/version.json
 stats.html
 .data
+.content
 
 # Node dependencies
 node_modules

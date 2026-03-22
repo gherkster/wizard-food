@@ -4,6 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "content:sync": "pnpm run content:sync:website",
+    "content:sync:website": "pnpm --filter @wizard/website run content:sync",
     "dev": "turbo run dev --filter=@wizard/website --continue",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",

@@ -1,21 +1,38 @@
-import { recipes as recipePayloads } from "~~/.nuxt/module/nuxt-prepare";
-import { recipeTotalDuration } from "~~/shared/utils/formatting";
-import { mapToRecipePreview } from "~~/shared/utils/mapping";
+import type { FeaturedRecipes, RecipePayload, RecipePreview } from "@wizard/content/store";
+import { formatDuration, recipeTotalDuration } from "./formatting";
 
-export default defineEventHandler(async () => {
-  const recipes = ((recipePayloads) ?? []).map((r) => mapToRecipePreview(r));
+const mapToRecipePreview = (recipe: RecipePayload): RecipePreview => {
+  return {
+    title: recipe.title,
+    descriptionSnippet: recipe.descriptionSnippet,
+    course: recipe.course ?? undefined,
+    cuisine: recipe.cuisine ?? undefined,
+    datePublished: recipe.datePublished,
+    favourite: recipe.favourite ?? undefined,
+    featuredTag: recipe.featuredTag,
+    preparationDuration: recipe.preparationDuration ?? undefined,
+    cookingDuration: recipe.cookingDuration ?? undefined,
+    customDurationName: recipe.customDurationName ?? undefined,
+    customDuration: recipe.customDuration ?? undefined,
+    totalDurationLabel: formatDuration(recipeTotalDuration(recipe)),
+    coverImage: recipe.coverImage,
+    slug: recipe.slug,
+    tags: recipe.tags,
+  };
+};
+
+export const buildFeaturedRecipes = (recipePayloads: RecipePayload[]): FeaturedRecipes => {
+  const recipes = (recipePayloads ?? []).map((r) => mapToRecipePreview(r));
 
   if (!recipes || recipes.length === 0) {
     throw new Error("Failed to retrieve recipes");
   }
 
-  // Track the recipes that have already been picked so far so that duplicates are not displayed
   const alreadyShownRecipes = new Set<string>();
 
   const now = new Date();
 
   const latestRecipes = recipes
-    // A missing date_published value means the recipe is brand new and the publish date has not been set in the record yet, so use the current time.
     .sort(
       (a, b) =>
         (b.datePublished ? new Date(b.datePublished) : now).getTime() -
@@ -42,7 +59,6 @@ export default defineEventHandler(async () => {
     .slice(0, 4);
   quickRecipes.forEach((r) => alreadyShownRecipes.add(r.slug));
 
-  // TODO: Probably needs to cover more cuisines
   const worldCuisineRecipes = shuffle(recipes)
     .filter(
       (r) =>
@@ -58,9 +74,8 @@ export default defineEventHandler(async () => {
     quickRecipes,
     worldCuisineRecipes,
   };
-});
+};
 
-// https://stackoverflow.com/a/46545530
 function shuffle<Type>(items: Type[]): Type[] {
   return items
     .map((value) => ({ value, sort: Math.random() }))
