@@ -1,4 +1,9 @@
 import MiniSearch, { type SearchResult } from "minisearch";
+import {
+  searchIndexSettings,
+  type SearchIndexRecipe,
+  type SearchIndexSearchFields,
+} from "~/utils/search";
 
 // Store these outside the function in the global scope for re-use
 const miniSearch = ref<MiniSearch<SearchIndexSearchFields>>();
@@ -14,7 +19,7 @@ export function useSearch() {
     verifySearchIndexIsCached();
 
     // If a valid copy of the search index wasn't found in localstorage,
-    // trigger an async download of the index in the background
+    // Trigger an async download of the index in the background
     if (!miniSearch.value) {
       await refreshIndex();
     }
@@ -83,9 +88,9 @@ export function useSearch() {
   }
 
   return {
+    allItems,
     ensureIndex,
     refreshIndex,
     search,
-    allItems,
   };
 }

@@ -1,3 +1,4 @@
+import type { RecipePayload } from "@wizard/content/store";
 import dayjs from "dayjs";
 import duration, { type Duration } from "dayjs/plugin/duration";
 import Fraction from "fraction.js";
@@ -101,7 +102,7 @@ export const recipeTotalDuration = (recipe: RecipeDuration) => {
   return secondsToDuration(sumDuration);
 };
 
-export const formatRecipeDurations = (recipe: Recipe) => {
+export const formatRecipeDurations = (recipe: RecipePayload) => {
   return {
     preparation: recipe.preparationDuration
       ? formatDuration(secondsToDuration(recipe.preparationDuration))

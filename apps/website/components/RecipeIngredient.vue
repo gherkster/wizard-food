@@ -10,7 +10,9 @@
 </template>
 
 <script setup lang="ts">
+import type { Ingredient } from "@wizard/content/store";
 import Fraction from "fraction.js";
+import { formatIngredientAmount } from "~/utils/formatting";
 
 const props = defineProps<{
   ingredient: Ingredient;

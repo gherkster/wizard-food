@@ -13,10 +13,11 @@ import {
   loadRecipesBySlug,
 } from "@wizard/content/store";
 import type { RecipePreview } from "@wizard/content/store";
-import { formatDuration, recipeTotalDuration } from "../../shared/utils/formatting";
-import { SearchIndexSearchFields, searchIndexSettings } from "../../shared/utils/searchIndex";
-import type { SearchIndexRecipe } from "../../shared/types/recipe";
-import type { Version } from "../../shared/types/version";
+import {
+  type SearchIndexRecipe,
+  type SearchIndexSearchFields,
+  searchIndexSettings,
+} from "../../utils/search";
 
 const logger = useLogger();
 
@@ -112,7 +113,12 @@ const createViteDevContentApiPlugin = (contentDir: string): VitePlugin => {
 
           const matchRecipe = pathname.match(/^\/api\/recipes\/(.+)$/);
           if (matchRecipe) {
-            const slug = decodeURIComponent(matchRecipe[1]);
+            const slugComponent = matchRecipe[1];
+            if (!slugComponent) {
+              throw new Error("Slug is a required path parameter.");
+            }
+
+            const slug = decodeURIComponent(slugComponent);
             const recipe = await getRecipeBySlug(slug, contentDir);
 
             if (!recipe) {
@@ -177,7 +183,7 @@ async function saveRecipeSearchIndex(index: string, nuxt: Nuxt, buildId: string)
   const hash = crypto.createHash("md5").update(index).digest("hex");
   logger.info("Generated search index hash:", hash);
 
-  const currentVersion: Version = {
+  const currentVersion = {
     build: buildId,
     searchIndex: hash,
   };
@@ -195,7 +201,7 @@ const mapToSearchIndexRecipe = (recipe: RecipePreview): SearchIndexRecipe => {
       width: recipe.coverImage.width,
       previewSquare: recipe.coverImage.variants.preview.square,
     },
-    totalDurationLabel: formatDuration(recipeTotalDuration(recipe)),
+    totalDurationLabel: recipe.totalDurationLabel,
     tags: recipe.tags,
     featuredTag: recipe.featuredTag,
     slug: recipe.slug,

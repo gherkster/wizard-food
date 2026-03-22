@@ -28,6 +28,9 @@
 </template>
 
 <script setup lang="ts">
+import { useSearch } from "~/composables/useSearch";
+import { debounce } from "~/utils/debounce";
+
 const searchClient = useSearch();
 /*
   Kick off a background download of the search index if it hasn't been downloaded yet.
