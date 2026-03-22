@@ -1,0 +1,13 @@
+{
+  "printWidth": 100,
+  "trailingComma": "all",
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/.turbo/**",
+    "**/dist/**",
+    "**/.nuxt/**",
+    "**/.output/**",
+    "pnpm-lock.yaml"
+  ]
+}

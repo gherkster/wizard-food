@@ -53,8 +53,7 @@ export default defineNuxtConfig({
     },
     css: {
       preprocessorOptions: {
-        scss: {
-        },
+        scss: {},
       },
     },
   },
@@ -63,17 +62,10 @@ export default defineNuxtConfig({
    * The recipe module is explicitly included in this list since it handles
    * prerender route generation, static content injection, and search index output.
    */
-  modules: [
-    "@nuxt/fonts",
-    "@nuxtjs/sitemap",
-    "@nuxt/eslint",
-    "@nuxtjs/robots",
-    "./modules/recipe",
-    "@nuxt/icon",
-  ],
+  modules: ["@nuxt/fonts", "@nuxtjs/sitemap", "@nuxtjs/robots", "./modules/recipe", "@nuxt/icon"],
 
   imports: {
-    dirs: ["clients"],
+    scan: false, // Only auto import framework-specific functions like ref
   },
 
   fonts: {
@@ -98,7 +90,7 @@ export default defineNuxtConfig({
     customCollections: [
       {
         prefix: "wf",
-        dir: "./app/assets/icons",
+        dir: "./assets/icons",
       },
     ],
   },
