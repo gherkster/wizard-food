@@ -2,10 +2,8 @@
   "name": "@wizard/website",
   "private": true,
   "scripts": {
-    "build": "pnpm run content:sync && nuxt build",
     "dev": "pnpm run content:sync && nuxt dev",
-    "generate": "pnpm run content:sync && nuxt generate",
-    "prepare": "pnpm exec nuxt prepare",
+    "generate": "nuxt generate",
     "content:sync": "pnpm --filter @wizard/content-pipeline run content:sync sync --site $PWD --dotenv-file .env --content-dir .content",
     "bundle:analyze": "nuxi analyze",
     "typecheck": "nuxi typecheck"

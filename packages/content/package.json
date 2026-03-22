@@ -30,6 +30,7 @@
     "fraction.js": "catalog:"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "typescript": "catalog:"
   }
 }
