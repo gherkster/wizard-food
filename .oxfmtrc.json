@@ -3,8 +3,9 @@
   "trailingComma": "all",
   "sortPackageJson": false,
   "sortImports": {
-    "order": "desc"
+    "order": "desc",
   },
+  "endOfLine": "lf",
   "ignorePatterns": [
     "**/node_modules/**",
     "**/.turbo/**",
@@ -12,6 +13,6 @@
     "**/.nuxt/**",
     "**/.output/**",
     "pnpm-lock.yaml",
-    "directus-schema.d.ts"
-  ]
+    "directus-schema.d.ts",
+  ],
 }

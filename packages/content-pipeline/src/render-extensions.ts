@@ -96,7 +96,8 @@ export const inlineIngredientSerializer = Node.create({
           "data-ingredient": JSON.stringify(htmlAttributes.data),
         };
 
-      const isSingularForm = htmlAttributes.data.amount && Number(htmlAttributes.data.amount) <= 1;
+      const isSingularForm =
+        htmlAttributes.data.amount !== undefined && Number(htmlAttributes.data.amount) <= 1;
 
       return [
         "span",
@@ -105,7 +106,10 @@ export const inlineIngredientSerializer = Node.create({
           ...inlineIngredientAttributes,
         },
         formatIngredient({
-          amount: htmlAttributes.data.amount ? new Fraction(htmlAttributes.data.amount) : undefined,
+          amount:
+            htmlAttributes.data.amount !== undefined
+              ? new Fraction(htmlAttributes.data.amount)
+              : undefined,
           unit: isSingularForm
             ? htmlAttributes.data.unit?.singular
             : htmlAttributes.data.unit?.plural,

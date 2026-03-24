@@ -6,7 +6,6 @@ import type { Plugin as VitePlugin } from "vite";
 import type { Nuxt } from "nuxt/schema";
 import { addTemplate, addVitePlugin, defineNuxtModule, useLogger } from "nuxt/kit";
 import MiniSearch from "minisearch";
-import type { RecipePreview } from "@wizard/content/store";
 import {
   getAllRecipes,
   getFeaturedRecipes,
@@ -14,6 +13,7 @@ import {
   getRecipeBySlug,
   loadRecipesBySlug,
 } from "@wizard/content/store";
+import type { RecipePreview } from "@wizard/content/store";
 
 import {
   type SearchIndexRecipe,

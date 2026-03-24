@@ -1,9 +1,22 @@
 {
   "rules": {
-    "no-debugger": "error"
+    "no-debugger": "error",
+    "typescript/strict-boolean-expressions": [
+      "error",
+      {
+        "allowNumber": false,
+        "allowNullableBoolean": true,
+        "allowNullableString": true,
+        "allowString": true,
+      },
+    ],
+  },
+  "options": {
+    "typeAware": true,
+    "typeCheck": true,
   },
   "env": {
-    "builtin": true
+    "builtin": true,
   },
   "ignorePatterns": [
     "**/node_modules/**",
@@ -11,6 +24,6 @@
     "**/dist/**",
     "**/.nuxt/**",
     "**/.output/**",
-    "pnpm-lock.yaml"
-  ]
+    "pnpm-lock.yaml",
+  ],
 }

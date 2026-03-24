@@ -27,8 +27,8 @@
 </template>
 
 <script setup lang="ts">
-import type { Image } from "@wizard/content/store";
 import type { WebsitePageContent } from "@wizard/content/store";
+import type { Image } from "@wizard/content/store";
 
 import type { SearchIndexRecipe } from "~/utils/search";
 import { useSearch } from "~/composables/useSearch";

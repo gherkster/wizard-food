@@ -1,32 +1,51 @@
 {
-  "name": "@wizard/website",
+  "name": "website",
+  "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "pnpm run content:sync && nuxt dev",
-    "generate": "nuxt generate",
-    "content:sync": "pnpm --filter @wizard/content-pipeline run content:sync sync --site $PWD --dotenv-file .env --content-dir .content",
-    "bundle:analyze": "nuxi analyze",
-    "typecheck": "nuxi typecheck"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "test:unit": "vitest",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build",
+    "lint": "run-s lint:*",
+    "lint:oxlint": "oxlint . --fix",
+    "lint:eslint": "eslint . --fix --cache",
+    "format": "oxfmt src/"
   },
   "dependencies": {
-    "dayjs": "catalog:",
-    "fraction.js": "catalog:",
-    "minisearch": "catalog:"
+    "@astrojs/vue": "catalog:",
+    "astro": "catalog:",
+    "vue": "catalog:"
   },
   "devDependencies": {
-    "@iconify-json/mynaui": "catalog:",
-    "@nuxt/fonts": "catalog:",
-    "@nuxt/icon": "catalog:",
-    "@nuxtjs/robots": "catalog:",
-    "@nuxtjs/sitemap": "catalog:",
-    "@types/node": "catalog:",
-    "@wizard/content": "workspace:*",
-    "nuxt": "catalog:",
-    "sass": "catalog:",
-    "schema-dts": "catalog:",
-    "typescript": "catalog:",
-    "vue": "catalog:",
-    "vue-tsc": "catalog:"
+    "@tsconfig/node24": "24.0.4",
+    "@types/jsdom": "catalog:",
+    "@types/node": "^24.12.0",
+    "@vitejs/plugin-vue": "^6.0.4",
+    "@vitejs/plugin-vue-jsx": "^5.1.4",
+    "@vitest/eslint-plugin": "^1.6.10",
+    "@vue/eslint-config-typescript": "^14.7.0",
+    "@vue/test-utils": "^2.4.6",
+    "@vue/tsconfig": "^0.9.0",
+    "eslint": "^10.0.3",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-oxlint": "~1.51.0",
+    "eslint-plugin-vue": "~10.8.0",
+    "jiti": "^2.6.1",
+    "jsdom": "^28.1.0",
+    "npm-run-all2": "^8.0.4",
+    "oxfmt": "^0.37.0",
+    "oxlint": "~1.51.0",
+    "typescript": "~5.9.3",
+    "vite": "beta",
+    "vite-plugin-vue-devtools": "^8.0.7",
+    "vitest": "^4.0.18",
+    "vue-tsc": "^3.2.5"
   },
-  "packageManager": "pnpm@10.32.1+sha512.a706938f0e89ac1456b6563eab4edf1d1faf3368d1191fc5c59790e96dc918e4456ab2e67d613de1043d2e8c81f87303e6b40d4ffeca9df15ef1ad567348f2be"
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  }
 }
