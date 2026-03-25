@@ -1,10 +1,11 @@
+import { ref } from "vue";
 import MiniSearch, { type SearchResult } from "minisearch";
 
 import {
   searchIndexSettings,
   type SearchIndexRecipe,
   type SearchIndexSearchFields,
-} from "~/utils/search";
+} from "@/utils/search";
 
 // Store these outside the function in the global scope for re-use
 const miniSearch = ref<MiniSearch<SearchIndexSearchFields>>();
@@ -27,26 +28,31 @@ export function useSearch() {
   }
 
   function verifySearchIndexIsCached() {
-    if (import.meta.client) {
-      const storedIndex = localStorage.getItem("search-index");
-      if (storedIndex) {
-        loadIndex(storedIndex);
-      }
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const storedIndex = localStorage.getItem("search-index");
+    if (storedIndex) {
+      loadIndex(storedIndex);
     }
   }
 
   async function refreshIndex() {
-    if (!import.meta.client) {
+    if (typeof window === "undefined") {
       return;
     }
 
-    const { data: index } = await useFetch<JSON>("/search-index.json");
-    if (index.value) {
-      const jsonString = JSON.stringify(index.value);
-      loadIndex(jsonString);
-
-      localStorage.setItem("search-index", jsonString);
+    const response = await fetch("/search-index.json");
+    if (!response.ok) {
+      return;
     }
+
+    const index = (await response.json()) as JSON;
+    const jsonString = JSON.stringify(index);
+    loadIndex(jsonString);
+
+    localStorage.setItem("search-index", jsonString);
   }
 
   async function search(query: string) {

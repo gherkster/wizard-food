@@ -1,0 +1,26 @@
+---
+import HeaderSearch from "@/components/layout/HeaderSearch.vue";
+
+const navItems = [
+  { href: "/", label: "Home" },
+  { href: "/recipes", label: "Recipes" },
+];
+const currentPath = Astro.url.pathname;
+---
+
+<header class="nav-header">
+  <div class="nav-header__options">
+    {
+      navItems.map((item) => (
+        <a
+          href={item.href}
+          class={`concealed${currentPath === item.href ? " is-active" : ""}`}
+          aria-current={currentPath === item.href ? "page" : undefined}
+        >
+          {item.label}
+        </a>
+      ))
+    }
+    <HeaderSearch client:load />
+  </div>
+</header>

@@ -1,0 +1,19 @@
+---
+import { loadPagesContent } from "@wizard/content/store";
+
+import RecipesIndexPage from "@/components/recipes/RecipesIndexPage.vue";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const pagesContent = await loadPagesContent(".content");
+const content = pagesContent.recipes;
+---
+
+<BaseLayout
+  title={content.title}
+  description={content.description}
+  canonicalPath="/recipes"
+  ogTitle={content.title}
+  ogDescription={content.openGraphDescription}
+>
+  <RecipesIndexPage client:load />
+</BaseLayout>

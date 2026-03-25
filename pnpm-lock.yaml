@@ -203,6 +203,9 @@ importers:
       fraction.js:
         specifier: 'catalog:'
         version: 4.3.7
+      minisearch:
+        specifier: 'catalog:'
+        version: 6.3.0
       vue:
         specifier: 'catalog:'
         version: 3.5.30(typescript@5.9.3)
@@ -210,6 +213,9 @@ importers:
       '@vitejs/plugin-vue-jsx':
         specifier: 'catalog:'
         version: 5.1.5(vite@8.0.0-beta.18(@types/node@24.12.0)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.30(typescript@5.9.3))
+      sass:
+        specifier: 'catalog:'
+        version: 1.98.0
 
   apps/website-old:
     dependencies:

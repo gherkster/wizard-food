@@ -15,6 +15,7 @@
     "astro": "catalog:",
     "dayjs": "catalog:",
     "fraction.js": "catalog:",
+    "minisearch": "catalog:",
     "vue": "catalog:"
   },
   "engines": {

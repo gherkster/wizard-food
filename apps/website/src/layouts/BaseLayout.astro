@@ -1,0 +1,58 @@
+---
+import SiteHeader from "@/components/layout/SiteHeader.astro";
+import "@/styles/index.scss";
+
+type Props = {
+  title?: string;
+  description?: string;
+  canonicalPath?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: string;
+};
+
+const {
+  title = "Wizard Food",
+  description,
+  canonicalPath,
+  ogTitle = title,
+  ogDescription = description,
+  ogImage,
+} = Astro.props as Props;
+
+const siteUrl = import.meta.env.PUBLIC_SITE_URL?.trim();
+
+const canonical =
+  siteUrl && canonicalPath && !canonicalPath.includes("?")
+    ? new URL(canonicalPath, siteUrl).toString()
+    : undefined;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    {ogTitle && <meta property="og:title" content={ogTitle} />}
+    {ogDescription && <meta property="og:description" content={ogDescription} />}
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    <slot name="head" />
+  </head>
+  <body>
+    <div class="layout">
+      <SiteHeader />
+      <main class="content">
+        <slot />
+      </main>
+    </div>
+  </body>
+</html>

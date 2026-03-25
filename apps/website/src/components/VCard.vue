@@ -1,5 +1,5 @@
 <template>
-  <nuxt-link :to="link" class="concealed">
+  <a :href="link" class="concealed">
     <div class="card" :class="variant">
       <blurrable-image
         :img="image"
@@ -17,7 +17,7 @@
             </small>
           </span>
           <span v-if="duration" class="card__label card__duration no-underline">
-            <icon name="mynaui:clock-four" :size="18" />
+            <span class="card__clock" aria-hidden="true">◷</span>
             <small
               ><span>{{ duration }}</span></small
             >
@@ -25,11 +25,12 @@
         </div>
       </div>
     </div>
-  </nuxt-link>
+  </a>
 </template>
 
 <script setup lang="ts">
 import type { Image } from "@wizard/content/store";
+import BlurrableImage from "@/components/BlurrableImage.vue";
 
 withDefaults(
   defineProps<{
@@ -53,8 +54,8 @@ withDefaults(
 </script>
 
 <style lang="scss" scoped>
-@use "@/styles/mixins" as m;
-@use "@/styles/variables" as v;
+@use "../styles/mixins" as m;
+@use "../styles/variables" as v;
 .card {
   position: relative;
   &__content {
@@ -78,7 +79,7 @@ withDefaults(
   &__duration {
     display: inline-flex;
     align-items: center;
-    .icon {
+    .card__clock {
       margin-right: 4px;
     }
   }
@@ -116,7 +117,7 @@ small {
 </style>
 
 <style lang="scss">
-@use "@/styles/mixins" as m;
+@use "../styles/mixins" as m;
 .card.preview {
   display: flex;
   flex-direction: column;

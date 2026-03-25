@@ -1,5 +1,73 @@
+@use "sass:map";
 @use "variables" as v;
 @use "mixins" as m;
+
+.layout {
+  max-width: 2000px;
+  margin: 0 auto;
+  padding: 2rem 5%;
+}
+
+.content {
+  max-width: map.get(v.$breakpoints, xl) * 1px;
+  margin: 0 auto;
+}
+
+.nav-header {
+  display: flex;
+  padding-top: 42px;
+  @include m.spacing("pb", "lg");
+
+  &__options {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    @include m.spacing("gx", "xs");
+    @include m.spacing("gy", "sm");
+
+    > a {
+      @include m.spacing("p", "xxs");
+
+      &.is-active {
+        text-decoration: underline;
+      }
+    }
+
+    .nav-header-search {
+      display: flex;
+      position: relative;
+      flex-direction: column;
+      margin-left: auto;
+      width: 260px;
+
+      @include m.breakpoint("sm", "max") {
+        width: 100%;
+      }
+
+      &__input {
+        width: 100%;
+        background-color: var(--theme-input-background-color);
+        border: none;
+        border-radius: v.$border-radius-md;
+        color: var(--theme-font-color);
+        outline: none;
+        @include m.spacing("px", "xs");
+        @include m.spacing("py", "xs");
+      }
+
+      &__mascot {
+        position: absolute;
+        top: 0;
+        right: 0;
+        align-self: flex-end;
+        transform: translateY(-100%);
+        cursor: pointer;
+        @include m.spacing("mr", "sm");
+      }
+    }
+  }
+}
 
 .center-screen {
   display: flex;

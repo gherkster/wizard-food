@@ -3,6 +3,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import MascotSVG from "@/components/MascotSVG.vue";
+
 const props = withDefaults(
   defineProps<{
     excited?: boolean;
@@ -13,7 +16,6 @@ const props = withDefaults(
     size: 24,
   },
 );
-
 
 const iconSize = computed(() => `${props.size}px`);
 </script>

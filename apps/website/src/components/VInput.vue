@@ -9,6 +9,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
+
 defineProps<{
   value?: string;
   label?: string;
@@ -26,8 +28,8 @@ const focusButton = () => btnRef.value?.focus();
 </script>
 
 <style lang="scss" scoped>
-@use "@/styles/mixins" as m;
-@use "@/styles/variables" as v;
+@use "../styles/mixins" as m;
+@use "../styles/variables" as v;
 
 .input-container {
   display: flex;
