@@ -16,7 +16,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
+import { navigate } from "astro:transitions/client";
 import VSearch from "@/components/VSearch.vue";
 import VMascot from "@/components/VMascot.vue";
 import { debounce } from "@/utils/debounce";
@@ -27,8 +28,27 @@ const searchClient = useSearch();
 searchClient.ensureIndex();
 
 const { query, initFromUrl, setQuery } = useRecipeSearchState();
+const isNavigatingToRecipes = ref(false);
+let syncFromLocationHandler: (() => void) | null = null;
 
 const onInput = (value: string) => {
+  const isRecipesPage = window.location.pathname === "/recipes";
+
+  if (!isRecipesPage) {
+    setQuery(value);
+    const trimmedQuery = value.trim();
+    if (trimmedQuery.length === 0) {
+      return;
+    }
+
+    if (!isNavigatingToRecipes.value) {
+      isNavigatingToRecipes.value = true;
+      void navigate(`/recipes?search=${encodeURIComponent(trimmedQuery)}`);
+    }
+    animateMascot();
+    return;
+  }
+
   search(value);
   animateMascot();
 };
@@ -41,16 +61,17 @@ const search = debounce(async (value: string) => {
   const isRecipesPage = window.location.pathname === "/recipes";
 
   if (isRecipesPage) {
+    isNavigatingToRecipes.value = false;
     setQuery(value, { replaceUrl: true });
     return;
   }
 
   if (trimmedQuery.length === 0) {
-    window.location.assign("/recipes");
+    void navigate("/recipes");
     return;
   }
 
-  window.location.assign(`/recipes?search=${encodeURIComponent(trimmedQuery)}`);
+  void navigate(`/recipes?search=${encodeURIComponent(trimmedQuery)}`);
 }, searchDebounceMs);
 
 const isAnimated = ref(false);
@@ -67,6 +88,29 @@ const finishAnimating = debounce(() => {
 }, animationDebounceMs);
 
 onMounted(() => {
-  initFromUrl();
+  const syncFromLocation = () => {
+    if (window.location.pathname === "/recipes") {
+      initFromUrl();
+      isNavigatingToRecipes.value = false;
+      return;
+    }
+
+    setQuery("");
+    isNavigatingToRecipes.value = false;
+  };
+
+  syncFromLocationHandler = syncFromLocation;
+  syncFromLocation();
+  document.addEventListener("astro:after-swap", syncFromLocation);
+  window.addEventListener("popstate", syncFromLocation);
+});
+
+onUnmounted(() => {
+  if (!syncFromLocationHandler) {
+    return;
+  }
+
+  document.removeEventListener("astro:after-swap", syncFromLocationHandler);
+  window.removeEventListener("popstate", syncFromLocationHandler);
 });
 </script>

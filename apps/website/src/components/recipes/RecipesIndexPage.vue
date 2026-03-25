@@ -26,6 +26,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
+import { navigate } from "astro:transitions/client";
 import type { Image } from "@wizard/content/store";
 
 import type { SearchIndexRecipe } from "@/utils/search";
@@ -115,7 +116,7 @@ const searchResultsPrefix = computed(() => {
 });
 
 const navigateToRecipes = () => {
-  window.location.assign("/recipes");
+  void navigate("/recipes");
 };
 </script>
 
