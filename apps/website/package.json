@@ -1,51 +1,27 @@
 {
   "name": "website",
-  "version": "0.0.0",
-  "private": true,
   "type": "module",
+  "version": "0.0.1",
   "scripts": {
+    "content:sync": "pnpm --filter @wizard/content-pipeline run content:sync sync --site $PWD --dotenv-file .env --content-dir .content",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "test:unit": "vitest",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --build",
-    "lint": "run-s lint:*",
-    "lint:oxlint": "oxlint . --fix",
-    "lint:eslint": "eslint . --fix --cache",
-    "format": "oxfmt src/"
+    "astro": "astro"
   },
   "dependencies": {
     "@astrojs/vue": "catalog:",
+    "@wizard/content": "workspace:*",
     "astro": "catalog:",
+    "dayjs": "catalog:",
+    "fraction.js": "catalog:",
     "vue": "catalog:"
   },
-  "devDependencies": {
-    "@tsconfig/node24": "24.0.4",
-    "@types/jsdom": "catalog:",
-    "@types/node": "^24.12.0",
-    "@vitejs/plugin-vue": "^6.0.4",
-    "@vitejs/plugin-vue-jsx": "^5.1.4",
-    "@vitest/eslint-plugin": "^1.6.10",
-    "@vue/eslint-config-typescript": "^14.7.0",
-    "@vue/test-utils": "^2.4.6",
-    "@vue/tsconfig": "^0.9.0",
-    "eslint": "^10.0.3",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-oxlint": "~1.51.0",
-    "eslint-plugin-vue": "~10.8.0",
-    "jiti": "^2.6.1",
-    "jsdom": "^28.1.0",
-    "npm-run-all2": "^8.0.4",
-    "oxfmt": "^0.37.0",
-    "oxlint": "~1.51.0",
-    "typescript": "~5.9.3",
-    "vite": "beta",
-    "vite-plugin-vue-devtools": "^8.0.7",
-    "vitest": "^4.0.18",
-    "vue-tsc": "^3.2.5"
-  },
   "engines": {
-    "node": "^20.19.0 || >=22.12.0"
+    "node": ">=22.12.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue-jsx": "catalog:",
+    "sass": "catalog:"
   }
 }

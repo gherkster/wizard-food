@@ -1,15 +1,10 @@
 {
-  "extends": ["../../tsconfig.base.json"],
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.node.json",
-    },
-    {
-      "path": "./tsconfig.app.json",
-    },
-    {
-      "path": "./tsconfig.vitest.json",
-    },
-  ],
+  "extends": ["../../tsconfig.base.json", "astro/tsconfigs/strict"],
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"],
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
 }

@@ -3,6 +3,7 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref, watch } from "vue";
 import Fraction from "fraction.js";
 import type { InlineIngredientHTMLElement } from "@wizard/content/store";
 import { formatIngredient, type InlineIngredient, type SingularPluralPair } from "@wizard/content";
@@ -123,7 +124,7 @@ const tryParseInlineIngredient = (
 </style>
 
 <style lang="scss">
-@use "@/styles/variables" as v;
+@use "../styles/variables" as v;
 .inline-ingredient {
   font-weight: v.$font-weight-bold;
 }

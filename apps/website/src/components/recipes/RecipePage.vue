@@ -1,18 +1,18 @@
 <template>
-  <div v-if="recipe" class="recipe">
+  <div class="recipe">
     <blurrable-image :img="recipe.coverImage" purpose="cover" aspect-ratio="portrait" />
     <div class="recipe__summary">
       <h1 class="recipe__title">{{ recipe.title }}</h1>
       <div v-if="recipe.description" class="recipe__description" v-html="recipe.description" />
       <div class="recipe__tags">
-        <nuxt-link
+        <a
           v-for="tag in recipe.tags"
           :key="tag"
-          :to="createSearchLink(tag)"
+          :href="createSearchLink(tag)"
           class="concealed"
         >
           <v-tag icon-name="mynaui:search">{{ tag }}</v-tag>
-        </nuxt-link>
+        </a>
       </div>
       <div class="recipe__details highlight-container">
         <div v-if="durationLabels.total" class="recipe__duration">
@@ -67,8 +67,8 @@
           <b>{{ ingredientSection.name }}</b>
         </p>
         <ul>
-          <template v-for="ingredient in ingredientSection.ingredients">
-            <li v-if="!ingredient.inlineOnly" :key="ingredient.name.singular">
+          <template v-for="ingredient in ingredientSection.ingredients" :key="ingredient.name.singular">
+            <li v-if="!ingredient.inlineOnly">
               <recipe-ingredient
                 :ingredient="ingredient"
                 :ingredient-multiplier="servings"
@@ -116,128 +116,49 @@
       <div v-html="recipe.note" />
     </div>
     <footer class="footer">
-      <icon name="wf:logo-light" :size="140" class="light-theme-only" />
-      <icon name="wf:logo-dark" :size="140" class="dark-theme-only" />
+      <img src="/icons/logo-light.svg" alt="Wizard Food" width="140" class="light-theme-only" />
+      <img src="/icons/logo-dark.svg" alt="Wizard Food" width="140" class="dark-theme-only" />
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from "vue";
 import type { RecipePayload } from "@wizard/content/store";
 
-import { useJsonld } from "~/utils/jsonld";
-import { formatRecipeDurations, recipeTotalDuration } from "~/utils/formatting";
-import type { RouteLocationRaw } from "#vue-router";
+import BlurrableImage from "@/components/BlurrableImage.vue";
+import RecipeIngredient from "@/components/RecipeIngredient.vue";
+import RecipeInstruction from "@/components/RecipeInstruction.vue";
+import ServingsAdjuster from "@/components/ServingsAdjuster.vue";
+import VBadge from "@/components/VBadge.vue";
+import VPopover from "@/components/VPopover.vue";
+import VTag from "@/components/VTag.vue";
+import { formatRecipeDurations } from "@/utils/formatting";
 
-const route = useRoute();
+const props = defineProps<{
+  recipe: RecipePayload;
+}>();
 
-
-const slug = route.params.slug!.toString();
-
-
-const recipesResponse = await useAsyncData(slug, async (): Promise<RecipePayload> => {
-  if (import.meta.server) {
-    const { recipesBySlug } = await import("#content");
-    const recipe = recipesBySlug[slug];
-    if (!recipe) {
-      throw `Recipe ${slug} could not be retrieved`;
-    }
-    return recipe;
-  }
-
-  if (import.meta.dev) {
-    const { data: recipe } = await useFetch(`/api/recipes/${slug}`);
-    if (!recipe.value) {
-      throw `Recipe ${slug} could not be retrieved`;
-    }
-    return recipe.value as RecipePayload;
-  }
-
-  throw `Recipe ${slug} could not be retrieved`;
-});
-
-
-if (recipesResponse.error.value) {
-  throw createError({
-    statusCode: 500,
-    statusMessage: recipesResponse.error.value?.message,
-  });
-}
-
-
-if (!recipesResponse.data.value) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: "Page not found!",
-  });
-}
-const recipe = ref(recipesResponse.data.value);
-
-
-const durationLabels = computed(() => formatRecipeDurations(recipe.value));
-
-
-useHead({
-  title: recipe.value.title,
-});
-
-
-if (import.meta.server) {
-  useSeoMeta({
-    title: recipe.value.title,
-    ogTitle: recipe.value.title,
-    description: recipe.value.descriptionPlainText,
-    ogDescription: recipe.value.descriptionSnippet,
-    ogImage: recipe.value.coverImage.variants.cover.square.src,
-  });
-
-
-  useJsonld({
-    "@context": "https://schema.org",
-    "@type": "Recipe",
-    name: recipe.value.title,
-    description: recipe.value.descriptionSnippet,
-    image: recipe.value.coverImage.variants.cover.square.src,
-    // Ingredients and instructions are not included, as that would require including both rich text and plain text variants of strings,
-    // which is not worth increasing the payload size over a minimal feature
-    recipeCategory: recipe.value.course,
-    recipeCuisine: recipe.value.cuisine,
-    recipeYield:
-      recipe.value.servings && recipe.value.servingsType
-        ? `${recipe.value.servings} ${recipe.value.servingsType}`
-        : undefined,
-    keywords: recipe.value.tags
-      .filter((t) => t !== recipe.value.course && t !== recipe.value.cuisine)
-      .join(", "),
-    totalTime: recipeTotalDuration(recipe.value).toISOString(),
-  });
-}
-
+const durationLabels = computed(() => formatRecipeDurations(props.recipe));
 
 const servings = ref<number>(
-  recipe.value.servings && recipe.value.servings > 0 ? recipe.value.servings : 1,
+  props.recipe.servings && props.recipe.servings > 0 ? props.recipe.servings : 1,
 );
 const originalNumberOfServings = servings.value;
-
 
 function updateNumberOfServings(newServings: number) {
   servings.value = newServings;
 }
 
-
-function createSearchLink(term: string): RouteLocationRaw {
-  return {
-    path: "/recipes",
-    query: {
-      search: term.trim(),
-    },
-  };
+function createSearchLink(term: string): string {
+  const query = new URLSearchParams({ search: term.trim() });
+  return `/recipes?${query.toString()}`;
 }
 </script>
 
 <style lang="scss" scoped>
-@use "@/styles/mixins" as m;
-@use "@/styles/variables" as v;
+@use "../../styles/mixins" as m;
+@use "../../styles/variables" as v;
 
 .recipe {
   display: grid;
@@ -298,7 +219,7 @@ function createSearchLink(term: string): RouteLocationRaw {
     align-items: end;
   }
   &__notes {
-    grid-column: 1 / -1; // Full width
+    grid-column: 1 / -1;
   }
 
   ul,
@@ -330,7 +251,7 @@ function createSearchLink(term: string): RouteLocationRaw {
 footer {
   display: flex;
   justify-content: center;
-  grid-column: 1 / -1; // Full width
+  grid-column: 1 / -1;
   @include m.spacing("mt", "md");
   @include m.spacing("mb", "lg");
 }

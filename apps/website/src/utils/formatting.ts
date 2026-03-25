@@ -104,14 +104,16 @@ export const recipeTotalDuration = (recipe: RecipeDuration) => {
 
 export const formatRecipeDurations = (recipe: RecipePayload) => {
   return {
-    preparation: recipe.preparationDuration
-      ? formatDuration(secondsToDuration(recipe.preparationDuration))
-      : undefined,
-    cooking: recipe.cookingDuration
-      ? formatDuration(secondsToDuration(recipe.cookingDuration))
-      : undefined,
+    preparation:
+      recipe.preparationDuration !== undefined
+        ? formatDuration(secondsToDuration(recipe.preparationDuration))
+        : undefined,
+    cooking:
+      recipe.cookingDuration !== undefined
+        ? formatDuration(secondsToDuration(recipe.cookingDuration))
+        : undefined,
     custom:
-      recipe.customDuration && recipe.customDurationName
+      recipe.customDuration !== undefined && recipe.customDurationName
         ? formatDuration(secondsToDuration(recipe.customDuration))
         : undefined,
     total: formatDuration(recipeTotalDuration(recipe)),

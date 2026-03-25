@@ -1,6 +1,6 @@
 <template>
   <div class="tag">
-    <icon v-if="iconName" :name="iconName" :size="16" />
+    <span v-if="iconName" class="tag__icon" aria-hidden="true">⌕</span>
     <slot />
   </div>
 </template>
@@ -12,8 +12,8 @@ defineProps<{
 </script>
 
 <style scoped lang="scss">
-@use "@/styles/mixins" as m;
-@use "@/styles/variables" as v;
+@use "../styles/mixins" as m;
+@use "../styles/variables" as v;
 
 $tag-size: 12px;
 
@@ -30,5 +30,12 @@ $tag-size: 12px;
   padding: 8px;
 
   @include m.spacing("gx", "xxs");
+}
+
+.tag__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
 }
 </style>

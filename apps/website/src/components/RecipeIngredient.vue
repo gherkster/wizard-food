@@ -10,10 +10,11 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import Fraction from "fraction.js";
 import type { Ingredient } from "@wizard/content/store";
 
-import { formatIngredientAmount } from "~/utils/formatting";
+import { formatIngredientAmount } from "@/utils/formatting";
 
 const props = defineProps<{
   ingredient: Ingredient;

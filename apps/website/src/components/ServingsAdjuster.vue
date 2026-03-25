@@ -8,7 +8,7 @@
         transparent
         @click="decrementServings"
       >
-        <icon name="mynaui:minus-square" :size="40" />
+        <span class="servings-adjuster__icon" aria-hidden="true">−</span>
       </v-button>
       <span>
         <span class="servings-adjuster__amount"
@@ -17,13 +17,16 @@
         <span class="servings-adjuster__servings">{{ label }}</span>
       </span>
       <v-button size="inline" aria-label="Increase servings" transparent @click="incrementServings">
-        <icon name="mynaui:plus-square" :size="40" />
+        <span class="servings-adjuster__icon" aria-hidden="true">+</span>
       </v-button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import VButton from "@/components/VButton.vue";
+
 const props = withDefaults(
   defineProps<{
     servings: number;
@@ -58,8 +61,8 @@ function incrementServings() {
 </script>
 
 <style lang="scss" scoped>
-@use "@/styles/mixins" as m;
-@use "@/styles/variables" as v;
+@use "../styles/mixins" as m;
+@use "../styles/variables" as v;
 .servings-adjuster {
   display: flex;
   align-items: center;
@@ -69,8 +72,16 @@ function incrementServings() {
     display: flex;
     align-items: center;
     user-select: none;
-    .icon {
+    .servings-adjuster__icon {
       color: var(--theme-color-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      line-height: 1;
+      font-size: 2rem;
+      font-weight: v.$font-weight-bold;
     }
   }
   &__amount {

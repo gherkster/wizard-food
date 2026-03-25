@@ -12,6 +12,9 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+  },
+  "vueCompilerOptions": {
+    "strictTemplates": true,
+  },
 }

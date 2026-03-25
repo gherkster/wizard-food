@@ -5,7 +5,7 @@
 </template>
 
 <style lang="scss">
-@use "@/styles/variables" as v;
+@use "../styles/variables" as v;
 $badge-size: 20px;
 .badge {
   display: flex;

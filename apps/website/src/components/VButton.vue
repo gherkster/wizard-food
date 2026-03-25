@@ -5,6 +5,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+
 const props = withDefaults(
   defineProps<{
     primary?: boolean;
@@ -43,8 +45,8 @@ const onClick = () => {
 </script>
 
 <style lang="scss" scoped>
-@use "@/styles/mixins" as m;
-@use "@/styles/variables" as v;
+@use "../styles/mixins" as m;
+@use "../styles/variables" as v;
 
 .v-button {
   width: fit-content;

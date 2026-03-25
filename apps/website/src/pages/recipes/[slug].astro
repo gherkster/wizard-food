@@ -1,0 +1,86 @@
+---
+import { loadRecipesBySlug } from "@wizard/content/store";
+import type { RecipePayload } from "@wizard/content/store";
+
+import RecipePage from "@/components/recipes/RecipePage.vue";
+import { recipeTotalDuration } from "@/utils/formatting";
+import "@/styles/index.scss";
+
+type StaticProps = {
+  recipe: RecipePayload;
+};
+
+export async function getStaticPaths() {
+  const recipesBySlug = await loadRecipesBySlug(".content");
+
+  return Object.entries(recipesBySlug).map(([slug, recipe]) => ({
+    params: { slug },
+    props: { recipe },
+  }));
+}
+
+const { recipe } = Astro.props as StaticProps;
+const siteUrl = import.meta.env.PUBLIC_SITE_URL?.trim();
+const canonical = siteUrl ? new URL(`/recipes/${recipe.slug}`, siteUrl).toString() : undefined;
+
+const servingsLabel =
+  recipe.servings && recipe.servingsType
+    ? recipe.servings > 1
+      ? recipe.servingsType.plural
+      : recipe.servingsType.singular
+    : undefined;
+
+const recipeSchema = {
+  "@context": "https://schema.org",
+  "@type": "Recipe",
+  name: recipe.title,
+  description: recipe.descriptionSnippet,
+  image: recipe.coverImage.variants.cover.square.src,
+  recipeCategory: recipe.course,
+  recipeCuisine: recipe.cuisine,
+  recipeYield:
+    recipe.servings && servingsLabel ? `${recipe.servings} ${servingsLabel}` : undefined,
+  keywords: recipe.tags.filter((t) => t !== recipe.course && t !== recipe.cuisine).join(", "),
+  totalTime: recipeTotalDuration(recipe).toISOString(),
+};
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{recipe.title}</title>
+    <meta name="description" content={recipe.descriptionPlainText} />
+    <meta property="og:title" content={recipe.title} />
+    <meta property="og:description" content={recipe.descriptionSnippet} />
+    <meta property="og:image" content={recipe.coverImage.variants.cover.square.src} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <script type="application/ld+json" set:html={JSON.stringify(recipeSchema)} />
+  </head>
+  <body>
+    <main class="layout">
+      <div class="content">
+        <RecipePage recipe={recipe} client:load />
+      </div>
+    </main>
+  </body>
+</html>
+
+<style>
+  .layout {
+    max-width: 2000px;
+    margin: 0 auto;
+    padding: 2rem 5%;
+  }
+
+  .content {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+</style>

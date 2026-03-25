@@ -9,12 +9,7 @@
       @click="isVisible = !isVisible"
     >
       <slot name="trigger" />
-      <icon
-        name="mynaui:chevron-down"
-        class="popover__icon"
-        :class="{ open: isVisible }"
-        :size="24"
-      />
+      <span class="popover__icon" :class="{ open: isVisible }" aria-hidden="true">▾</span>
     </button>
     <div
       v-if="isVisible"
@@ -30,6 +25,8 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, onUnmounted, ref, useTemplateRef } from "vue";
+
 const isVisible = ref(false);
 
 
@@ -58,8 +55,8 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@use "@/styles/mixins" as m;
-@use "@/styles/variables" as v;
+@use "../styles/mixins" as m;
+@use "../styles/variables" as v;
 
 .popover {
   position: relative;

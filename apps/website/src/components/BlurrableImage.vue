@@ -12,7 +12,7 @@
       role="presentation"
     />
     <!-- noscript always results in hydration mismatch with Vue SSR -->
-    <noscript data-allow-mismatch>
+    <noscript>
       <v-img
         class="image"
         :lazy="lazy"
@@ -40,7 +40,9 @@
 <script setup lang="ts">
 import type { AspectRatio, Image, ImagePurpose } from "@wizard/content/store";
 
-import { useImage } from "~/composables/useImage";
+import { useImage } from "@/composables/useImage";
+
+import VImg from "./VImg.vue";
 
 /*
 We can use X and Y aspect ratio values for height and width since we are using width 100% globally for img.
@@ -69,12 +71,11 @@ const props = withDefaults(
   },
 );
 
-
 const { x, y } = useImage().getAspectRatio(props.aspectRatio);
 </script>
 
 <style lang="scss">
-@use "@/styles/variables" as v;
+@use "../styles/variables" as v;
 
 .image-container {
   width: 100%;
