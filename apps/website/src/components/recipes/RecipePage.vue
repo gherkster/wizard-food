@@ -10,6 +10,7 @@
           :key="tag"
           :href="createSearchLink(tag)"
           class="concealed"
+          @click.prevent="onSearchTagClick(tag)"
         >
           <v-tag icon-name="mynaui:search">{{ tag }}</v-tag>
         </a>
@@ -124,6 +125,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { navigate } from "astro:transitions/client";
 import type { RecipePayload } from "@wizard/content/store";
 
 import BlurrableImage from "@/components/BlurrableImage.vue";
@@ -153,6 +155,10 @@ function updateNumberOfServings(newServings: number) {
 function createSearchLink(term: string): string {
   const query = new URLSearchParams({ search: term.trim() });
   return `/recipes?${query.toString()}`;
+}
+
+function onSearchTagClick(term: string) {
+  void navigate(createSearchLink(term));
 }
 </script>
 

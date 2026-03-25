@@ -12,7 +12,7 @@
       role="presentation"
     />
     <!-- noscript always results in hydration mismatch with Vue SSR -->
-    <noscript>
+    <noscript data-allow-mismatch>
       <v-img
         class="image"
         :lazy="lazy"

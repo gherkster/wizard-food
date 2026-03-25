@@ -1,5 +1,6 @@
 ---
 import SiteHeader from "@/components/layout/SiteHeader.astro";
+import { ClientRouter } from "astro:transitions";
 import "@/styles/index.scss";
 
 type Props = {
@@ -45,6 +46,7 @@ const canonical =
     {ogDescription && <meta property="og:description" content={ogDescription} />}
     {ogImage && <meta property="og:image" content={ogImage} />}
     {canonical && <link rel="canonical" href={canonical} />}
+    <ClientRouter />
     <slot name="head" />
   </head>
   <body>

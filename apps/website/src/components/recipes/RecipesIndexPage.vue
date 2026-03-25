@@ -28,17 +28,18 @@
 import { computed, onMounted, ref, watch } from "vue";
 import type { Image } from "@wizard/content/store";
 
-import VButton from "@/components/VButton.vue";
-import VCard from "@/components/VCard.vue";
-import { useRecipeSearchState } from "@/composables/useRecipeSearchState";
 import type { SearchIndexRecipe } from "@/utils/search";
 import { useSearch } from "@/composables/useSearch";
+import { useRecipeSearchState } from "@/composables/useRecipeSearchState";
+import VCard from "@/components/VCard.vue";
+import VButton from "@/components/VButton.vue";
 
 const { query, initFromUrl } = useRecipeSearchState();
 
 const searchClient = useSearch();
 
 const recipes = ref<SearchIndexRecipe[]>([]);
+const activeSearchTerm = ref<string | null>(null);
 
 const toCardImage = (recipe: SearchIndexRecipe): Image => {
   const previewSquare = recipe.coverImage.previewSquare;
@@ -68,32 +69,36 @@ const toCardImage = (recipe: SearchIndexRecipe): Image => {
 };
 
 const refreshResults = async () => {
+  if (window.location.pathname !== "/recipes") {
+    return;
+  }
+
   const searchTerm = query.value.trim();
-  if (!searchTerm) {
+  activeSearchTerm.value = searchTerm.length > 0 ? searchTerm : null;
+
+  if (!activeSearchTerm.value) {
     recipes.value = await searchClient.allItems();
     return;
   }
 
-  const searchResults = await searchClient.search(searchTerm);
+  const searchResults = await searchClient.search(activeSearchTerm.value);
   recipes.value = searchResults;
 };
 
 onMounted(async () => {
   initFromUrl();
+  await refreshResults();
 });
 
-watch(
-  query,
-  async () => {
-    await refreshResults();
-  },
-  { immediate: true },
-);
+watch(query, async () => {
+  if (window.location.pathname !== "/recipes") {
+    return;
+  }
 
-const searchTerm = computed(() => {
-  const value = query.value.trim();
-  return value.length > 0 ? value : null;
+  await refreshResults();
 });
+
+const searchTerm = computed(() => activeSearchTerm.value);
 
 const isEmptySearchResult = computed(() => recipes.value.length === 0 && !!searchTerm.value);
 
