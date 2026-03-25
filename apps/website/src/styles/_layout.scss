@@ -52,8 +52,6 @@
         border-radius: v.$border-radius-md;
         color: var(--theme-font-color);
         outline: none;
-        @include m.spacing("px", "xs");
-        @include m.spacing("py", "xs");
       }
 
       &__mascot {

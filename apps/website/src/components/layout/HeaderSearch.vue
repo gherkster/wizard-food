@@ -21,11 +21,12 @@ import VSearch from "@/components/VSearch.vue";
 import VMascot from "@/components/VMascot.vue";
 import { debounce } from "@/utils/debounce";
 import { useSearch } from "@/composables/useSearch";
+import { useRecipeSearchState } from "@/composables/useRecipeSearchState";
 
 const searchClient = useSearch();
 searchClient.ensureIndex();
 
-const query = ref("");
+const { query, initFromUrl, setQuery } = useRecipeSearchState();
 
 const onInput = (value: string) => {
   search(value);
@@ -35,8 +36,14 @@ const onInput = (value: string) => {
 const searchDebounceMs = 150;
 
 const search = debounce(async (value: string) => {
-  query.value = value;
-  const trimmedQuery = query.value.trim();
+  setQuery(value);
+  const trimmedQuery = value.trim();
+  const isRecipesPage = window.location.pathname === "/recipes";
+
+  if (isRecipesPage) {
+    setQuery(value, { replaceUrl: true });
+    return;
+  }
 
   if (trimmedQuery.length === 0) {
     window.location.assign("/recipes");
@@ -44,7 +51,6 @@ const search = debounce(async (value: string) => {
   }
 
   window.location.assign(`/recipes?search=${encodeURIComponent(trimmedQuery)}`);
-  return;
 }, searchDebounceMs);
 
 const isAnimated = ref(false);
@@ -61,7 +67,6 @@ const finishAnimating = debounce(() => {
 }, animationDebounceMs);
 
 onMounted(() => {
-  const initialQuery = new URLSearchParams(window.location.search).get("search");
-  query.value = initialQuery ?? "";
+  initFromUrl();
 });
 </script>

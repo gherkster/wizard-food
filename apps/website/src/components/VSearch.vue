@@ -16,21 +16,19 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
+
 import VInput from "@/components/VInput.vue";
 
 const props = defineProps<{
   value: string;
 }>();
 
-
 const query = ref(props.value);
-
 
 watch(
   () => props.value,
   (newValue) => (query.value = newValue),
 );
-
 
 defineEmits<{
   input: [value: string];

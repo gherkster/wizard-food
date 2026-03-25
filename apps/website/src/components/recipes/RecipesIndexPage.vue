@@ -25,15 +25,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import type { Image } from "@wizard/content/store";
 
 import VButton from "@/components/VButton.vue";
 import VCard from "@/components/VCard.vue";
+import { useRecipeSearchState } from "@/composables/useRecipeSearchState";
 import type { SearchIndexRecipe } from "@/utils/search";
 import { useSearch } from "@/composables/useSearch";
 
-const searchTerm = ref<string | null>(null);
+const { query, initFromUrl } = useRecipeSearchState();
 
 const searchClient = useSearch();
 
@@ -67,20 +68,31 @@ const toCardImage = (recipe: SearchIndexRecipe): Image => {
 };
 
 const refreshResults = async () => {
-  const query = new URLSearchParams(window.location.search).get("search");
-  searchTerm.value = query?.trim() ?? null;
-
-  if (!searchTerm.value) {
+  const searchTerm = query.value.trim();
+  if (!searchTerm) {
     recipes.value = await searchClient.allItems();
     return;
   }
 
-  const searchResults = await searchClient.search(searchTerm.value);
+  const searchResults = await searchClient.search(searchTerm);
   recipes.value = searchResults;
 };
 
 onMounted(async () => {
-  await refreshResults();
+  initFromUrl();
+});
+
+watch(
+  query,
+  async () => {
+    await refreshResults();
+  },
+  { immediate: true },
+);
+
+const searchTerm = computed(() => {
+  const value = query.value.trim();
+  return value.length > 0 ? value : null;
 });
 
 const isEmptySearchResult = computed(() => recipes.value.length === 0 && !!searchTerm.value);
