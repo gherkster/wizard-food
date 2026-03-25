@@ -3,14 +3,10 @@
     <section v-if="latestRecipes.length > 0">
       <div class="section-header">
         <h2>Latest Recipes</h2>
-        <nuxt-link
-          to="/recipes"
-          class="section-header__link concealed"
-          aria-label="See all recipes"
-        >
+        <a href="/recipes" class="section-header__link concealed" aria-label="See all recipes">
           <span>See more</span>
-          <icon name="mynaui:chevron-right" :size="24" />
-        </nuxt-link>
+          <span class="section-header__icon" aria-hidden="true">›</span>
+        </a>
       </div>
       <div class="recipe-list promo">
         <v-card
@@ -93,99 +89,23 @@
 </template>
 
 <script setup lang="ts">
-import type { FeaturedRecipes, WebsitePageContent } from "@wizard/content/store";
+import { ref } from "vue";
+import type { FeaturedRecipes } from "@wizard/content/store";
+import VCard from "@/components/VCard.vue";
 
-const recipesResponse = await useAsyncData<FeaturedRecipes>("featured-recipes", async () => {
-  if (import.meta.server) {
-    const { featuredRecipes } = await import("#content");
-    return featuredRecipes;
-  }
+const props = defineProps<{
+  featuredRecipes: FeaturedRecipes;
+}>();
 
-  if (import.meta.dev) {
-    const { data: response } = await useFetch("/api/featured-recipes");
-    if (!response.value) {
-      throw new Error("Featured recipes are unavailable");
-    }
-    return response.value as FeaturedRecipes;
-  }
-
-  throw new Error("Featured recipes are unavailable");
-});
-
-
-if (recipesResponse.error.value) {
-  throw createError({
-    statusCode: 500,
-    statusMessage: recipesResponse.error.value?.message,
-  });
-}
-
-
-if (!recipesResponse.data.value) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: "Page not found!",
-  });
-}
-
-
-const latestRecipes = ref(recipesResponse.data.value.latestRecipes);
-const favouriteRecipes = ref(recipesResponse.data.value.favouriteRecipes);
-const quickRecipes = ref(recipesResponse.data.value.quickRecipes);
-const worldCuisineRecipes = ref(recipesResponse.data.value.worldCuisineRecipes);
-
-
-const contentResponse = await useAsyncData<WebsitePageContent>("content-home", async () => {
-  if (import.meta.server) {
-    const { homePageContent } = await import("#content");
-    return homePageContent;
-  }
-
-  if (import.meta.dev) {
-    const { data: response } = await useFetch("/api/content/home");
-    if (!response.value) {
-      throw new Error("Home page content is unavailable");
-    }
-    return response.value as WebsitePageContent;
-  }
-
-  throw new Error("Home page content is unavailable");
-});
-
-
-if (contentResponse.error.value) {
-  throw createError({
-    statusCode: 500,
-    statusMessage: recipesResponse.error.value,
-  });
-}
-
-
-if (!contentResponse.data.value) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: "Content not found!",
-  });
-}
-
-
-const content = contentResponse.data.value;
-
-
-useServerSeoMeta({
-  title: content.title,
-  ogTitle: content.title,
-  description: content.description,
-  ogDescription: content.openGraphDescription,
-});
-useHead({
-  title: content.title,
-});
+const latestRecipes = ref(props.featuredRecipes.latestRecipes);
+const favouriteRecipes = ref(props.featuredRecipes.favouriteRecipes);
+const quickRecipes = ref(props.featuredRecipes.quickRecipes);
+const worldCuisineRecipes = ref(props.featuredRecipes.worldCuisineRecipes);
 </script>
 
 <style lang="scss" scoped>
-@use "@/styles/mixins" as m;
-@use "@/styles/variables" as v;
+@use "../../styles/mixins" as m;
+@use "../../styles/variables" as v;
 
 .home {
   display: flex;
@@ -251,6 +171,10 @@ useHead({
       span {
         @include m.spacing("pr", "xxs");
       }
+    }
+    &__icon {
+      font-size: 24px;
+      line-height: 1;
     }
   }
 }
