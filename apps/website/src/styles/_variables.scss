@@ -48,8 +48,8 @@ $breakpoint-max: map.get($breakpoints, "xl");
 $grid-cols-count: 12;
 
 // TYPOGRAPHY //
-$font-family-headers: "Inter", "Helvetica", sans-serif;
-$font-family-paragraph: "Inter", "Helvetica", sans-serif;
+$font-family-headers: var(--font-inter), "Helvetica", sans-serif;
+$font-family-paragraph: var(--font-inter), "Helvetica", sans-serif;
 
 $line-height: 1.4;
 

@@ -4,7 +4,7 @@ import {
   loadFeaturedRecipes,
   loadPagesContent,
   loadRecipesBySlug,
-} from "./loaders";
+} from "./loaders.js";
 
 export const getAllRecipes = async (contentDir?: string) => {
   return loadAllRecipes(contentDir);

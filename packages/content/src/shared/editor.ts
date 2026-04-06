@@ -1,4 +1,4 @@
-import type { InlineIngredient } from "../store/types";
+import type { InlineIngredient } from "../store/types.js";
 
 export type JSONContent = {
   type?: string;

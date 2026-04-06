@@ -4,11 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "content:sync": "pnpm run content:sync:website",
-    "content:sync:website": "pnpm --filter website run content:sync",
-    "dev": "turbo run dev --filter website --continue",
+    "dev:website": "turbo run dev --filter website --continue",
     "build": "turbo run build",
-    "generate": "turbo run generate --filter=@wizard/website",
     "typecheck": "turbo run typecheck",
     "check": "pnpm run lint && pnpm run format:check",
     "lint": "pnpm run lint:ox",

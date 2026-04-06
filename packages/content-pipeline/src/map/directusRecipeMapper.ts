@@ -192,9 +192,11 @@ const assertHydratedImage = (image: ServerImage | string | number): ServerImage 
 
 const mapImage = (serverImage: ServerImage): Image => {
   const imageId = serverImage.id ?? throwExpression("Image ID must be provided");
+
   const modifyDate =
     serverImage.modified_on ?? throwExpression("Image modified_on must be provided");
-  const signedVariants = buildSignedImageVariants({
+
+  const { variants } = buildSignedImageVariants({
     id: imageId,
     modifiedOn: modifyDate,
   });
@@ -208,7 +210,7 @@ const mapImage = (serverImage: ServerImage): Image => {
     width: serverImage.width ?? throwExpression("Image width must be provided"),
     height: serverImage.height ?? throwExpression("Image height must be provided"),
     modifyDate,
-    variants: signedVariants.variants,
+    variants: variants,
     metadata: {
       base64Url:
         serverImage.metadata?.base64Url ??

@@ -23,9 +23,11 @@ import VMascot from "@/components/VMascot.vue";
 import { debounce } from "@/utils/debounce";
 import { useSearch } from "@/composables/useSearch";
 import { useRecipeSearchState } from "@/composables/useRecipeSearchState";
+import { useVersioning } from "@/composables/useVersioning";
 
 const searchClient = useSearch();
 searchClient.ensureIndex();
+const versioning = useVersioning();
 
 const { query, initFromUrl, setQuery } = useRecipeSearchState();
 const isNavigatingToRecipes = ref(false);
@@ -88,6 +90,8 @@ const finishAnimating = debounce(() => {
 }, animationDebounceMs);
 
 onMounted(() => {
+  versioning.start();
+
   const syncFromLocation = () => {
     if (window.location.pathname === "/recipes") {
       initFromUrl();
@@ -106,6 +110,8 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  versioning.stop();
+
   if (!syncFromLocationHandler) {
     return;
   }

@@ -6,8 +6,8 @@ import type {
   RecipePayload,
   RecipePreview,
   WebsitePagesContent,
-} from "./types";
-import { resolveContentFile } from "./files";
+} from "./types.js";
+import { resolveContentFile } from "./files.js";
 
 async function readJson<T>(
   fileName: Parameters<typeof resolveContentFile>[0],

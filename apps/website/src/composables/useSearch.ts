@@ -22,7 +22,7 @@ export function useSearch() {
 
     // If a valid copy of the search index wasn't found in localstorage,
     // Trigger an async download of the index in the background
-    if (!miniSearch.value) {
+    if (miniSearch.value === undefined) {
       await refreshIndex();
     }
   }

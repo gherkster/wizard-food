@@ -5,7 +5,7 @@
   "scripts": {
     "content:sync": "pnpm --filter @wizard/content-pipeline run content:sync sync --site $PWD --dotenv-file .env --content-dir .content",
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "pnpm run content:sync && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue-jsx": "catalog:",
-    "sass": "catalog:"
+    "sass": "catalog:",
+    "typescript": "catalog:"
   }
 }

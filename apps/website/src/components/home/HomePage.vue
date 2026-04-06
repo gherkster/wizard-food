@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <section v-if="latestRecipes.length > 0">
+    <section v-if="featuredRecipes.latestRecipes.length > 0">
       <div class="section-header">
         <h2>Latest Recipes</h2>
         <a href="/recipes" class="section-header__link concealed" aria-label="See all recipes">
@@ -10,7 +10,7 @@
       </div>
       <div class="recipe-list promo">
         <v-card
-          v-for="(recipe, index) in latestRecipes"
+          v-for="(recipe, index) in featuredRecipes.latestRecipes"
           :key="recipe.slug"
           :title="recipe.title"
           :description="index === 0 ? recipe.descriptionSnippet : undefined"
@@ -22,17 +22,13 @@
         />
       </div>
     </section>
-    <section v-if="favouriteRecipes.length > 0">
+    <section v-if="featuredRecipes.favouriteRecipes.length > 0">
       <div class="section-header">
         <h2>Personal Favourites</h2>
-        <!-- <nuxt-link class="section-header__link">
-          <span>See more</span>
-          <icon :name="headerIcon.name" :size="headerIcon.size" />
-        </nuxt-link> -->
       </div>
       <div class="recipe-list standard">
         <v-card
-          v-for="recipe in favouriteRecipes"
+          v-for="recipe in featuredRecipes.favouriteRecipes"
           :key="recipe.slug"
           :title="recipe.title"
           :image="recipe.coverImage"
@@ -43,17 +39,13 @@
         />
       </div>
     </section>
-    <section v-if="quickRecipes.length > 0">
+    <section v-if="featuredRecipes.quickRecipes.length > 0">
       <div class="section-header">
         <h2>Quick Eats</h2>
-        <!-- <nuxt-link class="section-header__link">
-          <span>See more</span>
-          <icon :name="headerIcon.name" :size="headerIcon.size" />
-        </nuxt-link> -->
       </div>
       <div class="recipe-list standard">
         <v-card
-          v-for="recipe in quickRecipes"
+          v-for="recipe in featuredRecipes.quickRecipes"
           :key="recipe.slug"
           :title="recipe.title"
           :image="recipe.coverImage"
@@ -64,17 +56,13 @@
         />
       </div>
     </section>
-    <section v-if="worldCuisineRecipes.length > 0">
+    <section v-if="featuredRecipes.worldCuisineRecipes.length > 0">
       <div class="section-header">
         <h2>World Cuisines</h2>
-        <!-- <nuxt-link class="section-header__link">
-          <span>See more</span>
-          <icon :name="headerIcon.name" :size="headerIcon.size" />
-        </nuxt-link> -->
       </div>
       <div class="recipe-list standard">
-        <v-card
-          v-for="recipe in worldCuisineRecipes"
+        <VCard
+          v-for="recipe in featuredRecipes.worldCuisineRecipes"
           :key="recipe.slug"
           :title="recipe.title"
           :image="recipe.coverImage"
@@ -89,18 +77,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import type { FeaturedRecipes } from "@wizard/content/store";
+
 import VCard from "@/components/VCard.vue";
 
 const props = defineProps<{
   featuredRecipes: FeaturedRecipes;
 }>();
-
-const latestRecipes = ref(props.featuredRecipes.latestRecipes);
-const favouriteRecipes = ref(props.featuredRecipes.favouriteRecipes);
-const quickRecipes = ref(props.featuredRecipes.quickRecipes);
-const worldCuisineRecipes = ref(props.featuredRecipes.worldCuisineRecipes);
 </script>
 
 <style lang="scss" scoped>

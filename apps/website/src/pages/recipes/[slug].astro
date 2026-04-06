@@ -13,7 +13,13 @@ type StaticProps = {
 export async function getStaticPaths() {
   const recipesBySlug = await loadRecipesBySlug(".content");
 
-  return Object.entries(recipesBySlug).map(([slug, recipe]) => ({
+  const recipes = Object.entries(recipesBySlug);
+
+  if (recipes.length === 0) {
+    throw new Error("No recipes loaded from content directory.");
+  }
+
+  return recipes.map(([slug, recipe]) => ({
     params: { slug },
     props: { recipe },
   }));

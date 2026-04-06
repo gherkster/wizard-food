@@ -5,7 +5,7 @@
         :img="image"
         :lazy="lazyLoadImage"
         :purpose="variant === 'promo' ? 'cover' : 'preview'"
-        aspect-ratio="square"
+        shape="square"
       />
       <div class="card__content">
         <p class="title">{{ title }}</p>
@@ -30,6 +30,7 @@
 
 <script setup lang="ts">
 import type { Image } from "@wizard/content/store";
+
 import BlurrableImage from "@/components/BlurrableImage.vue";
 
 withDefaults(

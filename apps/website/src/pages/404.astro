@@ -1,0 +1,43 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Page not found"
+  description="The page you requested could not be found."
+  canonicalPath="/404"
+  ogTitle="Page not found"
+  ogDescription="The page you requested could not be found."
+>
+  <Fragment slot="head">
+    <meta name="robots" content="noindex, nofollow" />
+  </Fragment>
+
+  <div class="center-screen">
+    <h2>Page not found! 🙃</h2>
+    <a class="home-link" href="/">Home</a>
+  </div>
+</BaseLayout>
+
+<style>
+  .home-link {
+    min-width: 140px;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    background-color: var(--theme-color-primary);
+    color: var(--theme-font-color);
+    text-align: center;
+    text-decoration: none;
+  }
+
+  @media (hover: hover) {
+    .home-link:hover {
+      filter: brightness(90%);
+    }
+  }
+
+  .home-link:active {
+    transform: scale(0.97) translateY(1px);
+    filter: brightness(80%);
+  }
+</style>

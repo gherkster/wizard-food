@@ -1,6 +1,5 @@
 packages:
   - apps/*
-  - extensions/*
   - packages/*
 
 catalog:
@@ -9,11 +8,6 @@ catalog:
   "@directus/extensions-sdk": "^13.1.1"
   "@directus/sdk": "^18.0.3"
   "@iconify-json/mynaui": "^1.2.17"
-  "@nuxt/eslint": "0.7.2"
-  "@nuxt/fonts": "^0.6.1"
-  "@nuxt/icon": "2.2.1"
-  "@nuxtjs/robots": "5.2.4"
-  "@nuxtjs/sitemap": "^5.3.5"
   "@tiptap/core": "^2.27.2"
   "@tiptap/extension-blockquote": "^2.27.2"
   "@tiptap/extension-bold": "^2.27.2"
@@ -46,7 +40,7 @@ catalog:
   "@types/lodash": "^4.17.15"
   "@types/node": "^24.12.0"
   "@types/uuid": "^9.0.8"
-  '@vitejs/plugin-vue-jsx': ^5.1.5
+  "@vitejs/plugin-vue-jsx": ^5.1.5
   "astro": ^6.0.8
   "cloudflare": "^4.1.0"
   "commander": "^14.0.1"
@@ -58,10 +52,9 @@ catalog:
   "jsdom": "^28.1.0"
   "lodash": "^4.17.21"
   "minisearch": "^6.3.0"
-  "nuxt": "4.4.2"
   "openapi-fetch": "^0.13.8"
   "openapi-typescript": "^7.13.0"
-  "oxfmt": "0.42.0"
+  "oxfmt": "0.43.0"
   "oxlint": "1.56.0"
   "oxlint-tsgolint": ^0.17.2
   "pinia": "2.1.7"
@@ -75,6 +68,7 @@ catalog:
   "typescript-eslint": "^8.57.1"
   "uuid": "^9.0.1"
   "validator": "^13.12.0"
+  vite: ^8.0.5
   vue: 3.5.30
   "vue-tsc": "^3.2.5"
 

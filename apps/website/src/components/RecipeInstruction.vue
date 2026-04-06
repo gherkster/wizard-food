@@ -1,5 +1,5 @@
 <template>
-  <div ref="inlineIngredientsRef" class="instruction" v-html="content" />
+  <div ref="inlineIngredientsRef" class="instruction-content" v-html="content" />
 </template>
 
 <script setup lang="ts">
@@ -19,19 +19,15 @@ type InlineIngredientMarkup = {
   };
 };
 
-
 const props = defineProps<{
   content: string;
   ingredientMultiplier: number;
   originalNumberOfServings: number;
 }>();
 
-
 const inlineIngredientsRef = ref<HTMLDivElement>();
 
-
 const inlineIngredients = ref<InlineIngredientMarkup[]>([]);
-
 
 onMounted(() => {
   const elements =
@@ -54,12 +50,10 @@ onMounted(() => {
   });
 });
 
-
 watch(
   () => props.ingredientMultiplier,
   (newMultiplier) => multiplyInlineIngredients(newMultiplier),
 );
-
 
 const multiplyInlineIngredients = (multiplicationFactor: number) => {
   inlineIngredients.value.forEach((ingredient) => {
@@ -82,22 +76,18 @@ const multiplyInlineIngredients = (multiplicationFactor: number) => {
   });
 };
 
-
 const getUnitLabel = (unit: SingularPluralPair | undefined, currentAmount: number) => {
   if (!unit) {
     return undefined;
   }
-
 
   // We can't switch between a singular and plural form if there's no number to use as a threshold
   if (!currentAmount) {
     return undefined;
   }
 
-
   return currentAmount <= 1 ? unit.singular : unit.plural;
 };
-
 
 const tryParseInlineIngredient = (
   element: InlineIngredientHTMLElement,
@@ -117,7 +107,7 @@ const tryParseInlineIngredient = (
 </script>
 
 <style lang="scss" scoped>
-.instruction {
+.instruction-content {
   flex: 1;
   flex-direction: column;
 }

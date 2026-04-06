@@ -1,6 +1,6 @@
-export * from "./files";
-export * from "./loaders";
-export * from "./queries";
+export * from "./files.js";
+export * from "./loaders.js";
+export * from "./queries.js";
 export type {
   AspectRatio,
   ContentMeta,
@@ -9,6 +9,7 @@ export type {
   IngredientGroup,
   Image,
   ImagePurpose,
+  ImageShape,
   ImageVariant,
   ImageVariants,
   Instruction,
@@ -21,4 +22,4 @@ export type {
   SingularPluralPair,
   WebsitePageContent,
   WebsitePagesContent,
-} from "./types";
+} from "./types.js";

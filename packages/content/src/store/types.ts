@@ -1,13 +1,19 @@
 export type ImagePurpose = "cover" | "preview" | "instruction";
-export type AspectRatio = "square" | "portrait";
+export type ImageShape = "square" | "portrait";
 
 export type ImageVariant = {
   src: string;
   srcSet: string;
   sizes: string;
+  aspectRatio: AspectRatio;
 };
 
-export type ImageVariants = Record<ImagePurpose, Record<AspectRatio, ImageVariant>>;
+export type ImageVariants = Record<ImagePurpose, Record<ImageShape, ImageVariant>>;
+
+export type AspectRatio = {
+  x: number;
+  y: number;
+};
 
 export type RecipePayload = {
   id: number;

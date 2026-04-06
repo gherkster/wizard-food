@@ -1,6 +1,6 @@
 <template>
   <div class="recipe">
-    <blurrable-image :img="recipe.coverImage" purpose="cover" aspect-ratio="portrait" />
+    <blurrable-image :img="recipe.coverImage" purpose="cover" shape="portrait" />
     <div class="recipe__summary">
       <h1 class="recipe__title">{{ recipe.title }}</h1>
       <div v-if="recipe.description" class="recipe__description" v-html="recipe.description" />
@@ -68,7 +68,10 @@
           <b>{{ ingredientSection.name }}</b>
         </p>
         <ul>
-          <template v-for="ingredient in ingredientSection.ingredients" :key="ingredient.name.singular">
+          <template
+            v-for="ingredient in ingredientSection.ingredients"
+            :key="ingredient.name.singular"
+          >
             <li v-if="!ingredient.inlineOnly">
               <recipe-ingredient
                 :ingredient="ingredient"
@@ -106,7 +109,7 @@
               v-if="instruction.image"
               :img="instruction.image"
               purpose="instruction"
-              aspect-ratio="square"
+              shape="square"
             />
           </div>
         </div>
@@ -128,14 +131,14 @@ import { computed, ref } from "vue";
 import { navigate } from "astro:transitions/client";
 import type { RecipePayload } from "@wizard/content/store";
 
-import BlurrableImage from "@/components/BlurrableImage.vue";
-import RecipeIngredient from "@/components/RecipeIngredient.vue";
-import RecipeInstruction from "@/components/RecipeInstruction.vue";
-import ServingsAdjuster from "@/components/ServingsAdjuster.vue";
-import VBadge from "@/components/VBadge.vue";
-import VPopover from "@/components/VPopover.vue";
-import VTag from "@/components/VTag.vue";
 import { formatRecipeDurations } from "@/utils/formatting";
+import VTag from "@/components/VTag.vue";
+import VPopover from "@/components/VPopover.vue";
+import VBadge from "@/components/VBadge.vue";
+import ServingsAdjuster from "@/components/ServingsAdjuster.vue";
+import RecipeInstruction from "@/components/RecipeInstruction.vue";
+import RecipeIngredient from "@/components/RecipeIngredient.vue";
+import BlurrableImage from "@/components/BlurrableImage.vue";
 
 const props = defineProps<{
   recipe: RecipePayload;
