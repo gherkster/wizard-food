@@ -1,12 +1,21 @@
+<script setup lang="ts">
+defineProps<{
+  height: number;
+  width: number;
+}>();
+
+defineEmits(["click"]);
+</script>
+
 <template>
   <svg
     version="1.1"
     id="svg1"
-    width="16"
-    height="16"
+    :width="width"
+    :height="height"
     viewBox="0 0 16 16"
     xmlns="http://www.w3.org/2000/svg"
-    xmlns:svg="http://www.w3.org/2000/svg"
+    @click="onClick"
   >
     <defs id="defs1" />
     <g id="layer5" transform="translate(-697.7071,-444.58499)" style="display: inline">

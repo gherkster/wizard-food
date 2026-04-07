@@ -3,6 +3,7 @@ packages:
   - packages/*
 
 catalog:
+  '@astrojs/check': ^0.9.8
   "@astrojs/vue": ^6.0.1
   "@directus/api": "^25.0.1"
   "@directus/extensions-sdk": "^13.1.1"
@@ -70,6 +71,6 @@ catalog:
   "validator": "^13.12.0"
   vite: ^8.0.5
   vue: 3.5.30
-  "vue-tsc": "^3.2.5"
+  "vue-tsc": "^3.2.6"
 
 catalogMode: strict

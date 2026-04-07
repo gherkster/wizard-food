@@ -5,9 +5,9 @@
   "scripts": {
     "content:sync": "pnpm --filter @wizard/content-pipeline run content:sync sync --site $PWD --dotenv-file .env --content-dir .content",
     "dev": "astro dev",
-    "build": "pnpm run content:sync && astro build",
-    "preview": "astro preview",
-    "astro": "astro"
+    "build": "pnpm run typecheck && pnpm run content:sync && astro build",
+    "typecheck": "astro check && vue-tsc --noEmit",
+    "preview": "astro preview"
   },
   "dependencies": {
     "@astrojs/vue": "catalog:",
@@ -22,8 +22,10 @@
     "node": ">=22.12.0"
   },
   "devDependencies": {
+    "@astrojs/check": "catalog:",
     "@vitejs/plugin-vue-jsx": "catalog:",
     "sass": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vue-tsc": "catalog:"
   }
 }

@@ -6,24 +6,20 @@
       class="nav-header-search__mascot"
       @click="animateMascot"
     />
-    <v-search
-      :value="query"
-      class="nav-header-search__input"
-      @input="onInput"
-      @search="onInput"
-    />
+    <v-search :value="query" class="nav-header-search__input" @input="onInput" @search="onInput" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
 import { navigate } from "astro:transitions/client";
-import VSearch from "@/components/VSearch.vue";
-import VMascot from "@/components/VMascot.vue";
+
 import { debounce } from "@/utils/debounce";
+import { useVersioning } from "@/composables/useVersioning";
 import { useSearch } from "@/composables/useSearch";
 import { useRecipeSearchState } from "@/composables/useRecipeSearchState";
-import { useVersioning } from "@/composables/useVersioning";
+import VSearch from "@/components/VSearch.vue";
+import VMascot from "@/components/VMascot.vue";
 
 const searchClient = useSearch();
 searchClient.ensureIndex();

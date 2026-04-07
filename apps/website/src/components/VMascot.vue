@@ -1,9 +1,4 @@
-<template>
-  <MascotSVG :class="{ excited: excited }" :width="iconSize" :height="iconSize" />
-</template>
-
 <script setup lang="ts">
-import { computed } from "vue";
 import MascotSVG from "@/components/MascotSVG.vue";
 
 const props = withDefaults(
@@ -17,5 +12,9 @@ const props = withDefaults(
   },
 );
 
-const iconSize = computed(() => `${props.size}px`);
+defineEmits(["click"]);
 </script>
+
+<template>
+  <MascotSVG :class="{ excited: excited }" :width="size" :height="size" @click="onClick" />
+</template>

@@ -6,17 +6,18 @@
       {
         "allowNumber": false,
         "allowNullableBoolean": true,
+        "allowNullableObject": true,
         "allowNullableString": true,
-        "allowString": true,
-      },
-    ],
+        "allowString": true
+      }
+    ]
   },
   "options": {
     "typeAware": true,
-    "typeCheck": true,
+    "typeCheck": true
   },
   "env": {
-    "builtin": true,
+    "builtin": true
   },
   "ignorePatterns": [
     "**/node_modules/**",
@@ -24,6 +25,6 @@
     "**/dist/**",
     "**/.nuxt/**",
     "**/.output/**",
-    "pnpm-lock.yaml",
-  ],
+    "pnpm-lock.yaml"
+  ]
 }

@@ -4,7 +4,7 @@
       <v-button
         :disabled="servings <= 1"
         size="inline"
-        aria-label="Decrease servings"
+        ariaLabel="Decrease servings"
         transparent
         @click="decrementServings"
       >
@@ -16,7 +16,7 @@
         >
         <span class="servings-adjuster__servings">{{ label }}</span>
       </span>
-      <v-button size="inline" aria-label="Increase servings" transparent @click="incrementServings">
+      <v-button size="inline" ariaLabel="Increase servings" transparent @click="incrementServings">
         <span class="servings-adjuster__icon" aria-hidden="true">+</span>
       </v-button>
     </div>
@@ -25,6 +25,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+
 import VButton from "@/components/VButton.vue";
 
 const props = withDefaults(
@@ -39,21 +40,17 @@ const props = withDefaults(
   },
 );
 
-
 const emit = defineEmits<{
   input: [value: number];
 }>();
 
-
 const label = computed(() => (props.servings > 1 ? props.pluralLabel : props.singularLabel));
-
 
 function decrementServings() {
   if (props.servings > 1) {
     emit("input", props.servings - 1);
   }
 }
-
 
 function incrementServings() {
   emit("input", props.servings + 1);

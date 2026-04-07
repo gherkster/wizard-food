@@ -18,9 +18,9 @@ defineProps<{
   iconLeft?: string;
 }>();
 
-
-const model = defineModel<string>();
-
+const model = defineModel<string>({
+  required: true,
+});
 
 // Trigger input field focus if the icon is clicked
 const btnRef = ref<HTMLInputElement>();
