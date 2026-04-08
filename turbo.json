@@ -10,7 +10,7 @@
         "apps/website/.nuxt/**",
         "apps/website/node_modules/.cache/nuxt/.nuxt/**"
       ],
-      "passThroughEnv": ["CF_PAGES_COMMIT_SHA"]
+      "envMode": "loose"
     },
     "typecheck": {
       "dependsOn": ["^build"],

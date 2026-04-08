@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import { config as loadDotEnv } from "dotenv";
+import { config } from "dotenv";
 import { Command } from "commander";
 
 import { syncContent } from "./sync";
@@ -31,7 +31,8 @@ program
     const envFilePath = path.resolve(siteDir, options.dotenvFile);
     const contentDir = path.resolve(siteDir, options.contentDir);
 
-    loadDotEnv({ path: envFilePath });
+    // Use .env if set for local dev
+    config({ path: envFilePath });
 
     await syncContent({
       outputDir: contentDir,
