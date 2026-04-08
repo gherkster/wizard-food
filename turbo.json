@@ -3,13 +3,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [
-        "dist/**",
-        ".output/**",
-        "apps/website/.output/**",
-        "apps/website/.nuxt/**",
-        "apps/website/node_modules/.cache/nuxt/.nuxt/**"
-      ],
+      "outputs": ["dist/**"],
       "envMode": "loose"
     },
     "typecheck": {
