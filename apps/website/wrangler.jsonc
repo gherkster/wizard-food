@@ -2,9 +2,9 @@
   // This file is stored in the root, since we need to run the cloudflare build from the root to build the depenedent website packages
   "name": "astro",
   "compatibility_date": "2026-04-08",
-  "pages_build_output_dir": "apps/website/dist",
+  "pages_build_output_dir": "dist",
   "assets": {
-    "directory": "apps/website/dist",
+    "directory": "dist",
     "html_handling": "drop-trailing-slash",
     "not_found_handling": "404-page"
   }
