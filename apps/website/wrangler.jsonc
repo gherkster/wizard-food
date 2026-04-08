@@ -1,6 +1,6 @@
 {
   // This file is stored in the root, since we need to run the cloudflare build from the root to build the depenedent website packages
-  "name": "astro",
+  "name": "wizard-food",
   "compatibility_date": "2026-04-08",
   "pages_build_output_dir": "dist",
   "assets": {
