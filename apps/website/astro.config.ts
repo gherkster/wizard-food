@@ -8,6 +8,11 @@ import { recipeSearchIndexIntegration } from "./src/integrations/recipe-search-i
 const workspaceRoot = fileURLToPath(new URL("../../", import.meta.url));
 const srcDir = fileURLToPath(new URL("./src", import.meta.url));
 
+const websiteUrl = process.env.WEBSITE_URL;
+if (!websiteUrl) {
+  throw new Error("WEBSITE_URL environment variable not defined.");
+}
+
 // https://astro.build/config
 export default defineConfig({
   integrations: [vue(), recipeSearchIndexIntegration()],
@@ -19,6 +24,8 @@ export default defineConfig({
       weights: [400, 600],
     },
   ],
+  site: websiteUrl,
+  trailingSlash: "never", // Don't use trailing slashes with cloudflare
   vite: {
     resolve: {
       alias: {
