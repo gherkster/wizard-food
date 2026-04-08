@@ -15,7 +15,7 @@ import {
 } from "../utils/search";
 import type { AppVersion } from "../types/version";
 
-const CF_BUILD_ID_ENV = "CF_PAGES_COMMIT_SHA";
+const buildIdVariableName = "WORKERS_CI_COMMIT_SHA";
 
 export const recipeSearchIndexIntegration = (): AstroIntegration => ({
   name: "wizard-recipe-search-index",
@@ -40,11 +40,11 @@ export const recipeSearchIndexIntegration = (): AstroIntegration => ({
 });
 
 const resolveBuildId = (command: "dev" | "build") => {
-  const buildId = process.env[CF_BUILD_ID_ENV];
+  const buildId = process.env[buildIdVariableName];
 
   if (command === "build" && process.env.CI && !buildId) {
     throw new Error(
-      `${CF_BUILD_ID_ENV} environment variable is undefined. A build ID cannot be determined.`,
+      `${buildIdVariableName} environment variable is undefined. A build ID cannot be determined.`,
     );
   }
 

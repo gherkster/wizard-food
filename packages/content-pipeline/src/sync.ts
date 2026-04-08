@@ -24,7 +24,7 @@ export type SyncContentOptions = {
 
 export const syncContent = async (options: SyncContentOptions) => {
   const outputDir = resolveContentOutputDir(options.outputDir);
-  const buildId = options.buildId ?? process.env.CF_PAGES_COMMIT_SHA ?? "local";
+  const buildId = options.buildId ?? process.env.WORKERS_CI_COMMIT_SHA ?? "local";
 
   const client = useDirectusApi(options.directus);
 
