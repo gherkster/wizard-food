@@ -122,6 +122,6 @@ input {
 @media (prefers-reduced-motion: no-preference) {
   ::view-transition-old(root),
   ::view-transition-new(root) {
-    animation-duration: 200ms; // Reduce the page transition speed, defaults to 250ms
+    animation-duration: 120ms; // Reduce the page transition speed, defaults to 250ms
   }
 }
