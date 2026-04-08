@@ -1,7 +1,7 @@
 ---
 import { loadFeaturedRecipes, loadPagesContent } from "@wizard/content/store";
 
-import HomePage from "@/components/home/HomePage.vue";
+import HomePage from "@/components/home/HomePage.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const featuredRecipes = await loadFeaturedRecipes(".content");
@@ -16,5 +16,5 @@ const content = pagesContent.home;
 	ogTitle={content.title}
 	ogDescription={content.openGraphDescription}
 >
-	<HomePage featuredRecipes={featuredRecipes} client:load />
+	<HomePage featuredRecipes={featuredRecipes} />
 </BaseLayout>

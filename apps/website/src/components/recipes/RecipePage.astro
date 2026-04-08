@@ -1,0 +1,194 @@
+---
+import type { RecipePayload } from "@wizard/content/store";
+
+import { formatRecipeDurations } from "@/utils/formatting";
+import BlurrableImage from "@/components/astro/BlurrableImage.astro";
+import Tag from "@/components/astro/Tag.astro";
+import RecipeDurationPopover from "@/components/recipes/RecipeDurationPopover.vue";
+import RecipeServingsControls from "@/components/recipes/RecipeServingsControls.vue";
+import RecipeIngredientsSection from "@/components/recipes/RecipeIngredientsSection.vue";
+import RecipeInstructionsSection from "@/components/recipes/RecipeInstructionsSection.vue";
+
+interface Props {
+  recipe: RecipePayload;
+}
+
+const { recipe } = Astro.props as Props;
+const durationLabels = formatRecipeDurations(recipe);
+
+const createSearchLink = (term: string): string => {
+  const query = new URLSearchParams({ search: term.trim() });
+  return `/recipes?${query.toString()}`;
+};
+---
+
+<div class="recipe">
+  <BlurrableImage img={recipe.coverImage} purpose="cover" shape="portrait" />
+
+  <div class="recipe__summary">
+    <h1 class="recipe__title">{recipe.title}</h1>
+    {recipe.description && <div class="recipe__description" set:html={recipe.description} />}
+
+    <div class="recipe__tags">
+      {
+        recipe.tags.map((tag) => (
+          <a href={createSearchLink(tag)} class="concealed">
+            <Tag iconName="mynaui:search">{tag}</Tag>
+          </a>
+        ))
+      }
+    </div>
+
+    <div class="recipe__details highlight-container">
+      {
+        durationLabels.total && (
+          <RecipeDurationPopover
+            total={durationLabels.total}
+            preparation={durationLabels.preparation}
+            cooking={durationLabels.cooking}
+            custom={durationLabels.custom}
+            customDurationName={recipe.customDurationName}
+            client:load
+          />
+        )
+      }
+      <RecipeServingsControls recipe={recipe} recipeKey={recipe.slug} client:load />
+    </div>
+  </div>
+
+  {
+    recipe.ingredientGroups.length > 0 && (
+      <div class="recipe__ingredients highlight-container">
+        <div class="recipe__ingredients-title">
+          <h2>Ingredients</h2>
+        </div>
+        <RecipeIngredientsSection recipe={recipe} recipeKey={recipe.slug} client:load />
+      </div>
+    )
+  }
+
+  {
+    recipe.instructionGroups.length > 0 && (
+      <div class="recipe__instructions">
+        <h2>Instructions</h2>
+        <RecipeInstructionsSection recipe={recipe} recipeKey={recipe.slug} client:load />
+      </div>
+    )
+  }
+
+  {recipe.note && (
+    <div class="recipe__notes">
+      <h2>Notes</h2>
+      <div set:html={recipe.note} />
+    </div>
+  )}
+
+  <footer class="footer">
+    <img src="/icons/logo-light.svg" alt="Wizard Food logo" width="140" class="light-theme-only" style="width: 140px" />
+    <img src="/icons/logo-dark.svg" alt="Wizard Food logo" width="140" class="dark-theme-only" style="width: 140px" /> 
+  </footer>
+</div>
+
+<style lang="scss">
+@use "../../styles/mixins" as m;
+@use "../../styles/variables" as v;
+
+.recipe {
+  display: grid;
+  @include m.spacing("gx", "lg");
+  @include m.spacing("gy", "md");
+
+  @include m.breakpoint("md") {
+    grid-template-columns: 5fr 7fr;
+  }
+
+  @include m.breakpoint("lg") {
+    grid-template-columns: 4fr 8fr;
+  }
+
+  &__summary {
+    display: flex;
+    flex-direction: column;
+    @include m.spacing("gy", "md");
+  }
+
+  &__title {
+    margin: 0;
+  }
+
+  &__details {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    margin-top: auto;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    @include m.spacing("g", "xs");
+  }
+
+  &__ingredients {
+    display: flex;
+    flex-direction: column;
+
+    &-title {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+  }
+
+  &__instructions {
+    @include m.spacing("py", "sm");
+  }
+
+  &__notes {
+    grid-column: 1 / -1;
+  }
+
+  :global(.recipe__ingredients ul) {
+    @include m.spacing("pl", "xs");
+  }
+
+  :global(.instruction-group) {
+    display: flex;
+    flex-direction: column;
+    @include m.spacing("gy", "xs");
+  }
+
+  :global(.instruction) {
+    display: flex;
+    @include m.spacing("gx", "xs");
+  }
+
+  :global(.instruction-content) {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  :global(.recipe__ingredient__name p) {
+    display: inline;
+    margin: 0;
+  }
+}
+
+.highlight-container {
+  display: flex;
+  height: fit-content;
+  background-color: var(--theme-body-accent-color);
+  border-radius: v.$border-radius-sm;
+  @include m.spacing("p", "sm");
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  grid-column: 1 / -1;
+  @include m.spacing("mt", "md");
+  @include m.spacing("mb", "lg");
+}
+</style>

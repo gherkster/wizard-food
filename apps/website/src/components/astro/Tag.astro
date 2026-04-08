@@ -1,19 +1,19 @@
-<template>
-  <div class="tag">
-    <span v-if="iconName" class="tag__icon" aria-hidden="true">⌕</span>
-    <slot />
-  </div>
-</template>
-
-<script setup lang="ts">
-defineProps<{
+---
+interface Props {
   iconName?: string;
-}>();
-</script>
+}
 
-<style scoped lang="scss">
-@use "../styles/mixins" as m;
-@use "../styles/variables" as v;
+const { iconName } = Astro.props;
+---
+
+<div class="tag">
+  {iconName && <span class="tag__icon" aria-hidden="true">⌕</span>}
+  <slot />
+</div>
+
+<style lang="scss">
+@use "../../styles/mixins" as m;
+@use "../../styles/variables" as v;
 
 $tag-size: 12px;
 

@@ -1,0 +1,162 @@
+---
+import type { Image } from "@wizard/content/store";
+
+import BlurrableImage from "@/components/astro/BlurrableImage.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  link: string;
+  image: Image;
+  lazyLoadImage?: boolean;
+  variant?: "preview" | "promo";
+  tag?: string;
+  duration?: string;
+}
+
+const {
+  title,
+  description = "",
+  link,
+  image,
+  lazyLoadImage = false,
+  variant = "preview",
+  tag = "",
+  duration = "",
+} = Astro.props;
+---
+
+<a href={link} class="concealed card-link" data-astro-prefetch>
+  <div class:list={["card", variant]}>
+    <BlurrableImage
+      img={image}
+      lazy={lazyLoadImage}
+      purpose={variant === "promo" ? "cover" : "preview"}
+      shape="square"
+    />
+    <div class="card__content">
+      <p class="title">{title}</p>
+      {description && <p>{description}</p>}
+      <div class="card__stats">
+        {tag && (
+          <span class="card__label no-underline">
+            <small><span>{tag}</span></small>
+          </span>
+        )}
+        {duration && (
+          <span class="card__label card__duration no-underline">
+            <span class="card__clock" aria-hidden="true">◷</span>
+            <small><span>{duration}</span></small>
+          </span>
+        )}
+      </div>
+    </div>
+  </div>
+</a>
+
+<style lang="scss">
+@use "../../styles/mixins" as m;
+@use "../../styles/variables" as v;
+
+.card {
+  position: relative;
+
+  &__content {
+    @include m.spacing("py", "xs");
+
+    .title {
+      font-weight: v.$font-weight-bold;
+    }
+
+    > p {
+      margin-top: 0;
+    }
+  }
+
+  &__stats {
+    width: 100%;
+    display: inline-flex;
+    justify-content: space-between;
+  }
+
+  &__label {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &__duration {
+    display: inline-flex;
+    align-items: center;
+
+    .card__clock {
+      margin-right: 4px;
+    }
+  }
+
+  small {
+    text-wrap: nowrap;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      top: -2px;
+    }
+  }
+}
+
+.card-link {
+  display: block;
+  height: 100%;
+}
+
+.card.preview {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .card__content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
+  }
+}
+
+.card.promo {
+  display: flex;
+  background-color: var(--theme-body-accent-color);
+  border-radius: v.$border-radius-sm;
+
+  @include m.breakpoint("sm", "max") {
+    flex-direction: column;
+  }
+
+  .card__content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    @include m.spacing("p", "sm");
+  }
+}
+
+small {
+  span {
+    display: inline-block;
+  }
+}
+
+@include m.breakpoint("sm", "max") {
+  .card.promo :global(.image-container) {
+    border-bottom-left-radius: unset;
+    border-bottom-right-radius: unset;
+  }
+}
+
+@include m.breakpoint("sm") {
+  .card.promo :global(.image-container) {
+    border-top-right-radius: unset;
+    border-bottom-right-radius: unset;
+  }
+}
+</style>

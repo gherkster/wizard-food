@@ -2,7 +2,7 @@
 import { loadRecipesBySlug } from "@wizard/content/store";
 import type { RecipePayload } from "@wizard/content/store";
 
-import RecipePage from "@/components/recipes/RecipePage.vue";
+import RecipePage from "@/components/recipes/RecipePage.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { recipeTotalDuration } from "@/utils/formatting";
 
@@ -60,5 +60,5 @@ const recipeSchema = {
   <Fragment slot="head">
     <script type="application/ld+json" set:html={JSON.stringify(recipeSchema)} />
   </Fragment>
-  <RecipePage recipe={recipe} client:load />
+  <RecipePage recipe={recipe} />
 </BaseLayout>

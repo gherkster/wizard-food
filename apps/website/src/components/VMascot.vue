@@ -12,9 +12,13 @@ const props = withDefaults(
   },
 );
 
-defineEmits(["click"]);
+defineEmits<{
+  click: [];
+}>();
 </script>
 
 <template>
-  <MascotSVG :class="{ excited: excited }" :width="size" :height="size" @click="onClick" />
+  <span @click="$emit('click')">
+    <MascotSVG :class="{ excited: excited }" :width="size" :height="size" />
+  </span>
 </template>
