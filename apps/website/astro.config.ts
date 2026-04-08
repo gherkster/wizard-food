@@ -11,10 +11,13 @@ const srcDir = fileURLToPath(new URL("./src", import.meta.url));
 // https://astro.build/config
 export default defineConfig({
   integrations: [vue(), recipeSearchIndexIntegration()],
+  // Prefetch to speed up client navigation
   prefetch: {
-    // Prefetch to speed up client navigation
     defaultStrategy: "viewport",
     prefetchAll: true,
+  },
+  experimental: {
+    clientPrerender: true,
   },
   fonts: [
     {
