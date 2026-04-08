@@ -34,6 +34,8 @@ program
     // Use .env if set for local dev
     config({ path: envFilePath });
 
+    console.log(process.env);
+
     await syncContent({
       outputDir: contentDir,
       buildId: options.buildId,
