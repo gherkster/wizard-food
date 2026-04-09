@@ -1,32 +1,53 @@
 {
-  "name": "@wizard/website",
+  "name": "website",
   "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "scripts": {
-    "dev": "pnpm run content:sync && nuxt dev",
-    "generate": "nuxt generate",
-    "content:sync": "pnpm --filter @wizard/content-pipeline run content:sync sync --site $PWD --dotenv-file .env --content-dir .content",
-    "bundle:analyze": "nuxi analyze",
-    "typecheck": "nuxi typecheck"
+    "dev": "vite dev --port 3000",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "lint": "eslint",
+    "format": "prettier --check .",
+    "check": "prettier --write . && eslint --fix"
   },
   "dependencies": {
-    "dayjs": "catalog:",
-    "fraction.js": "catalog:",
-    "minisearch": "catalog:"
+    "@tailwindcss/vite": "^4.1.18",
+    "@tanstack/react-devtools": "latest",
+    "@tanstack/react-router": "latest",
+    "@tanstack/react-router-devtools": "latest",
+    "@tanstack/react-router-ssr-query": "latest",
+    "@tanstack/react-start": "latest",
+    "@tanstack/router-plugin": "^1.132.0",
+    "lucide-react": "^0.545.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
-    "@iconify-json/mynaui": "catalog:",
-    "@nuxt/fonts": "catalog:",
-    "@nuxt/icon": "catalog:",
-    "@nuxtjs/robots": "catalog:",
-    "@nuxtjs/sitemap": "catalog:",
-    "@types/node": "catalog:",
-    "@wizard/content": "workspace:*",
-    "nuxt": "catalog:",
-    "sass": "catalog:",
-    "schema-dts": "catalog:",
-    "typescript": "catalog:",
-    "vue": "catalog:",
-    "vue-tsc": "catalog:"
+    "@tailwindcss/typography": "^0.5.16",
+    "@tanstack/devtools-vite": "latest",
+    "@tanstack/eslint-config": "latest",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.0",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.1.4",
+    "jsdom": "^28.1.0",
+    "prettier": "^3.8.1",
+    "typescript": "^5.7.2",
+    "vite": "^7.3.1",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.0.5"
   },
-  "packageManager": "pnpm@10.32.1+sha512.a706938f0e89ac1456b6563eab4edf1d1faf3368d1191fc5c59790e96dc918e4456ab2e67d613de1043d2e8c81f87303e6b40d4ffeca9df15ef1ad567348f2be"
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "lightningcss"
+    ]
+  }
 }
