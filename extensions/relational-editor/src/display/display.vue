@@ -11,7 +11,6 @@ import extensions from "./extensions";
 
 const props = defineProps<{ value: JSONContent }>();
 
-
 const plainText = computed(() => {
   if (!props.value) {
     return "";

@@ -31,7 +31,6 @@ const props = defineProps<{
   disabled?: boolean;
 }>();
 
-
 const small = computed(() => props.icon || props.display);
 </script>
 

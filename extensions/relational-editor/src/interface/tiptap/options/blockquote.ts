@@ -3,12 +3,11 @@
 import Blockquote from "@tiptap/extension-blockquote";
 import type { Editor } from "@tiptap/core";
 
-import customMessages from "../../i18n/custom-messages";
 import { Tool } from "../../../common/types/tools";
 
 export default {
   key: "blockquote",
-  name: customMessages.tools.blockquote,
+  name: "Block quote",
   icon: "format_quote",
   extension: [Blockquote],
   shortcut: ["meta", "shift", "B"],

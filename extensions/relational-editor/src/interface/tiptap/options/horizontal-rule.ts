@@ -3,12 +3,11 @@
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import type { Editor } from "@tiptap/core";
 
-import customMessages from "../../i18n/custom-messages";
 import { Tool } from "../../../common/types/tools";
 
 export default {
   key: "horizontalRule",
-  name: customMessages.tools.hr,
+  name: "Horizontal rule",
   icon: "horizontal_rule",
   extension: [HorizontalRule],
   shortcut: [],
