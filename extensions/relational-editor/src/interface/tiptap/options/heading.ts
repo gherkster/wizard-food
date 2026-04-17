@@ -1,10 +1,9 @@
 // https://tiptap.dev/api/nodes/heading
 
-import type { Level, HeadingOptions } from "@tiptap/extension-heading";
 import Heading from "@tiptap/extension-heading";
+import type { Level, HeadingOptions } from "@tiptap/extension-heading";
 import type { Editor, AnyExtension } from "@tiptap/core";
 
-import customMessages from "../../i18n/custom-messages";
 import { Tool } from "../../../common/types/tools";
 import { ToolSelection } from "../../../common/types/relation-nodes";
 
@@ -18,11 +17,10 @@ export default (level: Level): Tool => {
       levels,
     } as HeadingOptions);
   };
-  const msgKey = `h${level}` as keyof typeof customMessages.tools;
 
   return {
     key: `h${level}`,
-    name: customMessages.tools[msgKey],
+    name: `h${level}`,
     display: `H${level}`,
     extension: [headingExtension],
     isFormatTool: true,

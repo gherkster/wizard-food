@@ -35,13 +35,16 @@ export function useRelationM2M(collection: Ref<string>, field: Ref<string>) {
   const fieldsStore = useFieldsStore();
 
   const relationInfo = computed<RelationM2M | undefined>(() => {
-    const relations = relationsStore.getRelationsForField(collection.value, field.value);
+    const relations = relationsStore.getRelationsForField(
+      collection.value,
+      field.value,
+    ) as Relation[];
 
     const junction = relations.find(
       (relation) =>
         relation.related_collection === collection.value &&
         relation.meta?.one_field === field.value &&
-        relation.meta.junction_field,
+        !!relation.meta.junction_field,
     );
 
     if (!junction) return undefined;

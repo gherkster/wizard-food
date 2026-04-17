@@ -4,12 +4,11 @@ import Strike from "@tiptap/extension-strike";
 import type { Editor } from "@tiptap/core";
 
 import { extendMarkRangeIfUnselected } from "../util";
-import customMessages from "../../i18n/custom-messages";
 import { Tool } from "../../../common/types/tools";
 
 export default {
   key: "strike",
-  name: customMessages.tools.strike,
+  name: "Strikethrough",
   icon: "format_strikethrough",
   extension: [Strike],
   shortcut: ["meta", "shift", "X"],

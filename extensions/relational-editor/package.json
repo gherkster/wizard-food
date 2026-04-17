@@ -50,18 +50,17 @@
     "tiptap-render-view": "^1.0.4"
   },
   "devDependencies": {
-    "@directus/extensions-sdk": "^13.1.1",
+    "@directus/extensions-sdk": "catalog:",
+    "@directus/types": "catalog:",
     "@tiptap/pm": "^2.27.2",
     "@tiptap/vue-3": "^2.27.2",
-    "@types/lodash": "^4.17.24",
+    "@types/validator": "catalog:",
     "@types/uuid": "^9.0.8",
-    "lodash": "^4.17.23",
-    "pinia": "2.1.7",
-    "typescript": "^5.9.3",
+    "pinia": "catalog:",
+    "typescript": "catalog:",
     "uuid": "^9.0.1",
     "validator": "^13.15.26",
-    "vue": "3.5.13",
-    "vue-i18n": "^9.14.5"
+    "vue": "catalog:"
   },
   "icon": "extension",
   "directus:extension": {

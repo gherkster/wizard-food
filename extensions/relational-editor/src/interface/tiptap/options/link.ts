@@ -4,13 +4,12 @@ import Link from "@tiptap/extension-link";
 import type { Editor } from "@tiptap/core";
 
 import { useLinkStore } from "../../stores/useLinkStore";
-import customMessages from "../../i18n/custom-messages";
 import { Tool } from "../../../common/types/tools";
 
 const add: Tool = {
   // https://tiptap.dev/api/marks/link
   key: "link",
-  name: customMessages.tools.link,
+  name: "Link",
   icon: "link",
   extension: [linkExtensionConfig],
   action: (editor) => {
@@ -23,7 +22,7 @@ const add: Tool = {
 const remove: Tool = {
   // https://tiptap.dev/api/marks/link
   key: "removeLink",
-  name: customMessages.tools.unlink,
+  name: "Remove link",
   icon: "link_off",
   extension: [linkExtensionConfig],
   action: (editor: Editor) => editor.chain().focus().unsetLink().run(),
@@ -35,7 +34,7 @@ const remove: Tool = {
 const auto: Tool = {
   // If you want to use autolink without a link button
   key: "autolink",
-  name: customMessages.tools.autolink,
+  name: "Auto link",
   excludeFromToolbar: true,
   extension: [linkExtensionConfig],
   action: () => {

@@ -6,9 +6,9 @@
       <template #activator="{ toggle }">
         <v-button
           v-if="displayFormat"
-          v-tooltip="t('formats')"
+          v-tooltip="'Formats'"
           tabindex="-1"
-          :aria-label="t('formats')"
+          aria-label="Formats"
           :disabled="formatToolsDisabled"
           :aria-disabled="formatToolsDisabled"
           small
@@ -20,7 +20,7 @@
         </v-button>
         <ToolButton
           v-else
-          :title="t('formats')"
+          title="Formats"
           icon="format_paragraph"
           :action="toggle"
           :disabled="formatToolsDisabled"
@@ -74,16 +74,13 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
 import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
-import { capitalize } from "lodash";
 import type { Editor } from "@tiptap/vue-3";
 
 import ToolButton from "./ToolButton.vue";
 import ToolbarRelationMenu from "./ToolbarRelationMenu.vue";
 import { useLinkStore } from "../stores/useLinkStore";
-import { useI18nFallback } from "../composables/use-i18n-fallback";
 import type { Tool } from "../../common/types/tools";
 
 // Props
@@ -96,23 +93,15 @@ interface Props {
 }
 const props = defineProps<Props>();
 
-
-const { t, $t } = useI18nFallback(useI18n());
-
-
 // Split up tools to types
 const buttonTools = ref<Tool[]>([]);
 
-
 const formatTools = ref<Tool[]>([]);
-
 
 props.basicTools.forEach((tool) => {
   if (tool.excludeFromToolbar) {
     return;
   }
-
-  tool.name = $t(tool.name);
 
   if (tool.isFormatTool) {
     formatTools.value.push(tool);
@@ -122,11 +111,9 @@ props.basicTools.forEach((tool) => {
   buttonTools.value.push(tool);
 });
 
-
 const formatToolsDisabled = computed(() =>
   formatTools.value.every((tool) => tool.disabled?.(props.editor)),
 );
-
 
 const formatToolsDisplay = computed(() => {
   const activeFormat: Tool[] = formatTools.value.filter((tool: Tool) =>
@@ -135,19 +122,17 @@ const formatToolsDisplay = computed(() => {
 
   if (activeFormat.length) return activeFormat.map((tool) => tool.name)[0];
 
-  return t("tools.paragraph");
+  return "Paragraph";
 });
-
 
 const linkStore = useLinkStore();
 const { dialog, isDialogOpen } = storeToRefs(linkStore);
-
 
 function translateShortcut(keys: string[]): string {
   return keys
     .map((key) => {
       if (key === "meta") return "Ctrl";
-      return capitalize(key);
+      return key;
     })
     .join("+");
 }

@@ -4,12 +4,11 @@ import ListItem from "@tiptap/extension-list-item";
 import BulletList from "@tiptap/extension-bullet-list";
 import type { Editor } from "@tiptap/core";
 
-import customMessages from "../../i18n/custom-messages";
 import { Tool } from "../../../common/types/tools";
 
 export default {
   key: "bulletList",
-  name: customMessages.tools.bullet_list,
+  name: "Bullet list",
   icon: "format_list_bulleted",
   extension: [BulletList, ListItem],
   shortcut: ["meta", "shift", "8"],

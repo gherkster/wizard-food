@@ -1,6 +1,5 @@
 import { useToolStore } from "./stores/toolStore";
 import InterfaceComponent from "./interface.vue";
-import customMessages from "./i18n/custom-messages";
 import inlineNodeTagNames from "../common/inlineNodeTagNames";
 
 export default {
@@ -16,7 +15,7 @@ export default {
       {
         field: "m2mField",
         type: "string",
-        name: customMessages.m2m_field,
+        name: "M2M Reference Field",
         meta: {
           width: "full",
           interface: "system-field",
@@ -78,7 +77,7 @@ export default {
       },
       {
         field: "tools",
-        name: customMessages.tools_title,
+        name: "Tools",
         type: "json",
         schema: {
           default_value: store.interfaceOptionsDefault,

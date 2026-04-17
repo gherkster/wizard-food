@@ -37,10 +37,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, watch, computed, toRef } from "vue";
+import { ref, inject, computed, toRef } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import type { Editor } from "@tiptap/vue-3";
-import type { Item, Filter } from "@directus/types";
+import type { Filter } from "@directus/types";
 import { useApi, useItems } from "@directus/extensions-sdk";
 
 import ToolButton from "./ToolButton.vue";
@@ -53,18 +53,13 @@ const props = defineProps<{
   editor: Editor;
 }>();
 
-
 const config = inject<Configuration>(configurationInjectionKey);
-
 
 const selectModalActive = ref(false);
 
-
 const { relation } = useRelation();
 
-
 const relationStore = useRelationStore();
-
 
 // TODO: This should probably sit somewhere else
 const { items: junctionItems, getItems } = relationStore.getItems(
@@ -76,7 +71,6 @@ const { items: junctionItems, getItems } = relationStore.getItems(
       }
     : undefined,
 );
-
 
 getItems().then(() => {
   if (junctionItems.value.length > 0) {
@@ -96,7 +90,6 @@ getItems().then(() => {
     });
   }
 });
-
 
 // Hacky way to extract the recipe ID from the URL,
 // this is necessary while Directus doesn't provide the current form values for sub-forms
@@ -118,17 +111,13 @@ const recipeId = computed(() => {
   return Number(recipeId);
 });
 
-
 const loading = ref(false);
 
-
 const filter = ref<Filter>();
-
 
 interface RecipeQueryResult {
   ingredientGroups: number[];
 }
-
 
 if (recipeId.value && config!.relation.limitToCurrentItem) {
   loading.value = true;
@@ -145,7 +134,6 @@ if (recipeId.value && config!.relation.limitToCurrentItem) {
     sort: ref(null),
   });
 
-
   getItems().then(() => {
     if (items.value.length > 0) {
       const recipe = items.value[0] as RecipeQueryResult;
@@ -160,26 +148,20 @@ if (recipeId.value && config!.relation.limitToCurrentItem) {
   });
 }
 
-
 const api = useApi();
-
 
 function selectItem() {
   selectModalActive.value = true;
 }
 
-
 const toolStore = useToolStore();
-
 
 async function stageSelects(items: [string | number]) {
   const nodeId = uuidv4();
 
-
   const relatedItemResponse = await api.get(
     `items/${relation.value!.relatedCollection.collection}/${items[0]}`,
   );
-
 
   // TODO: Remove any
   relationStore.stagedChanges.create.push({
@@ -194,7 +176,6 @@ async function stageSelects(items: [string | number]) {
       junctionFieldName: relation.value!.reverseJunctionField.field,
     },
   });
-
 
   toolStore.inlineRelationTool?.action(props.editor, {
     id: nodeId,

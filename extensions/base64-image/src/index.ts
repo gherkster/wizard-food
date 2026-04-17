@@ -1,18 +1,25 @@
-import type { Readable } from "stream";
+import { Readable } from "stream";
 
 import { defineHook } from "@directus/extensions-sdk";
-import * as Services from "@directus/api/dist/services";
 
 const base64UrlMetadataKey = "base64Url";
 
-export default defineHook(({ action, init }, { services, database, getSchema }) => {
-  const { AssetsService, ItemsService } = services as typeof Services;
+interface DirectusFileAsset {
+  id: string;
+  metadata: {
+    [base64UrlMetadataKey]?: string;
+  };
+}
 
-  // Add metadata to any images without it on extension load
+export default defineHook(({ action, init }, context) => {
+  const { database, getSchema, services } = context;
+  const { AssetsService, ItemsService } = services;
+
+  // Generate and append the base64 thumbnail image url to any images without it
   init("routes.custom.after", async () => {
     const schema = await getSchema();
 
-    const itemsService = new ItemsService("directus_files", {
+    const itemsService = new ItemsService<DirectusFileAsset>("directus_files", {
       knex: database,
       schema: schema,
     });
@@ -82,7 +89,7 @@ export default defineHook(({ action, init }, { services, database, getSchema }) 
     metadata ||= {};
     metadata[base64UrlMetadataKey] = dataUrl;
 
-    itemsService.updateOne(key, { metadata: metadata });
+    await itemsService.updateOne(key, { metadata: metadata });
     console.log(`Added base64 image URL to ${key}`);
   };
 });

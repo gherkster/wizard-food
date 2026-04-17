@@ -2,7 +2,6 @@ import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 import { AnyExtension } from "@tiptap/core";
 
-import table from "../tiptap/options/table";
 import strike from "../tiptap/options/strike";
 import paragraph from "../tiptap/options/paragraph";
 import orderedList from "../tiptap/options/ordered-list";
@@ -38,7 +37,6 @@ export const useToolStore = defineStore("tool-store", () => {
     bulletList,
     orderedList,
     blockquote,
-    table,
     history.undo,
     history.redo,
     link.add,

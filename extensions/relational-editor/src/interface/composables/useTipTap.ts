@@ -2,7 +2,6 @@ import { RelationBlockAttrs, type EditorDefaultAttributes } from "@wizard/conten
 import { VueNodeViewRenderer } from "@tiptap/vue-3";
 import { Editor, mergeAttributes, Node } from "@tiptap/core";
 
-import customMessages from "../i18n/custom-messages";
 import InlineRelation from "../../interface/components/InlineRelation.vue";
 import type { InlineRelationTool } from "../../common/types/tools";
 
@@ -70,7 +69,7 @@ export function useTipTap() {
     return {
       // Custom
       key: inlineTagName,
-      name: customMessages.tools.relation_block,
+      name: "Blocks",
       icon: "add",
       excludeFromOptions: true,
       excludeFromToolbar: true,
