@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import { config as loadDotEnv } from "dotenv";
+import { config } from "dotenv";
 import { Command } from "commander";
 
 import { syncContent } from "./sync";
@@ -31,15 +31,16 @@ program
     const envFilePath = path.resolve(siteDir, options.dotenvFile);
     const contentDir = path.resolve(siteDir, options.contentDir);
 
-    loadDotEnv({ path: envFilePath });
+    // Use .env if set for local dev
+    config({ path: envFilePath });
 
     await syncContent({
       outputDir: contentDir,
       buildId: options.buildId,
       directus: {
-        baseUrl: requiredEnv("NUXT_BASE_URL"),
-        cfAccessClientId: requiredEnv("NUXT_CF_ACCESS_CLIENT_ID"),
-        cfAccessClientSecret: requiredEnv("NUXT_CF_ACCESS_CLIENT_SECRET"),
+        baseUrl: requiredEnv("CRM_URL"),
+        cfAccessClientId: requiredEnv("CF_ACCESS_CLIENT_ID"),
+        cfAccessClientSecret: requiredEnv("CF_ACCESS_CLIENT_SECRET"),
       },
     });
 

@@ -1,12 +1,11 @@
 import path from "node:path";
 
 import type { IngredientUnitForms, ServerRecipe } from "@wizard/openapi";
-import type { RecipePayload, RecipePreview, WebsitePagesContent } from "@wizard/content/store";
+import type { RecipePayload, RecipePreview, WebsitePagesContent } from "@wizard/content";
 
 import { writeContentArtifacts } from "./output/writeArtifacts";
 import { toRecipePayload } from "./map/directusRecipeMapper";
-import { useDirectusApi } from "./directus/client";
-import type { DirectusRuntimeConfig } from "./directus/client";
+import { useDirectusApi, type DirectusRuntimeConfig } from "./directus/client";
 import { formatDuration, recipeTotalDuration } from "./build/formatting";
 import { buildFeaturedRecipes } from "./build/featured";
 
@@ -24,7 +23,7 @@ export type SyncContentOptions = {
 
 export const syncContent = async (options: SyncContentOptions) => {
   const outputDir = resolveContentOutputDir(options.outputDir);
-  const buildId = options.buildId ?? process.env.CF_PAGES_COMMIT_SHA ?? "local";
+  const buildId = options.buildId ?? process.env.WORKERS_CI_COMMIT_SHA ?? "local";
 
   const client = useDirectusApi(options.directus);
 
@@ -128,6 +127,11 @@ const mapToRecipePreview = (recipe: RecipePayload): RecipePreview => {
     descriptionSnippet: recipe.descriptionSnippet,
     course: recipe.course ?? undefined,
     cuisine: recipe.cuisine ?? undefined,
+    diets: recipe.diets?.filter((diet): diet is string => typeof diet === "string"),
+    main_ingredients: recipe.main_ingredients?.filter(
+      (ingredient): ingredient is string => typeof ingredient === "string",
+    ),
+    method: recipe.method ?? undefined,
     datePublished: recipe.datePublished,
     favourite: recipe.favourite ?? undefined,
     featuredTag: recipe.featuredTag,

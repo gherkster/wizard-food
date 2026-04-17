@@ -13,7 +13,7 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "openapi:generate": "openapi-typescript ../../openapi/directus.json -o ./src/types/directus-schema.d.ts",
     "typecheck": "tsc --noEmit --project tsconfig.json"
   },

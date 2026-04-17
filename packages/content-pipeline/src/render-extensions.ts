@@ -1,12 +1,12 @@
 import Fraction from "fraction.js";
-import type {
-  EditorDefaultAttributes,
-  InlineIngredient,
-  InlineIngredientHTMLElementDataset,
-  KebabCaseDataAttributes,
-  RelationBlockAttrs,
-} from "@wizard/content/shared";
-import { formatIngredient } from "@wizard/content/shared";
+import {
+  formatIngredient,
+  type EditorDefaultAttributes,
+  type InlineIngredient,
+  type InlineIngredientHTMLElementDataset,
+  type KebabCaseDataAttributes,
+  type RelationBlockAttrs,
+} from "@wizard/content";
 import Text from "@tiptap/extension-text";
 import { TableRow } from "@tiptap/extension-table-row";
 import { TableHeader } from "@tiptap/extension-table-header";
@@ -96,7 +96,8 @@ export const inlineIngredientSerializer = Node.create({
           "data-ingredient": JSON.stringify(htmlAttributes.data),
         };
 
-      const isSingularForm = htmlAttributes.data.amount && Number(htmlAttributes.data.amount) <= 1;
+      const isSingularForm =
+        htmlAttributes.data.amount !== undefined && Number(htmlAttributes.data.amount) <= 1;
 
       return [
         "span",
@@ -105,7 +106,10 @@ export const inlineIngredientSerializer = Node.create({
           ...inlineIngredientAttributes,
         },
         formatIngredient({
-          amount: htmlAttributes.data.amount ? new Fraction(htmlAttributes.data.amount) : undefined,
+          amount:
+            htmlAttributes.data.amount !== undefined
+              ? new Fraction(htmlAttributes.data.amount)
+              : undefined,
           unit: isSingularForm
             ? htmlAttributes.data.unit?.singular
             : htmlAttributes.data.unit?.plural,

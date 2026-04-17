@@ -1,4 +1,4 @@
-import type { RichTextContent } from "@wizard/content/shared";
+import type { RichTextContent } from "@wizard/content";
 import { generateHTML } from "@tiptap/html";
 import { generateText } from "@tiptap/core";
 

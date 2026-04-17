@@ -13,7 +13,7 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "typecheck": "tsc --noEmit --project tsconfig.json",
     "content:sync": "tsx ./src/cli.ts"
   },

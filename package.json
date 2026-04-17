@@ -4,13 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "content:sync": "pnpm run content:sync:website",
-    "content:sync:website": "pnpm --filter website run content:sync",
-    "dev": "turbo run dev --filter website --continue",
+    "dev:website": "turbo run dev --filter website --continue",
     "build": "turbo run build",
-    "generate": "turbo run generate --filter=@wizard/website",
-    "typecheck": "turbo run typecheck",
-    "check": "pnpm run lint && pnpm run format:check",
+    "build:website": "turbo run build --filter website",
     "lint": "pnpm run lint:ox",
     "lint:ox": "oxlint -c .oxlintrc.json --import-plugin --vue-plugin .",
     "lint:fix": "pnpm run lint:ox -- --fix",
@@ -21,8 +17,8 @@
     "jiti": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "turbo": "catalog:",
-    "typescript-eslint": "catalog:"
+    "oxlint-tsgolint": "catalog:",
+    "turbo": "catalog:"
   },
   "packageManager": "pnpm@10.32.1+sha512.a706938f0e89ac1456b6563eab4edf1d1faf3368d1191fc5c59790e96dc918e4456ab2e67d613de1043d2e8c81f87303e6b40d4ffeca9df15ef1ad567348f2be"
 }

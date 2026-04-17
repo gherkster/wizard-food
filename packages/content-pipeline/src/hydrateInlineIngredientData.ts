@@ -1,10 +1,13 @@
-import type { InlineIngredient, RichTextContent } from "@wizard/content/shared";
+import type { InlineIngredient, RichTextContent } from "@wizard/content";
 
 export const hydrateInlineIngredientData = (
   content: RichTextContent,
   getInlineIngredient: (id: string) => InlineIngredient | undefined,
 ): RichTextContent => {
-  if (content.type === "inline-ingredient" && content.attrs?.id) {
+  if (
+    content.type === "inline-ingredient" &&
+    (typeof content.attrs?.id === "string" || typeof content.attrs?.id === "number")
+  ) {
     const id = String(content.attrs.id);
     const inlineIngredient = getInlineIngredient(id);
 

@@ -5,14 +5,28 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import tailwindcss from "@tailwindcss/vite";
 
-const config = defineConfig({
-  plugins: [
-    devtools(),
-    tsconfigPaths({ projects: ["./tsconfig.json"] }),
-    tailwindcss(),
-    tanstackStart(),
-    viteReact(),
-  ],
+import { getPrerenderPages } from "./scripts/prerender-pages";
+
+const config = defineConfig(async () => {
+  const pages = await getPrerenderPages();
+
+  return {
+    plugins: [
+      devtools(),
+      tsconfigPaths({ projects: ["./tsconfig.json"] }),
+      tailwindcss(),
+      tanstackStart({
+        prerender: {
+          enabled: true,
+          crawlLinks: false,
+          autoStaticPathsDiscovery: false,
+          autoSubfolderIndex: false,
+        },
+        pages,
+      }),
+      viteReact(),
+    ],
+  };
 });
 
 export default config;

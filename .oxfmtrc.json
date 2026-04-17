@@ -5,12 +5,12 @@
   "sortImports": {
     "order": "desc"
   },
+  "endOfLine": "lf",
   "ignorePatterns": [
     "**/node_modules/**",
     "**/.turbo/**",
     "**/dist/**",
-    "**/.nuxt/**",
-    "**/.output/**",
+    "**/*.gen.ts",
     "pnpm-lock.yaml",
     "directus-schema.d.ts"
   ]

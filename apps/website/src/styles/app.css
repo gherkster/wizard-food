@@ -1,0 +1,75 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+:root {
+  --color-primary: #924c0e;
+  --color-primary-soft: #ffdcc6;
+  --color-background: #fbf9f8;
+  --color-foreground: #1b1c1c;
+  --color-muted: #544339;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f6f3f2;
+  --color-border: #d9c2b4;
+  --color-glow: rgba(146, 76, 14, 0.24);
+}
+
+:root[data-theme="warm-noir"] {
+  --color-primary: #ffb785;
+  --color-primary-soft: #cf7c3d;
+  --color-background: #171210;
+  --color-foreground: #ebe0db;
+  --color-muted: #d9c2b4;
+  --color-surface: #201b18;
+  --color-surface-soft: #2a241f;
+  --color-border: #544339;
+  --color-glow: rgba(255, 183, 133, 0.22);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+html {
+  background-image:
+    radial-gradient(circle at 12% 8%, var(--color-glow), transparent 45%),
+    radial-gradient(circle at 82% 18%, rgba(104, 121, 106, 0.14), transparent 38%),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-surface) 34%, transparent), transparent 280px);
+  background-attachment: fixed;
+}
+
+body {
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Noto Serif", ui-serif, Georgia, serif;
+}
+
+a {
+  color: inherit;
+}
+
+.inline-ingredient {
+  font-weight: 700;
+}
+
+.recipe-ingredient-name,
+.recipe-ingredient-name p {
+  display: inline;
+  margin: 0;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-primary-soft) 75%, transparent);
+  color: var(--color-foreground);
+}

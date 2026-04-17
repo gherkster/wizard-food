@@ -2,37 +2,13 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": [
-        "dist/**",
-        ".output/**",
-        "apps/website/.output/**",
-        "apps/website/.nuxt/**",
-        "apps/website/node_modules/.cache/nuxt/.nuxt/**"
-      ]
+      "dependsOn": ["^build", "//#lint"],
+      "outputs": ["dist/**"],
+      "envMode": "loose"
     },
-    "generate": {
-      "dependsOn": ["content:sync", "^build"],
-      "outputs": [
-        "dist/**",
-        ".output/**",
-        "apps/website/.output/**",
-        "apps/website/.nuxt/**",
-        "apps/website/node_modules/.cache/nuxt/.nuxt/**"
-      ],
-      "passThroughEnv": ["CF_PAGES_COMMIT_SHA"]
-    },
-    "content:sync": {
-      "dependsOn": ["^build"],
-      "outputs": [".content/**"],
-      "passThroughEnv": ["CLOUDINARY_API_KEY", "CLOUDINARY_CLOUD_NAME", "CLOUDINARY_IMAGE_FOLDER"]
-    },
-    "typecheck": {
-      "dependsOn": ["^build"],
-      "outputs": []
-    },
-    "lint": {
-      "dependsOn": ["^lint"],
+    "//#lint": {
+      "cache": true,
+      "inputs": ["**/*.{js,ts,tsx,jsx}", ".oxfmtrc*"],
       "outputs": []
     },
     "dev": {

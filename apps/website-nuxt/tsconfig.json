@@ -1,5 +1,0 @@
-{
-  // https://nuxt.com/docs/guide/concepts/typescript
-  "extends": ["../../tsconfig.base.json", "./.nuxt/tsconfig.json"],
-  "exclude": ["functions/**/*"]
-}

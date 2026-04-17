@@ -1,16 +1,23 @@
 {
   "rules": {
-    "no-debugger": "error"
+    "no-debugger": "error",
+    "typescript/strict-boolean-expressions": [
+      "error",
+      {
+        "allowNumber": false,
+        "allowNullableBoolean": true,
+        "allowNullableObject": true,
+        "allowNullableString": true,
+        "allowString": true
+      }
+    ]
+  },
+  "options": {
+    "typeAware": true,
+    "typeCheck": true
   },
   "env": {
     "builtin": true
   },
-  "ignorePatterns": [
-    "**/node_modules/**",
-    "**/.turbo/**",
-    "**/dist/**",
-    "**/.nuxt/**",
-    "**/.output/**",
-    "pnpm-lock.yaml"
-  ]
+  "ignorePatterns": ["**/node_modules/**", "**/.turbo/**", "**/dist/**", "pnpm-lock.yaml"]
 }

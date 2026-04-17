@@ -8,6 +8,10 @@ dist-ssr
 .tanstack
 .wrangler
 .output
+.content
 .vinxi
 __unconfig*
 todos.json
+
+public/search-index.json
+public/version.json

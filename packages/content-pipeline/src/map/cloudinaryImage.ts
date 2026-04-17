@@ -1,6 +1,12 @@
 import crypto from "node:crypto";
 
-import type { AspectRatio, ImagePurpose, ImageVariants } from "@wizard/content/store";
+import type {
+  AspectRatio,
+  ImagePurpose,
+  ImageShape,
+  ImageVariant,
+  ImageVariants,
+} from "@wizard/content";
 
 const imageFileExtension = "avif";
 
@@ -10,7 +16,7 @@ type CloudinaryRuntimeConfig = {
   imageFolder: string;
 };
 
-const imageWidths: Record<ImagePurpose, Record<AspectRatio, number[]>> = {
+const imageWidths: Record<ImagePurpose, Record<ImageShape, number[]>> = {
   cover: {
     portrait: [320, 480, 720, 960],
     square: [320, 480, 720, 960],
@@ -31,12 +37,23 @@ const imageSizes: Record<ImagePurpose, string> = {
   instruction: "(max-width: 768px) 100vw, 640px",
 };
 
-const getAspectRatio = (aspectRatio: AspectRatio) => {
-  if (aspectRatio === "portrait") {
-    return { x: 3, y: 4 };
+/**
+ * Gets the aspect ratio X and Y for a given image shape.
+ * @param shape The shape of the image, e.g. "square".
+ */
+const getAspectRatio = (shape: ImageShape): { x: number; y: number } => {
+  switch (shape) {
+    case "portrait":
+      return {
+        x: 3,
+        y: 4,
+      };
+    case "square":
+      return {
+        x: 1,
+        y: 1,
+      };
   }
-
-  return { x: 1, y: 1 };
 };
 
 const resolveConfig = (): CloudinaryRuntimeConfig => {
@@ -74,8 +91,7 @@ const transformToCloudinaryVersion = (modifiedOn: string): number => {
 };
 
 const buildTransformation = (aspectRatio: AspectRatio, width: number): string => {
-  const { x, y } = getAspectRatio(aspectRatio);
-  return `c_fill,g_auto,ar_${x}:${y},w_${width},f_${imageFileExtension},q_auto`;
+  return `c_fill,g_auto,ar_${aspectRatio.x}:${aspectRatio.y},w_${width},f_${imageFileExtension},q_auto`;
 };
 
 const generateCloudinaryDeliverySignature = (signingKey: string, slug: string) => {
@@ -109,9 +125,12 @@ const buildVariant = (
   imageId: string,
   modifiedOn: string,
   purpose: ImagePurpose,
-  aspectRatio: AspectRatio,
-) => {
-  const widths = imageWidths[purpose][aspectRatio];
+  shape: ImageShape,
+): ImageVariant => {
+  const widths = imageWidths[purpose][shape];
+
+  const aspectRatio = getAspectRatio(shape);
+
   const variants = widths.map((width) => {
     const transformation = buildTransformation(aspectRatio, width);
     const { url } = buildSignedUrl(config, imageId, modifiedOn, transformation);
@@ -124,7 +143,7 @@ const buildVariant = (
 
   const largestVariant = variants.at(-1);
   if (!largestVariant) {
-    throw new Error(`No widths configured for ${purpose} ${aspectRatio}`);
+    throw new Error(`No widths configured for ${purpose} ${shape}`);
   }
 
   return {

@@ -1,5 +1,6 @@
 {
-  "include": ["**/*.ts", "**/*.tsx", "eslint.config.js", "prettier.config.js", "vite.config.js"],
+  "extends": ["../../tsconfig.base.json"],
+  "include": ["**/*.ts", "**/*.tsx", "vite.config.ts", "scripts/generate-search-assets.ts"],
 
   "compilerOptions": {
     "target": "ES2022",
@@ -10,12 +11,11 @@
       "@/*": ["./src/*"]
     },
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["vite/client"],
+    "types": ["vite/client", "node"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
     "noEmit": true,
 
     /* Linting */
