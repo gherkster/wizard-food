@@ -2,7 +2,6 @@ packages:
   - apps/*
   - extensions/*
   - packages/*
-catalogMode: strict
 catalog:
   "@directus/extensions-sdk": 17.1.3
   "@directus/types": 15.0.2
@@ -64,7 +63,7 @@ catalog:
   sass: ^1.98.0
   schema-dts: ^1.1.5
   tiptap-render-view: ^1.0.4
-  tsx: ^4.20.6
+  tsx: ^4.21.0
   turbo: ^2.8.20
   typescript: ^5.9.3
   typescript-eslint: ^8.57.1
@@ -72,3 +71,4 @@ catalog:
   validator: ^13.15.26
   vue: 3.5.24
   vue-tsc: 3.2.6
+catalogMode: strict
