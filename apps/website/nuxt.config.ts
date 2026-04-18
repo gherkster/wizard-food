@@ -32,9 +32,6 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    baseUrl: "", // Overridden by .env NUXT_CRM_URL
-    cfAccessClientId: "", // Overridden by .env NUXT_CF_ACCESS_CLIENT_ID
-    cfAccessClientSecret: "", // Overridden by .env NUXT_CF_ACCESS_CLIENT_SECRET
     public: {
       /*
         Overridden in recipe module. This is included in the generated HTML,
@@ -42,6 +39,10 @@ export default defineNuxtConfig({
       */
       searchIndexHash: "",
     },
+  },
+
+  site: {
+    url: process.env.PUBLIC_SITE_URL,
   },
 
   typescript: {

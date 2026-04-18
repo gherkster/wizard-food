@@ -29,7 +29,7 @@ export default defineNuxtModule({
       );
     }
 
-    nuxt.options.appConfig.externalBaseUrl = process.env.NUXT_PUBLIC_SITE_URL ?? "";
+    nuxt.options.appConfig.externalBaseUrl = process.env.PUBLIC_SITE_URL ?? "";
 
     const recipes = await loadAllRecipes(contentDir);
 

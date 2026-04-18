@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev:website": "turbo run dev --filter website --continue",
-    "generate:website": "turbo run generate --filter=@wizard/website",
+    "generate:website": "turbo run generate --filter website",
     "build": "turbo run build",
     "check": "pnpm run lint && pnpm run format:check",
     "lint": "pnpm run lint:ox",

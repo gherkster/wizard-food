@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type { Image, ImagePurpose, ImageShape } from "@wizard/content";
-
-import { getAspectRatio } from "~/composables/useImage";
+import { getAspectRatio, type Image, type ImagePurpose, type ImageShape } from "@wizard/content";
 
 /*
 We can use X and Y aspect ratio values for height and width since we are using width 100% globally for img.

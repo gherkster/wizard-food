@@ -2,7 +2,7 @@
   "name": "wizard-food",
   "compatibility_date": "2026-04-08",
   "assets": {
-    "directory": "./dist",
+    "directory": "./.output/public",
     "html_handling": "drop-trailing-slash",
     "not_found_handling": "404-page"
   }

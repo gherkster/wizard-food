@@ -1,7 +1,7 @@
 import path from "node:path";
 
-import { config as loadDotEnv } from "dotenv";
 import { Command } from "commander";
+import { config as loadDotEnv } from "dotenv";
 
 import { syncContent } from "./sync";
 
@@ -37,9 +37,9 @@ program
       outputDir: contentDir,
       buildId: options.buildId,
       directus: {
-        baseUrl: requiredEnv("NUXT_CRM_URL"),
-        cfAccessClientId: requiredEnv("NUXT_CF_ACCESS_CLIENT_ID"),
-        cfAccessClientSecret: requiredEnv("NUXT_CF_ACCESS_CLIENT_SECRET"),
+        baseUrl: requiredEnv("CRM_URL"),
+        cfAccessClientId: requiredEnv("CF_ACCESS_CLIENT_ID"),
+        cfAccessClientSecret: requiredEnv("CF_ACCESS_CLIENT_SECRET"),
       },
     });
 

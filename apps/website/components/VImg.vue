@@ -14,9 +14,13 @@
 </template>
 
 <script setup lang="ts">
-import type { Image, ImagePurpose, ImageShape } from "@wizard/content";
-
-import { getAspectRatio, getVariant } from "~/composables/useImage";
+import {
+  getAspectRatio,
+  getVariant,
+  type Image,
+  type ImagePurpose,
+  type ImageShape,
+} from "@wizard/content";
 
 const props = defineProps<{
   img: Image;

@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm run content:sync && nuxt dev",
-    "generate": "nuxt generate",
+    "generate": "pnpm run content:sync && nuxt generate",
     "content:sync": "pnpm --filter @wizard/content-pipeline run content:sync sync --site $PWD --dotenv-file .env --content-dir .content",
     "prepare": "nuxt prepare",
     "bundle:analyze": "nuxi analyze",

@@ -12,7 +12,7 @@
       ]
     },
     "generate": {
-      "dependsOn": ["content:sync", "^build"],
+      "dependsOn": ["^build", "//#lint"],
       "outputs": [
         "dist/**",
         ".output/**",
