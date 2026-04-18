@@ -27,6 +27,10 @@ export default defineNuxtConfig({
       // We are already dynamically adding most recipe links in the recipe module prerender hook, so / and /recipes are added there as well to avoid spending time crawling the site.
       crawlLinks: false,
     },
+    cloudflare: {
+      // Fix a redirected config being deployed that assumes a worker mjs file is being used https://github.com/nuxt/nuxt/issues/34186
+      deployConfig: false,
+    },
   },
 
   appConfig: {
