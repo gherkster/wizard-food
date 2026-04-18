@@ -1,46 +1,7 @@
-<template>
-  <div class="image-container" :style="`aspect-ratio: ${x} / ${y}`">
-    <v-img
-      v-if="img.metadata?.base64Url"
-      class="blur"
-      :img="img"
-      :purpose="purpose"
-      :aspect-ratio="aspectRatio"
-      thumbnail
-      alt=""
-      aria-hidden="true"
-      role="presentation"
-    />
-    <!-- noscript always results in hydration mismatch with Vue SSR -->
-    <noscript data-allow-mismatch>
-      <v-img
-        class="image"
-        :lazy="lazy"
-        :img="img"
-        :purpose="purpose"
-        :aspect-ratio="aspectRatio"
-        :alt="alt"
-        :aria-hidden="ariaHidden"
-        :role="role"
-      />
-    </noscript>
-    <v-img
-      class="image"
-      :img="img"
-      :purpose="purpose"
-      :aspect-ratio="aspectRatio"
-      :lazy="lazy"
-      :alt="alt"
-      :aria-hidden="ariaHidden"
-      :role="role"
-    />
-  </div>
-</template>
-
 <script setup lang="ts">
-import type { AspectRatio, Image, ImagePurpose } from "@wizard/content/store";
+import type { Image, ImagePurpose, ImageShape } from "@wizard/content";
 
-import { useImage } from "~/composables/useImage";
+import { getAspectRatio } from "~/composables/useImage";
 
 /*
 We can use X and Y aspect ratio values for height and width since we are using width 100% globally for img.
@@ -55,7 +16,7 @@ const props = withDefaults(
   defineProps<{
     img: Image;
     purpose: ImagePurpose;
-    aspectRatio: AspectRatio;
+    shape: ImageShape;
     lazy?: boolean;
     alt?: string;
     role?: string;
@@ -69,9 +30,47 @@ const props = withDefaults(
   },
 );
 
-
-const { x, y } = useImage().getAspectRatio(props.aspectRatio);
+const { x, y } = getAspectRatio(props.shape);
 </script>
+
+<template>
+  <div class="image-container" :style="`aspect-ratio: ${x} / ${y}`">
+    <v-img
+      v-if="img.metadata?.base64Url"
+      class="blur"
+      :img="img"
+      :purpose="purpose"
+      :shape="shape"
+      thumbnail
+      alt=""
+      aria-hidden="true"
+      role="presentation"
+    />
+    <!-- noscript always results in hydration mismatch with Vue SSR -->
+    <noscript data-allow-mismatch>
+      <v-img
+        class="image"
+        :lazy="lazy"
+        :img="img"
+        :purpose="purpose"
+        :shape="shape"
+        :alt="alt"
+        :aria-hidden="ariaHidden"
+        :role="role"
+      />
+    </noscript>
+    <v-img
+      class="image"
+      :img="img"
+      :purpose="purpose"
+      :shape="shape"
+      :lazy="lazy"
+      :alt="alt"
+      :aria-hidden="ariaHidden"
+      :role="role"
+    />
+  </div>
+</template>
 
 <style lang="scss">
 @use "@/styles/variables" as v;

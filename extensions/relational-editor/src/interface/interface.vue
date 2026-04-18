@@ -18,23 +18,23 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { provide, toRef, watch } from "vue";
+import Document from "@tiptap/extension-document";
+import Dropcursor from "@tiptap/extension-dropcursor";
+import Gapcursor from "@tiptap/extension-gapcursor";
+import Paragraph from "@tiptap/extension-paragraph";
+import Placeholder from "@tiptap/extension-placeholder";
+import Text from "@tiptap/extension-text";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 import type { JSONContent } from "@tiptap/vue-3";
-import Text from "@tiptap/extension-text";
-import Placeholder from "@tiptap/extension-placeholder";
-import Paragraph from "@tiptap/extension-paragraph";
-import Gapcursor from "@tiptap/extension-gapcursor";
-import Dropcursor from "@tiptap/extension-dropcursor";
-import Document from "@tiptap/extension-document";
+import { computed } from "vue";
+import { provide, toRef, watch } from "vue";
 
-import { useToolStore } from "./stores/toolStore";
-import { RelationDelta, useRelationStore } from "./stores/relationStore";
-import { Configuration, configurationInjectionKey } from "./config/configuration";
-import { useTipTap } from "./composables/useTipTap";
-import { useEditorStoreSync } from "./composables/useEditorStoreSync";
 import Toolbar from "./components/Toolbar.vue";
+import { useEditorStoreSync } from "./composables/useEditorStoreSync";
+import { useTipTap } from "./composables/useTipTap";
+import { type Configuration, configurationInjectionKey } from "./config/configuration";
+import { type RelationDelta, useRelationStore } from "./stores/relationStore";
+import { useToolStore } from "./stores/toolStore";
 
 const props = withDefaults(
   defineProps<{

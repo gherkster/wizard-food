@@ -1,6 +1,26 @@
 {
   "rules": {
-    "no-debugger": "error"
+    "no-debugger": "error",
+    "typescript/consistent-type-imports": [
+      "error",
+      {
+        "fixStyle": "inline-type-imports"
+      }
+    ],
+    "typescript/strict-boolean-expressions": [
+      "error",
+      {
+        "allowNumber": false,
+        "allowNullableBoolean": true,
+        "allowNullableObject": true,
+        "allowNullableString": true,
+        "allowString": true
+      }
+    ]
+  },
+  "options": {
+    "typeAware": true,
+    "typeCheck": true
   },
   "env": {
     "builtin": true

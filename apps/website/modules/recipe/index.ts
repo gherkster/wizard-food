@@ -1,19 +1,11 @@
-import type { IncomingMessage, ServerResponse } from "node:http";
-import * as fs from "node:fs/promises";
 import * as crypto from "node:crypto";
+import * as fs from "node:fs/promises";
 
-import type { Plugin as VitePlugin } from "vite";
-import type { Nuxt } from "nuxt/schema";
-import { addTemplate, addVitePlugin, defineNuxtModule, useLogger } from "nuxt/kit";
+import type { RecipePreview } from "@wizard/content";
+import { loadAllRecipes } from "@wizard/content";
 import MiniSearch from "minisearch";
-import type { RecipePreview } from "@wizard/content/store";
-import {
-  getAllRecipes,
-  getFeaturedRecipes,
-  getPageContent,
-  getRecipeBySlug,
-  loadRecipesBySlug,
-} from "@wizard/content/store";
+import { defineNuxtModule, useLogger } from "nuxt/kit";
+import type { Nuxt } from "nuxt/schema";
 
 import {
   type SearchIndexRecipe,
@@ -23,24 +15,23 @@ import {
 
 const logger = useLogger();
 
+// https://developers.cloudflare.com/workers/ci-cd/builds/configuration/
+const commitHashVariableName = "WORKERS_CI_COMMIT_SHA";
+
 export default defineNuxtModule({
   async setup(_, nuxt) {
-    const buildId = process.env.CF_PAGES_COMMIT_SHA ?? "local";
+    const buildId = process.env[commitHashVariableName] ?? "local";
     const contentDir = `${nuxt.options.rootDir}/.content`;
 
-    if (nuxt.options.dev === false && !process.env.CF_PAGES_COMMIT_SHA) {
+    if (process.env.CI && !process.env[commitHashVariableName]) {
       throw new Error(
-        "CF_PAGES_COMMIT_SHA environment variable is undefined. A build ID cannot be determined.",
+        `${commitHashVariableName} environment variable is undefined. A build ID cannot be determined.`,
       );
     }
 
     nuxt.options.appConfig.externalBaseUrl = process.env.NUXT_PUBLIC_SITE_URL ?? "";
 
-    await createContentTemplate(nuxt, contentDir);
-
-    addVitePlugin(createViteDevContentApiPlugin(contentDir));
-
-    const recipes = await loadAllRecipesForModule(contentDir);
+    const recipes = await loadAllRecipes(contentDir);
 
     nuxt.hook("prerender:routes", async ({ routes }) => {
       const recipeRoutes = recipes.map((recipe) => `/recipes/${recipe.slug}`);
@@ -60,114 +51,6 @@ export default defineNuxtModule({
     }
   },
 });
-
-const createContentTemplate = async (nuxt: Nuxt, contentDir: string) => {
-  const recipesBySlug = await loadRecipesBySlugForModule(contentDir);
-  const featuredRecipes = await loadFeaturedRecipesForModule(contentDir);
-  const homePageContent = await loadPageContentForModule("home", contentDir);
-  const recipesPageContent = await loadPageContentForModule("recipes", contentDir);
-
-  const template = addTemplate({
-    filename: "module/content-data.mjs",
-    getContents: () =>
-      [
-        `export const recipesBySlug = ${JSON.stringify(recipesBySlug)};`,
-        `export const featuredRecipes = ${JSON.stringify(featuredRecipes)};`,
-        `export const homePageContent = ${JSON.stringify(homePageContent)};`,
-        `export const recipesPageContent = ${JSON.stringify(recipesPageContent)};`,
-      ].join("\n"),
-  });
-
-  nuxt.options.alias["#content"] = template.dst;
-};
-
-const createViteDevContentApiPlugin = (contentDir: string): VitePlugin => {
-  return {
-    name: "wizard-content-dev-api",
-    apply: "serve",
-    configureServer(server) {
-      server.middlewares.use(async (req, res, next) => {
-        if (!req.url || !req.url.startsWith("/api/")) {
-          next();
-          return;
-        }
-
-        try {
-          const pathname = new URL(req.url, "http://localhost").pathname;
-
-          if (pathname === "/api/featured-recipes") {
-            const featured = await getFeaturedRecipes(contentDir);
-            sendJson(res, 200, featured);
-            return;
-          }
-
-          if (pathname === "/api/content/home") {
-            const content = await getPageContent("home", contentDir);
-            sendJson(res, 200, content);
-            return;
-          }
-
-          if (pathname === "/api/content/recipes") {
-            const content = await getPageContent("recipes", contentDir);
-            sendJson(res, 200, content);
-            return;
-          }
-
-          const matchRecipe = pathname.match(/^\/api\/recipes\/(.+)$/);
-          if (matchRecipe) {
-            const slugComponent = matchRecipe[1];
-            if (!slugComponent) {
-              throw new Error("Slug is a required path parameter.");
-            }
-
-            const slug = decodeURIComponent(slugComponent);
-            const recipe = await getRecipeBySlug(slug, contentDir);
-
-            if (!recipe) {
-              sendJson(res, 404, {
-                statusCode: 404,
-                statusMessage: "Recipe not found",
-              });
-              return;
-            }
-
-            sendJson(res, 200, recipe);
-            return;
-          }
-
-          next();
-        } catch (error) {
-          sendJson(res, 500, {
-            statusCode: 500,
-            statusMessage: error instanceof Error ? error.message : "Unexpected content error",
-          });
-        }
-      });
-    },
-  };
-};
-
-const loadAllRecipesForModule = async (contentDir: string) => {
-  return await getAllRecipes(contentDir);
-};
-
-const loadRecipesBySlugForModule = async (contentDir: string) => {
-  return await loadRecipesBySlug(contentDir);
-};
-
-const loadFeaturedRecipesForModule = async (contentDir: string) => {
-  return await getFeaturedRecipes(contentDir);
-};
-
-const loadPageContentForModule = async (page: "home" | "recipes", contentDir: string) => {
-  return await getPageContent(page, contentDir);
-};
-
-const sendJson = (res: ServerResponse<IncomingMessage>, statusCode: number, body: unknown) => {
-  res.statusCode = statusCode;
-  res.setHeader("Content-Type", "application/json");
-  res.end(JSON.stringify(body));
-};
 
 const generateRecipeSearchIndex = (recipes: SearchIndexRecipe[]) => {
   logger.info("Generating recipe search index");

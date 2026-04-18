@@ -1,9 +1,9 @@
 // https://tiptap.dev/api/extensions/history
 
-import History from "@tiptap/extension-history";
 import type { Editor } from "@tiptap/core";
+import History from "@tiptap/extension-history";
 
-import { Tool } from "../../../common/types/tools";
+import { type Tool } from "../../../common/types/tools";
 
 const undo: Tool = {
   key: "undo",

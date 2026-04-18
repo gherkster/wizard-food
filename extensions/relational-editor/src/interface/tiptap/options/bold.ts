@@ -1,10 +1,10 @@
 // https://tiptap.dev/api/marks/bold
 
-import Bold from "@tiptap/extension-bold";
 import type { Editor } from "@tiptap/core";
+import Bold from "@tiptap/extension-bold";
 
+import { type Tool } from "../../../common/types/tools";
 import { extendMarkRangeIfUnselected } from "../util";
-import { Tool } from "../../../common/types/tools";
 
 export default {
   key: "bold",

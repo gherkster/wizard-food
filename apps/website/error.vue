@@ -14,14 +14,11 @@ const props = defineProps<{
   error: NuxtError;
 }>();
 
-
 const errorMessage = computed(() =>
   props.error.statusCode === 404 ? "Page not found! 🙃" : "Something went wrong! 😤",
 );
 
-
 console.error(props.error);
-
 
 const handleError = () => clearError({ redirect: "/" });
 </script>

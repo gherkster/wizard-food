@@ -37,17 +37,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, computed, toRef } from "vue";
-import { v4 as uuidv4 } from "uuid";
-import type { Editor } from "@tiptap/vue-3";
-import type { Filter } from "@directus/types";
 import { useApi, useItems } from "@directus/extensions-sdk";
+import type { Filter } from "@directus/types";
+import type { Editor } from "@tiptap/vue-3";
+import { v4 as uuidv4 } from "uuid";
+import { ref, inject, computed, toRef } from "vue";
 
-import ToolButton from "./ToolButton.vue";
-import { useToolStore } from "../stores/toolStore";
-import { useRelationStore } from "../stores/relationStore";
-import { Configuration, configurationInjectionKey } from "../config/configuration";
 import { useRelation } from "../composables/useRelation";
+import { type Configuration, configurationInjectionKey } from "../config/configuration";
+import { useRelationStore } from "../stores/relationStore";
+import { useToolStore } from "../stores/toolStore";
+import ToolButton from "./ToolButton.vue";
 
 const props = defineProps<{
   editor: Editor;

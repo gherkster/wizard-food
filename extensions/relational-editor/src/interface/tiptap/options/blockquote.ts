@@ -1,9 +1,9 @@
 // https://tiptap.dev/api/nodes/blockquote
 
-import Blockquote from "@tiptap/extension-blockquote";
 import type { Editor } from "@tiptap/core";
+import Blockquote from "@tiptap/extension-blockquote";
 
-import { Tool } from "../../../common/types/tools";
+import { type Tool } from "../../../common/types/tools";
 
 export default {
   key: "blockquote",

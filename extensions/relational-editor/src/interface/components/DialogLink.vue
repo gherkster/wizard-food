@@ -40,12 +40,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watchEffect } from "vue";
-import isURL from "validator/lib/isURL";
-import isSlug from "validator/lib/isSlug";
 import isEmail from "validator/lib/isEmail";
+import isSlug from "validator/lib/isSlug";
+import isURL from "validator/lib/isURL";
+import { ref, computed, watchEffect } from "vue";
 
-import { LinkAttributes } from "../../common/types/tools";
+import { type LinkAttributes } from "../../common/types/tools";
 
 // Props
 interface Props {

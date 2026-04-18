@@ -1,10 +1,10 @@
 // https://tiptap.dev/api/marks/strike
 
-import Strike from "@tiptap/extension-strike";
 import type { Editor } from "@tiptap/core";
+import Strike from "@tiptap/extension-strike";
 
+import { type Tool } from "../../../common/types/tools";
 import { extendMarkRangeIfUnselected } from "../util";
-import { Tool } from "../../../common/types/tools";
 
 export default {
   key: "strike",

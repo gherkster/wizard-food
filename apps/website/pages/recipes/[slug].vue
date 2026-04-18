@@ -1,6 +1,74 @@
+<script setup lang="ts">
+import type { RouteLocationRaw } from "#vue-router";
+import { formatRecipeDurations, recipeTotalDuration } from "~/utils/formatting";
+import { useJsonld } from "~/utils/jsonld";
+
+const route = useRoute();
+const slug = route.params.slug!.toString();
+
+const recipe = await $fetch(`/api/recipes/${slug}`);
+
+if (!recipe) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: "Page not found!",
+  });
+}
+
+if (import.meta.server) {
+  useSeoMeta({
+    title: recipe.title,
+    ogTitle: recipe.title,
+    description: recipe.descriptionPlainText,
+    ogDescription: recipe.descriptionSnippet,
+    ogImage: recipe.coverImage.variants.cover.square.src,
+  });
+
+  useJsonld({
+    "@context": "https://schema.org",
+    "@type": "Recipe",
+    name: recipe.title,
+    description: recipe.descriptionSnippet,
+    image: recipe.coverImage.variants.cover.square.src,
+    // Ingredients and instructions are not included, as that would require including both rich text and plain text variants of strings,
+    // which is not worth increasing the payload size over a minimal feature
+    recipeCategory: recipe.course,
+    recipeCuisine: recipe.cuisine,
+    recipeYield:
+      recipe.servings && recipe.servingsType
+        ? `${recipe.servings} ${recipe.servingsType}`
+        : undefined,
+    keywords: recipe.tags.filter((t) => t !== recipe.course && t !== recipe.cuisine).join(", "),
+    totalTime: recipeTotalDuration(recipe).toISOString(),
+  });
+}
+
+const durationLabels = computed(() => formatRecipeDurations(recipe));
+
+useHead({
+  title: recipe.title,
+});
+
+const servings = ref<number>(recipe.servings && recipe.servings > 0 ? recipe.servings : 1);
+const originalNumberOfServings = servings.value;
+
+function updateNumberOfServings(newServings: number) {
+  servings.value = newServings;
+}
+
+const createSearchLink = (term: string): RouteLocationRaw => {
+  return {
+    path: "/recipes",
+    query: {
+      search: term.trim(),
+    },
+  };
+};
+</script>
+
 <template>
   <div v-if="recipe" class="recipe">
-    <blurrable-image :img="recipe.coverImage" purpose="cover" aspect-ratio="portrait" />
+    <blurrable-image :img="recipe.coverImage" purpose="cover" shape="portrait" />
     <div class="recipe__summary">
       <h1 class="recipe__title">{{ recipe.title }}</h1>
       <div v-if="recipe.description" class="recipe__description" v-html="recipe.description" />
@@ -105,7 +173,7 @@
               v-if="instruction.image"
               :img="instruction.image"
               purpose="instruction"
-              aspect-ratio="square"
+              shape="square"
             />
           </div>
         </div>
@@ -121,119 +189,6 @@
     </footer>
   </div>
 </template>
-
-<script setup lang="ts">
-import type { RecipePayload } from "@wizard/content/store";
-
-import { useJsonld } from "~/utils/jsonld";
-import { formatRecipeDurations, recipeTotalDuration } from "~/utils/formatting";
-import type { RouteLocationRaw } from "#vue-router";
-
-const route = useRoute();
-
-
-const slug = route.params.slug!.toString();
-
-
-const recipesResponse = await useAsyncData(slug, async (): Promise<RecipePayload> => {
-  if (import.meta.server) {
-    const { recipesBySlug } = await import("#content");
-    const recipe = recipesBySlug[slug];
-    if (!recipe) {
-      throw `Recipe ${slug} could not be retrieved`;
-    }
-    return recipe;
-  }
-
-  if (import.meta.dev) {
-    const { data: recipe } = await useFetch(`/api/recipes/${slug}`);
-    if (!recipe.value) {
-      throw `Recipe ${slug} could not be retrieved`;
-    }
-    return recipe.value as RecipePayload;
-  }
-
-  throw `Recipe ${slug} could not be retrieved`;
-});
-
-
-if (recipesResponse.error.value) {
-  throw createError({
-    statusCode: 500,
-    statusMessage: recipesResponse.error.value?.message,
-  });
-}
-
-
-if (!recipesResponse.data.value) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: "Page not found!",
-  });
-}
-const recipe = ref(recipesResponse.data.value);
-
-
-const durationLabels = computed(() => formatRecipeDurations(recipe.value));
-
-
-useHead({
-  title: recipe.value.title,
-});
-
-
-if (import.meta.server) {
-  useSeoMeta({
-    title: recipe.value.title,
-    ogTitle: recipe.value.title,
-    description: recipe.value.descriptionPlainText,
-    ogDescription: recipe.value.descriptionSnippet,
-    ogImage: recipe.value.coverImage.variants.cover.square.src,
-  });
-
-
-  useJsonld({
-    "@context": "https://schema.org",
-    "@type": "Recipe",
-    name: recipe.value.title,
-    description: recipe.value.descriptionSnippet,
-    image: recipe.value.coverImage.variants.cover.square.src,
-    // Ingredients and instructions are not included, as that would require including both rich text and plain text variants of strings,
-    // which is not worth increasing the payload size over a minimal feature
-    recipeCategory: recipe.value.course,
-    recipeCuisine: recipe.value.cuisine,
-    recipeYield:
-      recipe.value.servings && recipe.value.servingsType
-        ? `${recipe.value.servings} ${recipe.value.servingsType}`
-        : undefined,
-    keywords: recipe.value.tags
-      .filter((t) => t !== recipe.value.course && t !== recipe.value.cuisine)
-      .join(", "),
-    totalTime: recipeTotalDuration(recipe.value).toISOString(),
-  });
-}
-
-
-const servings = ref<number>(
-  recipe.value.servings && recipe.value.servings > 0 ? recipe.value.servings : 1,
-);
-const originalNumberOfServings = servings.value;
-
-
-function updateNumberOfServings(newServings: number) {
-  servings.value = newServings;
-}
-
-
-function createSearchLink(term: string): RouteLocationRaw {
-  return {
-    path: "/recipes",
-    query: {
-      search: term.trim(),
-    },
-  };
-}
-</script>
 
 <style lang="scss" scoped>
 @use "@/styles/mixins" as m;

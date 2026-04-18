@@ -1,22 +1,22 @@
-import { computed, ref } from "vue";
+import { type AnyExtension } from "@tiptap/core";
 import { defineStore } from "pinia";
-import { AnyExtension } from "@tiptap/core";
+import { computed, ref } from "vue";
 
-import strike from "../tiptap/options/strike";
-import paragraph from "../tiptap/options/paragraph";
-import orderedList from "../tiptap/options/ordered-list";
-import link from "../tiptap/options/link";
-import italic from "../tiptap/options/italic";
-import horizontalRule from "../tiptap/options/horizontal-rule";
-import history from "../tiptap/options/history";
-import heading from "../tiptap/options/heading";
-import hardBreak from "../tiptap/options/hard-break";
-import bulletList from "../tiptap/options/bullet-list";
-import bold from "../tiptap/options/bold";
-import blockquote from "../tiptap/options/blockquote";
+import { type ToolSelection } from "../../common/types/relation-nodes";
+import { type Tool, type InlineRelationTool } from "../../common/types/tools";
 import { useTipTap } from "../composables/useTipTap";
-import { Tool, type InlineRelationTool } from "../../common/types/tools";
-import { ToolSelection } from "../../common/types/relation-nodes";
+import blockquote from "../tiptap/options/blockquote";
+import bold from "../tiptap/options/bold";
+import bulletList from "../tiptap/options/bullet-list";
+import hardBreak from "../tiptap/options/hard-break";
+import heading from "../tiptap/options/heading";
+import history from "../tiptap/options/history";
+import horizontalRule from "../tiptap/options/horizontal-rule";
+import italic from "../tiptap/options/italic";
+import link from "../tiptap/options/link";
+import orderedList from "../tiptap/options/ordered-list";
+import paragraph from "../tiptap/options/paragraph";
+import strike from "../tiptap/options/strike";
 
 export const useToolStore = defineStore("tool-store", () => {
   const tiptap = useTipTap();

@@ -1,11 +1,11 @@
 // https://tiptap.dev/api/nodes/heading
 
+import type { Editor, AnyExtension } from "@tiptap/core";
 import Heading from "@tiptap/extension-heading";
 import type { Level, HeadingOptions } from "@tiptap/extension-heading";
-import type { Editor, AnyExtension } from "@tiptap/core";
 
-import { Tool } from "../../../common/types/tools";
-import { ToolSelection } from "../../../common/types/relation-nodes";
+import { type ToolSelection } from "../../../common/types/relation-nodes";
+import { type Tool } from "../../../common/types/tools";
 
 export default (level: Level): Tool => {
   const headingKeys = ["h1", "h2", "h3", "h4", "h5", "h6"];

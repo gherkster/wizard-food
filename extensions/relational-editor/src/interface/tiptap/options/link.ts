@@ -1,10 +1,10 @@
 // https://tiptap.dev/api/marks/link
 
-import Link from "@tiptap/extension-link";
 import type { Editor } from "@tiptap/core";
+import Link from "@tiptap/extension-link";
 
+import { type Tool } from "../../../common/types/tools";
 import { useLinkStore } from "../../stores/useLinkStore";
-import { Tool } from "../../../common/types/tools";
 
 const add: Tool = {
   // https://tiptap.dev/api/marks/link

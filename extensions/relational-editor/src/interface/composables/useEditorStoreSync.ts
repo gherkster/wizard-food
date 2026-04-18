@@ -1,4 +1,4 @@
-import { Editor, NodeWithPos } from "@tiptap/core";
+import { type Editor, type NodeWithPos } from "@tiptap/core";
 
 import { useRelationStore } from "../stores/relationStore";
 

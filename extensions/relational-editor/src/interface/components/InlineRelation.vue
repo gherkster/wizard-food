@@ -31,11 +31,11 @@
 </template>
 
 <script setup lang="ts">
+import { type NodeViewProps, NodeViewWrapper } from "@tiptap/vue-3";
 import { computed, ref } from "vue";
-import { NodeViewProps, NodeViewWrapper } from "@tiptap/vue-3";
 
-import { useRelationStore } from "../stores/relationStore";
 import { useRelation } from "../composables/useRelation";
+import { useRelationStore } from "../stores/relationStore";
 
 const props = defineProps<NodeViewProps>();
 

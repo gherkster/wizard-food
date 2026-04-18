@@ -37,7 +37,7 @@ program
       outputDir: contentDir,
       buildId: options.buildId,
       directus: {
-        baseUrl: requiredEnv("NUXT_BASE_URL"),
+        baseUrl: requiredEnv("NUXT_CRM_URL"),
         cfAccessClientId: requiredEnv("NUXT_CF_ACCESS_CLIENT_ID"),
         cfAccessClientSecret: requiredEnv("NUXT_CF_ACCESS_CLIENT_SECRET"),
       },

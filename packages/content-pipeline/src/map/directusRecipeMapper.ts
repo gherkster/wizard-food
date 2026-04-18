@@ -1,6 +1,15 @@
 import path from "node:path";
 
-import prand from "pure-rand";
+import type {
+  Image,
+  Ingredient,
+  IngredientGroup,
+  Instruction,
+  InstructionGroup,
+  RecipePayload,
+  SingularPluralPair,
+  RichTextContent,
+} from "@wizard/content";
 import type {
   ServerImage,
   ServerIngredient,
@@ -10,21 +19,12 @@ import type {
   ServerInstructionGroup,
   ServerRecipe,
 } from "@wizard/openapi";
-import type {
-  Image,
-  Ingredient,
-  IngredientGroup,
-  Instruction,
-  InstructionGroup,
-  RecipePayload,
-  SingularPluralPair,
-} from "@wizard/content/store";
-import type { RichTextContent } from "@wizard/content/shared";
+import prand from "pure-rand";
 
-import { buildSignedImageVariants } from "./cloudinaryImage";
-import { assertIsHydrated, throwExpression } from "../utils";
-import { renderRichTextHtml, renderRichTextText } from "../render";
 import { hydrateInlineIngredientData } from "../hydrateInlineIngredientData";
+import { renderRichTextHtml, renderRichTextText } from "../render";
+import { assertIsHydrated, throwExpression } from "../utils";
+import { buildSignedImageVariants } from "./cloudinaryImage";
 
 export const toRecipePayload = (
   serverRecipe: ServerRecipe,
@@ -32,10 +32,11 @@ export const toRecipePayload = (
     getUnitNames: (unit: string) => SingularPluralPair;
   },
 ): RecipePayload => {
-  if (!serverRecipe.coverImage) {
+  if (isNil(serverRecipe.coverImage)) {
     throw new Error("Recipe image not provided");
   }
-  assertIsHydrated(serverRecipe.coverImage);
+
+  assertIsHydrated(serverRecipe.coverImage, "coverImage");
 
   const tags = buildTagList({
     course: serverRecipe.course,
@@ -50,14 +51,14 @@ export const toRecipePayload = (
       name: ingredientGroup.name ?? undefined,
       ingredients:
         ingredientGroup.ingredients?.map<Ingredient>((i) => {
-          assertIsHydrated(i);
+          assertIsHydrated(i, "ingredient");
 
-          if (!i.name_singular) {
+          if (isNil(i.name_singular)) {
             throw new Error(
               `Ingredient group ${ingredientGroup.id} includes a ingredient with no singular form name. Ingredient: ${i.id}`,
             );
           }
-          if (!i.name_plural) {
+          if (isNil(i.name_plural)) {
             throw new Error(
               `Ingredient group ${ingredientGroup.id} includes a ingredient with no plural form name. Ingredient: ${i.id}`,
             );
@@ -86,13 +87,8 @@ export const toRecipePayload = (
       name: instructionGroup.name ?? undefined,
       instructions:
         instructionGroup.instructions?.map<Instruction>((i) => {
-          assertIsHydrated(i);
-
-          if (i.inline_ingredients?.some((inline) => typeof inline === "string")) {
-            throw new Error(
-              "Instruction inline_ingredients is only an identifier, the data fields have not been retrieved.",
-            );
-          }
+          assertIsHydrated(i, "instruction");
+          i.inline_ingredients?.forEach((ii) => assertIsHydrated(ii, "inline_ingredient"));
 
           return mapInstruction(i);
         }) ?? [],
@@ -111,7 +107,7 @@ export const toRecipePayload = (
           ),
         ),
       ),
-      image: serverInstruction.image
+      image: !isNil(serverInstruction.image)
         ? mapImage(assertHydratedImage(serverInstruction.image))
         : undefined,
     };
@@ -125,11 +121,11 @@ export const toRecipePayload = (
       (inlineIngredient) => inlineIngredient.id === inlineIngredientId,
     )?.ingredient_id;
 
-    if (!serverIngredient) {
+    if (isNil(serverIngredient)) {
       return undefined;
     }
 
-    assertIsHydrated(serverIngredient);
+    assertIsHydrated(serverIngredient, "serverIngredient");
     const ingredient = mapIngredient(serverIngredient);
 
     return {
@@ -145,26 +141,26 @@ export const toRecipePayload = (
   return {
     id: serverRecipe.id!,
     title: serverRecipe.title,
-    description: serverRecipe.description
+    description: !isNil(serverRecipe.description)
       ? renderRichTextHtml(serverRecipe.description as RichTextContent)
       : "",
-    descriptionPlainText: serverRecipe.description
+    descriptionPlainText: !isNil(serverRecipe.description)
       ? renderRichTextText(serverRecipe.description as RichTextContent)
       : "",
     descriptionSnippet: serverRecipe.description_snippet,
     cuisine: serverRecipe.cuisine ?? undefined,
     course: serverRecipe.course ?? undefined,
-    note: serverRecipe.note ? renderRichTextHtml(serverRecipe.note as RichTextContent) : "",
+    note: !isNil(serverRecipe.note) ? renderRichTextHtml(serverRecipe.note as RichTextContent) : "",
     coverImage: mapImage(serverRecipe.coverImage),
     ingredientGroups:
       serverRecipe.ingredientGroups?.map<IngredientGroup>((ig) => {
-        assertIsHydrated(ig);
+        assertIsHydrated(ig, "ingredientGroup");
 
         return mapIngredientGroup(ig);
       }) ?? [],
     instructionGroups:
       serverRecipe.instructionGroups?.map<InstructionGroup>((ig) => {
-        assertIsHydrated(ig);
+        assertIsHydrated(ig, "instructionGroup");
 
         return mapInstructionGroup(ig);
       }) ?? [],
@@ -186,15 +182,17 @@ export const toRecipePayload = (
 };
 
 const assertHydratedImage = (image: ServerImage | string | number): ServerImage => {
-  assertIsHydrated(image);
+  assertIsHydrated(image, "image");
   return image;
 };
 
 const mapImage = (serverImage: ServerImage): Image => {
   const imageId = serverImage.id ?? throwExpression("Image ID must be provided");
+
   const modifyDate =
     serverImage.modified_on ?? throwExpression("Image modified_on must be provided");
-  const signedVariants = buildSignedImageVariants({
+
+  const { variants } = buildSignedImageVariants({
     id: imageId,
     modifiedOn: modifyDate,
   });
@@ -208,7 +206,7 @@ const mapImage = (serverImage: ServerImage): Image => {
     width: serverImage.width ?? throwExpression("Image width must be provided"),
     height: serverImage.height ?? throwExpression("Image height must be provided"),
     modifyDate,
-    variants: signedVariants.variants,
+    variants: variants,
     metadata: {
       base64Url:
         serverImage.metadata?.base64Url ??
@@ -253,4 +251,8 @@ const buildTagList = (categories: RecipeCategories): string[] => {
     tags.push(...categories.main_ingredients);
   }
   return tags.sort();
+};
+
+const isNil = (value: unknown) => {
+  return value === undefined || value === null;
 };

@@ -1,9 +1,9 @@
-import { RelationBlockAttrs, type EditorDefaultAttributes } from "@wizard/content";
+import { type Editor, mergeAttributes, Node } from "@tiptap/core";
 import { VueNodeViewRenderer } from "@tiptap/vue-3";
-import { Editor, mergeAttributes, Node } from "@tiptap/core";
+import { type RelationBlockAttrs, type EditorDefaultAttributes } from "@wizard/content";
 
-import InlineRelation from "../../interface/components/InlineRelation.vue";
 import type { InlineRelationTool } from "../../common/types/tools";
+import InlineRelation from "../../interface/components/InlineRelation.vue";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {

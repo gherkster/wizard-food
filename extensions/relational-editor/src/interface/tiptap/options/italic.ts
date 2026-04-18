@@ -1,10 +1,10 @@
 // https://tiptap.dev/api/marks/italic
 
-import Italic from "@tiptap/extension-italic";
 import type { Editor } from "@tiptap/core";
+import Italic from "@tiptap/extension-italic";
 
+import { type Tool } from "../../../common/types/tools";
 import { extendMarkRangeIfUnselected } from "../util";
-import { Tool } from "../../../common/types/tools";
 
 export default {
   key: "italic",

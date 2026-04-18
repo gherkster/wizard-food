@@ -1,5 +1,5 @@
-import type { AppVersion } from "~/types/version";
 import { useSearch } from "~/composables/useSearch";
+import type { AppVersion } from "~/types/version";
 
 let searchIndexDownload: Promise<void> | null = null;
 let isBuildStale = false;
@@ -24,7 +24,7 @@ export default defineNuxtRouteMiddleware((to) => {
   const lastVersionCheckMs = Number(localStorage.getItem(lastCheckTimeStorageKey));
 
   const fiveMinutesInMs = 1000 * 60 * 5;
-  if (lastVersionCheckMs && lastVersionCheckMs > Date.now() - fiveMinutesInMs) {
+  if (!isNaN(lastVersionCheckMs) && lastVersionCheckMs > Date.now() - fiveMinutesInMs) {
     return;
   }
 

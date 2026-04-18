@@ -2,7 +2,7 @@
 
 import type { Editor } from "@tiptap/core";
 
-import { Tool } from "../../../common/types/tools";
+import { type Tool } from "../../../common/types/tools";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {

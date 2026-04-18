@@ -1,10 +1,10 @@
 // https://tiptap.dev/api/nodes/bullet-list
 
-import ListItem from "@tiptap/extension-list-item";
-import BulletList from "@tiptap/extension-bullet-list";
 import type { Editor } from "@tiptap/core";
+import BulletList from "@tiptap/extension-bullet-list";
+import ListItem from "@tiptap/extension-list-item";
 
-import { Tool } from "../../../common/types/tools";
+import { type Tool } from "../../../common/types/tools";
 
 export default {
   key: "bulletList",

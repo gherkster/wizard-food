@@ -1,4 +1,4 @@
-import { Readable } from "stream";
+import { type Readable } from "stream";
 
 import { defineHook } from "@directus/extensions-sdk";
 
@@ -75,6 +75,7 @@ export default defineHook(({ action, init }, context) => {
         height: 40,
         fit: "cover",
         format: "webp",
+        withoutEnlargement: true,
       },
     });
 

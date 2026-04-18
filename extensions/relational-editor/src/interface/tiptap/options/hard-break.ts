@@ -1,9 +1,9 @@
 // https://tiptap.dev/api/nodes/hard-break
 
-import HardBreak from "@tiptap/extension-hard-break";
 import type { Editor } from "@tiptap/core";
+import HardBreak from "@tiptap/extension-hard-break";
 
-import { Tool } from "../../../common/types/tools";
+import { type Tool } from "../../../common/types/tools";
 
 export default {
   key: "hardBreak",

@@ -1,5 +1,5 @@
+import type { ImageVariant } from "@wizard/content";
 import type { Options } from "minisearch";
-import type { ImageVariant } from "@wizard/content/store";
 
 /** The minimal fields that are stored inside the recipe search index. */
 export interface SearchIndexRecipe {
