@@ -9,7 +9,8 @@
     "search:generate": "tsx ./scripts/generateSearchAssets.ts",
     "prepare": "nuxt prepare",
     "bundle:analyze": "nuxi analyze",
-    "typecheck": "nuxi typecheck"
+    "typecheck": "nuxi typecheck",
+    "preview": "npx serve .output/public"
   },
   "dependencies": {
     "dayjs": "catalog:",

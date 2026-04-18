@@ -2,20 +2,22 @@
 import type { Image } from "@wizard/content";
 
 import { useSearch } from "~/composables/useSearch";
+import { throwIfNil } from "~/utils/error";
 import type { SearchIndexRecipe } from "~/utils/search";
 
-const content = await $fetch("/api/content/recipes");
+const { data: content } = await useFetch("/api/content/recipes");
+throwIfNil(content.value, "Failed to fetch content.");
 
 useHead({
-  title: content.title,
+  title: content.value.title,
 });
 
 if (import.meta.server) {
   useSeoMeta({
-    title: content.title,
-    ogTitle: content.title,
-    description: content.description,
-    ogDescription: content.openGraphDescription,
+    title: content.value.title,
+    ogTitle: content.value.title,
+    description: content.value.description,
+    ogDescription: content.value.openGraphDescription,
   });
 }
 

@@ -6,9 +6,9 @@ import { useJsonld } from "~/utils/jsonld";
 const route = useRoute();
 const slug = route.params.slug!.toString();
 
-const recipe = await $fetch(`/api/recipes/${slug}`);
+const { data: recipe } = await useFetch(`/api/recipes/${slug}`);
 
-if (!recipe) {
+if (!recipe.value) {
   throw createError({
     statusCode: 404,
     statusMessage: "Page not found!",
@@ -17,39 +17,43 @@ if (!recipe) {
 
 if (import.meta.server) {
   useSeoMeta({
-    title: recipe.title,
-    ogTitle: recipe.title,
-    description: recipe.descriptionPlainText,
-    ogDescription: recipe.descriptionSnippet,
-    ogImage: recipe.coverImage.variants.cover.square.src,
+    title: recipe.value.title,
+    ogTitle: recipe.value.title,
+    description: recipe.value.descriptionPlainText,
+    ogDescription: recipe.value.descriptionSnippet,
+    ogImage: recipe.value.coverImage.variants.cover.square.src,
   });
 
   useJsonld({
     "@context": "https://schema.org",
     "@type": "Recipe",
-    name: recipe.title,
-    description: recipe.descriptionSnippet,
-    image: recipe.coverImage.variants.cover.square.src,
+    name: recipe.value.title,
+    description: recipe.value.descriptionSnippet,
+    image: recipe.value.coverImage.variants.cover.square.src,
     // Ingredients and instructions are not included, as that would require including both rich text and plain text variants of strings,
     // which is not worth increasing the payload size over a minimal feature
-    recipeCategory: recipe.course,
-    recipeCuisine: recipe.cuisine,
+    recipeCategory: recipe.value.course,
+    recipeCuisine: recipe.value.cuisine,
     recipeYield:
-      recipe.servings && recipe.servingsType
-        ? `${recipe.servings} ${recipe.servingsType}`
+      recipe.value.servings && recipe.value.servingsType
+        ? `${recipe.value.servings} ${recipe.value.servingsType}`
         : undefined,
-    keywords: recipe.tags.filter((t) => t !== recipe.course && t !== recipe.cuisine).join(", "),
-    totalTime: recipeTotalDuration(recipe).toISOString(),
+    keywords: recipe.value.tags
+      .filter((t) => t !== recipe.value!.course && t !== recipe.value!.cuisine)
+      .join(", "),
+    totalTime: recipeTotalDuration(recipe.value).toISOString(),
   });
 }
 
-const durationLabels = computed(() => formatRecipeDurations(recipe));
+const durationLabels = computed(() => formatRecipeDurations(recipe.value!));
 
 useHead({
-  title: recipe.title,
+  title: recipe.value.title,
 });
 
-const servings = ref<number>(recipe.servings && recipe.servings > 0 ? recipe.servings : 1);
+const servings = ref<number>(
+  recipe.value.servings && recipe.value.servings > 0 ? recipe.value.servings : 1,
+);
 const originalNumberOfServings = servings.value;
 
 function updateNumberOfServings(newServings: number) {

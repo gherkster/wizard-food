@@ -1,24 +1,29 @@
 <script setup lang="ts">
-const content = await $fetch("/api/content/home");
-const recipes = await $fetch("/api/featured-recipes");
+import { throwIfNil } from "~/utils/error";
+
+const { data: content } = await useFetch("/api/content/home");
+const { data: recipes } = await useFetch("/api/featured-recipes");
+
+throwIfNil(content.value, "Failed to fetch content.");
+throwIfNil(recipes.value, "Failed to fetch recipes.");
 
 if (import.meta.prerender) {
   useSeoMeta({
-    title: content.title,
-    ogTitle: content.title,
-    description: content.description,
-    ogDescription: content.openGraphDescription,
+    title: content.value.title,
+    ogTitle: content.value.title,
+    description: content.value.description,
+    ogDescription: content.value.openGraphDescription,
   });
 }
 
 useHead({
-  title: content.title,
+  title: content.value.title,
 });
 </script>
 
 <template>
   <div class="home">
-    <section v-if="recipes.latestRecipes.length > 0">
+    <section v-if="recipes!.latestRecipes.length > 0">
       <div class="section-header">
         <h2>Latest Recipes</h2>
         <nuxt-link
@@ -32,7 +37,7 @@ useHead({
       </div>
       <div class="recipe-list promo">
         <v-card
-          v-for="(recipe, index) in recipes.latestRecipes"
+          v-for="(recipe, index) in recipes!.latestRecipes"
           :key="recipe.slug"
           :title="recipe.title"
           :description="index === 0 ? recipe.descriptionSnippet : undefined"
@@ -44,13 +49,13 @@ useHead({
         />
       </div>
     </section>
-    <section v-if="recipes.favouriteRecipes.length > 0">
+    <section v-if="recipes!.favouriteRecipes.length > 0">
       <div class="section-header">
         <h2>Personal Favourites</h2>
       </div>
       <div class="recipe-list standard">
         <v-card
-          v-for="recipe in recipes.favouriteRecipes"
+          v-for="recipe in recipes!.favouriteRecipes"
           :key="recipe.slug"
           :title="recipe.title"
           :image="recipe.coverImage"
@@ -61,13 +66,13 @@ useHead({
         />
       </div>
     </section>
-    <section v-if="recipes.quickRecipes.length > 0">
+    <section v-if="recipes!.quickRecipes.length > 0">
       <div class="section-header">
         <h2>Quick Eats</h2>
       </div>
       <div class="recipe-list standard">
         <v-card
-          v-for="recipe in recipes.quickRecipes"
+          v-for="recipe in recipes!.quickRecipes"
           :key="recipe.slug"
           :title="recipe.title"
           :image="recipe.coverImage"
@@ -78,13 +83,13 @@ useHead({
         />
       </div>
     </section>
-    <section v-if="recipes.worldCuisineRecipes.length > 0">
+    <section v-if="recipes!.worldCuisineRecipes.length > 0">
       <div class="section-header">
         <h2>World Cuisines</h2>
       </div>
       <div class="recipe-list standard">
         <v-card
-          v-for="recipe in recipes.worldCuisineRecipes"
+          v-for="recipe in recipes!.worldCuisineRecipes"
           :key="recipe.slug"
           :title="recipe.title"
           :image="recipe.coverImage"

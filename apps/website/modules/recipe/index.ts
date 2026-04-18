@@ -20,9 +20,6 @@ export default defineNuxtModule({
         throw new Error("No recipes retrieved.");
       }
 
-      routes.add("/");
-      routes.add("/recipes");
-
       const recipeRoutes = recipes.map((recipe) => `/recipes/${recipe.slug}`);
       recipeRoutes.forEach((s) => routes.add(s));
 
