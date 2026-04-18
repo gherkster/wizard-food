@@ -3,7 +3,7 @@
   "trailingComma": "all",
   "sortPackageJson": false,
   "sortImports": {
-    "order": "desc"
+    "order": "asc"
   },
   "ignorePatterns": [
     "**/node_modules/**",

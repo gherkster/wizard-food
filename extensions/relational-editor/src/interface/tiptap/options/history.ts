@@ -1,14 +1,13 @@
 // https://tiptap.dev/api/extensions/history
 
-import History from "@tiptap/extension-history";
 import type { Editor } from "@tiptap/core";
+import History from "@tiptap/extension-history";
 
-import customMessages from "../../i18n/custom-messages";
-import { Tool } from "../../../common/types/tools";
+import { type Tool } from "../../../common/types/tools";
 
 const undo: Tool = {
   key: "undo",
-  name: customMessages.tools.undo,
+  name: "Undo",
   icon: "undo",
   extension: [History],
   shortcut: ["meta", "Z"],
@@ -19,7 +18,7 @@ const undo: Tool = {
 
 const redo: Tool = {
   key: "redo",
-  name: customMessages.tools.redo,
+  name: "Redo",
   icon: "redo",
   extension: [History],
   shortcut: ["meta", "shift", "Z"],

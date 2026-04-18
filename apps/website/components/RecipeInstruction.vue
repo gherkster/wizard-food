@@ -3,9 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import Fraction from "fraction.js";
-import type { InlineIngredientHTMLElement } from "@wizard/content/store";
+import type { InlineIngredientHTMLElement } from "@wizard/content";
 import { formatIngredient, type InlineIngredient, type SingularPluralPair } from "@wizard/content";
+import Fraction from "fraction.js";
 
 type InlineIngredientMarkup = {
   element: {
@@ -18,19 +18,15 @@ type InlineIngredientMarkup = {
   };
 };
 
-
 const props = defineProps<{
   content: string;
   ingredientMultiplier: number;
   originalNumberOfServings: number;
 }>();
 
-
 const inlineIngredientsRef = ref<HTMLDivElement>();
 
-
 const inlineIngredients = ref<InlineIngredientMarkup[]>([]);
-
 
 onMounted(() => {
   const elements =
@@ -53,12 +49,10 @@ onMounted(() => {
   });
 });
 
-
 watch(
   () => props.ingredientMultiplier,
   (newMultiplier) => multiplyInlineIngredients(newMultiplier),
 );
-
 
 const multiplyInlineIngredients = (multiplicationFactor: number) => {
   inlineIngredients.value.forEach((ingredient) => {
@@ -81,22 +75,18 @@ const multiplyInlineIngredients = (multiplicationFactor: number) => {
   });
 };
 
-
 const getUnitLabel = (unit: SingularPluralPair | undefined, currentAmount: number) => {
   if (!unit) {
     return undefined;
   }
-
 
   // We can't switch between a singular and plural form if there's no number to use as a threshold
   if (!currentAmount) {
     return undefined;
   }
 
-
   return currentAmount <= 1 ? unit.singular : unit.plural;
 };
-
 
 const tryParseInlineIngredient = (
   element: InlineIngredientHTMLElement,

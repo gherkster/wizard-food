@@ -1,12 +1,16 @@
 {
-  "name": "@wizard/website",
+  "name": "website",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "pnpm run content:sync && nuxt dev",
-    "generate": "nuxt generate",
+    "dev": "pnpm run content:sync && pnpm run search:generate && nuxt dev",
+    "generate": "pnpm run content:sync && pnpm run search:generate && nuxt generate",
     "content:sync": "pnpm --filter @wizard/content-pipeline run content:sync sync --site $PWD --dotenv-file .env --content-dir .content",
+    "search:generate": "tsx ./scripts/generateSearchAssets.ts",
+    "prepare": "nuxt prepare",
     "bundle:analyze": "nuxi analyze",
-    "typecheck": "nuxi typecheck"
+    "typecheck": "nuxi typecheck",
+    "preview": "npx serve .output/public"
   },
   "dependencies": {
     "dayjs": "catalog:",
@@ -24,6 +28,7 @@
     "nuxt": "catalog:",
     "sass": "catalog:",
     "schema-dts": "catalog:",
+    "tsx": "catalog:",
     "typescript": "catalog:",
     "vue": "catalog:",
     "vue-tsc": "catalog:"

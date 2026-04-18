@@ -14,14 +14,18 @@
 </template>
 
 <script setup lang="ts">
-import type { AspectRatio, Image, ImagePurpose } from "@wizard/content/store";
-
-import { useImage } from "~/composables/useImage";
+import {
+  getAspectRatio,
+  getVariant,
+  type Image,
+  type ImagePurpose,
+  type ImageShape,
+} from "@wizard/content";
 
 const props = defineProps<{
   img: Image;
   purpose: ImagePurpose;
-  aspectRatio: AspectRatio;
+  shape: ImageShape;
   thumbnail?: boolean;
   lazy?: boolean;
   alt?: string;
@@ -29,31 +33,24 @@ const props = defineProps<{
   ariaHidden?: boolean | "true" | "false";
 }>();
 
-
 const imgRef = useTemplateRef("imgRef");
-
 
 defineExpose({
   img: imgRef,
 });
 
-
-const image = useImage();
-const variant = image.getVariant(props.img, props.purpose, props.aspectRatio);
-
+const variant = getVariant(props.img, props.purpose, props.shape);
 
 const src =
   props.thumbnail && props.img.metadata?.base64Url ? props.img.metadata.base64Url : variant.src;
 
-
 const alt = props.alt ?? (props.thumbnail ? "" : props.img.title);
-
 
 /*
 Set the height based on the final image aspect ratio to avoid CLS issues when loading
 e.g. a 3:4 aspect ratio image should have a height which is 4/3 x width
 */
-const { x, y } = image.getAspectRatio(props.aspectRatio);
+const { x, y } = getAspectRatio(props.shape);
 const adjustedHeight = Math.round((props.img.width * y) / x);
 </script>
 

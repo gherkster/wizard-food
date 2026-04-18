@@ -24,6 +24,13 @@ export default defineNuxtConfig({
       // Disable to prevent unnecessary trailing slash redirects
       // https://community.cloudflare.com/t/removing-trailing-slash-on-static-websites/583429/3
       autoSubfolderIndex: false,
+      crawlLinks: false,
+      // The recipe links are being dynamically added in the recipe module prerender hook.
+      routes: ["/", "/recipes"],
+    },
+    cloudflare: {
+      // Fix a redirected config being deployed that assumes a worker mjs file is being used https://github.com/nuxt/nuxt/issues/34186
+      deployConfig: false,
     },
   },
 
@@ -32,9 +39,6 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    baseUrl: "", // Overridden by .env NUXT_BASE_URL
-    cfAccessClientId: "", // Overridden by .env NUXT_CF_ACCESS_CLIENT_ID
-    cfAccessClientSecret: "", // Overridden by .env NUXT_CF_ACCESS_CLIENT_SECRET
     public: {
       /*
         Overridden in recipe module. This is included in the generated HTML,
@@ -42,6 +46,10 @@ export default defineNuxtConfig({
       */
       searchIndexHash: "",
     },
+  },
+
+  site: {
+    url: process.env.PUBLIC_SITE_URL,
   },
 
   typescript: {

@@ -21,10 +21,9 @@
     "typecheck": "tsc --noEmit --project tsconfig.json"
   },
   "devDependencies": {
-    "@directus/api": "^25.0.1",
-    "@directus/extensions-sdk": "13.0.3",
-    "@types/node": "^22.19.15",
-    "typescript": "^5.9.3"
+    "@directus/extensions-sdk": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
   },
   "icon": "extension",
   "directus:extension": {

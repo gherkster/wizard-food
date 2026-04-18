@@ -1,8 +1,8 @@
-import { computed, Ref } from "vue";
-import { Field, Relation } from "@directus/types";
 import { useStores } from "@directus/extensions-sdk";
+import { type Field, type Relation } from "@directus/types";
+import { computed, type Ref } from "vue";
 
-import { Collection } from "../types/collections";
+import { type Collection } from "../types/collections";
 
 export type RelationM2M = {
   relation: Relation;
@@ -35,13 +35,16 @@ export function useRelationM2M(collection: Ref<string>, field: Ref<string>) {
   const fieldsStore = useFieldsStore();
 
   const relationInfo = computed<RelationM2M | undefined>(() => {
-    const relations = relationsStore.getRelationsForField(collection.value, field.value);
+    const relations = relationsStore.getRelationsForField(
+      collection.value,
+      field.value,
+    ) as Relation[];
 
     const junction = relations.find(
       (relation) =>
         relation.related_collection === collection.value &&
         relation.meta?.one_field === field.value &&
-        relation.meta.junction_field,
+        !!relation.meta.junction_field,
     );
 
     if (!junction) return undefined;

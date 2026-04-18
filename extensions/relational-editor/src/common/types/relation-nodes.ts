@@ -1,4 +1,4 @@
-import { Extension, Mark } from "@tiptap/core";
+import { type Extension, type Mark } from "@tiptap/core";
 
 export type UUID = string;
 

@@ -2,8 +2,7 @@
 
 import type { Editor } from "@tiptap/core";
 
-import customMessages from "../../i18n/custom-messages";
-import { Tool } from "../../../common/types/tools";
+import { type Tool } from "../../../common/types/tools";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -15,7 +14,7 @@ declare module "@tiptap/core" {
 
 export default {
   key: "paragraph",
-  name: customMessages.tools.paragraph,
+  name: "Paragraph",
   // Because we want “Paragraph” selectable from the formats menu, we don’t `excludeFromOptions: true`
   // Already imported
   extension: [],

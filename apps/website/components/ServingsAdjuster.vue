@@ -1,3 +1,33 @@
+<script setup lang="ts">
+const props = withDefaults(
+  defineProps<{
+    servings: number;
+    singularLabel: string | undefined;
+    pluralLabel: string | undefined;
+  }>(),
+  {
+    singularLabel: "serving",
+    pluralLabel: "servings",
+  },
+);
+
+const emit = defineEmits<{
+  input: [value: number];
+}>();
+
+const label = computed(() => (props.servings > 1 ? props.pluralLabel : props.singularLabel));
+
+const incrementServings = () => {
+  emit("input", props.servings + 1);
+};
+
+const decrementServings = () => {
+  if (props.servings > 1) {
+    emit("input", props.servings - 1);
+  }
+};
+</script>
+
 <template>
   <div class="servings-adjuster">
     <div class="servings-adjuster__control">
@@ -22,40 +52,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-const props = withDefaults(
-  defineProps<{
-    servings: number;
-    singularLabel: string | undefined;
-    pluralLabel: string | undefined;
-  }>(),
-  {
-    singularLabel: "serving",
-    pluralLabel: "servings",
-  },
-);
-
-
-const emit = defineEmits<{
-  input: [value: number];
-}>();
-
-
-const label = computed(() => (props.servings > 1 ? props.pluralLabel : props.singularLabel));
-
-
-function decrementServings() {
-  if (props.servings > 1) {
-    emit("input", props.servings - 1);
-  }
-}
-
-
-function incrementServings() {
-  emit("input", props.servings + 1);
-}
-</script>
 
 <style lang="scss" scoped>
 @use "@/styles/mixins" as m;

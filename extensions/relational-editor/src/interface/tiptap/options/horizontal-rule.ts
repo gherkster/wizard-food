@@ -1,14 +1,13 @@
 // https://tiptap.dev/api/nodes/horizontal-rule
 
-import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import type { Editor } from "@tiptap/core";
+import HorizontalRule from "@tiptap/extension-horizontal-rule";
 
-import customMessages from "../../i18n/custom-messages";
-import { Tool } from "../../../common/types/tools";
+import { type Tool } from "../../../common/types/tools";
 
 export default {
   key: "horizontalRule",
-  name: customMessages.tools.hr,
+  name: "Horizontal rule",
   icon: "horizontal_rule",
   extension: [HorizontalRule],
   shortcut: [],

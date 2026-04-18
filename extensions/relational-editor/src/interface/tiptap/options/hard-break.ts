@@ -1,14 +1,13 @@
 // https://tiptap.dev/api/nodes/hard-break
 
-import HardBreak from "@tiptap/extension-hard-break";
 import type { Editor } from "@tiptap/core";
+import HardBreak from "@tiptap/extension-hard-break";
 
-import customMessages from "../../i18n/custom-messages";
-import { Tool } from "../../../common/types/tools";
+import { type Tool } from "../../../common/types/tools";
 
 export default {
   key: "hardBreak",
-  name: customMessages.tools.hard_break,
+  name: "Hard break",
   icon: "keyboard_return",
   extension: [HardBreak],
   shortcut: ["shift", "Enter"],

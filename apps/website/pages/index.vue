@@ -1,6 +1,29 @@
+<script setup lang="ts">
+import { throwIfNil } from "~/utils/error";
+
+const { data: content } = await useFetch("/api/content/home");
+const { data: recipes } = await useFetch("/api/featured-recipes");
+
+throwIfNil(content.value, "Failed to fetch content.");
+throwIfNil(recipes.value, "Failed to fetch recipes.");
+
+if (import.meta.prerender) {
+  useSeoMeta({
+    title: content.value.title,
+    ogTitle: content.value.title,
+    description: content.value.description,
+    ogDescription: content.value.openGraphDescription,
+  });
+}
+
+useHead({
+  title: content.value.title,
+});
+</script>
+
 <template>
   <div class="home">
-    <section v-if="latestRecipes.length > 0">
+    <section v-if="recipes!.latestRecipes.length > 0">
       <div class="section-header">
         <h2>Latest Recipes</h2>
         <nuxt-link
@@ -14,7 +37,7 @@
       </div>
       <div class="recipe-list promo">
         <v-card
-          v-for="(recipe, index) in latestRecipes"
+          v-for="(recipe, index) in recipes!.latestRecipes"
           :key="recipe.slug"
           :title="recipe.title"
           :description="index === 0 ? recipe.descriptionSnippet : undefined"
@@ -26,17 +49,13 @@
         />
       </div>
     </section>
-    <section v-if="favouriteRecipes.length > 0">
+    <section v-if="recipes!.favouriteRecipes.length > 0">
       <div class="section-header">
         <h2>Personal Favourites</h2>
-        <!-- <nuxt-link class="section-header__link">
-          <span>See more</span>
-          <icon :name="headerIcon.name" :size="headerIcon.size" />
-        </nuxt-link> -->
       </div>
       <div class="recipe-list standard">
         <v-card
-          v-for="recipe in favouriteRecipes"
+          v-for="recipe in recipes!.favouriteRecipes"
           :key="recipe.slug"
           :title="recipe.title"
           :image="recipe.coverImage"
@@ -47,17 +66,13 @@
         />
       </div>
     </section>
-    <section v-if="quickRecipes.length > 0">
+    <section v-if="recipes!.quickRecipes.length > 0">
       <div class="section-header">
         <h2>Quick Eats</h2>
-        <!-- <nuxt-link class="section-header__link">
-          <span>See more</span>
-          <icon :name="headerIcon.name" :size="headerIcon.size" />
-        </nuxt-link> -->
       </div>
       <div class="recipe-list standard">
         <v-card
-          v-for="recipe in quickRecipes"
+          v-for="recipe in recipes!.quickRecipes"
           :key="recipe.slug"
           :title="recipe.title"
           :image="recipe.coverImage"
@@ -68,17 +83,13 @@
         />
       </div>
     </section>
-    <section v-if="worldCuisineRecipes.length > 0">
+    <section v-if="recipes!.worldCuisineRecipes.length > 0">
       <div class="section-header">
         <h2>World Cuisines</h2>
-        <!-- <nuxt-link class="section-header__link">
-          <span>See more</span>
-          <icon :name="headerIcon.name" :size="headerIcon.size" />
-        </nuxt-link> -->
       </div>
       <div class="recipe-list standard">
         <v-card
-          v-for="recipe in worldCuisineRecipes"
+          v-for="recipe in recipes!.worldCuisineRecipes"
           :key="recipe.slug"
           :title="recipe.title"
           :image="recipe.coverImage"
@@ -91,97 +102,6 @@
     </section>
   </div>
 </template>
-
-<script setup lang="ts">
-import type { FeaturedRecipes, WebsitePageContent } from "@wizard/content/store";
-
-const recipesResponse = await useAsyncData<FeaturedRecipes>("featured-recipes", async () => {
-  if (import.meta.server) {
-    const { featuredRecipes } = await import("#content");
-    return featuredRecipes;
-  }
-
-  if (import.meta.dev) {
-    const { data: response } = await useFetch("/api/featured-recipes");
-    if (!response.value) {
-      throw new Error("Featured recipes are unavailable");
-    }
-    return response.value as FeaturedRecipes;
-  }
-
-  throw new Error("Featured recipes are unavailable");
-});
-
-
-if (recipesResponse.error.value) {
-  throw createError({
-    statusCode: 500,
-    statusMessage: recipesResponse.error.value?.message,
-  });
-}
-
-
-if (!recipesResponse.data.value) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: "Page not found!",
-  });
-}
-
-
-const latestRecipes = ref(recipesResponse.data.value.latestRecipes);
-const favouriteRecipes = ref(recipesResponse.data.value.favouriteRecipes);
-const quickRecipes = ref(recipesResponse.data.value.quickRecipes);
-const worldCuisineRecipes = ref(recipesResponse.data.value.worldCuisineRecipes);
-
-
-const contentResponse = await useAsyncData<WebsitePageContent>("content-home", async () => {
-  if (import.meta.server) {
-    const { homePageContent } = await import("#content");
-    return homePageContent;
-  }
-
-  if (import.meta.dev) {
-    const { data: response } = await useFetch("/api/content/home");
-    if (!response.value) {
-      throw new Error("Home page content is unavailable");
-    }
-    return response.value as WebsitePageContent;
-  }
-
-  throw new Error("Home page content is unavailable");
-});
-
-
-if (contentResponse.error.value) {
-  throw createError({
-    statusCode: 500,
-    statusMessage: recipesResponse.error.value,
-  });
-}
-
-
-if (!contentResponse.data.value) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: "Content not found!",
-  });
-}
-
-
-const content = contentResponse.data.value;
-
-
-useServerSeoMeta({
-  title: content.title,
-  ogTitle: content.title,
-  description: content.description,
-  ogDescription: content.openGraphDescription,
-});
-useHead({
-  title: content.title,
-});
-</script>
 
 <style lang="scss" scoped>
 @use "@/styles/mixins" as m;

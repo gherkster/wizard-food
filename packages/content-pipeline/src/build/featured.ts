@@ -1,4 +1,4 @@
-import type { FeaturedRecipes, RecipePayload, RecipePreview } from "@wizard/content/store";
+import type { FeaturedRecipes, RecipePayload, RecipePreview } from "@wizard/content";
 
 import { formatDuration, recipeTotalDuration } from "./formatting";
 
@@ -25,7 +25,7 @@ const mapToRecipePreview = (recipe: RecipePayload): RecipePreview => {
 export const buildFeaturedRecipes = (recipePayloads: RecipePayload[]): FeaturedRecipes => {
   const recipes = (recipePayloads ?? []).map((r) => mapToRecipePreview(r));
 
-  if (!recipes || recipes.length === 0) {
+  if (recipes.length === 0) {
     throw new Error("Failed to retrieve recipes");
   }
 
@@ -64,7 +64,7 @@ export const buildFeaturedRecipes = (recipePayloads: RecipePayload[]): FeaturedR
     .filter(
       (r) =>
         !alreadyShownRecipes.has(r.slug) &&
-        r.cuisine &&
+        !!r.cuisine &&
         !["american", "australian"].includes(r.cuisine.toLowerCase()),
     )
     .slice(0, 4);

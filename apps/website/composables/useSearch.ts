@@ -11,8 +11,8 @@ const miniSearch = ref<MiniSearch<SearchIndexSearchFields>>();
 
 export type RecipeSearchResult = SearchResult & SearchIndexRecipe;
 
-export function useSearch() {
-  async function ensureIndex() {
+export const useSearch = () => {
+  const ensureIndex = async () => {
     if (miniSearch.value) {
       return;
     }
@@ -21,21 +21,21 @@ export function useSearch() {
 
     // If a valid copy of the search index wasn't found in localstorage,
     // Trigger an async download of the index in the background
-    if (!miniSearch.value) {
+    if (miniSearch.value === undefined) {
       await refreshIndex();
     }
-  }
+  };
 
-  function verifySearchIndexIsCached() {
+  const verifySearchIndexIsCached = () => {
     if (import.meta.client) {
       const storedIndex = localStorage.getItem("search-index");
       if (storedIndex) {
         loadIndex(storedIndex);
       }
     }
-  }
+  };
 
-  async function refreshIndex() {
+  const refreshIndex = async () => {
     if (!import.meta.client) {
       return;
     }
@@ -47,9 +47,9 @@ export function useSearch() {
 
       localStorage.setItem("search-index", jsonString);
     }
-  }
+  };
 
-  async function search(query: string) {
+  const search = async (query: string) => {
     if (!miniSearch.value) {
       await ensureIndex();
     }
@@ -64,9 +64,9 @@ export function useSearch() {
       // Don't use the default "OR" matching, which can match different recipes when the query includes spaces
       combineWith: "AND",
     }) as RecipeSearchResult[];
-  }
+  };
 
-  async function allItems() {
+  const allItems = async () => {
     if (!miniSearch.value) {
       await ensureIndex();
     }
@@ -76,9 +76,9 @@ export function useSearch() {
     }
 
     return miniSearch.value.search(MiniSearch.wildcard) as RecipeSearchResult[];
-  }
+  };
 
-  function loadIndex(jsonString: string) {
+  const loadIndex = (jsonString: string) => {
     try {
       miniSearch.value = MiniSearch.loadJSON(jsonString, searchIndexSettings);
       miniSearch.value.search("a"); // Do a search to validate this is a valid search index
@@ -86,7 +86,7 @@ export function useSearch() {
       miniSearch.value = undefined;
       console.error(error);
     }
-  }
+  };
 
   return {
     allItems,
@@ -94,4 +94,4 @@ export function useSearch() {
     refreshIndex,
     search,
   };
-}
+};

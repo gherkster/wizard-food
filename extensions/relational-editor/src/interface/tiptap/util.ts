@@ -1,4 +1,4 @@
-import { Editor } from "@tiptap/core";
+import { type Editor } from "@tiptap/core";
 
 // if textIsSelected only the selection will be de-/marked. if no selection the whole word will be de-/marked
 export function extendMarkRangeIfUnselected(editor: Editor, mark: string) {

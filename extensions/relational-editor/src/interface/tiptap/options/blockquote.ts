@@ -1,14 +1,13 @@
 // https://tiptap.dev/api/nodes/blockquote
 
-import Blockquote from "@tiptap/extension-blockquote";
 import type { Editor } from "@tiptap/core";
+import Blockquote from "@tiptap/extension-blockquote";
 
-import customMessages from "../../i18n/custom-messages";
-import { Tool } from "../../../common/types/tools";
+import { type Tool } from "../../../common/types/tools";
 
 export default {
   key: "blockquote",
-  name: customMessages.tools.blockquote,
+  name: "Block quote",
   icon: "format_quote",
   extension: [Blockquote],
   shortcut: ["meta", "shift", "B"],

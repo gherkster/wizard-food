@@ -1,5 +1,7 @@
+import type { InlineIngredientHTMLElementDataset, SingularPluralPair } from "./recipe";
+
 export type ImagePurpose = "cover" | "preview" | "instruction";
-export type AspectRatio = "square" | "portrait";
+export type ImageShape = "square" | "portrait";
 
 export type ImageVariant = {
   src: string;
@@ -7,7 +9,12 @@ export type ImageVariant = {
   sizes: string;
 };
 
-export type ImageVariants = Record<ImagePurpose, Record<AspectRatio, ImageVariant>>;
+export type ImageVariants = Record<ImagePurpose, Record<ImageShape, ImageVariant>>;
+
+export type AspectRatio = {
+  x: number;
+  y: number;
+};
 
 export type RecipePayload = {
   id: number;
@@ -21,14 +28,14 @@ export type RecipePayload = {
   coverImage: Image;
   ingredientGroups: IngredientGroup[];
   instructionGroups: InstructionGroup[];
-  servings?: number;
+  servings: number;
   servingsType: SingularPluralPair;
   preparationDuration?: number;
   cookingDuration?: number;
   customDurationName?: string;
   customDuration?: number;
-  diets?: unknown;
-  main_ingredients?: unknown;
+  diets?: string[];
+  main_ingredients?: string[];
   favourite?: boolean;
   method?: string;
   tags: string[];
@@ -43,6 +50,9 @@ export type RecipePreview = {
   coverImage: Image;
   cuisine?: string;
   course?: string;
+  diets?: string[];
+  main_ingredients?: string[];
+  method?: string;
   tags: string[];
   featuredTag?: string;
   preparationDuration?: number;
@@ -90,21 +100,6 @@ export type Ingredient = {
   note?: string;
   inlineOnly?: boolean;
 };
-
-export type SingularPluralPair = {
-  singular: string;
-  plural: string;
-};
-
-export type InlineIngredient = {
-  amount?: number;
-  unit?: SingularPluralPair;
-  name: SingularPluralPair;
-};
-
-export interface InlineIngredientHTMLElementDataset extends DOMStringMap {
-  ingredient: string;
-}
 
 export interface InlineIngredientHTMLElement extends HTMLSpanElement {
   dataset: InlineIngredientHTMLElementDataset;

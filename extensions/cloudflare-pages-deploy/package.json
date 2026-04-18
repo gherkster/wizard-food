@@ -23,13 +23,13 @@
     "typecheck": "tsc --noEmit --project tsconfig.json"
   },
   "dependencies": {
-    "cloudflare": "^4.5.0"
+    "cloudflare": "catalog:"
   },
   "devDependencies": {
-    "@directus/extensions-sdk": "13.0.2",
-    "@types/node": "^22.19.15",
-    "typescript": "^5.9.3",
-    "vue": "^3.5.30"
+    "@directus/extensions-sdk": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vue": "catalog:"
   },
   "icon": "extension",
   "directus:extension": {

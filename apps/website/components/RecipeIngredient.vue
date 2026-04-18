@@ -10,8 +10,8 @@
 </template>
 
 <script setup lang="ts">
+import type { Ingredient } from "@wizard/content";
 import Fraction from "fraction.js";
-import type { Ingredient } from "@wizard/content/store";
 
 import { formatIngredientAmount } from "~/utils/formatting";
 
@@ -21,11 +21,9 @@ const props = defineProps<{
   originalNumberOfServings: number;
 }>();
 
-
 const amount = computed(() =>
   props.ingredient.amount ? new Fraction(props.ingredient.amount) : undefined,
 );
-
 
 const multipliedAmount = computed(() => {
   if (!amount.value) {
@@ -35,7 +33,6 @@ const multipliedAmount = computed(() => {
   return amount.value.mul(props.ingredientMultiplier).div(props.originalNumberOfServings);
 });
 
-
 const formattedAmount = computed(() => {
   if (!multipliedAmount.value) {
     return "";
@@ -43,7 +40,6 @@ const formattedAmount = computed(() => {
 
   return formatIngredientAmount(multipliedAmount.value);
 });
-
 
 /** Get the ingredient unit label, displaying the singular or plural form depending on the current recipe multiplier. */
 const ingredientUnit = computed(() => {
@@ -59,7 +55,6 @@ const ingredientUnit = computed(() => {
     ? props.ingredient.unit.singular
     : props.ingredient.unit.plural;
 });
-
 
 const nameVariant = computed(() => {
   if (!multipliedAmount.value) {

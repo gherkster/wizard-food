@@ -1,5 +1,5 @@
-import type { AppVersion } from "~/types/version";
 import { useSearch } from "~/composables/useSearch";
+import type { AppVersion } from "~/types/version";
 
 let searchIndexDownload: Promise<void> | null = null;
 let isBuildStale = false;
@@ -24,7 +24,7 @@ export default defineNuxtRouteMiddleware((to) => {
   const lastVersionCheckMs = Number(localStorage.getItem(lastCheckTimeStorageKey));
 
   const fiveMinutesInMs = 1000 * 60 * 5;
-  if (lastVersionCheckMs && lastVersionCheckMs > Date.now() - fiveMinutesInMs) {
+  if (!isNaN(lastVersionCheckMs) && lastVersionCheckMs > Date.now() - fiveMinutesInMs) {
     return;
   }
 
@@ -43,7 +43,7 @@ export default defineNuxtRouteMiddleware((to) => {
         return;
       }
 
-      const isSearchIndexStale = checkForStaleSearchIndex(version.searchIndex);
+      const isSearchIndexStale = checkForStaleSearchIndex(version.searchIndexHash);
       if (isSearchIndexStale) {
         /*
         Trigger a background download of the latest search index,
@@ -53,7 +53,7 @@ export default defineNuxtRouteMiddleware((to) => {
           searchIndexDownload = useSearch()
             .refreshIndex()
             .finally(() => {
-              localStorage.setItem(searchIndexHashStorageKey, version.searchIndex);
+              localStorage.setItem(searchIndexHashStorageKey, version.searchIndexHash);
               searchIndexDownload = null;
             });
         }
@@ -63,8 +63,8 @@ export default defineNuxtRouteMiddleware((to) => {
       If the search index is downloading we don't want to trigger a full page load and cancel a pending request.
       It can always happen after the next navigation, an old build won't immediately affect the user experience.
     */
-      if (!searchIndexDownload && checkForStaleBuild(version.build)) {
-        localStorage.setItem("build-version", version.build);
+      if (!searchIndexDownload && checkForStaleBuild(version.buildId)) {
+        localStorage.setItem("build-version", version.buildId);
         isBuildStale = true;
       }
     })

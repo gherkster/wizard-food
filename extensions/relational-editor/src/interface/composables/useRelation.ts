@@ -1,7 +1,7 @@
 import { computed, inject } from "vue";
 
+import { type Configuration, configurationInjectionKey } from "../config/configuration";
 import { useRelationM2M } from "./useRelationM2M";
-import { Configuration, configurationInjectionKey } from "../config/configuration";
 
 export function useRelation(configuration?: Configuration) {
   const config = configuration ?? inject<Configuration>(configurationInjectionKey);
@@ -15,13 +15,21 @@ export function useRelation(configuration?: Configuration) {
   );
 
   const templateWithDefaults = computed(() => {
-    if (!relationInfo.value) return null;
-
-    if (relationInfo.value.junctionCollection.meta?.display_template) {
-      return relationInfo.value.junctionCollection.meta.display_template;
+    if (!relationInfo.value) {
+      return null;
     }
 
-    let relatedDisplayTemplate = relationInfo.value.relatedCollection.meta?.display_template;
+    const junctionDisplayTemplate = relationInfo.value.junctionCollection.meta?.display_template as
+      | string
+      | undefined;
+
+    if (junctionDisplayTemplate) {
+      return junctionDisplayTemplate;
+    }
+
+    let relatedDisplayTemplate = relationInfo.value.relatedCollection.meta?.display_template as
+      | string
+      | undefined;
 
     if (relatedDisplayTemplate) {
       const regex = /({{.*?}})/g;

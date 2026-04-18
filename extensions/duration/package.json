@@ -17,9 +17,9 @@
     "typecheck": "tsc --noEmit --project tsconfig.json"
   },
   "devDependencies": {
-    "@directus/extensions-sdk": "^11.0.10",
-    "typescript": "^5.9.3",
-    "vue": "^3.5.30"
+    "@directus/extensions-sdk": "catalog:",
+    "typescript": "catalog:",
+    "vue": "catalog:"
   },
   "icon": "extension",
   "directus:extension": {
