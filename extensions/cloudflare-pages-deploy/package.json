@@ -23,7 +23,7 @@
     "typecheck": "tsc --noEmit --project tsconfig.json"
   },
   "dependencies": {
-    "cloudflare": "^4.5.0"
+    "cloudflare": "catalog:"
   },
   "devDependencies": {
     "@directus/extensions-sdk": "catalog:",

@@ -1,17 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
-import type { Image } from "@wizard/content";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import type { Image } from "@wizard/content";
+import { useEffect, useMemo, useState } from "react";
 
-import type { RecipeSearch } from "@/models/content";
+import { BlurrableImage } from "@/components/domain/blurrable-image";
+import { Select } from "@/components/ui/select";
+import { searchIndexToCardImage } from "@/lib/images";
 import {
   allSearchRecipes,
   searchRecipes,
   type RecipeSearchResult,
 } from "@/lib/search/search-client";
-import { searchIndexToCardImage } from "@/lib/images";
-import { getRecipesPageData } from "@/lib/content";
-import { Select } from "@/components/ui/select";
-import { BlurrableImage } from "@/components/domain/blurrable-image";
+import type { RecipeSearch } from "@/models/content";
+import { getRecipesPageData } from "@/server/content.functions";
 
 type RecipeListItem = {
   slug: string;
@@ -416,14 +416,14 @@ const RecipesPage = () => {
       <section className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
         <div className="space-y-4">
           <h1 className="text-5xl font-bold leading-tight sm:text-6xl">
-            {search ? `Results for "${search}"` : data.content.title}
+            {search ? `Results for "${search}"` : data.title}
           </h1>
           <p className="max-w-xl text-lg text-[color:var(--color-muted)]">
             {isIndexLoading
               ? "Loading recipes..."
               : search
                 ? `${recipes.length} matching recipes curated for your search.`
-                : data.content.description}
+                : data.description}
           </p>
         </div>
       </section>
@@ -553,7 +553,7 @@ const RecipesPage = () => {
 };
 
 export const Route = createFileRoute("/recipes/")({
-  loader: () => getRecipesPageData(),
+  loader: async () => await getRecipesPageData(),
   validateSearch: (search: Record<string, unknown>): RecipeSearch => {
     const ingredient = toSingleString(search.ingredient);
     const rawDiet = toSingleString(search.diet);
@@ -579,21 +579,18 @@ export const Route = createFileRoute("/recipes/")({
   component: RecipesPage,
   head: ({ loaderData }) => ({
     meta: [
-      { title: loaderData?.content.title ?? "Wizard Food | Recipes" },
+      { title: loaderData?.title },
       {
         name: "description",
-        content: loaderData?.content.description ?? "Browse and search Wizard Food recipes.",
+        content: loaderData?.description,
       },
       {
         property: "og:title",
-        content: loaderData?.content.title ?? "Wizard Food | Recipes",
+        content: loaderData?.title,
       },
       {
         property: "og:description",
-        content:
-          loaderData?.content.openGraphDescription ??
-          loaderData?.content.description ??
-          "Browse and search Wizard Food recipes.",
+        content: loaderData?.openGraphDescription,
       },
     ],
   }),

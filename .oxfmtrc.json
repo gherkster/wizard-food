@@ -3,7 +3,7 @@
   "trailingComma": "all",
   "sortPackageJson": false,
   "sortImports": {
-    "order": "desc"
+    "order": "asc"
   },
   "endOfLine": "lf",
   "ignorePatterns": [

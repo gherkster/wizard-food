@@ -75,6 +75,7 @@ export default defineHook(({ action, init }, context) => {
         height: 40,
         fit: "cover",
         format: "webp",
+        withoutEnlargement: true,
       },
     });
 

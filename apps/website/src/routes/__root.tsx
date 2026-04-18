@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
 import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 
 import { SiteLayout } from "@/components/layout/site-layout";
 
@@ -46,4 +46,21 @@ export const Route = createRootRoute({
     ],
   }),
   component: RootComponent,
+  errorComponent: ({ error }) => (
+    <RootDocument>
+      <div style={{ padding: "2rem", color: "red" }}>
+        <h1>Something went wrong</h1>
+        <pre>{error.message}</pre>
+        <button onClick={() => window.location.reload()}>Retry</button>
+      </div>
+    </RootDocument>
+  ),
+  notFoundComponent: () => (
+    <RootDocument>
+      <div style={{ padding: "2rem" }}>
+        <h1>404 - Page Not Found</h1>
+        <p>We couldn't find the recipe you're looking for.</p>
+      </div>
+    </RootDocument>
+  ),
 });

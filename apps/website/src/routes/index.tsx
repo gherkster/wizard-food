@@ -1,10 +1,10 @@
-import type { Image, RecipePreview } from "@wizard/content";
 import { Link, createFileRoute } from "@tanstack/react-router";
+import type { Image, RecipePreview } from "@wizard/content";
 
-import { previewToCardImage } from "@/lib/images";
-import { getHomePageData } from "@/lib/content";
-import { Tag } from "@/components/ui/tag";
 import { BlurrableImage } from "@/components/domain/blurrable-image";
+import { Tag } from "@/components/ui/tag";
+import { previewToCardImage } from "@/lib/images";
+import { getHomePageData } from "@/server/content.functions";
 
 type GridItem = {
   slug: string;
@@ -199,25 +199,22 @@ const HomePage = () => {
 };
 
 export const Route = createFileRoute("/")({
-  loader: () => getHomePageData(),
+  loader: async () => await getHomePageData(),
   component: HomePage,
   head: ({ loaderData }) => ({
     meta: [
-      { title: loaderData?.content.title ?? "Wizard Food | Home" },
+      { title: loaderData?.content.title },
       {
         name: "description",
-        content: loaderData?.content.description ?? "Wizard Food recipes and search experience.",
+        content: loaderData?.content.description,
       },
       {
         property: "og:title",
-        content: loaderData?.content.title ?? "Wizard Food | Home",
+        content: loaderData?.content.title,
       },
       {
         property: "og:description",
-        content:
-          loaderData?.content.openGraphDescription ??
-          loaderData?.content.description ??
-          "Wizard Food recipes and search experience.",
+        content: loaderData?.content.openGraphDescription,
       },
     ],
   }),

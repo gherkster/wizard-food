@@ -1,24 +1,24 @@
-import { useMemo, useState } from "react";
-import type { Ingredient } from "@wizard/content";
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
+import type { Ingredient } from "@wizard/content";
+import { useMemo, useState } from "react";
 
-import { recipeTotalDurationSeconds, secondsToIsoDuration } from "@/lib/seo";
-import { formatDurationFromSeconds, totalRecipeDurationSeconds } from "@/lib/formatting";
-import { getRecipeDetailData } from "@/lib/content";
-import { Tag } from "@/components/ui/tag";
-import { Popover } from "@/components/ui/popover";
-import { ServingsAdjuster } from "@/components/domain/servings-adjuster";
-import { RecipeInstruction } from "@/components/domain/recipe-instruction";
-import { RecipeIngredient } from "@/components/domain/recipe-ingredient";
 import { BlurrableImage } from "@/components/domain/blurrable-image";
+import { RecipeIngredient } from "@/components/domain/recipe-ingredient";
+import { RecipeInstruction } from "@/components/domain/recipe-instruction";
+import { ServingsAdjuster } from "@/components/domain/servings-adjuster";
+import { Popover } from "@/components/ui/popover";
+import { Tag } from "@/components/ui/tag";
+import { formatDurationFromSeconds, totalRecipeDurationSeconds } from "@/lib/formatting";
+import { recipeTotalDurationSeconds, secondsToIsoDuration } from "@/lib/seo";
+import { getRecipe } from "@/server/content.functions";
 
 const toIngredientKey = (groupName: string | undefined, ingredient: Ingredient) => {
   return `${groupName ?? "group"}-${ingredient.name.singular}-${ingredient.amount ?? "na"}`;
 };
 
 const RecipeDetailPage = () => {
-  const data = Route.useLoaderData();
-  const recipe = data.recipe;
+  const recipe = Route.useLoaderData();
+
   const initialServings = recipe.servings > 0 ? recipe.servings : 1;
   const [servings, setServings] = useState(initialServings);
 
@@ -61,7 +61,7 @@ const RecipeDetailPage = () => {
           </div>
 
           <h1 className="text-5xl font-bold leading-tight sm:text-6xl">{recipe.title}</h1>
-          <p
+          <div
             className="max-w-xl text-lg text-[color:var(--color-muted)]"
             dangerouslySetInnerHTML={{ __html: recipe.description }}
           />
@@ -202,7 +202,7 @@ const RecipeDetailPage = () => {
           {recipe.note ? (
             <section className="rounded-2xl border border-[color:var(--color-border)]/35 bg-[color:var(--color-surface)]/85 p-6">
               <h3 className="mb-2 text-2xl font-semibold">Notes</h3>
-              <p
+              <div
                 className="text-[color:var(--color-muted)]"
                 dangerouslySetInnerHTML={{ __html: recipe.note }}
               />
@@ -218,39 +218,32 @@ const RecipeDetailPage = () => {
 
 export const Route = createFileRoute("/recipes/$slug")({
   loader: async ({ params }) => {
-    const data = await getRecipeDetailData(params.slug);
-
-    if (!data) {
+    const recipe = await getRecipe({ data: { slug: params.slug } });
+    if (!recipe) {
       throw notFound();
     }
 
-    return data;
+    return recipe;
   },
   component: RecipeDetailPage,
-  head: ({ loaderData }) => ({
+  head: ({ loaderData: recipe }) => ({
     meta: [
-      { title: loaderData?.recipe.title ?? "Recipe" },
+      { title: recipe?.title },
       {
         name: "description",
-        content:
-          loaderData?.recipe.descriptionPlainText ??
-          loaderData?.recipe.descriptionSnippet ??
-          "Recipe details",
+        content: recipe?.descriptionPlainText,
       },
       {
         property: "og:title",
-        content: loaderData?.recipe.title ?? "Recipe",
+        content: recipe?.title,
       },
       {
         property: "og:description",
-        content:
-          loaderData?.recipe.descriptionSnippet ??
-          loaderData?.recipe.descriptionPlainText ??
-          "Recipe details",
+        content: recipe?.descriptionSnippet,
       },
       {
         property: "og:image",
-        content: loaderData?.recipe.coverImage.variants.cover.square.src ?? "",
+        content: recipe?.coverImage.variants.cover.square.src,
       },
     ],
   }),

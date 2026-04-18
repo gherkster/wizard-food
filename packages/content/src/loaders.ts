@@ -1,5 +1,6 @@
 import * as fs from "node:fs/promises";
 
+import { ContentFileName, resolveContentFile } from "./files";
 import type {
   ContentMeta,
   FeaturedRecipes,
@@ -7,14 +8,13 @@ import type {
   RecipePreview,
   WebsitePagesContent,
 } from "./types";
-import { ContentFileName, resolveContentFile } from "./files";
 
-async function readJson<T>(fileName: ContentFileName, contentDir: string) {
+const readJson = async <T>(fileName: ContentFileName, contentDir: string) => {
   const filePath = resolveContentFile(fileName, contentDir);
   const content = await fs.readFile(filePath, "utf8");
 
   return JSON.parse(content) as T;
-}
+};
 
 export const loadRecipesBySlug = async (contentDir: string) => {
   return readJson<Record<string, RecipePayload>>("recipes.by-slug.json", contentDir);
