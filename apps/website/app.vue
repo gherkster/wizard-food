@@ -27,10 +27,8 @@ useHead({
   ],
 });
 
-
 const appConfig = useAppConfig();
 const route = useRoute();
-
 
 if (import.meta.server) {
   useHead({

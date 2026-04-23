@@ -1,5 +1,5 @@
-import path from "node:path";
 import * as fs from "node:fs/promises";
+import path from "node:path";
 
 const writeJson = async (target: string, value: unknown) => {
   await fs.writeFile(target, `${JSON.stringify(value)}\n`, "utf8");

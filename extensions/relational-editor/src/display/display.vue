@@ -3,9 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import type { JSONContent } from "@tiptap/vue-3";
 import { generateText } from "@tiptap/core";
+import type { JSONContent } from "@tiptap/vue-3";
+import { computed } from "vue";
 
 import extensions from "./extensions";
 

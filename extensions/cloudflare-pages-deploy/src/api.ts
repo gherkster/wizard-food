@@ -1,6 +1,6 @@
-import { sleep } from "cloudflare/core";
-import Cloudflare from "cloudflare";
 import { defineOperationApi } from "@directus/extensions-sdk";
+import Cloudflare from "cloudflare";
+import { sleep } from "cloudflare/core";
 
 type Options = {
   cloudflareAccountId: string;

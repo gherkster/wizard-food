@@ -1,6 +1,6 @@
-import { useToolStore } from "./stores/toolStore";
-import InterfaceComponent from "./interface.vue";
 import inlineNodeTagNames from "../common/inlineNodeTagNames";
+import InterfaceComponent from "./interface.vue";
+import { useToolStore } from "./stores/toolStore";
 
 export default {
   id: "custom-instruction-editor",

@@ -74,14 +74,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { storeToRefs } from "pinia";
 import type { Editor } from "@tiptap/vue-3";
+import { storeToRefs } from "pinia";
+import { ref, computed } from "vue";
 
-import ToolButton from "./ToolButton.vue";
-import ToolbarRelationMenu from "./ToolbarRelationMenu.vue";
-import { useLinkStore } from "../stores/useLinkStore";
 import type { Tool } from "../../common/types/tools";
+import { useLinkStore } from "../stores/useLinkStore";
+import ToolbarRelationMenu from "./ToolbarRelationMenu.vue";
+import ToolButton from "./ToolButton.vue";
 
 // Props
 interface Props {

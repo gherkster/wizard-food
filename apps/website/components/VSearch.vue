@@ -8,7 +8,9 @@
       @update:model-value="$emit('input', query)"
     >
       <template #prepend="{ onClick }">
-        <icon name="mynaui:search" :size="20" @click="onClick" />
+        <span @click="onClick">
+          <icon name="mynaui:search" :size="20" />
+        </span>
       </template>
     </v-input>
   </form>
@@ -19,15 +21,12 @@ const props = defineProps<{
   value: string;
 }>();
 
-
 const query = ref(props.value);
-
 
 watch(
   () => props.value,
   (newValue) => (query.value = newValue),
 );
-
 
 defineEmits<{
   input: [value: string];
