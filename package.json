@@ -9,7 +9,7 @@
     "build": "turbo run build",
     "check": "pnpm run lint && pnpm run format:check",
     "lint": "pnpm run lint:ox",
-    "lint:ox": "oxlint -c .oxlintrc.json --import-plugin --vue-plugin .",
+    "lint:ox": "oxlint -c .oxlintrc.json .",
     "lint:fix": "pnpm run lint:ox -- --fix",
     "format": "oxfmt -c .oxfmtrc.json --write --no-error-on-unmatched-pattern \"*.{json,md,yaml,yml}\" \"apps/**/*.{js,jsx,mjs,cjs,ts,tsx,vue,json,md,scss,yaml,yml}\" \"packages/**/*.{js,jsx,mjs,cjs,ts,tsx,vue,json,md,scss,yaml,yml}\" \"extensions/**/*.{js,jsx,mjs,cjs,ts,tsx,vue,json,md,scss,yaml,yml}\" \"openapi/**/*.json\"",
     "format:check": "oxfmt -c .oxfmtrc.json --check --no-error-on-unmatched-pattern \"*.{json,md,yaml,yml}\" \"apps/**/*.{js,jsx,mjs,cjs,ts,tsx,vue,json,md,scss,yaml,yml}\" \"packages/**/*.{js,jsx,mjs,cjs,ts,tsx,vue,json,md,scss,yaml,yml}\" \"extensions/**/*.{js,jsx,mjs,cjs,ts,tsx,vue,json,md,scss,yaml,yml}\" \"openapi/**/*.json\""

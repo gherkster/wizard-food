@@ -1,9 +1,9 @@
-import { computed, ref } from "vue";
-import { defineStore } from "pinia";
 import type { Editor } from "@tiptap/core";
+import { defineStore } from "pinia";
+import { computed, ref } from "vue";
 
-import DialogLink from "../components/DialogLink.vue";
 import type { Dialog, LinkAttributes } from "../../common/types/tools";
+import DialogLink from "../components/DialogLink.vue";
 
 export const useLinkStore = defineStore("link-store", () => {
   const dialog = ref<Dialog>();

@@ -89,12 +89,7 @@ const finishAnimating = debounce(() => {
         <nuxt-link to="/" class="concealed"> Home </nuxt-link>
         <nuxt-link to="/recipes" class="concealed">Recipes</nuxt-link>
         <div class="nav-header-search">
-          <v-mascot
-            :excited="isAnimated"
-            :size="54"
-            class="nav-header-search__mascot"
-            @click="animateMascot"
-          />
+          <v-mascot :animate="isAnimated" :size="54" class="nav-header-search__mascot" />
           <v-search
             :value="query"
             class="nav-header-search__input"

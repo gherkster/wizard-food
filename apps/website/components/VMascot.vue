@@ -1,19 +1,46 @@
-<template>
-  <MascotSVG :class="{ excited: excited }" :width="iconSize" :height="iconSize" />
-</template>
-
 <script setup lang="ts">
+import { debounce } from "~/utils/debounce";
+
 const props = withDefaults(
   defineProps<{
-    excited?: boolean;
+    animate?: boolean;
     size?: number;
   }>(),
   {
-    excited: false,
+    animate: false,
     size: 24,
   },
 );
 
+const isAnimated = ref(false);
 
-const iconSize = computed(() => `${props.size}px`);
+const animateMascot = () => {
+  isAnimated.value = true;
+  // Finish animation after a debounced delay
+  finishAnimating();
+};
+
+const animationDebounceMs = 1000;
+
+const finishAnimating = debounce(() => {
+  isAnimated.value = false;
+}, animationDebounceMs);
+
+defineEmits(["click"]);
 </script>
+
+<template>
+  <button @click="animateMascot">
+    <MascotSVG :class="{ excited: animate || isAnimated }" :width="size" />
+  </button>
+</template>
+
+<style lang="scss" scoped>
+button {
+  line-height: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+</style>

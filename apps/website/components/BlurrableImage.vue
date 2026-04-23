@@ -41,22 +41,9 @@ const { x, y } = getAspectRatio(props.shape);
       :shape="shape"
       thumbnail
       alt=""
-      aria-hidden="true"
+      ariaHidden="true"
       role="presentation"
     />
-    <!-- noscript always results in hydration mismatch with Vue SSR -->
-    <noscript data-allow-mismatch>
-      <v-img
-        class="image"
-        :lazy="lazy"
-        :img="img"
-        :purpose="purpose"
-        :shape="shape"
-        :alt="alt"
-        :aria-hidden="ariaHidden"
-        :role="role"
-      />
-    </noscript>
     <v-img
       class="image"
       :img="img"
@@ -64,7 +51,7 @@ const { x, y } = getAspectRatio(props.shape);
       :shape="shape"
       :lazy="lazy"
       :alt="alt"
-      :aria-hidden="ariaHidden"
+      :ariaHidden="ariaHidden"
       :role="role"
     />
   </div>

@@ -1,5 +1,5 @@
-import duration, { type Duration } from "dayjs/plugin/duration";
 import dayjs from "dayjs";
+import duration, { type Duration } from "dayjs/plugin/duration";
 
 export const secondsToDuration = (seconds: number): Duration => {
   dayjs.extend(duration);

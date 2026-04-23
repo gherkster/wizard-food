@@ -1,5 +1,11 @@
 <template>
-  <button class="control v-button" :class="classes" :disabled="disabled" @click="onClick">
+  <button
+    class="control v-button"
+    :class="classes"
+    :disabled="disabled"
+    :aria-label="ariaLabel"
+    @click="onClick"
+  >
     <slot />
   </button>
 </template>
@@ -11,13 +17,13 @@ const props = withDefaults(
     transparent?: boolean;
     disabled?: boolean;
     size?: "inline" | "small" | "medium" | "large";
+    ariaLabel?: string;
   }>(),
   {
     primary: true,
     size: "medium",
   },
 );
-
 
 const classes = computed(() => {
   const isVisuallyPrimary = props.primary && !props.transparent;
@@ -29,11 +35,9 @@ const classes = computed(() => {
   };
 });
 
-
 const emit = defineEmits<{
   click: [];
 }>();
-
 
 const onClick = () => {
   if (!props.disabled) {

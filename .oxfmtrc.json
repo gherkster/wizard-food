@@ -12,6 +12,7 @@
     "**/.nuxt/**",
     "**/.output/**",
     "pnpm-lock.yaml",
-    "directus-schema.d.ts"
+    "directus-schema.d.ts",
+    "**/public/**"
   ]
 }
