@@ -1,7 +1,3 @@
-<template>
-  <div ref="inlineIngredientsRef" class="instruction" v-html="content" />
-</template>
-
 <script setup lang="ts">
 import type { InlineIngredientHTMLElement } from "@wizard/content";
 import { formatIngredient, type InlineIngredient, type SingularPluralPair } from "@wizard/content";
@@ -104,6 +100,10 @@ const tryParseInlineIngredient = (
   }
 };
 </script>
+
+<template>
+  <div ref="inlineIngredientsRef" class="instruction" v-html="content" />
+</template>
 
 <style lang="scss" scoped>
 .instruction {

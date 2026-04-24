@@ -9,8 +9,10 @@ catalog:
   "@nuxt/eslint": 0.7.2
   "@nuxt/fonts": ^0.6.1
   "@nuxt/icon": 2.2.1
+  '@nuxt/kit': ^4.4.2
   "@nuxtjs/robots": 5.2.4
   "@nuxtjs/sitemap": ^5.3.5
+  '@pandacss/dev': ^1.10.0
   "@tiptap/core": ^2.27.2
   "@tiptap/extension-blockquote": ^2.27.2
   "@tiptap/extension-bold": ^2.27.2

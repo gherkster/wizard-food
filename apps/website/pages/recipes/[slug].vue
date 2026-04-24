@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { css } from "styled-system/css";
+
 import type { RouteLocationRaw } from "#vue-router";
 import { formatRecipeDurations, recipeTotalDuration } from "~/utils/formatting";
 import { useJsonld } from "~/utils/jsonld";
@@ -72,23 +74,18 @@ const createSearchLink = (term: string): RouteLocationRaw => {
 
 <template>
   <div v-if="recipe" class="recipe">
-    <blurrable-image :img="recipe.coverImage" purpose="cover" shape="portrait" />
+    <BlurrableImage :img="recipe.coverImage" purpose="cover" shape="portrait" />
     <div class="recipe__summary">
       <h1 class="recipe__title">{{ recipe.title }}</h1>
       <div v-if="recipe.description" class="recipe__description" v-html="recipe.description" />
       <div class="recipe__tags">
-        <nuxt-link
-          v-for="tag in recipe.tags"
-          :key="tag"
-          :to="createSearchLink(tag)"
-          class="concealed"
-        >
-          <v-tag icon-name="mynaui:search">{{ tag }}</v-tag>
-        </nuxt-link>
+        <HoverLink v-for="tag in recipe.tags" :key="tag" :to="createSearchLink(tag)">
+          <VTag icon-name="mynaui:search">{{ tag }}</VTag>
+        </HoverLink>
       </div>
       <div class="recipe__details highlight-container">
         <div v-if="durationLabels.total" class="recipe__duration">
-          <v-popover>
+          <VPopover>
             <template #trigger>
               <span
                 >Total <b>{{ durationLabels.total }}</b></span
@@ -114,10 +111,10 @@ const createSearchLink = (term: string): RouteLocationRaw => {
                 </li>
               </ul>
             </template>
-          </v-popover>
+          </VPopover>
         </div>
         <div class="recipe__options">
-          <servings-adjuster
+          <ServingsAdjuster
             :servings="servings"
             :singular-label="recipe.servingsType?.singular"
             :plural-label="recipe.servingsType?.plural"
@@ -141,7 +138,7 @@ const createSearchLink = (term: string): RouteLocationRaw => {
         <ul>
           <template v-for="ingredient in ingredientSection.ingredients">
             <li v-if="!ingredient.inlineOnly" :key="ingredient.name.singular">
-              <recipe-ingredient
+              <RecipeIngredient
                 :ingredient="ingredient"
                 :ingredient-multiplier="servings"
                 :original-number-of-servings="originalNumberOfServings"
@@ -167,13 +164,13 @@ const createSearchLink = (term: string): RouteLocationRaw => {
             :key="instruction.text"
             class="instruction"
           >
-            <v-badge>{{ index + 1 }}</v-badge>
-            <recipe-instruction
+            <VBadge>{{ index + 1 }}</VBadge>
+            <RecipeInstruction
               :content="instruction.text"
               :ingredient-multiplier="servings"
               :original-number-of-servings="originalNumberOfServings"
             />
-            <blurrable-image
+            <BlurrableImage
               v-if="instruction.image"
               :img="instruction.image"
               purpose="instruction"
@@ -188,8 +185,24 @@ const createSearchLink = (term: string): RouteLocationRaw => {
       <div v-html="recipe.note" />
     </div>
     <footer class="footer">
-      <icon name="wf:logo-light" :size="140" class="light-theme-only" />
-      <icon name="wf:logo-dark" :size="140" class="dark-theme-only" />
+      <icon
+        name="wf:logo-light"
+        :size="140"
+        :class="
+          css({
+            display: { base: 'block !important', _osDark: 'none !important' },
+          })
+        "
+      />
+      <icon
+        name="wf:logo-dark"
+        :size="140"
+        :class="
+          css({
+            display: { base: 'none !important', _osDark: 'block !important' },
+          })
+        "
+      />
     </footer>
   </div>
 </template>

@@ -1,13 +1,3 @@
-<template>
-  <div class="input-container">
-    <slot name="prepend" :on-click="focusButton" />
-    <label>
-      {{ label }}
-      <input ref="btnRef" v-model="model" type="input" :placeholder="placeholder" size="1" />
-    </label>
-  </div>
-</template>
-
 <script setup lang="ts">
 defineProps<{
   value?: string;
@@ -24,6 +14,16 @@ const model = defineModel<string>({
 const btnRef = ref<HTMLInputElement>();
 const focusButton = () => btnRef.value?.focus();
 </script>
+
+<template>
+  <div class="input-container">
+    <slot name="prepend" :on-click="focusButton" />
+    <label>
+      {{ label }}
+      <input ref="btnRef" v-model="model" type="input" :placeholder="placeholder" size="1" />
+    </label>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 @use "@/styles/mixins" as m;

@@ -1,14 +1,3 @@
-<template>
-  <span>
-    <span v-if="formattedAmount">{{ formattedAmount }}&nbsp;</span>
-    <span v-if="ingredientUnit">{{ ingredientUnit }}&nbsp;</span>
-    <span class="recipe__ingredient__name" v-html="nameVariant" />
-    <span v-if="ingredient.note" class="text-muted"
-      ><i>&nbsp;{{ ingredient.note }}</i></span
-    >
-  </span>
-</template>
-
 <script setup lang="ts">
 import type { Ingredient } from "@wizard/content";
 import Fraction from "fraction.js";
@@ -68,3 +57,14 @@ const nameVariant = computed(() => {
     : props.ingredient.name.plural;
 });
 </script>
+
+<template>
+  <span>
+    <span v-if="formattedAmount">{{ formattedAmount }}&nbsp;</span>
+    <span v-if="ingredientUnit">{{ ingredientUnit }}&nbsp;</span>
+    <span class="recipe__ingredient__name" v-html="nameVariant" />
+    <span v-if="ingredient.note" class="text-muted"
+      ><i>&nbsp;{{ ingredient.note }}</i></span
+    >
+  </span>
+</template>

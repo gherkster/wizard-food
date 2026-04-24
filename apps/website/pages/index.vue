@@ -26,17 +26,13 @@ useHead({
     <section v-if="recipes!.latestRecipes.length > 0">
       <div class="section-header">
         <h2>Latest Recipes</h2>
-        <nuxt-link
-          to="/recipes"
-          class="section-header__link concealed"
-          aria-label="See all recipes"
-        >
+        <HoverLink to="/recipes" class="section-header__link" aria-label="See all recipes">
           <span>See more</span>
           <icon name="mynaui:chevron-right" :size="24" />
-        </nuxt-link>
+        </HoverLink>
       </div>
       <div class="recipe-list promo">
-        <v-card
+        <VCard
           v-for="(recipe, index) in recipes!.latestRecipes"
           :key="recipe.slug"
           :title="recipe.title"
@@ -54,7 +50,7 @@ useHead({
         <h2>Personal Favourites</h2>
       </div>
       <div class="recipe-list standard">
-        <v-card
+        <VCard
           v-for="recipe in recipes!.favouriteRecipes"
           :key="recipe.slug"
           :title="recipe.title"
@@ -71,7 +67,7 @@ useHead({
         <h2>Quick Eats</h2>
       </div>
       <div class="recipe-list standard">
-        <v-card
+        <VCard
           v-for="recipe in recipes!.quickRecipes"
           :key="recipe.slug"
           :title="recipe.title"
@@ -88,7 +84,7 @@ useHead({
         <h2>World Cuisines</h2>
       </div>
       <div class="recipe-list standard">
-        <v-card
+        <VCard
           v-for="recipe in recipes!.worldCuisineRecipes"
           :key="recipe.slug"
           :title="recipe.title"

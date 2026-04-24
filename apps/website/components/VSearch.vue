@@ -1,22 +1,7 @@
-<template>
-  <form class="search" role="search" @submit.prevent="$emit('search', query)">
-    <v-input
-      v-model="query"
-      class="text-muted"
-      icon-left="mynaui:search"
-      placeholder="Search..."
-      @update:model-value="$emit('input', query)"
-    >
-      <template #prepend="{ onClick }">
-        <span @click="onClick">
-          <icon name="mynaui:search" :size="20" />
-        </span>
-      </template>
-    </v-input>
-  </form>
-</template>
-
 <script setup lang="ts">
+import { css } from "styled-system/css";
+import { token } from "styled-system/tokens";
+
 const props = defineProps<{
   value: string;
 }>();
@@ -33,6 +18,24 @@ defineEmits<{
   search: [value: string];
 }>();
 </script>
+
+<template>
+  <form class="search" role="search" @submit.prevent="$emit('search', query)">
+    <VInput
+      v-model="query"
+      :class="css({ color: token('colors.font.muted') })"
+      icon-left="mynaui:search"
+      placeholder="Search..."
+      @update:model-value="$emit('input', query)"
+    >
+      <template #prepend="{ onClick }">
+        <span :class="css({ lineHeight: 0 })" @click="onClick">
+          <icon name="mynaui:search" :size="20" />
+        </span>
+      </template>
+    </VInput>
+  </form>
+</template>
 
 <style lang="scss" scoped>
 @use "@/styles/mixins" as m;

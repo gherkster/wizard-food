@@ -1,15 +1,15 @@
+<script setup lang="ts">
+defineProps<{
+  iconName?: string;
+}>();
+</script>
+
 <template>
   <div class="tag">
     <icon v-if="iconName" :name="iconName" :size="16" />
     <slot />
   </div>
 </template>
-
-<script setup lang="ts">
-defineProps<{
-  iconName?: string;
-}>();
-</script>
 
 <style scoped lang="scss">
 @use "@/styles/mixins" as m;
