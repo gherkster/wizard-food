@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Image } from "@wizard/content";
+import { center } from "styled-system/patterns";
 
 import { useSearch } from "~/composables/useSearch";
 import { throwIfNil } from "~/utils/error";
@@ -94,19 +95,30 @@ const searchResultsPrefix = computed(() => {
 </script>
 
 <template>
-  <div v-if="isEmptySearchResult" class="center-screen">
+  <div
+    v-if="isEmptySearchResult"
+    :class="
+      center({
+        w: '100%',
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+      })
+    "
+  >
     <h3>
       No recipes found for <b>{{ searchTerm }}</b>
     </h3>
-    <v-button size="large" @click="navigateTo('/recipes')">See all recipes</v-button>
+    <VButton size="large" @click="navigateTo('/recipes')">See all recipes</VButton>
   </div>
   <div v-else>
     <h2>
       {{ searchResultsPrefix }}<b v-show="searchTerm">{{ searchTerm }}</b>
     </h2>
     <div class="recipes">
-      <client-only>
-        <v-card
+      <ClientOnly>
+        <VCard
           v-for="(recipe, index) in recipes"
           :key="recipe.slug"
           :title="recipe.title"
@@ -116,7 +128,7 @@ const searchResultsPrefix = computed(() => {
           :duration="recipe.totalDurationLabel"
           :lazy-load-image="index > 8"
         />
-      </client-only>
+      </ClientOnly>
     </div>
   </div>
 </template>

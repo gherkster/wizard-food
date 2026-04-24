@@ -1,15 +1,3 @@
-<template>
-  <button
-    class="control v-button"
-    :class="classes"
-    :disabled="disabled"
-    :aria-label="ariaLabel"
-    @click="onClick"
-  >
-    <slot />
-  </button>
-</template>
-
 <script setup lang="ts">
 const props = withDefaults(
   defineProps<{
@@ -45,6 +33,18 @@ const onClick = () => {
   }
 };
 </script>
+
+<template>
+  <button
+    class="control v-button"
+    :class="classes"
+    :disabled="disabled"
+    :aria-label="ariaLabel"
+    @click="onClick"
+  >
+    <slot />
+  </button>
+</template>
 
 <style lang="scss" scoped>
 @use "@/styles/mixins" as m;

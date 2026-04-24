@@ -23,9 +23,9 @@ withDefaults(
 </script>
 
 <template>
-  <nuxt-link :to="link" class="concealed">
+  <HoverLink :to="link">
     <div class="card" :class="variant">
-      <blurrable-image
+      <BlurrableImage
         :img="image"
         :lazy="lazyLoadImage"
         :purpose="variant === 'promo' ? 'cover' : 'preview'"
@@ -49,7 +49,7 @@ withDefaults(
         </div>
       </div>
     </div>
-  </nuxt-link>
+  </HoverLink>
 </template>
 
 <style lang="scss" scoped>

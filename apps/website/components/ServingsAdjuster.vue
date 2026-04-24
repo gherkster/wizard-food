@@ -31,7 +31,7 @@ const decrementServings = () => {
 <template>
   <div class="servings-adjuster">
     <div class="servings-adjuster__control">
-      <v-button
+      <VButton
         :disabled="servings <= 1"
         size="inline"
         ariaLabel="Decrease servings"
@@ -39,16 +39,16 @@ const decrementServings = () => {
         @click="decrementServings"
       >
         <icon name="mynaui:minus-square" :size="40" />
-      </v-button>
+      </VButton>
       <span>
         <span class="servings-adjuster__amount"
           ><b>{{ servings }}&nbsp;</b></span
         >
         <span class="servings-adjuster__servings">{{ label }}</span>
       </span>
-      <v-button size="inline" ariaLabel="Increase servings" transparent @click="incrementServings">
+      <VButton size="inline" ariaLabel="Increase servings" transparent @click="incrementServings">
         <icon name="mynaui:plus-square" :size="40" />
-      </v-button>
+      </VButton>
     </div>
   </div>
 </template>

@@ -33,7 +33,7 @@ const { x, y } = getAspectRatio(props.shape);
 
 <template>
   <div class="image-container" :style="`aspect-ratio: ${x} / ${y}`">
-    <v-img
+    <VImg
       v-if="img.metadata?.base64Url"
       class="blur"
       :img="img"
@@ -44,7 +44,7 @@ const { x, y } = getAspectRatio(props.shape);
       ariaHidden="true"
       role="presentation"
     />
-    <v-img
+    <VImg
       class="image"
       :img="img"
       :purpose="purpose"

@@ -1,3 +1,28 @@
+<script setup lang="ts">
+const isVisible = ref(false);
+
+const popoverTriggerRef = useTemplateRef("popoverTrigger");
+const popoverContentRef = useTemplateRef("popoverContent");
+
+const onOutsideClick = (event: MouseEvent) => {
+  if (
+    popoverContentRef.value &&
+    !popoverContentRef.value.contains(event.target as HTMLElement) &&
+    popoverTriggerRef.value &&
+    !popoverTriggerRef.value.contains(event.target as HTMLElement)
+  ) {
+    isVisible.value = false; // Close the popover if clicked outside
+  }
+};
+
+onMounted(() => {
+  document.addEventListener("mousedown", onOutsideClick);
+});
+onUnmounted(() => {
+  document.removeEventListener("mousedown", onOutsideClick);
+});
+</script>
+
 <template>
   <span class="popover">
     <button
@@ -28,31 +53,6 @@
     </div>
   </span>
 </template>
-
-<script setup lang="ts">
-const isVisible = ref(false);
-
-const popoverTriggerRef = useTemplateRef("popoverTrigger");
-const popoverContentRef = useTemplateRef("popoverContent");
-
-const onOutsideClick = (event: MouseEvent) => {
-  if (
-    popoverContentRef.value &&
-    !popoverContentRef.value.contains(event.target as HTMLElement) &&
-    popoverTriggerRef.value &&
-    !popoverTriggerRef.value.contains(event.target as HTMLElement)
-  ) {
-    isVisible.value = false; // Close the popover if clicked outside
-  }
-};
-
-onMounted(() => {
-  document.addEventListener("mousedown", onOutsideClick);
-});
-onUnmounted(() => {
-  document.removeEventListener("mousedown", onOutsideClick);
-});
-</script>
 
 <style lang="scss" scoped>
 @use "@/styles/mixins" as m;

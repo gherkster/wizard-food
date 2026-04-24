@@ -83,14 +83,14 @@ const finishAnimating = debounce(() => {
 
 <template>
   <div class="layout">
-    <nuxt-loading-indicator :duration="1000" :throttle="500" :height="3" :color="false" />
+    <NuxtLoadingIndicator :duration="1000" :throttle="500" :height="3" :color="false" />
     <header class="nav-header">
       <div class="nav-header__options">
-        <nuxt-link to="/" class="concealed"> Home </nuxt-link>
-        <nuxt-link to="/recipes" class="concealed">Recipes</nuxt-link>
+        <HoverLink to="/"> Home </HoverLink>
+        <HoverLink to="/recipes">Recipes</HoverLink>
         <div class="nav-header-search">
-          <v-mascot :animate="isAnimated" :size="54" class="nav-header-search__mascot" />
-          <v-search
+          <VMascot :animate="isAnimated" :size="54" class="nav-header-search__mascot" />
+          <VSearch
             :value="query"
             class="nav-header-search__input"
             @input="onInput"

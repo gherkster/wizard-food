@@ -1,18 +1,3 @@
-<template>
-  <img
-    ref="imgRef"
-    :src="src"
-    :srcset="thumbnail ? undefined : variant.srcSet"
-    :sizes="thumbnail ? undefined : variant.sizes"
-    :alt="alt"
-    :aria-hidden="ariaHidden"
-    :role="role"
-    :width="img.width"
-    :height="adjustedHeight"
-    :loading="lazy ? 'lazy' : undefined"
-  />
-</template>
-
 <script setup lang="ts">
 import {
   getAspectRatio,
@@ -53,6 +38,21 @@ e.g. a 3:4 aspect ratio image should have a height which is 4/3 x width
 const { x, y } = getAspectRatio(props.shape);
 const adjustedHeight = Math.round((props.img.width * y) / x);
 </script>
+
+<template>
+  <img
+    ref="imgRef"
+    :src="src"
+    :srcset="thumbnail ? undefined : variant.srcSet"
+    :sizes="thumbnail ? undefined : variant.sizes"
+    :alt="alt"
+    :aria-hidden="ariaHidden"
+    :role="role"
+    :width="img.width"
+    :height="adjustedHeight"
+    :loading="lazy ? 'lazy' : undefined"
+  />
+</template>
 
 <style lang="scss" scoped>
 @use "@/styles/variables" as v;
