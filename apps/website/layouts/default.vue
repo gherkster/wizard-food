@@ -3,6 +3,7 @@ import { css } from "styled-system/css";
 import { token } from "styled-system/tokens";
 
 import { useSearch } from "~/composables/useSearch";
+import { headerKeyframePaddingBlockStart } from "~/styles/keyframes";
 import { debounce } from "~/utils/debounce";
 
 const searchClient = useSearch();
@@ -82,30 +83,105 @@ const animationDebounceMs = 1000;
 const finishAnimating = debounce(() => {
   isAnimated.value = false;
 }, animationDebounceMs);
+
+/** The range over which to animate the header and mascot. */
+const animationRangePx = "150px";
+const contentPadding = "2rem";
+const maxContentWidth = "1600px";
+
+/**
+ * Styles for the animated header.
+ * On wider screen clients that support the animation-timeline API, this will animate compacting down when scrolling past,
+ * and animate expanding back out when scrolling back to the top of the page.'
+ */
+const headerStyles = css({
+  alignItems: "center",
+  display: "flex",
+  flexDirection: {
+    base: "row",
+    smDown: "column",
+  },
+  gap: "sm",
+  paddingBlock: "56px {spacing.xs}", // Reserve a constant padding block start to leave room for the mascot.
+  zIndex: 100,
+
+  md: {
+    backgroundColor: token("colors.body.background"),
+    borderBottom: `2px solid ${token("colors.border")}`,
+    // Match the keyframes paddingBlock value for consistent padding on larger screen clients that don't support animation-timeline.
+    // Use a constant start padding to reserve space for the mascot.
+    paddingBlock: `${headerKeyframePaddingBlockStart} {spacing.xs}`,
+
+    "@supports (animation-timeline: view())": {
+      animationName: "headerShrink", // Match the name of the animation defined in keyframes
+      animationFillMode: "both",
+      animationRange: "exit 0% exit 100%",
+      animationTimeline: "--header-tracker", // Match the name of the parent timeline scope
+      animationTimingFunction: "linear",
+      padding: `calc((100% - ${maxContentWidth}) / 2)`,
+      position: "sticky",
+      top: 0,
+      left: 0,
+      right: 0,
+    },
+  },
+});
+
+/**
+ * Styles for the animated mascot.
+ * On wider screen clients that support the animation-timeline API, this will animate the mascot ducking down behind the search input when scrolling past,
+ * and animate jumping back out when scrolling back to the top of the page.'
+ */
+const mascotStyles = css({
+  alignSelf: "flex-end",
+  marginRight: "sm",
+  position: "absolute",
+  right: 0,
+  top: 0,
+  translate: "auto",
+  translateY: "-100%",
+  md: {
+    "@supports (animation-timeline: view())": {
+      animationName: "mascotDuck", // Match the name of the animation defined in keyframes
+      animationFillMode: "both",
+      animationRange: "exit 0% exit 80%",
+      animationTimeline: "--header-tracker", // Match the name of the parent timeline scope
+      animationTimingFunction: "linear",
+    },
+  },
+  zIndex: 5,
+});
 </script>
 
 <template>
-  <div :class="css({ maxWidth: '1600px', margin: '0 auto', padding: '2rem 4%' })">
-    <NuxtLoadingIndicator :duration="1000" :throttle="500" :height="3" :color="false" />
-
-    <header
+  <div
+    :class="
+      css({
+        maxWidth: maxContentWidth,
+        margin: '0 auto',
+        padding: contentPadding,
+        position: 'relative',
+        timelineScope: '--header-tracker',
+      })
+    "
+  >
+    <div
       :class="
         css({
-          alignItems: 'center',
-          display: 'flex',
-          flexDirection: {
-            base: 'row',
-            smDown: 'column',
-          },
-          gap: 'sm',
-          paddingTop: {
-            base: '32px', // Hardcode spacing to guarantee consistent space for logo,
-            smDown: 'sm',
-          },
-          paddingBottom: 'lg',
+          position: 'absolute',
+          top: 0,
+          height: animationRangePx,
+          width: '100%',
+          pointerEvents: 'none',
+          viewTimelineName: '--header-tracker',
+          viewTimelineAxis: 'block',
         })
       "
-    >
+    ></div>
+
+    <NuxtLoadingIndicator :duration="1000" :throttle="500" :height="3" :color="false" />
+
+    <header :class="headerStyles">
       <NuxtLink to="/" style="color: unset">
         <Text size="xxl" text-wrap="noWrap" weight="bold">Wizard Food</Text>
       </NuxtLink>
@@ -136,25 +212,16 @@ const finishAnimating = debounce(() => {
             })
           "
         >
-          <VMascot
-            :animate="isAnimated"
-            :size="54"
-            :class="
-              css({
-                alignSelf: 'flex-end',
-                marginRight: 'sm',
-                position: 'absolute',
-                right: 0,
-                top: 0,
-                translate: 'auto',
-                translateY: '-100%',
-              })
-            "
-          />
+          <VMascot :animate="isAnimated" :size="54" :class="mascotStyles" />
 
           <VSearch
             :value="query"
-            :class="css({ width: '100%' })"
+            :class="
+              css({
+                width: '100%',
+                zIndex: '50', // Ensure the search is in front of the mascot
+              })
+            "
             @input="onInput"
             @search="onInput"
           />
@@ -162,7 +229,7 @@ const finishAnimating = debounce(() => {
       </div>
     </header>
 
-    <div :class="css({ maxWidth: token('breakpoints.xl'), margin: '0 auto' })">
+    <div :class="css({ maxWidth: token('breakpoints.xl'), margin: '0 auto', marginTop: 'md' })">
       <slot />
     </div>
   </div>

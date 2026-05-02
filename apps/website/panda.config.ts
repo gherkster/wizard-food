@@ -1,6 +1,7 @@
 import { defineConfig } from "@pandacss/dev";
 
 import { globalFont, globalStyles } from "./styles/globalStyles";
+import { keyframes } from "./styles/keyframes";
 import { palette } from "./styles/palette";
 
 const clamp = (minSize: number, maxSize: number, minVw = 320, maxVw = 1400) => {
@@ -37,6 +38,7 @@ export default defineConfig({
       xl: "1280px",
       "2xl": "1536px",
     },
+    keyframes: keyframes,
     tokens: {
       colors: palette,
       fonts: {
@@ -55,7 +57,7 @@ export default defineConfig({
         sm: { value: clamp(12, 14) },
       },
       spacing: {
-        lg: { value: clamp(32, 96) },
+        lg: { value: clamp(32, 64) },
         md: { value: clamp(24, 48) },
         sm: { value: clamp(18, 24) },
         xs: { value: clamp(8, 16) },
