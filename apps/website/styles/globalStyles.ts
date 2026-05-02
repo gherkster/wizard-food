@@ -17,7 +17,7 @@ export const globalStyles = defineGlobalStyles({
   },
   html: {
     bg: "body.background",
-    fontSize: "sm",
+    fontSize: "md",
   },
   body: {
     color: "font",
@@ -33,11 +33,11 @@ export const globalStyles = defineGlobalStyles({
   },
   input: {
     color: "font",
-    fontSize: "sm",
+    fontSize: "md",
     lineHeight: "1.2",
   },
   button: {
-    fontSize: "sm",
+    fontSize: "md",
   },
   img: {
     fontSize: "0", // Hide alt text while loading

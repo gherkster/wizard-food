@@ -63,9 +63,6 @@ export default defineConfig({
         xs: { value: clamp(8, 16) },
         xxs: { value: clamp(4, 8) },
 
-        // Semantic spacings
-        "cols-gap": { value: "24px" },
-        "cols-gap-wide": { value: "80px" },
         "li-mb": { value: "16px" },
         "header-mb": { value: "16px" },
         "p-my": { value: "16px" },
@@ -73,11 +70,6 @@ export default defineConfig({
       radii: {
         sm: { value: "6px" },
         md: { value: "10px" },
-      },
-      sizes: {
-        "btn-min": { value: "84px" },
-        "preview-max": { value: "260px" },
-        "preview-min": { value: "120px" },
       },
     },
     semanticTokens: {
