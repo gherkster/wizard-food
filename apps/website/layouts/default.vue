@@ -3,7 +3,6 @@ import { css } from "styled-system/css";
 import { token } from "styled-system/tokens";
 
 import { useSearch } from "~/composables/useSearch";
-import { headerKeyframePaddingBlockStart } from "~/styles/keyframes";
 import { debounce } from "~/utils/debounce";
 
 const searchClient = useSearch();
@@ -85,7 +84,7 @@ const finishAnimating = debounce(() => {
 }, animationDebounceMs);
 
 /** The range over which to animate the header and mascot. */
-const animationRangePx = "150px";
+const animationRangePx = "200px";
 const contentPadding = "2rem";
 const maxContentWidth = "1600px";
 
@@ -102,15 +101,17 @@ const headerStyles = css({
     smDown: "column",
   },
   gap: "sm",
-  paddingBlock: "56px {spacing.xs}", // Reserve a constant padding block start to leave room for the mascot.
+  paddingBlockStart: {
+    // Reserve a constant padding block start to leave room for the mascot, leaving more space on larger screens
+    base: "16px",
+    md: "64px",
+  },
+  paddingBlockEnd: "xs",
   zIndex: 100,
 
   md: {
     backgroundColor: token("colors.body.background"),
     borderBottom: `2px solid ${token("colors.border")}`,
-    // Match the keyframes paddingBlock value for consistent padding on larger screen clients that don't support animation-timeline.
-    // Use a constant start padding to reserve space for the mascot.
-    paddingBlock: `${headerKeyframePaddingBlockStart} {spacing.xs}`,
 
     "@supports (animation-timeline: view())": {
       animationName: "headerShrink", // Match the name of the animation defined in keyframes
@@ -144,7 +145,7 @@ const mascotStyles = css({
     "@supports (animation-timeline: view())": {
       animationName: "mascotDuck", // Match the name of the animation defined in keyframes
       animationFillMode: "both",
-      animationRange: "exit 0% exit 80%",
+      animationRange: "exit 0% exit 100%",
       animationTimeline: "--header-tracker", // Match the name of the parent timeline scope
       animationTimingFunction: "linear",
     },
