@@ -26,15 +26,16 @@ export default defineNuxtConfig({
 
   compatibilityDate: "2025-02-27",
 
+  components: [
+    {
+      path: "~/components",
+      pathPrefix: false,
+    },
+  ],
+
   css: ["@/assets/css/global.css"],
 
   fonts: {
-    families: [
-      {
-        name: "Inter",
-        provider: "google",
-      },
-    ],
     defaults: {
       weights: [400],
     },
@@ -138,11 +139,6 @@ export default defineNuxtConfig({
         output: {
           entryFileNames: "_nuxt/entry.[hash].js",
         },
-      },
-    },
-    css: {
-      preprocessorOptions: {
-        scss: {},
       },
     },
   },

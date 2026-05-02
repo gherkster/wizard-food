@@ -4,7 +4,7 @@ import { defineGlobalStyles } from "@pandacss/dev";
 // This is because nuxt-fonts will only pick up font-family declarations defined with a value in the output css, not ones referencing a css variable.
 // The font family panda theme token is set to this value as well for consistency.
 export const globalFont = {
-  family: '"Inter", sans-serif',
+  family: '"Plus Jakarta Sans", sans-serif',
   weights: {
     regular: 400,
     bold: 600,
@@ -17,7 +17,7 @@ export const globalStyles = defineGlobalStyles({
   },
   html: {
     bg: "body.background",
-    fontSize: "base",
+    fontSize: "sm",
   },
   body: {
     color: "font",
@@ -33,11 +33,11 @@ export const globalStyles = defineGlobalStyles({
   },
   input: {
     color: "font",
-    fontSize: "base",
+    fontSize: "sm",
     lineHeight: "1.2",
   },
   button: {
-    fontSize: "base",
+    fontSize: "sm",
   },
   img: {
     fontSize: "0", // Hide alt text while loading
@@ -50,12 +50,12 @@ export const globalStyles = defineGlobalStyles({
     lineHeight: "1.2",
     margin: "0 0 {spacing.header-mb} 0",
   },
-  h1: { fontSize: "h1" },
-  h2: { fontSize: "h2" },
-  h3: { fontSize: "h3" },
-  h4: { fontSize: "h4" },
-  h5: { fontSize: "h5" },
-  h6: { fontSize: "h6" },
+  h1: { fontSize: "xxl" },
+  h2: { fontSize: "xl" },
+  h3: { fontSize: "lg" },
+  h4: { fontSize: "md" },
+  h5: { fontSize: "md" },
+  h6: { fontSize: "sm" },
   p: {
     my: "p-my",
     lineHeight: 1.4,
