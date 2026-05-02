@@ -3,8 +3,6 @@ import { center } from "styled-system/patterns";
 
 import type { NuxtError } from "#app";
 
-import VButton from "./components/VButton.vue";
-
 const props = defineProps<{
   error: NuxtError;
 }>();
@@ -23,6 +21,8 @@ const handleError = () => clearError({ redirect: "/" });
     <div
       :class="
         center({
+          display: 'flex',
+          flexDirection: 'column',
           w: '100%',
           position: 'fixed',
           top: '50%',
@@ -32,7 +32,9 @@ const handleError = () => clearError({ redirect: "/" });
       "
     >
       <h2>{{ errorMessage }}</h2>
-      <VButton size="large" @click="handleError">Home</VButton>
+      <HoverLink to="/" @click.prevent="handleError">
+        <Text size="lg">Go home</Text>
+      </HoverLink>
     </div>
   </nuxt-layout>
 </template>

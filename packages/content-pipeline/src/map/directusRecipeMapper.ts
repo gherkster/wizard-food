@@ -235,6 +235,7 @@ type RecipeCategories = {
 
 const buildTagList = (categories: RecipeCategories): string[] => {
   const tags: string[] = [];
+  
   if (categories.cuisine) {
     tags.push(categories.cuisine);
   }

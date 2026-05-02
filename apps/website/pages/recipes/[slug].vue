@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { css } from "styled-system/css";
+import { css, type Styles } from "styled-system/css";
+import { grid } from "styled-system/patterns";
+import { token } from "styled-system/tokens";
 
 import type { RouteLocationRaw } from "#vue-router";
 import { formatRecipeDurations, recipeTotalDuration } from "~/utils/formatting";
@@ -70,64 +72,119 @@ const createSearchLink = (term: string): RouteLocationRaw => {
     },
   };
 };
+
+const highlightContainerStyles: Styles = {
+  display: "flex",
+  height: "fit-content",
+  backgroundColor: token("colors.surface"),
+  borderRadius: "sm",
+  borderWidth: "1px",
+  borderColor: token("colors.border"),
+  padding: "sm",
+};
 </script>
 
 <template>
-  <div v-if="recipe" class="recipe">
+  <div
+    v-if="recipe"
+    :class="
+      grid({
+        gridTemplateColumns: {
+          base: '1fr',
+          sm: '5fr 7fr',
+          md: '4fr 8fr',
+        },
+        columnGap: 'lg',
+        rowGap: 'md',
+      })
+    "
+  >
     <BlurrableImage :img="recipe.coverImage" purpose="cover" shape="portrait" />
-    <div class="recipe__summary">
-      <h1 class="recipe__title">{{ recipe.title }}</h1>
-      <div v-if="recipe.description" class="recipe__description" v-html="recipe.description" />
-      <div class="recipe__tags">
+    <div :class="css({ display: 'flex', flexDirection: 'column', rowGap: 'md' })">
+      <h1 :class="css({ margin: 0 })">{{ recipe.title }}</h1>
+
+      <div v-if="recipe.description" v-html="recipe.description" />
+      <div :class="css({ display: 'flex', flexWrap: 'wrap', gap: 'xs' })">
         <HoverLink v-for="tag in recipe.tags" :key="tag" :to="createSearchLink(tag)">
           <VTag icon-name="mynaui:search">{{ tag }}</VTag>
         </HoverLink>
       </div>
-      <div class="recipe__details highlight-container">
-        <div v-if="durationLabels.total" class="recipe__duration">
-          <VPopover>
-            <template #trigger>
-              <span
-                >Total <b>{{ durationLabels.total }}</b></span
-              >
-            </template>
-            <template #content>
-              <ul>
-                <li v-if="durationLabels.preparation">
-                  <span
-                    >Preparation <b>{{ durationLabels.preparation }}</b></span
-                  >
-                </li>
-                <li v-if="durationLabels.cooking">
-                  <span
-                    >Cooking <b>{{ durationLabels.cooking }}</b></span
-                  >
-                </li>
-                <li v-if="recipe.customDurationName && durationLabels.custom">
-                  <span>
-                    {{ recipe.customDurationName }}
-                    <b>{{ durationLabels.custom }}</b></span
-                  >
-                </li>
-              </ul>
-            </template>
-          </VPopover>
+
+      <div
+        :class="
+          css(highlightContainerStyles, {
+            display: 'flex',
+            width: '100%',
+            justifyContent: 'space-between',
+            marginTop: 'auto',
+          })
+        "
+      >
+        <div
+          v-if="durationLabels.total"
+          :class="
+            css({
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              textTransform: 'capitalize',
+              gap: 'xs',
+            })
+          "
+        >
+          <div>
+            <span
+              >Total <b>{{ durationLabels.total }}</b></span
+            >
+            <ul>
+              <li v-if="durationLabels.preparation">
+                <span
+                  >Preparation <b>{{ durationLabels.preparation }}</b></span
+                >
+              </li>
+              <li v-if="durationLabels.cooking">
+                <span
+                  >Cooking <b>{{ durationLabels.cooking }}</b></span
+                >
+              </li>
+              <li v-if="recipe.customDurationName && durationLabels.custom">
+                <span>
+                  {{ recipe.customDurationName }}
+                  <b>{{ durationLabels.custom }}</b></span
+                >
+              </li>
+            </ul>
+          </div>
         </div>
-        <div class="recipe__options">
+
+        <div :class="css({ display: 'flex', justifyContent: 'space-between', alignItems: 'end' })">
           <ServingsAdjuster
             :servings="servings"
             :singular-label="recipe.servingsType?.singular"
             :plural-label="recipe.servingsType?.plural"
-            class="recipe__multiplier"
             @input="updateNumberOfServings"
           />
         </div>
       </div>
     </div>
-    <div v-if="recipe.ingredientGroups.length > 0" class="recipe__ingredients highlight-container">
-      <div class="recipe__ingredients-title">
+
+    <div
+      v-if="recipe.ingredientGroups.length > 0"
+      :class="css(highlightContainerStyles, { display: 'flex', flexDirection: 'column' })"
+    >
+      <div
+        :class="
+          css({
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+          })
+        "
+      >
         <h2>Ingredients</h2>
       </div>
+
       <div
         v-for="ingredientSection in recipe.ingredientGroups"
         :key="`${ingredientSection.name}-${ingredientSection.ingredients.length}`"
@@ -148,21 +205,21 @@ const createSearchLink = (term: string): RouteLocationRaw => {
         </ul>
       </div>
     </div>
-    <div v-if="recipe.instructionGroups.length > 0" class="recipe__instructions">
+
+    <div v-if="recipe.instructionGroups.length > 0" :class="css({ py: 'sm' })">
       <h2>Instructions</h2>
       <div
         v-for="instructionSection in recipe.instructionGroups"
         :key="`${instructionSection.name}-${instructionSection.instructions.length}`"
-        class="instruction-section"
       >
         <p v-if="instructionSection.name">
           <b>{{ instructionSection.name }}</b>
         </p>
-        <div class="instruction-group">
+        <div :class="css({ display: 'flex', flexDirection: 'column', rowGap: 'xs' })">
           <div
             v-for="(instruction, index) in instructionSection.instructions"
             :key="instruction.text"
-            class="instruction"
+            :class="css({ display: 'flex', columnGap: 'xs' })"
           >
             <VBadge>{{ index + 1 }}</VBadge>
             <RecipeInstruction
@@ -180,11 +237,26 @@ const createSearchLink = (term: string): RouteLocationRaw => {
         </div>
       </div>
     </div>
-    <div v-if="recipe.note" class="recipe__notes">
+
+    <div
+      v-if="recipe.note"
+      :class="
+        css(highlightContainerStyles, {
+          display: 'flex',
+          flexDirection: 'column',
+          gridColumn: '1 / -1',
+        })
+      "
+    >
       <h2>Notes</h2>
       <div v-html="recipe.note" />
     </div>
-    <footer class="footer">
+
+    <footer
+      :class="
+        css({ display: 'flex', justifyContent: 'center', gridColumn: '1 / -1', mt: 'md', mb: 'lg' })
+      "
+    >
       <icon
         name="wf:logo-light"
         :size="140"
@@ -206,115 +278,3 @@ const createSearchLink = (term: string): RouteLocationRaw => {
     </footer>
   </div>
 </template>
-
-<style lang="scss" scoped>
-@use "@/styles/mixins" as m;
-@use "@/styles/variables" as v;
-
-.recipe {
-  display: grid;
-  @include m.spacing("gx", "lg");
-  @include m.spacing("gy", "md");
-
-  @include m.breakpoint("md") {
-    grid-template-columns: 5fr 7fr;
-  }
-  @include m.breakpoint("lg") {
-    grid-template-columns: 4fr 8fr;
-  }
-
-  &__summary {
-    display: flex;
-    flex-direction: column;
-    @include m.spacing("gy", "md");
-  }
-  &__title {
-    margin: 0;
-  }
-  &__details {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    margin-top: auto;
-  }
-  &__tags {
-    display: flex;
-    flex-wrap: wrap;
-
-    @include m.spacing("g", "xs");
-  }
-  &__duration {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    text-transform: capitalize;
-
-    @include m.spacing("g", "xs");
-  }
-  &__ingredients {
-    display: flex;
-    flex-direction: column;
-    &-title {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      flex-wrap: wrap;
-    }
-  }
-  &__instructions {
-    @include m.spacing("py", "sm");
-  }
-  &__options {
-    display: flex;
-    justify-content: space-between;
-    align-items: end;
-  }
-  &__notes {
-    grid-column: 1 / -1; // Full width
-  }
-
-  ul,
-  ol {
-    @include m.spacing("pl", "xs");
-  }
-}
-
-.instruction-group {
-  display: flex;
-  flex-direction: column;
-  @include m.spacing("gy", "xs");
-}
-
-.instruction {
-  display: flex;
-  @include m.spacing("gx", "xs");
-}
-
-.highlight-container {
-  display: flex;
-  height: fit-content;
-  background-color: var(--theme-body-accent-color);
-  border-radius: v.$border-radius-sm;
-
-  @include m.spacing("p", "sm");
-}
-
-footer {
-  display: flex;
-  justify-content: center;
-  grid-column: 1 / -1; // Full width
-  @include m.spacing("mt", "md");
-  @include m.spacing("mb", "lg");
-}
-</style>
-
-<style lang="scss">
-.recipe__ingredient {
-  &__name {
-    p {
-      display: inline;
-      margin: 0;
-    }
-  }
-}
-</style>

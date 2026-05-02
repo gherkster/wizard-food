@@ -6,6 +6,7 @@ import {
   type ImagePurpose,
   type ImageShape,
 } from "@wizard/content";
+import { css } from "styled-system/css";
 
 const props = defineProps<{
   img: Image;
@@ -42,6 +43,7 @@ const adjustedHeight = Math.round((props.img.width * y) / x);
 <template>
   <img
     ref="imgRef"
+    :class="css({ display: 'block' })"
     :src="src"
     :srcset="thumbnail ? undefined : variant.srcSet"
     :sizes="thumbnail ? undefined : variant.sizes"
@@ -53,11 +55,3 @@ const adjustedHeight = Math.round((props.img.width * y) / x);
     :loading="lazy ? 'lazy' : undefined"
   />
 </template>
-
-<style lang="scss" scoped>
-@use "@/styles/variables" as v;
-
-img {
-  display: block;
-}
-</style>

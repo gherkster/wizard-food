@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Image } from "@wizard/content";
-import { center } from "styled-system/patterns";
+import { center, grid } from "styled-system/patterns";
 
 import { useSearch } from "~/composables/useSearch";
 import { throwIfNil } from "~/utils/error";
@@ -99,6 +99,8 @@ const searchResultsPrefix = computed(() => {
     v-if="isEmptySearchResult"
     :class="
       center({
+        display: 'flex',
+        flexDirection: 'column',
         w: '100%',
         position: 'fixed',
         top: '50%',
@@ -110,20 +112,34 @@ const searchResultsPrefix = computed(() => {
     <h3>
       No recipes found for <b>{{ searchTerm }}</b>
     </h3>
-    <VButton size="large" @click="navigateTo('/recipes')">See all recipes</VButton>
+
+    <HoverLink to="/recipes">
+      <Text size="lg">See all recipes</Text>
+    </HoverLink>
   </div>
   <div v-else>
     <h2>
       {{ searchResultsPrefix }}<b v-show="searchTerm">{{ searchTerm }}</b>
     </h2>
-    <div class="recipes">
+    <div
+      :class="
+        grid({
+          columns: {
+            base: 2,
+            md: 3,
+            lg: 4,
+          },
+          gap: 'sm',
+        })
+      "
+    >
       <ClientOnly>
-        <VCard
+        <RecipeCard
           v-for="(recipe, index) in recipes"
           :key="recipe.slug"
           :title="recipe.title"
           :image="toCardImage(recipe)"
-          :link="`/recipes/${recipe.slug}`"
+          :to="`/recipes/${recipe.slug}`"
           :tag="recipe.featuredTag"
           :duration="recipe.totalDurationLabel"
           :lazy-load-image="index > 8"
@@ -132,23 +148,3 @@ const searchResultsPrefix = computed(() => {
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped>
-@use "@/styles/mixins" as m;
-@use "@/styles/variables" as v;
-
-.recipes {
-  display: grid;
-  @include m.spacing("g", "sm");
-
-  @include m.breakpoint("xs") {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  @include m.breakpoint("sm") {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  @include m.breakpoint("md") {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-</style>

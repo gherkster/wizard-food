@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Ingredient } from "@wizard/content";
 import Fraction from "fraction.js";
+import { css } from "styled-system/css";
+import { token } from "styled-system/tokens";
 
 import { formatIngredientAmount } from "~/utils/formatting";
 
@@ -62,8 +64,18 @@ const nameVariant = computed(() => {
   <span>
     <span v-if="formattedAmount">{{ formattedAmount }}&nbsp;</span>
     <span v-if="ingredientUnit">{{ ingredientUnit }}&nbsp;</span>
-    <span class="recipe__ingredient__name" v-html="nameVariant" />
-    <span v-if="ingredient.note" class="text-muted"
+    <span
+      :class="
+        css({
+          '& p': {
+            display: 'inline',
+            margin: 0,
+          },
+        })
+      "
+      v-html="nameVariant"
+    />
+    <span v-if="ingredient.note" :class="css({ color: token('colors.font.muted') })"
       ><i>&nbsp;{{ ingredient.note }}</i></span
     >
   </span>

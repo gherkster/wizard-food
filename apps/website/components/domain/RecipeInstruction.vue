@@ -2,6 +2,8 @@
 import type { InlineIngredientHTMLElement } from "@wizard/content";
 import { formatIngredient, type InlineIngredient, type SingularPluralPair } from "@wizard/content";
 import Fraction from "fraction.js";
+import { css } from "styled-system/css";
+import { token } from "styled-system/tokens";
 
 type InlineIngredientMarkup = {
   element: {
@@ -102,19 +104,15 @@ const tryParseInlineIngredient = (
 </script>
 
 <template>
-  <div ref="inlineIngredientsRef" class="instruction" v-html="content" />
+  <div
+    ref="inlineIngredientsRef"
+    :class="
+      css({
+        flex: 1,
+        flexDirection: 'column',
+        '& .inline-ingredient': { fontWeight: token('fontWeights.bold') },
+      })
+    "
+    v-html="content"
+  />
 </template>
-
-<style lang="scss" scoped>
-.instruction {
-  flex: 1;
-  flex-direction: column;
-}
-</style>
-
-<style lang="scss">
-@use "@/styles/variables" as v;
-.inline-ingredient {
-  font-weight: v.$font-weight-bold;
-}
-</style>

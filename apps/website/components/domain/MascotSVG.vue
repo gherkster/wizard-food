@@ -61,7 +61,7 @@ defineProps<Props>();
   </svg>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 #face-excited {
   opacity: 0 !important;
 }

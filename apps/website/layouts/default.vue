@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { css } from "styled-system/css";
+import { token } from "styled-system/tokens";
+
 import { useSearch } from "~/composables/useSearch";
 import { debounce } from "~/utils/debounce";
 
@@ -82,96 +85,91 @@ const finishAnimating = debounce(() => {
 </script>
 
 <template>
-  <div class="layout">
+  <div :class="css({ maxWidth: '1600px', margin: '0 auto', padding: '2rem 4%' })">
     <NuxtLoadingIndicator :duration="1000" :throttle="500" :height="3" :color="false" />
-    <header class="nav-header">
-      <div class="nav-header__options">
-        <HoverLink to="/"> Home </HoverLink>
-        <HoverLink to="/recipes">Recipes</HoverLink>
-        <div class="nav-header-search">
-          <VMascot :animate="isAnimated" :size="54" class="nav-header-search__mascot" />
+
+    <header
+      :class="
+        css({
+          alignItems: 'center',
+          display: 'flex',
+          flexDirection: {
+            base: 'row',
+            smDown: 'column',
+          },
+          gap: 'sm',
+          paddingTop: {
+            base: '32px', // Hardcode spacing to guarantee consistent space for logo,
+            smDown: 'sm',
+          },
+          paddingBottom: 'lg',
+        })
+      "
+    >
+      <NuxtLink to="/" style="color: unset">
+        <Text size="xxl" text-wrap="noWrap" weight="bold">Wizard Food</Text>
+      </NuxtLink>
+
+      <div
+        :class="
+          css({
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            width: '100%',
+            columnGap: 'sm',
+            rowGap: 'md',
+          })
+        "
+      >
+        <div
+          :class="
+            css({
+              display: 'flex',
+              position: 'relative',
+              flexDirection: 'column',
+              marginLeft: 'auto',
+              width: {
+                base: '260px',
+                smDown: '100%',
+              },
+            })
+          "
+        >
+          <VMascot
+            :animate="isAnimated"
+            :size="54"
+            :class="
+              css({
+                alignSelf: 'flex-end',
+                marginRight: 'sm',
+                position: 'absolute',
+                right: 0,
+                top: 0,
+                translate: 'auto',
+                translateY: '-100%',
+              })
+            "
+          />
+
           <VSearch
             :value="query"
-            class="nav-header-search__input"
+            :class="css({ width: '100%' })"
             @input="onInput"
             @search="onInput"
           />
         </div>
       </div>
     </header>
-    <div class="content">
+
+    <div :class="css({ maxWidth: token('breakpoints.xl'), margin: '0 auto' })">
       <slot />
     </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
-@use "sass:map";
-@use "@/styles/mixins" as m;
-@use "@/styles/variables" as v;
-
-.layout {
-  max-width: 2000px;
-  margin: 0 auto;
-  padding: 2rem 5%;
-}
-
-.content {
-  max-width: map.get(v.$breakpoints, xl) * 1px;
-  margin: 0 auto;
-}
-
-.nav-header {
-  display: flex;
-  padding-top: 42px; // Hardcode spacing to guarantee consistent space for logo
-
-  @include m.spacing("pb", "lg");
-
-  &__options {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    width: 100%;
-    @include m.spacing("gx", "xs");
-    @include m.spacing("gy", "sm");
-    > a {
-      @include m.spacing("p", "xxs");
-    }
-
-    .nav-header-search {
-      display: flex;
-      position: relative;
-      flex-direction: column;
-      margin-left: auto;
-      width: 260px;
-      @include m.breakpoint("sm", "max") {
-        width: 100%;
-      }
-
-      &__input {
-        width: 100%;
-      }
-
-      &__mascot {
-        // Display different logo faces
-        top: 0;
-        right: 0;
-        transform: translateY(-100%);
-        position: absolute;
-        align-self: flex-end;
-        @include m.spacing("mr", "sm");
-      }
-    }
-  }
-}
-
-.router-link-active {
-  text-decoration: underline;
-}
-</style>
-
-<style lang="scss">
+<style>
 .nuxt-loading-indicator {
-  background-color: var(--theme-color-primary);
+  background-color: var(--colors-primary);
 }
 </style>

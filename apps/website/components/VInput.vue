@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { css } from "styled-system/css";
+import { token } from "styled-system/tokens";
+
 defineProps<{
   value?: string;
   label?: string;
@@ -16,7 +19,33 @@ const focusButton = () => btnRef.value?.focus();
 </script>
 
 <template>
-  <div class="input-container">
+  <div
+    :class="
+      css({
+        display: 'flex',
+        alignItems: 'center',
+        minWidth: '160px',
+        borderRadius: 'md',
+        borderWidth: '2px',
+        borderStyle: 'solid',
+        borderColor: token('colors.border'),
+        backgroundColor: token('colors.surface'),
+        px: 'xxs',
+        '& input': {
+          backgroundColor: token('colors.surface'),
+          outline: 'none',
+          padding: '10px 4px',
+          width: '100%',
+        },
+        '& label': {
+          width: '100%',
+        },
+        _focusWithin: {
+          borderColor: token('colors.primary'),
+        },
+      })
+    "
+  >
     <slot name="prepend" :on-click="focusButton" />
     <label>
       {{ label }}
@@ -24,30 +53,3 @@ const focusButton = () => btnRef.value?.focus();
     </label>
   </div>
 </template>
-
-<style lang="scss" scoped>
-@use "@/styles/mixins" as m;
-@use "@/styles/variables" as v;
-
-.input-container {
-  display: flex;
-  align-items: center;
-  min-width: 160px;
-  background-color: var(--theme-input-background-color);
-  border-radius: v.$border-radius-md;
-
-  @include m.spacing("px", "xs");
-
-  label,
-  input {
-    width: 100%;
-  }
-
-  input {
-    outline: none;
-    background-color: var(--theme-input-background-color);
-    border: none;
-    padding: 12px 8px;
-  }
-}
-</style>
