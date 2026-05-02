@@ -41,13 +41,8 @@
     "@tiptap/extension-paragraph": "catalog:",
     "@tiptap/extension-placeholder": "catalog:",
     "@tiptap/extension-strike": "catalog:",
-    "@tiptap/extension-table": "catalog:",
-    "@tiptap/extension-table-cell": "catalog:",
-    "@tiptap/extension-table-header": "catalog:",
-    "@tiptap/extension-table-row": "catalog:",
     "@tiptap/extension-text": "catalog:",
-    "@wizard/content": "workspace:*",
-    "tiptap-render-view": "catalog:"
+    "@wizard/content": "workspace:*"
   },
   "devDependencies": {
     "@directus/extensions-sdk": "catalog:",

@@ -93,18 +93,6 @@ catalogs:
     '@tiptap/extension-strike':
       specifier: ^2.27.2
       version: 2.27.2
-    '@tiptap/extension-table':
-      specifier: ^2.27.2
-      version: 2.27.2
-    '@tiptap/extension-table-cell':
-      specifier: ^2.27.2
-      version: 2.27.2
-    '@tiptap/extension-table-header':
-      specifier: ^2.27.2
-      version: 2.27.2
-    '@tiptap/extension-table-row':
-      specifier: ^2.27.2
-      version: 2.27.2
     '@tiptap/extension-text':
       specifier: ^2.27.2
       version: 2.27.2
@@ -141,9 +129,6 @@ catalogs:
     fraction.js:
       specifier: 5.3.4
       version: 5.3.4
-    jiti:
-      specifier: ^2.6.1
-      version: 2.6.1
     minisearch:
       specifier: ^6.3.0
       version: 6.3.0
@@ -174,9 +159,6 @@ catalogs:
     schema-dts:
       specifier: ^1.1.5
       version: 1.1.5
-    tiptap-render-view:
-      specifier: ^1.0.4
-      version: 1.0.4
     tsx:
       specifier: ^4.21.0
       version: 4.21.0
@@ -203,9 +185,6 @@ importers:
 
   .:
     devDependencies:
-      jiti:
-        specifier: 'catalog:'
-        version: 2.6.1
       oxfmt:
         specifier: 'catalog:'
         version: 0.43.0
@@ -281,7 +260,7 @@ importers:
     devDependencies:
       '@directus/extensions-sdk':
         specifier: 'catalog:'
-        version: 17.1.3(@types/node@22.19.15)(@unhead/vue@1.11.20(vue@3.5.30(typescript@5.9.3)))(jiti@2.6.1)(knex@3.1.0)(pinia@2.3.1(typescript@5.9.3)(vue@3.5.30(typescript@5.9.3)))(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
+        version: 17.1.3(@types/node@22.19.15)(@unhead/vue@1.11.20(vue@3.5.24(typescript@5.9.3)))(jiti@2.6.1)(knex@3.1.0)(pinia@2.3.1(typescript@5.9.3)(vue@3.5.24(typescript@5.9.3)))(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
       '@types/node':
         specifier: 'catalog:'
         version: 22.19.15
@@ -382,27 +361,12 @@ importers:
       '@tiptap/extension-strike':
         specifier: 'catalog:'
         version: 2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))
-      '@tiptap/extension-table':
-        specifier: 'catalog:'
-        version: 2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))(@tiptap/pm@2.27.2)
-      '@tiptap/extension-table-cell':
-        specifier: 'catalog:'
-        version: 2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))
-      '@tiptap/extension-table-header':
-        specifier: 'catalog:'
-        version: 2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))
-      '@tiptap/extension-table-row':
-        specifier: 'catalog:'
-        version: 2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))
       '@tiptap/extension-text':
         specifier: 'catalog:'
         version: 2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))
       '@wizard/content':
         specifier: workspace:*
         version: link:../../packages/content
-      tiptap-render-view:
-        specifier: 'catalog:'
-        version: 1.0.4(@tiptap/pm@2.27.2)
     devDependencies:
       '@directus/extensions-sdk':
         specifier: 'catalog:'
@@ -499,18 +463,6 @@ importers:
         specifier: 'catalog:'
         version: 2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))
       '@tiptap/extension-strike':
-        specifier: 'catalog:'
-        version: 2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))
-      '@tiptap/extension-table':
-        specifier: 'catalog:'
-        version: 2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))(@tiptap/pm@2.27.2)
-      '@tiptap/extension-table-cell':
-        specifier: 'catalog:'
-        version: 2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))
-      '@tiptap/extension-table-header':
-        specifier: 'catalog:'
-        version: 2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))
-      '@tiptap/extension-table-row':
         specifier: 'catalog:'
         version: 2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))
       '@tiptap/extension-text':
@@ -3623,27 +3575,6 @@ packages:
     resolution: {integrity: sha512-HHIjhafLhS2lHgfAsCwC1okqMsQzR4/mkGDm4M583Yftyjri1TNA7lzhzXWRFWiiMfJxKtdjHjUAQaHuteRTZw==}
     peerDependencies:
       '@tiptap/core': ^2.7.0
-
-  '@tiptap/extension-table-cell@2.27.2':
-    resolution: {integrity: sha512-9Lk46MjZMFzVZfOj9Kd7VgC6Odt6vmEhlCYVumErShUY7EkFqCw3b2IYoUtQkntfOEx/Afnhff/okNQwPsJeUA==}
-    peerDependencies:
-      '@tiptap/core': ^2.7.0
-
-  '@tiptap/extension-table-header@2.27.2':
-    resolution: {integrity: sha512-ZEb6lbG0NbbodWLV0b4BS/QrDIPlUbCcuOsUxzqVvlMUY1Vg6Fj6fKwLaBcsIUDHi8sxZDBEgYEDw3BR/zcO6A==}
-    peerDependencies:
-      '@tiptap/core': ^2.7.0
-
-  '@tiptap/extension-table-row@2.27.2':
-    resolution: {integrity: sha512-Nw9+tA56Y5HtLVP01NGCZSUuTQhJPtfK9OfmDgGgcxynn2cRVdEtj+9FNZqRhQ1iRVaAI+Rd4xRvX9qYePMOxw==}
-    peerDependencies:
-      '@tiptap/core': ^2.7.0
-
-  '@tiptap/extension-table@2.27.2':
-    resolution: {integrity: sha512-pDbhOpT5phZkcsyPjGBQlXv0+0hmdrvqHJ+dJjkGcCtlfy2pHiEIhmIItOFagc7wXy8G9iUFZ9Jie4zvDf+brg==}
-    peerDependencies:
-      '@tiptap/core': ^2.7.0
-      '@tiptap/pm': ^2.7.0
 
   '@tiptap/extension-text@2.27.2':
     resolution: {integrity: sha512-Xk7nYcigljAY0GO9hAQpZ65ZCxqOqaAlTPDFcKerXmlkQZP/8ndx95OgUb1Xf63kmPOh3xypurGS2is3v0MXSA==}
@@ -6971,9 +6902,6 @@ packages:
   tippy.js@6.3.7:
     resolution: {integrity: sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==}
 
-  tiptap-render-view@1.0.4:
-    resolution: {integrity: sha512-y5VCJFWw4B1/kpO+OsELjvkdJqfaL04eSfvzm2wDMFT/tMtuFIpS2cRkxThQCT6g35Z71e0HU+RFfrpzJ7nLkQ==}
-
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
@@ -8249,70 +8177,6 @@ snapshots:
       - ws
       - yaml
 
-  '@directus/extensions-sdk@17.1.3(@types/node@22.19.15)(@unhead/vue@1.11.20(vue@3.5.30(typescript@5.9.3)))(jiti@2.6.1)(knex@3.1.0)(pinia@2.3.1(typescript@5.9.3)(vue@3.5.30(typescript@5.9.3)))(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)':
-    dependencies:
-      '@directus/composables': 11.4.0(vue@3.5.24(typescript@5.9.3))
-      '@directus/constants': 14.3.0
-      '@directus/extensions': 3.0.24(knex@3.1.0)(vue@3.5.24(typescript@5.9.3))
-      '@directus/themes': 1.3.2(@unhead/vue@1.11.20(vue@3.5.30(typescript@5.9.3)))(pinia@2.3.1(typescript@5.9.3)(vue@3.5.30(typescript@5.9.3)))(vue@3.5.24(typescript@5.9.3))
-      '@directus/types': 15.0.2(knex@3.1.0)(vue@3.5.24(typescript@5.9.3))
-      '@directus/utils': 13.4.0(vue@3.5.24(typescript@5.9.3))
-      '@rollup/plugin-commonjs': 28.0.9(rollup@4.59.0)
-      '@rollup/plugin-json': 6.1.0(rollup@4.59.0)
-      '@rollup/plugin-node-resolve': 16.0.3(rollup@4.59.0)
-      '@rollup/plugin-replace': 6.0.3(rollup@4.59.0)
-      '@rollup/plugin-terser': 1.0.0(rollup@4.59.0)
-      '@rollup/plugin-virtual': 3.0.2(rollup@4.59.0)
-      '@vitejs/plugin-vue': 6.0.1(vite@8.0.8(@types/node@22.19.15)(esbuild@0.26.0)(jiti@2.6.1)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.24(typescript@5.9.3))
-      chalk: 5.6.2
-      commander: 14.0.2
-      esbuild: 0.26.0
-      execa: 9.6.0
-      fs-extra: 11.3.2
-      inquirer: 12.11.0(@types/node@22.19.15)
-      ora: 8.2.0
-      rollup: 4.59.0
-      rollup-plugin-esbuild: 6.2.1(esbuild@0.26.0)(rollup@4.59.0)
-      rollup-plugin-styler: 2.0.0(rollup@4.59.0)(typescript@5.9.3)
-      semver: 7.7.3
-      vite: 8.0.8(@types/node@22.19.15)(esbuild@0.26.0)(jiti@2.6.1)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)
-      vue: 3.5.24(typescript@5.9.3)
-    transitivePeerDependencies:
-      - '@types/node'
-      - '@unhead/vue'
-      - '@vitejs/devtools'
-      - aws-crt
-      - better-sqlite3
-      - debug
-      - deep-diff
-      - express
-      - graphql
-      - jiti
-      - knex
-      - less
-      - mysql
-      - mysql2
-      - nodemailer
-      - openapi3-ts
-      - pg
-      - pg-native
-      - pinia
-      - pino
-      - sass
-      - sass-embedded
-      - sharp
-      - sqlite3
-      - stylus
-      - sugarss
-      - supports-color
-      - tedious
-      - terser
-      - tsx
-      - typescript
-      - vue-router
-      - ws
-      - yaml
-
   '@directus/extensions@3.0.24(knex@3.1.0)(vue@3.5.24(typescript@5.9.3))':
     dependencies:
       '@directus/constants': 14.3.0
@@ -8366,17 +8230,6 @@ snapshots:
       flat: 6.0.1
       lodash-es: 4.18.1
       pinia: 2.3.1(typescript@5.9.3)(vue@3.5.24(typescript@5.9.3))
-      vue: 3.5.24(typescript@5.9.3)
-      zod: 4.1.12
-
-  '@directus/themes@1.3.2(@unhead/vue@1.11.20(vue@3.5.30(typescript@5.9.3)))(pinia@2.3.1(typescript@5.9.3)(vue@3.5.30(typescript@5.9.3)))(vue@3.5.24(typescript@5.9.3))':
-    dependencies:
-      '@directus/utils': 13.4.0(vue@3.5.24(typescript@5.9.3))
-      '@unhead/vue': 1.11.20(vue@3.5.30(typescript@5.9.3))
-      decamelize: 6.0.1
-      flat: 6.0.1
-      lodash-es: 4.18.1
-      pinia: 2.3.1(typescript@5.9.3)(vue@3.5.30(typescript@5.9.3))
       vue: 3.5.24(typescript@5.9.3)
       zod: 4.1.12
 
@@ -10902,23 +10755,6 @@ snapshots:
     dependencies:
       '@tiptap/core': 2.27.2(@tiptap/pm@2.27.2)
 
-  '@tiptap/extension-table-cell@2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))':
-    dependencies:
-      '@tiptap/core': 2.27.2(@tiptap/pm@2.27.2)
-
-  '@tiptap/extension-table-header@2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))':
-    dependencies:
-      '@tiptap/core': 2.27.2(@tiptap/pm@2.27.2)
-
-  '@tiptap/extension-table-row@2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))':
-    dependencies:
-      '@tiptap/core': 2.27.2(@tiptap/pm@2.27.2)
-
-  '@tiptap/extension-table@2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))(@tiptap/pm@2.27.2)':
-    dependencies:
-      '@tiptap/core': 2.27.2(@tiptap/pm@2.27.2)
-      '@tiptap/pm': 2.27.2
-
   '@tiptap/extension-text@2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))':
     dependencies:
       '@tiptap/core': 2.27.2(@tiptap/pm@2.27.2)
@@ -11105,14 +10941,6 @@ snapshots:
       hookable: 5.5.3
       unhead: 1.11.20
       vue: 3.5.24(typescript@5.9.3)
-
-  '@unhead/vue@1.11.20(vue@3.5.30(typescript@5.9.3))':
-    dependencies:
-      '@unhead/schema': 1.11.20
-      '@unhead/shared': 1.11.20
-      hookable: 5.5.3
-      unhead: 1.11.20
-      vue: 3.5.30(typescript@5.9.3)
 
   '@unhead/vue@2.1.12(vue@3.5.30(typescript@5.9.3))':
     dependencies:
@@ -13953,16 +13781,6 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
 
-  pinia@2.3.1(typescript@5.9.3)(vue@3.5.30(typescript@5.9.3)):
-    dependencies:
-      '@vue/devtools-api': 6.6.4
-      vue: 3.5.30(typescript@5.9.3)
-      vue-demi: 0.14.10(vue@3.5.30(typescript@5.9.3))
-    optionalDependencies:
-      typescript: 5.9.3
-    transitivePeerDependencies:
-      - '@vue/composition-api'
-
   pkce-challenge@5.0.1: {}
 
   pkg-types@1.3.1:
@@ -14904,12 +14722,6 @@ snapshots:
     dependencies:
       '@popperjs/core': 2.11.8
 
-  tiptap-render-view@1.0.4(@tiptap/pm@2.27.2):
-    dependencies:
-      '@tiptap/core': 2.27.2(@tiptap/pm@2.27.2)
-    transitivePeerDependencies:
-      - '@tiptap/pm'
-
   to-regex-range@5.0.1:
     dependencies:
       is-number: 7.0.0
@@ -15277,10 +15089,6 @@ snapshots:
   vue-demi@0.14.10(vue@3.5.24(typescript@5.9.3)):
     dependencies:
       vue: 3.5.24(typescript@5.9.3)
-
-  vue-demi@0.14.10(vue@3.5.30(typescript@5.9.3)):
-    dependencies:
-      vue: 3.5.30(typescript@5.9.3)
 
   vue-devtools-stub@0.1.0: {}
 
