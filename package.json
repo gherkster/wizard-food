@@ -15,7 +15,6 @@
     "format:check": "oxfmt -c .oxfmtrc.json --check --no-error-on-unmatched-pattern \"*.{json,md,yaml,yml}\" \"apps/**/*.{js,jsx,mjs,cjs,ts,tsx,vue,json,md,scss,yaml,yml}\" \"packages/**/*.{js,jsx,mjs,cjs,ts,tsx,vue,json,md,scss,yaml,yml}\" \"extensions/**/*.{js,jsx,mjs,cjs,ts,tsx,vue,json,md,scss,yaml,yml}\" \"openapi/**/*.json\""
   },
   "devDependencies": {
-    "jiti": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
