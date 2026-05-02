@@ -20,12 +20,23 @@ defineEmits<{
 </script>
 
 <template>
-  <form class="search" role="search" @submit.prevent="$emit('search', query)">
+  <form
+    :class="
+      css({
+        flexBasis: {
+          base: undefined,
+          smDown: '100%',
+        },
+      })
+    "
+    role="search"
+    @submit.prevent="$emit('search', query)"
+  >
     <VInput
       v-model="query"
       :class="css({ color: token('colors.font.muted') })"
       icon-left="mynaui:search"
-      placeholder="Search..."
+      placeholder="Search recipes..."
       @update:model-value="$emit('input', query)"
     >
       <template #prepend="{ onClick }">
@@ -36,12 +47,3 @@ defineEmits<{
     </VInput>
   </form>
 </template>
-
-<style lang="scss" scoped>
-@use "@/styles/mixins" as m;
-@include m.breakpoint("sm", "max") {
-  .search {
-    flex-basis: 100%;
-  }
-}
-</style>

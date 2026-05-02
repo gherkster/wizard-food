@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { css } from "styled-system/css";
+
 import { debounce } from "~/utils/debounce";
 
 const props = withDefaults(
@@ -30,17 +32,18 @@ defineEmits(["click"]);
 </script>
 
 <template>
-  <button @click="animateMascot">
+  <button
+    :class="
+      css({
+        lineHeight: 0,
+        padding: 0,
+        border: 'none',
+        background: 'transparent',
+        cursor: 'pointer',
+      })
+    "
+    @click="animateMascot"
+  >
     <MascotSVG :class="{ excited: animate || isAnimated }" :width="size" />
   </button>
 </template>
-
-<style lang="scss" scoped>
-button {
-  line-height: 0;
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-}
-</style>

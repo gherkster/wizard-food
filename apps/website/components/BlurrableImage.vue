@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getAspectRatio, type Image, type ImagePurpose, type ImageShape } from "@wizard/content";
+import { css } from "styled-system/css";
 
 /*
 We can use X and Y aspect ratio values for height and width since we are using width 100% globally for img.
@@ -32,10 +33,13 @@ const { x, y } = getAspectRatio(props.shape);
 </script>
 
 <template>
-  <div class="image-container" :style="`aspect-ratio: ${x} / ${y}`">
+  <div
+    :class="css({ width: '100%', position: 'relative', overflow: 'hidden', borderRadius: 'sm' })"
+    :style="`aspect-ratio: ${x} / ${y}`"
+  >
     <VImg
       v-if="img.metadata?.base64Url"
-      class="blur"
+      :class="css({ filter: 'blur(20px)' })"
       :img="img"
       :purpose="purpose"
       :shape="shape"
@@ -45,7 +49,7 @@ const { x, y } = getAspectRatio(props.shape);
       role="presentation"
     />
     <VImg
-      class="image"
+      :class="css({ position: 'absolute', inset: 0 })"
       :img="img"
       :purpose="purpose"
       :shape="shape"
@@ -56,23 +60,3 @@ const { x, y } = getAspectRatio(props.shape);
     />
   </div>
 </template>
-
-<style lang="scss">
-@use "@/styles/variables" as v;
-
-.image-container {
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-  border-radius: v.$border-radius-sm;
-
-  .image {
-    position: absolute;
-    inset: 0;
-  }
-
-  .blur {
-    filter: blur(20px);
-  }
-}
-</style>
