@@ -42,10 +42,8 @@ export const formatIngredientAmount = (amount: Fraction) => {
   } else if (decimalAmount > 10) {
     amount = amount.round();
   } else {
-    // @ts-expect-error fraction.js@4.3.7 does not include type for roundTo
-    const roundedToOneEighth = amount.roundTo("1/8") as Fraction;
-    // @ts-expect-error fraction.js@4.3.7 does not include type for roundTo
-    const roundedToOneThird = amount.roundTo("1/3") as Fraction;
+    const roundedToOneEighth = amount.roundTo("1/8");
+    const roundedToOneThird = amount.roundTo("1/3");
 
     /*
       We want the maximum accuracy to be 1/8 to avoid excessively precise fractions,

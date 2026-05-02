@@ -29,10 +29,8 @@ export const formatIngredientAmount = (amount: Fraction) => {
   } else if (decimalAmount > 10) {
     amount = amount.round();
   } else {
-    // @ts-expect-error fraction.js@4.3.7 does not include type for roundTo
-    const roundedToOneEighth = amount.roundTo("1/8") as Fraction;
-    // @ts-expect-error fraction.js@4.3.7 does not include type for roundTo
-    const roundedToOneThird = amount.roundTo("1/3") as Fraction;
+    const roundedToOneEighth = amount.roundTo("1/8");
+    const roundedToOneThird = amount.roundTo("1/3");
 
     amount =
       Math.abs(roundedToOneEighth.valueOf() - decimalAmount) <
