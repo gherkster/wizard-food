@@ -4,7 +4,7 @@ import { type ContentFileName, resolveContentFile } from "./files";
 import type {
   ContentMeta,
   FeaturedRecipes,
-  RecipePayload,
+  Recipe,
   RecipePreview,
   WebsitePagesContent,
 } from "./types";
@@ -16,7 +16,7 @@ async function readJson<T>(fileName: ContentFileName, contentDir: string) {
 }
 
 export const loadRecipesBySlug = async (contentDir: string) => {
-  return readJson<Record<string, RecipePayload>>("recipes.by-slug.json", contentDir);
+  return readJson<Record<string, Recipe>>("recipes.by-slug.json", contentDir);
 };
 
 export const loadAllRecipes = async (contentDir: string) => {

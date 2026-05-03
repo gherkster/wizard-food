@@ -15,20 +15,18 @@ export { formatIngredient, formatIngredientAmount } from "./formatting";
 export * from "./files";
 export * from "./loaders";
 export type {
-  AspectRatio,
   ContentMeta,
   FeaturedRecipes,
   Ingredient,
   IngredientGroup,
   Image,
   ImagePurpose,
-  ImageShape,
   ImageVariant,
   ImageVariants,
   Instruction,
   InstructionGroup,
   InlineIngredientHTMLElement,
-  RecipePayload,
+  Recipe,
   RecipePreview,
   WebsitePageContent,
   WebsitePagesContent,

@@ -1,14 +1,14 @@
 import path from "node:path";
 
-import type { RecipePayload, RecipePreview, WebsitePagesContent } from "@wizard/content";
+import type { WebsitePagesContent } from "@wizard/content";
 import type { IngredientUnitForms, ServerRecipe } from "@wizard/openapi";
 
 import { buildFeaturedRecipes } from "./build/featured";
-import { formatDuration, recipeTotalDuration } from "./build/formatting";
 import { useDirectusApi } from "./directus/client";
 import type { DirectusRuntimeConfig } from "./directus/client";
-import { toRecipePayload } from "./map/directusRecipeMapper";
+import { mapToRecipe } from "./map/directusRecipeMapper";
 import { writeContentArtifacts } from "./output/writeArtifacts";
+import { mapToRecipePreview } from "./utils/mappings";
 
 export const resolveContentOutputDir = (contentDir?: string) => {
   return path.resolve(
@@ -66,7 +66,7 @@ export const syncContent = async (options: SyncContentOptions) => {
   });
 
   const recipes = recipesResponse.map((recipe) =>
-    toRecipePayload(recipe, {
+    mapToRecipe(recipe, {
       getUnitNames: (unit) => {
         return getSingularPluralMapping(unit, unitSingularPluralMap, recipe);
       },
@@ -120,26 +120,6 @@ export const syncContent = async (options: SyncContentOptions) => {
       outputDir,
     },
   );
-};
-
-const mapToRecipePreview = (recipe: RecipePayload): RecipePreview => {
-  return {
-    title: recipe.title,
-    descriptionSnippet: recipe.descriptionSnippet,
-    course: recipe.course ?? undefined,
-    cuisine: recipe.cuisine ?? undefined,
-    datePublished: recipe.datePublished,
-    favourite: recipe.favourite ?? undefined,
-    featuredTag: recipe.featuredTag,
-    preparationDuration: recipe.preparationDuration ?? undefined,
-    cookingDuration: recipe.cookingDuration ?? undefined,
-    customDurationName: recipe.customDurationName ?? undefined,
-    customDuration: recipe.customDuration ?? undefined,
-    totalDurationLabel: formatDuration(recipeTotalDuration(recipe)),
-    coverImage: recipe.coverImage,
-    slug: recipe.slug,
-    tags: recipe.tags,
-  };
 };
 
 const getSingularPluralMapping = (

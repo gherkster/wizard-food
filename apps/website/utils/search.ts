@@ -1,13 +1,14 @@
-import type { ImageVariant } from "@wizard/content";
 import type { Options } from "minisearch";
 
 /** The minimal fields that are stored inside the recipe search index. */
 export interface SearchIndexRecipe {
   title: string;
-  coverImage: {
+  image: {
     height: number;
     width: number;
-    previewSquare: ImageVariant;
+    src: string;
+    srcSet: string;
+    sizes: string;
   };
   slug: string;
   tags: string[];
@@ -27,7 +28,7 @@ const searchIndexStoredFields: (keyof SearchIndexRecipe)[] = [
   "tags",
   "featuredTag",
   "totalDurationLabel",
-  "coverImage",
+  "image",
 ];
 
 export const searchIndexSettings: Options = {

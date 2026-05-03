@@ -52,13 +52,7 @@ const cardRecipe = cva({
     "
   >
     <div :class="cardRecipe({ orientation })">
-      <BlurrableImage
-        v-if="image"
-        :img="image"
-        :lazy="lazyLoadImage"
-        purpose="preview"
-        shape="square"
-      />
+      <Image v-if="image" :image="image" :lazy="lazyLoadImage" />
       <slot />
     </div>
   </NuxtLink>

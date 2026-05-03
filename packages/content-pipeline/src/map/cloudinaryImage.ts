@@ -1,62 +1,17 @@
 import crypto from "node:crypto";
 
-import {
-  getAspectRatio,
-  type ImagePurpose,
-  type ImageShape,
-  type ImageVariants,
-} from "@wizard/content";
+import { imageAspectRatio, type ImagePurpose } from "@wizard/content";
 
-const imageFileExtension = "avif";
+import { type CloudinaryRuntimeConfig } from "../utils/config";
 
-type CloudinaryRuntimeConfig = {
-  cloudName: string;
-  signingKey: string;
-  imageFolder: string;
-};
-
-const imageWidths: Record<ImagePurpose, Record<ImageShape, number[]>> = {
-  cover: {
-    portrait: [320, 480, 720, 960],
-    square: [320, 480, 720, 960],
-  },
-  preview: {
-    portrait: [240, 360, 480, 640],
-    square: [240, 360, 480, 640],
-  },
-  instruction: {
-    portrait: [320, 480, 640, 800],
-    square: [320, 480, 640, 800],
-  },
+const imageWidths: Record<ImagePurpose, number[]> = {
+  cover: [600, 800, 1200, 1600], // Header image
+  preview: [400, 600, 800], // Card grids
 };
 
 const imageSizes: Record<ImagePurpose, string> = {
-  cover: "(max-width: 768px) 100vw, 50vw",
   preview: "(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw",
-  instruction: "(max-width: 768px) 100vw, 640px",
-};
-
-const resolveConfig = (): CloudinaryRuntimeConfig => {
-  const signingKey = process.env.CLOUDINARY_API_KEY;
-  if (!signingKey) {
-    throw new Error("CLOUDINARY_API_KEY environment variable not defined.");
-  }
-
-  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-  if (!cloudName) {
-    throw new Error("CLOUDINARY_CLOUD_NAME environment variable not defined.");
-  }
-
-  const imageFolder = process.env.CLOUDINARY_IMAGE_FOLDER;
-  if (!imageFolder) {
-    throw new Error("CLOUDINARY_IMAGE_FOLDER environment variable not defined.");
-  }
-
-  return {
-    cloudName,
-    signingKey,
-    imageFolder,
-  };
+  cover: "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, vw",
 };
 
 const transformToCloudinaryVersion = (modifiedOn: string): number => {
@@ -70,9 +25,18 @@ const transformToCloudinaryVersion = (modifiedOn: string): number => {
   return timestamp;
 };
 
-const buildTransformation = (shape: ImageShape, width: number): string => {
-  const { x, y } = getAspectRatio(shape);
-  return `c_fill,g_auto,ar_${x}:${y},w_${width},f_${imageFileExtension},q_auto`;
+const buildTransformation = (width: number): string => {
+  const { x, y } = imageAspectRatio;
+  /**
+   * Cloudinary Transformation Parameters:
+   * c_fill: Resize to fill dimensions
+   * g_auto: AI-based subject centering
+   * ar_x:y: Force aspect ratio
+   * w_xxx: Target width in pixels
+   * f_auto: Best format (AVIF/WebP)
+   * q_auto: Smart quality compression
+   */
+  return `c_fill,g_auto,ar_${x}:${y},w_${width},f_auto,q_auto`;
 };
 
 const generateCloudinaryDeliverySignature = (signingKey: string, slug: string) => {
@@ -88,10 +52,11 @@ const buildSignedUrl = (
 ) => {
   const version = transformToCloudinaryVersion(modifiedOn);
   const versionPath = `v${version}`;
-  const publicId = `${config.imageFolder}/${imageId}.${imageFileExtension}`;
+  const publicId = `${config.imageFolder}/${imageId}`;
   const signedSlug = `${transformation}/${versionPath}/${publicId}`;
   const signature = generateCloudinaryDeliverySignature(config.signingKey, signedSlug);
   const signedUrl = `https://res.cloudinary.com/${config.cloudName}/image/upload/${signature}/${signedSlug}`;
+
   const url = new URL(signedUrl);
   url.searchParams.set("v", String(version));
 
@@ -101,16 +66,16 @@ const buildSignedUrl = (
   };
 };
 
-const buildVariant = (
+export const buildImageVariant = (
   config: CloudinaryRuntimeConfig,
   imageId: string,
   modifiedOn: string,
   purpose: ImagePurpose,
-  shape: ImageShape,
 ) => {
-  const widths = imageWidths[purpose][shape];
+  const widths = imageWidths[purpose];
+
   const variants = widths.map((width) => {
-    const transformation = buildTransformation(shape, width);
+    const transformation = buildTransformation(width);
     const { url } = buildSignedUrl(config, imageId, modifiedOn, transformation);
 
     return {
@@ -121,35 +86,12 @@ const buildVariant = (
 
   const largestVariant = variants.at(-1);
   if (!largestVariant) {
-    throw new Error(`No widths configured for ${purpose} ${shape}`);
+    throw new Error(`No widths configured for ${purpose}`);
   }
 
   return {
     src: largestVariant.url,
     srcSet: variants.map((v) => `${v.url} ${v.width}w`).join(", "),
     sizes: imageSizes[purpose],
-  };
-};
-
-export const buildSignedImageVariants = (image: { id: string; modifiedOn: string }) => {
-  const config = resolveConfig();
-
-  const variants = {
-    cover: {
-      portrait: buildVariant(config, image.id, image.modifiedOn, "cover", "portrait"),
-      square: buildVariant(config, image.id, image.modifiedOn, "cover", "square"),
-    },
-    preview: {
-      portrait: buildVariant(config, image.id, image.modifiedOn, "preview", "portrait"),
-      square: buildVariant(config, image.id, image.modifiedOn, "preview", "square"),
-    },
-    instruction: {
-      portrait: buildVariant(config, image.id, image.modifiedOn, "instruction", "portrait"),
-      square: buildVariant(config, image.id, image.modifiedOn, "instruction", "square"),
-    },
-  } satisfies ImageVariants;
-
-  return {
-    variants,
   };
 };
