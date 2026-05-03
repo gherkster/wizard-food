@@ -25,7 +25,7 @@ if (import.meta.server) {
     ogTitle: recipe.value.title,
     description: recipe.value.descriptionPlainText,
     ogDescription: recipe.value.descriptionSnippet,
-    ogImage: recipe.value.coverImage.variants.cover.square.src,
+    ogImage: recipe.value.coverImage.src,
   });
 
   useJsonld({
@@ -33,7 +33,7 @@ if (import.meta.server) {
     "@type": "Recipe",
     name: recipe.value.title,
     description: recipe.value.descriptionSnippet,
-    image: recipe.value.coverImage.variants.cover.square.src,
+    image: recipe.value.coverImage.src,
     // Ingredients and instructions are not included, as that would require including both rich text and plain text variants of strings,
     // which is not worth increasing the payload size over a minimal feature
     recipeCategory: recipe.value.course,
@@ -99,7 +99,7 @@ const highlightContainerStyles: Styles = {
       })
     "
   >
-    <BlurrableImage :img="recipe.coverImage" purpose="cover" shape="portrait" />
+    <Image :image="recipe.coverImage" />
     <div :class="css({ display: 'flex', flexDirection: 'column', rowGap: 'md' })">
       <h1 :class="css({ margin: 0 })">{{ recipe.title }}</h1>
 
@@ -226,12 +226,6 @@ const highlightContainerStyles: Styles = {
               :content="instruction.text"
               :ingredient-multiplier="servings"
               :original-number-of-servings="originalNumberOfServings"
-            />
-            <BlurrableImage
-              v-if="instruction.image"
-              :img="instruction.image"
-              purpose="instruction"
-              shape="square"
             />
           </div>
         </div>

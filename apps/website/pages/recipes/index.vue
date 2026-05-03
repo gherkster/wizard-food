@@ -36,29 +36,14 @@ const searchClient = useSearch();
 const recipes = ref<SearchIndexRecipe[]>([]);
 
 const toCardImage = (recipe: SearchIndexRecipe): Image => {
-  const previewSquare = recipe.coverImage.previewSquare;
-
   return {
-    id: recipe.slug,
+    height: recipe.image.height,
+    modifiedOn: "",
+    sizes: recipe.image.sizes,
+    src: recipe.image.src,
+    srcSet: recipe.image.srcSet,
     title: `Picture of ${recipe.title}`,
-    fileName: recipe.slug,
-    width: recipe.coverImage.width,
-    height: recipe.coverImage.height,
-    modifyDate: "",
-    variants: {
-      cover: {
-        portrait: previewSquare,
-        square: previewSquare,
-      },
-      preview: {
-        portrait: previewSquare,
-        square: previewSquare,
-      },
-      instruction: {
-        portrait: previewSquare,
-        square: previewSquare,
-      },
-    },
+    width: recipe.image.width,
   };
 };
 

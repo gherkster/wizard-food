@@ -1,31 +1,12 @@
-import type { FeaturedRecipes, RecipePayload, RecipePreview } from "@wizard/content";
+import type { FeaturedRecipes, Recipe } from "@wizard/content";
 
-import { formatDuration, recipeTotalDuration } from "./formatting";
+import { mapToRecipePreview } from "../utils/mappings";
+import { recipeTotalDuration } from "./formatting";
 
-const mapToRecipePreview = (recipe: RecipePayload): RecipePreview => {
-  return {
-    title: recipe.title,
-    descriptionSnippet: recipe.descriptionSnippet,
-    course: recipe.course ?? undefined,
-    cuisine: recipe.cuisine ?? undefined,
-    datePublished: recipe.datePublished,
-    favourite: recipe.favourite ?? undefined,
-    featuredTag: recipe.featuredTag,
-    preparationDuration: recipe.preparationDuration ?? undefined,
-    cookingDuration: recipe.cookingDuration ?? undefined,
-    customDurationName: recipe.customDurationName ?? undefined,
-    customDuration: recipe.customDuration ?? undefined,
-    totalDurationLabel: formatDuration(recipeTotalDuration(recipe)),
-    coverImage: recipe.coverImage,
-    slug: recipe.slug,
-    tags: recipe.tags,
-  };
-};
+export const buildFeaturedRecipes = (rawRecipes: Recipe[]): FeaturedRecipes => {
+  const recipePreviews = rawRecipes.map(mapToRecipePreview);
 
-export const buildFeaturedRecipes = (recipePayloads: RecipePayload[]): FeaturedRecipes => {
-  const recipes = (recipePayloads ?? []).map((r) => mapToRecipePreview(r));
-
-  if (recipes.length === 0) {
+  if (recipePreviews.length === 0) {
     throw new Error("Failed to retrieve recipes");
   }
 
@@ -33,7 +14,7 @@ export const buildFeaturedRecipes = (recipePayloads: RecipePayload[]): FeaturedR
 
   const now = new Date();
 
-  const latestRecipes = recipes
+  const latestRecipes = recipePreviews
     .sort(
       (a, b) =>
         (b.datePublished ? new Date(b.datePublished) : now).getTime() -
@@ -42,12 +23,12 @@ export const buildFeaturedRecipes = (recipePayloads: RecipePayload[]): FeaturedR
     .slice(0, 3);
   latestRecipes.forEach((r) => alreadyShownRecipes.add(r.slug));
 
-  const favouriteRecipes = shuffle(recipes)
+  const favouriteRecipes = shuffle(recipePreviews)
     .filter((r) => !alreadyShownRecipes.has(r.slug) && r.favourite)
     .slice(0, 4);
   favouriteRecipes.forEach((r) => alreadyShownRecipes.add(r.slug));
 
-  const quickRecipes = shuffle(recipes)
+  const quickRecipes = shuffle(recipePreviews)
     .filter((r) => {
       const totalDuration = recipeTotalDuration(r);
       return (
@@ -60,7 +41,7 @@ export const buildFeaturedRecipes = (recipePayloads: RecipePayload[]): FeaturedR
     .slice(0, 4);
   quickRecipes.forEach((r) => alreadyShownRecipes.add(r.slug));
 
-  const worldCuisineRecipes = shuffle(recipes)
+  const worldCuisineRecipes = shuffle(recipePreviews)
     .filter(
       (r) =>
         !alreadyShownRecipes.has(r.slug) &&

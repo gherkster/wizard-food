@@ -53,7 +53,7 @@ export default defineConfig({
         xxl: { value: clamp(26, 36) },
         xl: { value: clamp(20, 26) },
         lg: { value: clamp(16, 20) },
-        md: { value: clamp(14, 16) }, // html, input, button
+        md: { value: clamp(15, 16) }, // html, input, button
         sm: { value: clamp(12, 14) },
       },
       spacing: {

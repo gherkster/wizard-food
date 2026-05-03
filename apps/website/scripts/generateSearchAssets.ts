@@ -61,10 +61,12 @@ const generateAppVersionAsset = async (version: AppVersion) => {
 const mapToSearchIndexRecipe = (recipe: RecipePreview): SearchIndexRecipe => {
   return {
     title: recipe.title,
-    coverImage: {
-      height: recipe.coverImage.height,
-      width: recipe.coverImage.width,
-      previewSquare: recipe.coverImage.variants.preview.square,
+    image: {
+      height: recipe.previewImage.height,
+      width: recipe.previewImage.width,
+      sizes: recipe.previewImage.sizes,
+      src: recipe.previewImage.src,
+      srcSet: recipe.previewImage.srcSet,
     },
     totalDurationLabel: recipe.totalDurationLabel,
     tags: recipe.tags,

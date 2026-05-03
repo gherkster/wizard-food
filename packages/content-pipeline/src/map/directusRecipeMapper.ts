@@ -1,14 +1,13 @@
-import path from "node:path";
-
 import type {
   Image,
   Ingredient,
   IngredientGroup,
   Instruction,
   InstructionGroup,
-  RecipePayload,
+  Recipe,
   SingularPluralPair,
   RichTextContent,
+  ImagePurpose,
 } from "@wizard/content";
 import type {
   ServerImage,
@@ -24,14 +23,15 @@ import prand from "pure-rand";
 import { hydrateInlineIngredientData } from "../hydrateInlineIngredientData";
 import { renderRichTextHtml, renderRichTextText } from "../render";
 import { assertIsHydrated, throwExpression } from "../utils";
-import { buildSignedImageVariants } from "./cloudinaryImage";
+import { resolveConfig } from "../utils/config";
+import { buildImageVariant } from "./cloudinaryImage";
 
-export const toRecipePayload = (
+export const mapToRecipe = (
   serverRecipe: ServerRecipe,
   getters: {
     getUnitNames: (unit: string) => SingularPluralPair;
   },
-): RecipePayload => {
+): Recipe => {
   if (isNil(serverRecipe.coverImage)) {
     throw new Error("Recipe image not provided");
   }
@@ -107,9 +107,6 @@ export const toRecipePayload = (
           ),
         ),
       ),
-      image: !isNil(serverInstruction.image)
-        ? mapImage(assertHydratedImage(serverInstruction.image))
-        : undefined,
     };
   };
 
@@ -151,7 +148,8 @@ export const toRecipePayload = (
     cuisine: serverRecipe.cuisine ?? undefined,
     course: serverRecipe.course ?? undefined,
     note: !isNil(serverRecipe.note) ? renderRichTextHtml(serverRecipe.note as RichTextContent) : "",
-    coverImage: mapImage(serverRecipe.coverImage),
+    coverImage: mapImage(serverRecipe.coverImage, "cover"),
+    previewImage: mapImage(serverRecipe.coverImage, "preview"),
     ingredientGroups:
       serverRecipe.ingredientGroups?.map<IngredientGroup>((ig) => {
         assertIsHydrated(ig, "ingredientGroup");
@@ -181,37 +179,25 @@ export const toRecipePayload = (
   };
 };
 
-const assertHydratedImage = (image: ServerImage | string | number): ServerImage => {
-  assertIsHydrated(image, "image");
-  return image;
-};
-
-const mapImage = (serverImage: ServerImage): Image => {
+const mapImage = (serverImage: ServerImage, purpose: ImagePurpose): Image => {
   const imageId = serverImage.id ?? throwExpression("Image ID must be provided");
 
-  const modifyDate =
+  const modifiedOn =
     serverImage.modified_on ?? throwExpression("Image modified_on must be provided");
 
-  const { variants } = buildSignedImageVariants({
-    id: imageId,
-    modifiedOn: modifyDate,
-  });
+  const config = resolveConfig();
+
+  const variant = buildImageVariant(config, imageId, modifiedOn, purpose);
 
   return {
-    id: imageId,
-    title: serverImage.title ?? throwExpression("Image title must be provided"),
-    fileName: serverImage.filename_download
-      ? path.parse(serverImage.filename_download).name
-      : throwExpression("Image filename_download must be provided"),
-    width: serverImage.width ?? throwExpression("Image width must be provided"),
+    ...variant,
+    base64ThumbnailUrl:
+      serverImage.metadata?.base64Url ??
+      throwExpression("Image base64 thumbnail URL must be provided"),
     height: serverImage.height ?? throwExpression("Image height must be provided"),
-    modifyDate,
-    variants: variants,
-    metadata: {
-      base64Url:
-        serverImage.metadata?.base64Url ??
-        throwExpression("Image base64 thumbnail URL must be provided"),
-    },
+    modifiedOn,
+    title: serverImage.title ?? throwExpression("Image title must be provided"),
+    width: serverImage.width ?? throwExpression("Image width must be provided"),
   };
 };
 
@@ -235,7 +221,7 @@ type RecipeCategories = {
 
 const buildTagList = (categories: RecipeCategories): string[] => {
   const tags: string[] = [];
-  
+
   if (categories.cuisine) {
     tags.push(categories.cuisine);
   }

@@ -1,7 +1,6 @@
 import type { InlineIngredientHTMLElementDataset, SingularPluralPair } from "./recipe";
 
-export type ImagePurpose = "cover" | "preview" | "instruction";
-export type ImageShape = "square" | "portrait";
+export type ImagePurpose = "cover" | "preview";
 
 export type ImageVariant = {
   src: string;
@@ -9,60 +8,103 @@ export type ImageVariant = {
   sizes: string;
 };
 
-export type ImageVariants = Record<ImagePurpose, Record<ImageShape, ImageVariant>>;
+export type ImageVariants = Record<ImagePurpose, ImageVariant>;
 
-export type AspectRatio = {
-  x: number;
-  y: number;
+export type Image = {
+  /** The optional base64 encoded thumbnail image URL. */
+  base64ThumbnailUrl?: string;
+  /** The height of the image in pixels. */
+  height: number;
+  /** The time the image was last modified, for cache busting purposes. */
+  modifiedOn: string;
+  /** The sizes of the image. */
+  sizes: string;
+  /** The src of the image. */
+  src: string;
+  /** The srcSet of the image. */
+  srcSet: string;
+  /** The title of the image, for alt text. */
+  title: string;
+  /** The width of the image in pixels. */
+  width: number;
 };
 
-export type RecipePayload = {
-  id: number;
-  title: string;
+export type Recipe = {
+  /** The cooking duration in minutes. */
+  cookingDuration?: number;
+  /** The recipe course. @example "Mains" */
+  course?: string;
+  /** The large cover image of the recipe. */
+  coverImage: Image;
+  /** The recipe cuisine. @example "German" */
+  cuisine?: string;
+  /** The custom duration in minutes. */
+  customDuration?: number;
+  /** The name of the custom duration. */
+  customDurationName?: string;
+  /** The date the recipe was published. */
+  datePublished?: string;
+  /** The description of the recipe. @format html */
   description: string;
+  /** The plaintext description of the recipe. */
   descriptionPlainText: string;
+  /** The plaintext description snippet. */
   descriptionSnippet: string;
-  cuisine?: string;
-  course?: string;
-  note?: string;
-  coverImage: Image;
-  ingredientGroups: IngredientGroup[];
-  instructionGroups: InstructionGroup[];
-  servings: number;
-  servingsType: SingularPluralPair;
-  preparationDuration?: number;
-  cookingDuration?: number;
-  customDurationName?: string;
-  customDuration?: number;
+  /** The diets applicable to this recipe. @example ["Vegetarian", "Vegan"] */
   diets?: string[];
-  main_ingredients?: string[];
+  /** Whether the recipe is a favourite recipe. */
   favourite?: boolean;
-  method?: string;
-  tags: string[];
+  /** The featured tag of the recipe metadata. */
   featuredTag?: string;
+  /** The unique identifier of the recipe. */
+  id: number;
+  /** The recipe ingredient groups. */
+  ingredientGroups: IngredientGroup[];
+  /** The recipe instruction groups. */
+  instructionGroups: InstructionGroup[];
+  /** The main ingredients of the recipe. @example ["Beef"] */
+  mainIngredients?: string[];
+  /** The method of the recipe. @example "Stir Fry" */
+  method?: string;
+  /** The recipe notes. @format html */
+  note?: string;
+  /** The preparation duration in minutes. */
+  preparationDuration?: number;
+  /** The small preview image of the recipe. */
+  previewImage: Image;
+  /** The number of recipe servings. */
+  servings: number;
+  /** The type of recipe servings. @example { singular: "Slice", plural: "Slices" } */
+  servingsType: SingularPluralPair;
+  /** The unique URL slug of the recipe. */
   slug: string;
-  datePublished?: string;
+  /** The array of tags of the recipe metadata. */
+  tags: string[];
+  /** The title of the recipe. */
+  title: string;
 };
 
-export type RecipePreview = {
-  title: string;
-  descriptionSnippet: string;
-  coverImage: Image;
-  cuisine?: string;
-  course?: string;
-  diets?: string[];
-  main_ingredients?: string[];
-  method?: string;
-  tags: string[];
-  featuredTag?: string;
-  preparationDuration?: number;
-  cookingDuration?: number;
-  customDurationName?: string;
-  customDuration?: number;
+export type RecipePreview = Pick<
+  Recipe,
+  | "cookingDuration"
+  | "course"
+  | "cuisine"
+  | "customDuration"
+  | "customDurationName"
+  | "datePublished"
+  | "descriptionSnippet"
+  | "diets"
+  | "featuredTag"
+  | "favourite"
+  | "mainIngredients"
+  | "method"
+  | "preparationDuration"
+  | "previewImage"
+  | "slug"
+  | "tags"
+  | "title"
+> & {
   totalDurationLabel?: string;
-  slug: string;
-  datePublished?: string;
-  favourite?: boolean;
 };
 
 export type FeaturedRecipes = {
@@ -105,19 +147,6 @@ export interface InlineIngredientHTMLElement extends HTMLSpanElement {
   dataset: InlineIngredientHTMLElementDataset;
 }
 
-export type Image = {
-  id: string;
-  title: string;
-  fileName: string;
-  height: number;
-  width: number;
-  modifyDate: string;
-  variants: ImageVariants;
-  metadata?: {
-    base64Url: string;
-  };
-};
-
 export type InstructionGroup = {
   name?: string;
   instructions: Array<Instruction>;
@@ -125,5 +154,4 @@ export type InstructionGroup = {
 
 export type Instruction = {
   text: string;
-  image?: Image;
 };
