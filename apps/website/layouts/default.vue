@@ -161,7 +161,10 @@ const mascotStyles = css({
         margin: '0 auto',
         padding: '1.2rem',
         position: 'relative',
-        timelineScope: '--header-tracker',
+
+        '@supports (animation-timeline: view())': {
+          timelineScope: '--header-tracker',
+        },
       })
     "
   >
@@ -171,10 +174,14 @@ const mascotStyles = css({
           position: 'absolute',
           top: 0,
           height: animationRangePx,
-          width: '100%',
+          left: 0,
+          right: 0,
           pointerEvents: 'none',
-          viewTimelineName: '--header-tracker',
-          viewTimelineAxis: 'block',
+
+          '@supports (animation-timeline: view())': {
+            viewTimelineName: '--header-tracker',
+            viewTimelineAxis: 'block',
+          },
         })
       "
     ></div>

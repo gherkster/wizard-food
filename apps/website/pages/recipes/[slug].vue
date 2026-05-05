@@ -228,7 +228,7 @@ const highlightContainerStyles: Styles = {
             size="lg"
             weight="bold"
             is="div"
-            :class="css({ mb: '0.5em' })"
+            :class="css({ mb: '0.8em' })"
           >
             {{ instructionSection.name }}
           </Text>
