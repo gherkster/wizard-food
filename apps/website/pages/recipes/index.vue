@@ -99,7 +99,7 @@ const searchResultsPrefix = computed(() => {
     </h3>
 
     <HoverLink to="/recipes">
-      <Text size="lg">See all recipes</Text>
+      <Text size="xl">See all recipes</Text>
     </HoverLink>
   </div>
   <div v-else>
@@ -114,7 +114,8 @@ const searchResultsPrefix = computed(() => {
             md: 3,
             lg: 4,
           },
-          gap: 'sm',
+          columnGap: 'sm',
+          rowGap: 'md',
         })
       "
     >
@@ -126,7 +127,7 @@ const searchResultsPrefix = computed(() => {
           :image="toCardImage(recipe)"
           :to="`/recipes/${recipe.slug}`"
           :tag="recipe.featuredTag"
-          :duration="recipe.totalDurationLabel"
+          :duration="recipe.totalDuration"
           :lazy-load-image="index > 8"
         />
       </ClientOnly>

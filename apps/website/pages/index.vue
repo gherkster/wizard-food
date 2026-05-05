@@ -64,7 +64,7 @@ const cardGroupStyles = grid({
           :to="`/recipes/${recipe.slug}`"
           :image="recipe.previewImage"
           :tag="recipe.featuredTag"
-          :duration="recipe.totalDurationLabel"
+          :duration="recipe.durationTotal?.text"
         />
       </div>
     </section>
@@ -81,7 +81,7 @@ const cardGroupStyles = grid({
           :image="recipe.previewImage"
           :to="`/recipes/${recipe.slug}`"
           :tag="recipe.featuredTag"
-          :duration="recipe.totalDurationLabel"
+          :duration="recipe.durationTotal?.text"
           lazy-load-image
         />
       </div>
@@ -100,7 +100,7 @@ const cardGroupStyles = grid({
           :image="recipe.previewImage"
           :to="`/recipes/${recipe.slug}`"
           :tag="recipe.featuredTag"
-          :duration="recipe.totalDurationLabel"
+          :duration="recipe.durationTotal?.text"
           lazy-load-image
         />
       </div>
@@ -118,7 +118,7 @@ const cardGroupStyles = grid({
           :image="recipe.previewImage"
           :to="`/recipes/${recipe.slug}`"
           :tag="recipe.featuredTag"
-          :duration="recipe.totalDurationLabel"
+          :duration="recipe.durationTotal?.text"
           lazy-load-image
         />
       </div>

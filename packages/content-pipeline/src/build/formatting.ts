@@ -6,9 +6,9 @@ export const secondsToDuration = (seconds: number): Duration => {
   return dayjs.duration(seconds, "seconds");
 };
 
-export const formatDuration = (duration: Duration): string | undefined => {
+export const formatDuration = (duration: Duration) => {
   if (duration.asSeconds() === 0) {
-    return undefined;
+    return "";
   }
 
   const formatStrings: string[] = [];
@@ -25,13 +25,13 @@ export const formatDuration = (duration: Duration): string | undefined => {
   return duration.format(formatStrings.join(" "));
 };
 
-type RecipeDuration = {
+type RecipeDurations = {
   preparationDuration?: number | null;
   cookingDuration?: number | null;
   customDuration?: number | null;
 };
 
-export const recipeTotalDuration = (recipe: RecipeDuration) => {
+export const recipeTotalDuration = (recipe: RecipeDurations) => {
   const sumDuration =
     (recipe.preparationDuration ?? 0) +
     (recipe.cookingDuration ?? 0) +

@@ -33,7 +33,7 @@ const handleError = () => clearError({ redirect: "/" });
     >
       <h2>{{ errorMessage }}</h2>
       <HoverLink to="/" @click.prevent="handleError">
-        <Text size="lg">Go home</Text>
+        <Text size="xl">Go home</Text>
       </HoverLink>
     </div>
   </nuxt-layout>

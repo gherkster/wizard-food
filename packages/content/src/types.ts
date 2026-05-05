@@ -52,6 +52,8 @@ export type Recipe = {
   descriptionSnippet: string;
   /** The diets applicable to this recipe. @example ["Vegetarian", "Vegan"] */
   diets?: string[];
+  durationTotal?: RecipeDuration;
+  durationComponents: RecipeDuration[];
   /** Whether the recipe is a favourite recipe. */
   favourite?: boolean;
   /** The featured tag of the recipe metadata. */
@@ -86,25 +88,32 @@ export type Recipe = {
 
 export type RecipePreview = Pick<
   Recipe,
-  | "cookingDuration"
   | "course"
   | "cuisine"
-  | "customDuration"
-  | "customDurationName"
   | "datePublished"
   | "descriptionSnippet"
   | "diets"
+  | "durationComponents"
+  | "durationTotal"
   | "featuredTag"
   | "favourite"
   | "mainIngredients"
   | "method"
-  | "preparationDuration"
   | "previewImage"
   | "slug"
   | "tags"
   | "title"
-> & {
-  totalDurationLabel?: string;
+>;
+
+export type RecipeDuration = {
+  /** The ISO 8601 duration. @example "PT1H15M" */
+  isoDuration: string;
+  /** The label of the recipe duration. @example "Preparation" */
+  label: string;
+  /** The total number of minutes in the duration. */
+  minutes: number;
+  /** The text of the recipe duration. @example "1h 20m" */
+  text: string;
 };
 
 export type FeaturedRecipes = {

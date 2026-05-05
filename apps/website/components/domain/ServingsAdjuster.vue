@@ -34,10 +34,10 @@ const decrementServings = () => {
 <template>
   <div :class="css({ display: 'flex', alignItems: 'center', columnGap: 'xs' })">
     <div :class="css({ display: 'flex', alignItems: 'center', userSelect: 'none' })">
-      <Button :disabled="servings <= 1" ariaLabel="Decrease servings" @click="decrementServings">
+      <Button :disabled="servings <= 1" aria-label="Decrease servings" @click="decrementServings">
         <icon
           name="mynaui:minus-square"
-          :size="40"
+          :size="36"
           :class="css({ color: token('colors.primary') })"
         />
       </Button>
@@ -47,7 +47,7 @@ const decrementServings = () => {
             css({
               textAlign: 'right',
               display: 'inline-block',
-              minWidth: '1.7em', // Reserve space for larger numbers to avoid minus icon jumping around
+              minWidth: '1.5em', // Reserve space for larger numbers to avoid minus icon jumping around
             })
           "
           ><b>{{ servings }}&nbsp;</b></span
@@ -55,16 +55,16 @@ const decrementServings = () => {
         <span
           :class="
             css({
-              marginRight: ' 0.7em', // Match extra space on the left side reserved for larger numbers
+              marginRight: ' 0.5em', // Match extra space on the left side reserved for larger numbers
             })
           "
           >{{ label }}</span
         >
       </span>
-      <Button ariaLabel="Increase servings" @click="incrementServings">
+      <Button aria-label="Increase servings" @click="incrementServings">
         <icon
           name="mynaui:plus-square"
-          :size="40"
+          :size="36"
           :class="css({ color: token('colors.primary') })"
         />
       </Button>

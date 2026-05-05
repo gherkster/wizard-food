@@ -1,7 +1,6 @@
 import type { FeaturedRecipes, Recipe } from "@wizard/content";
 
-import { mapToRecipePreview } from "../utils/mappings";
-import { recipeTotalDuration } from "./formatting";
+import { mapToRecipePreview } from "../utils/mapping";
 
 export const buildFeaturedRecipes = (rawRecipes: Recipe[]): FeaturedRecipes => {
   const recipePreviews = rawRecipes.map(mapToRecipePreview);
@@ -30,12 +29,12 @@ export const buildFeaturedRecipes = (rawRecipes: Recipe[]): FeaturedRecipes => {
 
   const quickRecipes = shuffle(recipePreviews)
     .filter((r) => {
-      const totalDuration = recipeTotalDuration(r);
       return (
         !alreadyShownRecipes.has(r.slug) &&
         r.course?.toLowerCase().startsWith("main") &&
-        totalDuration.asMinutes() > 0 &&
-        totalDuration.asMinutes() <= 45
+        r.durationTotal?.minutes !== undefined &&
+        r.durationTotal.minutes > 0 &&
+        r.durationTotal.minutes <= 45
       );
     })
     .slice(0, 4);

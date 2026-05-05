@@ -50,18 +50,21 @@ export const globalStyles = defineGlobalStyles({
     lineHeight: "1.2",
     margin: "0 0 {spacing.header-mb} 0",
   },
-  h1: { fontSize: "xxl" },
-  h2: { fontSize: "xl" },
-  h3: { fontSize: "lg" },
-  h4: { fontSize: "md" },
+  h1: { fontSize: "xxxl" },
+  h2: { fontSize: "xxl" },
+  h3: { fontSize: "xl" },
+  h4: { fontSize: "lg" },
   h5: { fontSize: "md" },
   h6: { fontSize: "sm" },
   p: {
-    my: "p-my",
-    lineHeight: 1.4,
+    lineHeight: 1.5,
+    marginBottom: "1em",
+    "&:last-of-type": {
+      marginBottom: 0,
+    },
   },
   span: {
-    lineHeight: 1.4,
+    lineHeight: 1.5,
   },
   b: {
     fontWeight: globalFont.weights.bold,
@@ -74,7 +77,7 @@ export const globalStyles = defineGlobalStyles({
     margin: 0,
   },
   "li:not(:last-child)": {
-    marginBottom: "li-mb",
+    marginBottom: "12px",
   },
   a: {
     color: "link",

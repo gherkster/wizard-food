@@ -4,7 +4,6 @@ import { grid } from "styled-system/patterns";
 import { token } from "styled-system/tokens";
 
 import type { RouteLocationRaw } from "#vue-router";
-import { formatRecipeDurations, recipeTotalDuration } from "~/utils/formatting";
 import { useJsonld } from "~/utils/jsonld";
 
 const route = useRoute();
@@ -45,11 +44,9 @@ if (import.meta.server) {
     keywords: recipe.value.tags
       .filter((t) => t !== recipe.value!.course && t !== recipe.value!.cuisine)
       .join(", "),
-    totalTime: recipeTotalDuration(recipe.value).toISOString(),
+    totalTime: recipe.value.durationTotal?.isoDuration,
   });
 }
-
-const durationLabels = computed(() => formatRecipeDurations(recipe.value!));
 
 useHead({
   title: recipe.value.title,
@@ -100,133 +97,155 @@ const highlightContainerStyles: Styles = {
     "
   >
     <Image :image="recipe.coverImage" />
-    <div :class="css({ display: 'flex', flexDirection: 'column', rowGap: 'md' })">
-      <h1 :class="css({ margin: 0 })">{{ recipe.title }}</h1>
 
-      <div v-if="recipe.description" v-html="recipe.description" />
+    <div :class="css({ display: 'flex', flexDirection: 'column', rowGap: '1em' })">
+      <h1 :class="css({ margin: 0, textWrapStyle: 'auto' })">{{ recipe.title }}</h1>
+
       <div :class="css({ display: 'flex', flexWrap: 'wrap', gap: 'xs' })">
         <HoverLink v-for="tag in recipe.tags" :key="tag" :to="createSearchLink(tag)">
-          <VTag icon-name="mynaui:search">{{ tag }}</VTag>
+          <Tag icon-name="mynaui:search">{{ tag }}</Tag>
         </HoverLink>
       </div>
 
+      <div v-if="recipe.description" v-html="recipe.description" />
+
+      <Divider />
+
       <div
         :class="
-          css(highlightContainerStyles, {
+          css({
             display: 'flex',
             width: '100%',
             justifyContent: 'space-between',
-            marginTop: 'auto',
           })
         "
       >
         <div
-          v-if="durationLabels.total"
+          v-if="recipe.durationTotal"
           :class="
             css({
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              textTransform: 'capitalize',
-              gap: 'xs',
+              hideFrom: 'lg', // Hide the popover using a parent container, since targeting the popover directly with panda css doesn't hide it
             })
           "
         >
-          <div>
-            <span
-              >Total <b>{{ durationLabels.total }}</b></span
-            >
-            <ul>
-              <li v-if="durationLabels.preparation">
-                <span
-                  >Preparation <b>{{ durationLabels.preparation }}</b></span
-                >
-              </li>
-              <li v-if="durationLabels.cooking">
-                <span
-                  >Cooking <b>{{ durationLabels.cooking }}</b></span
-                >
-              </li>
-              <li v-if="recipe.customDurationName && durationLabels.custom">
-                <span>
-                  {{ recipe.customDurationName }}
-                  <b>{{ durationLabels.custom }}</b></span
-                >
-              </li>
-            </ul>
-          </div>
+          <Popover>
+            <template #trigger>
+              <RecipeDuration
+                :label="recipe.durationTotal.label"
+                :value="recipe.durationTotal.text"
+              />
+            </template>
+
+            <div :class="css({ display: 'flex', flexDirection: 'column', gap: '0.5em' })">
+              <RecipeDuration
+                v-for="duration in recipe.durationComponents"
+                :label="duration.label"
+                :value="duration.text"
+              />
+            </div>
+          </Popover>
         </div>
 
-        <div :class="css({ display: 'flex', justifyContent: 'space-between', alignItems: 'end' })">
-          <ServingsAdjuster
-            :servings="servings"
-            :singular-label="recipe.servingsType?.singular"
-            :plural-label="recipe.servingsType?.plural"
-            @input="updateNumberOfServings"
-          />
-        </div>
+        <RecipeDuration
+          v-if="recipe.durationTotal"
+          :class="
+            css({
+              hideBelow: 'lg',
+            })
+          "
+          :label="recipe.durationTotal.label"
+          :value="recipe.durationTotal.text"
+        />
+
+        <RecipeDuration
+          v-for="duration in recipe.durationComponents"
+          :class="
+            css({
+              hideBelow: 'lg',
+            })
+          "
+          :label="duration.label"
+          :value="duration.text"
+        />
+
+        <ServingsAdjuster
+          :servings="servings"
+          :singular-label="recipe.servingsType?.singular"
+          :plural-label="recipe.servingsType?.plural"
+          @input="updateNumberOfServings"
+        />
       </div>
+
+      <Divider />
     </div>
 
     <div
       v-if="recipe.ingredientGroups.length > 0"
       :class="css(highlightContainerStyles, { display: 'flex', flexDirection: 'column' })"
     >
-      <div
-        :class="
-          css({
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-          })
-        "
-      >
-        <h2>Ingredients</h2>
-      </div>
+      <h2>Ingredients</h2>
 
-      <div
-        v-for="ingredientSection in recipe.ingredientGroups"
-        :key="`${ingredientSection.name}-${ingredientSection.ingredients.length}`"
-      >
-        <p v-if="ingredientSection.name">
-          <b>{{ ingredientSection.name }}</b>
-        </p>
-        <ul>
-          <template v-for="ingredient in ingredientSection.ingredients">
-            <li v-if="!ingredient.inlineOnly" :key="ingredient.name.singular">
-              <RecipeIngredient
-                :ingredient="ingredient"
-                :ingredient-multiplier="servings"
-                :original-number-of-servings="originalNumberOfServings"
-              />
-            </li>
-          </template>
-        </ul>
+      <div :class="css({ display: 'flex', flexDirection: 'column', rowGap: '1.2em' })">
+        <div
+          v-for="ingredientSection in recipe.ingredientGroups"
+          :key="`${ingredientSection.name}-${ingredientSection.ingredients.length}`"
+        >
+          <Text
+            v-if="ingredientSection.name"
+            size="lg"
+            weight="bold"
+            is="div"
+            :class="css({ mb: '0.5em' })"
+          >
+            {{ ingredientSection.name }}
+          </Text>
+
+          <ul :class="css({ listStyle: 'inside' })">
+            <template v-for="ingredient in ingredientSection.ingredients">
+              <li v-if="!ingredient.inlineOnly" :key="ingredient.name.singular">
+                <RecipeIngredient
+                  :ingredient="ingredient"
+                  :ingredient-multiplier="servings"
+                  :original-number-of-servings="originalNumberOfServings"
+                />
+              </li>
+            </template>
+          </ul>
+        </div>
       </div>
     </div>
 
     <div v-if="recipe.instructionGroups.length > 0" :class="css({ py: 'sm' })">
       <h2>Instructions</h2>
-      <div
-        v-for="instructionSection in recipe.instructionGroups"
-        :key="`${instructionSection.name}-${instructionSection.instructions.length}`"
-      >
-        <p v-if="instructionSection.name">
-          <b>{{ instructionSection.name }}</b>
-        </p>
-        <div :class="css({ display: 'flex', flexDirection: 'column', rowGap: 'xs' })">
-          <div
-            v-for="(instruction, index) in instructionSection.instructions"
-            :key="instruction.text"
-            :class="css({ display: 'flex', columnGap: 'xs' })"
+
+      <div :class="css({ display: 'flex', flexDirection: 'column', gap: 'sm' })">
+        <div
+          v-for="instructionSection in recipe.instructionGroups"
+          :key="`${instructionSection.name}-${instructionSection.instructions.length}`"
+        >
+          <Text
+            v-if="instructionSection.name"
+            size="lg"
+            weight="bold"
+            is="div"
+            :class="css({ mb: '0.5em' })"
           >
-            <VBadge>{{ index + 1 }}</VBadge>
-            <RecipeInstruction
-              :content="instruction.text"
-              :ingredient-multiplier="servings"
-              :original-number-of-servings="originalNumberOfServings"
-            />
+            {{ instructionSection.name }}
+          </Text>
+
+          <div :class="css({ display: 'flex', flexDirection: 'column', rowGap: '1.2em' })">
+            <div
+              v-for="(instruction, index) in instructionSection.instructions"
+              :key="instruction.text"
+              :class="css({ display: 'flex', columnGap: 'xs' })"
+            >
+              <VBadge>{{ index + 1 }}</VBadge>
+              <RecipeInstruction
+                :content="instruction.text"
+                :ingredient-multiplier="servings"
+                :original-number-of-servings="originalNumberOfServings"
+              />
+            </div>
           </div>
         </div>
       </div>

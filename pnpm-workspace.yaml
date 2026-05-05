@@ -53,6 +53,7 @@ catalog:
   oxlint-tsgolint: ^0.21.1
   pinia: 2.3.1
   pure-rand: ^6.1.0
+  reka-ui: ^2.9.6
   schema-dts: ^1.1.5
   tsx: ^4.21.0
   turbo: ^2.8.20

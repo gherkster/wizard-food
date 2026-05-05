@@ -13,9 +13,9 @@
     "preview": "npx serve .output/public"
   },
   "dependencies": {
-    "dayjs": "catalog:",
     "fraction.js": "catalog:",
-    "minisearch": "catalog:"
+    "minisearch": "catalog:",
+    "reka-ui": "catalog:"
   },
   "devDependencies": {
     "@iconify-json/mynaui": "catalog:",
