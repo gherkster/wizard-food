@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import type { Ingredient } from "@wizard/content";
+import { formatIngredientAmount, type Ingredient } from "@wizard/content";
 import Fraction from "fraction.js";
 import { css } from "styled-system/css";
 import { token } from "styled-system/tokens";
-
-import { formatIngredientAmount } from "~/utils/formatting";
 
 const props = defineProps<{
   ingredient: Ingredient;
