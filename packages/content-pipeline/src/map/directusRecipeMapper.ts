@@ -18,8 +18,10 @@ import type {
   ServerInstructionGroup,
   ServerRecipe,
 } from "@wizard/openapi";
+import dayjs from "dayjs";
 import prand from "pure-rand";
 
+import { formatDuration, secondsToDuration } from "../build/formatting";
 import { hydrateInlineIngredientData } from "../hydrateInlineIngredientData";
 import { renderRichTextHtml, renderRichTextText } from "../render";
 import { assertIsHydrated, throwExpression } from "../utils";
@@ -135,9 +137,36 @@ export const mapToRecipe = (
     };
   };
 
+  const preparationDuration = !isNil(serverRecipe.preparationDuration)
+    ? { name: "Preparation", duration: secondsToDuration(serverRecipe.preparationDuration) }
+    : undefined;
+
+  const cookingDuration = !isNil(serverRecipe.cookingDuration)
+    ? { name: "Cooking", duration: secondsToDuration(serverRecipe.cookingDuration) }
+    : undefined;
+
+  const customDuration =
+    !isNil(serverRecipe.customDuration) && !isNil(serverRecipe.customDurationName)
+      ? {
+          name: serverRecipe.customDurationName,
+          duration: secondsToDuration(serverRecipe.customDuration),
+        }
+      : undefined;
+
+  const recipeDurations = [preparationDuration, cookingDuration, customDuration].filter((d) => !!d);
+
+  const totalDuration = recipeDurations.reduce(
+    (acc, curr) => acc.add(curr.duration),
+    dayjs.duration(0),
+  );
+
   return {
     id: serverRecipe.id!,
-    title: serverRecipe.title,
+
+    cuisine: serverRecipe.cuisine ?? undefined,
+    course: serverRecipe.course ?? undefined,
+    coverImage: mapImage(serverRecipe.coverImage, "cover"),
+    datePublished: serverRecipe.date_published ?? undefined,
     description: !isNil(serverRecipe.description)
       ? renderRichTextHtml(serverRecipe.description as RichTextContent)
       : "",
@@ -145,11 +174,24 @@ export const mapToRecipe = (
       ? renderRichTextText(serverRecipe.description as RichTextContent)
       : "",
     descriptionSnippet: serverRecipe.description_snippet,
-    cuisine: serverRecipe.cuisine ?? undefined,
-    course: serverRecipe.course ?? undefined,
-    note: !isNil(serverRecipe.note) ? renderRichTextHtml(serverRecipe.note as RichTextContent) : "",
-    coverImage: mapImage(serverRecipe.coverImage, "cover"),
-    previewImage: mapImage(serverRecipe.coverImage, "preview"),
+    durationTotal:
+      totalDuration !== undefined
+        ? {
+            isoDuration: totalDuration.toISOString(),
+            label: "Total",
+            minutes: totalDuration.asMinutes(),
+            text: formatDuration(totalDuration),
+          }
+        : undefined,
+    durationComponents: recipeDurations.map((d) => {
+      return {
+        isoDuration: d.duration.toISOString(),
+        label: d.name,
+        minutes: d.duration.asMinutes(),
+        text: formatDuration(d.duration),
+      };
+    }),
+    favourite: serverRecipe.favourite,
     ingredientGroups:
       serverRecipe.ingredientGroups?.map<IngredientGroup>((ig) => {
         assertIsHydrated(ig, "ingredientGroup");
@@ -162,6 +204,10 @@ export const mapToRecipe = (
 
         return mapInstructionGroup(ig);
       }) ?? [],
+    note: !isNil(serverRecipe.note) ? renderRichTextHtml(serverRecipe.note as RichTextContent) : "",
+    previewImage: mapImage(serverRecipe.coverImage, "preview"),
+    title: serverRecipe.title,
+
     preparationDuration: serverRecipe.preparationDuration ?? undefined,
     cookingDuration: serverRecipe.cookingDuration ?? undefined,
     customDurationName: serverRecipe.customDurationName ?? undefined,
@@ -174,8 +220,6 @@ export const mapToRecipe = (
     slug: serverRecipe.slug,
     tags: tags,
     featuredTag: getRandomTag(tags, serverRecipe.id!),
-    favourite: serverRecipe.favourite,
-    datePublished: serverRecipe.date_published ?? undefined,
   };
 };
 

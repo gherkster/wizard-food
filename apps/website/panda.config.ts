@@ -50,9 +50,10 @@ export default defineConfig({
         bold: { value: globalFont.weights.bold },
       },
       fontSizes: {
-        xxl: { value: clamp(26, 36) },
-        xl: { value: clamp(20, 26) },
-        lg: { value: clamp(16, 20) },
+        xxxl: { value: clamp(26, 36) },
+        xxl: { value: clamp(20, 26) },
+        xl: { value: clamp(17, 20) },
+        lg: { value: clamp(16, 18) },
         md: { value: clamp(15, 16) }, // html, input, button
         sm: { value: clamp(12, 14) },
       },
@@ -63,7 +64,6 @@ export default defineConfig({
         xs: { value: clamp(8, 16) },
         xxs: { value: clamp(4, 8) },
 
-        "li-mb": { value: "16px" },
         "header-mb": { value: "16px" },
         "p-my": { value: "16px" },
       },

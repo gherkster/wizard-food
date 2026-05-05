@@ -8,7 +8,7 @@ import { useDirectusApi } from "./directus/client";
 import type { DirectusRuntimeConfig } from "./directus/client";
 import { mapToRecipe } from "./map/directusRecipeMapper";
 import { writeContentArtifacts } from "./output/writeArtifacts";
-import { mapToRecipePreview } from "./utils/mappings";
+import { mapToRecipePreview } from "./utils/mapping";
 
 export const resolveContentOutputDir = (contentDir?: string) => {
   return path.resolve(

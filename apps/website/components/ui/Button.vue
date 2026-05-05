@@ -3,7 +3,6 @@ import { css } from "styled-system/css";
 
 interface Props {
   disabled?: boolean;
-  ariaLabel?: string;
 }
 
 const props = defineProps<Props>();
@@ -51,7 +50,6 @@ const onClick = () => {
       })
     "
     :disabled="disabled"
-    :aria-label="ariaLabel"
     @click="onClick"
   >
     <slot />

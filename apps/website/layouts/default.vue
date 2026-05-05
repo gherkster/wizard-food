@@ -85,7 +85,6 @@ const finishAnimating = debounce(() => {
 
 /** The range over which to animate the header and mascot. */
 const animationRangePx = "200px";
-const contentPadding = "2rem";
 const maxContentWidth = "1600px";
 
 /**
@@ -160,7 +159,7 @@ const mascotStyles = css({
       css({
         maxWidth: maxContentWidth,
         margin: '0 auto',
-        padding: contentPadding,
+        padding: '1.2rem',
         position: 'relative',
         timelineScope: '--header-tracker',
       })
@@ -184,7 +183,7 @@ const mascotStyles = css({
 
     <header :class="headerStyles">
       <NuxtLink to="/" style="color: unset">
-        <Text size="xxl" text-wrap="noWrap" weight="bold">Wizard Food</Text>
+        <Text size="xxxl" text-wrap="noWrap" weight="bold">Wizard Food</Text>
       </NuxtLink>
 
       <div

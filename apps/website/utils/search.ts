@@ -13,7 +13,7 @@ export interface SearchIndexRecipe {
   slug: string;
   tags: string[];
   featuredTag?: string;
-  totalDurationLabel?: string;
+  totalDuration?: string;
 }
 
 export type SearchIndexSearchFields = Pick<SearchIndexRecipe, "title" | "tags">;
@@ -27,7 +27,7 @@ const searchIndexStoredFields: (keyof SearchIndexRecipe)[] = [
   "title",
   "tags",
   "featuredTag",
-  "totalDurationLabel",
+  "totalDuration",
   "image",
 ];
 

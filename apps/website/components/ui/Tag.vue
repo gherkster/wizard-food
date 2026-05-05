@@ -22,12 +22,12 @@ const tagSize = "12px";
         lineHeight: tagSize,
         borderRadius: token('radii.md'),
         textAlign: 'center',
-        fontSize: '1rem',
-        padding: '8px',
+        fontSize: 'sm',
+        padding: '6px',
       })
     "
   >
-    <icon v-if="iconName" :name="iconName" :size="16" />
+    <icon v-if="iconName" :name="iconName" :size="14" />
     <slot />
   </div>
 </template>

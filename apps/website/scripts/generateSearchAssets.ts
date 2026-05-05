@@ -68,7 +68,7 @@ const mapToSearchIndexRecipe = (recipe: RecipePreview): SearchIndexRecipe => {
       src: recipe.previewImage.src,
       srcSet: recipe.previewImage.srcSet,
     },
-    totalDurationLabel: recipe.totalDurationLabel,
+    totalDuration: recipe.durationTotal?.text,
     tags: recipe.tags,
     featuredTag: recipe.featuredTag,
     slug: recipe.slug,

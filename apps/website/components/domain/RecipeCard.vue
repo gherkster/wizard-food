@@ -28,7 +28,7 @@ defineProps<Props>();
         })
       "
     >
-      <Text size="lg" weight="bold">{{ title }}</Text>
+      <Text size="xl" weight="bold">{{ title }}</Text>
       <div v-if="duration || tag" :class="css({ display: 'flex', gap: '10px' })">
         <Text v-if="tag" size="sm">{{ tag }}</Text>
         <DotSeparator v-if="duration && tag" />

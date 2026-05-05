@@ -3,12 +3,15 @@ import { cva } from "styled-system/css";
 import type { FontSizeToken, FontWeightToken } from "styled-system/tokens";
 
 interface Props {
+  is?: "div" | "span" | "p";
   size?: FontSizeToken;
   textWrap?: "wrap" | "noWrap";
   weight?: FontWeightToken;
 }
 
-defineProps<Props>();
+withDefaults(defineProps<Props>(), {
+  is: "span",
+});
 
 const textRecipe = cva({
   variants: {
@@ -19,6 +22,7 @@ const textRecipe = cva({
       lg: { fontSize: "lg" },
       xl: { fontSize: "xl" },
       xxl: { fontSize: "xxl" },
+      xxxl: { fontSize: "xxxl" },
     },
     weight: {
       bold: { fontWeight: "bold" },
@@ -37,7 +41,7 @@ const textRecipe = cva({
 </script>
 
 <template>
-  <span :class="textRecipe({ size, weight, textWrap })">
+  <component :is="is" :class="textRecipe({ size, weight, textWrap })">
     <slot />
-  </span>
+  </component>
 </template>
