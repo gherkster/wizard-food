@@ -94,6 +94,9 @@ export default defineConfig({
           muted: { value: { base: palette.rye.value, _osDark: palette.ash.value } },
         },
         link: { value: { base: palette.burntHoney.value, _osDark: palette.rockmelon.value } },
+        selection: {
+          value: { base: palette.rockmelon.value, _osDark: palette.burntHoney.value },
+        },
         surface: {
           value: {
             base: palette.frosting.value,
