@@ -1,5 +1,9 @@
 import Fraction from "fraction.js";
 
+/**
+ * Formats an ingredient into a single line label
+ * @param ingredient The amount, name, units and note of an ingredient.
+ */
 export const formatIngredient = (ingredient: {
   amount?: Fraction | number;
   name: string;
@@ -17,6 +21,11 @@ export const formatIngredient = (ingredient: {
   return value.trim();
 };
 
+/**
+ * Format the recipe ingredient in a consistent way
+ * @param amount The ingredient amount
+ * @returns The ingredient amount, rounded to avoid excessively accurate fractions
+ */
 export const formatIngredientAmount = (amount: Fraction) => {
   const decimalAmount = amount.valueOf();
 

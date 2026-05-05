@@ -7,7 +7,7 @@ export type ContentFileName =
   | "pages-content.json"
   | "meta.json";
 
-export const resolveContentDir = (contentDir?: string) => {
+const resolveContentDir = (contentDir?: string) => {
   return path.resolve(
     contentDir ?? process.env.CONTENT_DIR ?? path.join(process.cwd(), ".content"),
   );
