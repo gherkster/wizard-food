@@ -13,6 +13,10 @@ export default defineNuxtConfig({
           name: "color-scheme",
           content: "light dark",
         },
+        {
+          name: "viewport",
+          content: "width=device-width, initial-scale=1",
+        },
       ],
       htmlAttrs: {
         lang: "en",
