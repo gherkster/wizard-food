@@ -88,4 +88,7 @@ export const globalStyles = defineGlobalStyles({
       textDecoration: "underline",
     },
   },
+  "::selection": {
+    bg: "selection",
+  },
 });
