@@ -44,7 +44,7 @@ export const useSearch = () => {
       return;
     }
 
-    const { data: index } = await useFetch<JSON>("/search-index.json");
+    const { data: index } = await useFetch<string>("/search-index.json");
     if (index.value) {
       const jsonString = JSON.stringify(index.value);
       loadIndex(jsonString);
