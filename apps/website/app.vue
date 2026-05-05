@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useSearch } from "./composables/useSearch";
+
 useHead({
   link: [
     {
@@ -32,6 +34,11 @@ if (import.meta.server) {
       },
     ],
   });
+}
+
+if (import.meta.env.DEV) {
+  // Refresh the search index in local dev, to avoid a stale search index if the handling logic around it has changed
+  void useSearch().refreshIndex();
 }
 </script>
 

@@ -12,6 +12,7 @@ const miniSearch = ref<MiniSearch<SearchIndexSearchFields>>();
 export type RecipeSearchResult = SearchResult & SearchIndexRecipe;
 
 export const useSearch = () => {
+  /** Ensures that the search index exists in local storage, retrieving it from the server if not. */
   const ensureIndex = async () => {
     if (miniSearch.value) {
       return;
@@ -35,6 +36,9 @@ export const useSearch = () => {
     }
   };
 
+  /**
+   * Refreshes the search index by downloading the latest copy from the server, and replacing the copy in local storage if successful.
+   */
   const refreshIndex = async () => {
     if (!import.meta.client) {
       return;
@@ -49,6 +53,11 @@ export const useSearch = () => {
     }
   };
 
+  /**
+   * Searches the recipe search index for a given query.
+   * @param query The string to prefix search for in the recipe search index.
+   * @returns The search results matching the given search query.
+   */
   const search = async (query: string) => {
     if (!miniSearch.value) {
       await ensureIndex();
@@ -66,6 +75,7 @@ export const useSearch = () => {
     }) as RecipeSearchResult[];
   };
 
+  /** Returns all items in the search index. */
   const allItems = async () => {
     if (!miniSearch.value) {
       await ensureIndex();
