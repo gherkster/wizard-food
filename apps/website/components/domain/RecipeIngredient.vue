@@ -8,8 +8,8 @@ import { formatIngredientAmount } from "~/utils/formatting";
 
 const props = defineProps<{
   ingredient: Ingredient;
-  ingredientMultiplier: number;
-  originalNumberOfServings: number;
+  selectedServings: number;
+  originalServings: number;
 }>();
 
 const amount = computed(() =>
@@ -21,7 +21,7 @@ const multipliedAmount = computed(() => {
     return undefined;
   }
 
-  return amount.value.mul(props.ingredientMultiplier).div(props.originalNumberOfServings);
+  return amount.value.mul(props.selectedServings).div(props.originalServings);
 });
 
 const formattedAmount = computed(() => {

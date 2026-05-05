@@ -13,7 +13,7 @@ defineProps<Props>();
     v-bind="$props"
     :class="
       css({
-        borderWidth: '1px',
+        borderBottomWidth: '2px',
         borderStyle: 'solid',
         borderColor: token('colors.border'),
       })
