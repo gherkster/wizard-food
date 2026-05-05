@@ -60,7 +60,7 @@ const contentCss = css({
         />
       </div>
     </PopoverTrigger>
-    <PopoverContent :class="contentCss" align="start">
+    <PopoverContent :class="contentCss" align="start" position-strategy="absolute">
       <slot />
       <PopoverArrow :class="css({ fill: token('colors.border') })" />
     </PopoverContent>

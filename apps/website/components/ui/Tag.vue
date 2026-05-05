@@ -22,7 +22,7 @@ const tagSize = "12px";
         lineHeight: tagSize,
         borderRadius: token('radii.md'),
         textAlign: 'center',
-        fontSize: 'sm',
+        fontSize: 'md',
         padding: '6px',
       })
     "
