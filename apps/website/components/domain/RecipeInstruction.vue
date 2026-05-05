@@ -18,8 +18,8 @@ type InlineIngredientMarkup = {
 
 const props = defineProps<{
   content: string;
-  ingredientMultiplier: number;
-  originalNumberOfServings: number;
+  selectedServings: number;
+  originalServings: number;
 }>();
 
 const inlineIngredientsRef = ref<HTMLDivElement>();
@@ -48,7 +48,7 @@ onMounted(() => {
 });
 
 watch(
-  () => props.ingredientMultiplier,
+  () => props.selectedServings,
   (newMultiplier) => multiplyInlineIngredients(newMultiplier),
 );
 
@@ -60,7 +60,7 @@ const multiplyInlineIngredients = (multiplicationFactor: number) => {
 
     const currentAmount = ingredient.data.amount
       .mul(multiplicationFactor)
-      .div(props.originalNumberOfServings);
+      .div(props.originalServings);
 
     const displayedIngredient = formatIngredient({
       amount: currentAmount,

@@ -4,6 +4,7 @@ import { grid } from "styled-system/patterns";
 import { token } from "styled-system/tokens";
 
 import type { RouteLocationRaw } from "#vue-router";
+import HeightAwareSticky from "~/components/ui/HeightAwareSticky.vue";
 import { useJsonld } from "~/utils/jsonld";
 
 const route = useRoute();
@@ -52,14 +53,11 @@ useHead({
   title: recipe.value.title,
 });
 
-const servings = ref<number>(
+const selectedServings = ref<number>(
   recipe.value.servings && recipe.value.servings > 0 ? recipe.value.servings : 1,
 );
-const originalNumberOfServings = servings.value;
 
-function updateNumberOfServings(newServings: number) {
-  servings.value = newServings;
-}
+const originalServings = selectedServings.value;
 
 const createSearchLink = (term: string): RouteLocationRaw => {
   return {
@@ -75,7 +73,7 @@ const highlightContainerStyles: Styles = {
   height: "fit-content",
   backgroundColor: token("colors.surface"),
   borderRadius: "sm",
-  borderWidth: "1px",
+  borderWidth: "2px",
   borderColor: token("colors.border"),
   padding: "sm",
 };
@@ -117,6 +115,10 @@ const highlightContainerStyles: Styles = {
             display: 'flex',
             width: '100%',
             justifyContent: 'space-between',
+            px: {
+              base: 'xs',
+              lg: 0,
+            },
           })
         "
       >
@@ -169,87 +171,32 @@ const highlightContainerStyles: Styles = {
         />
 
         <ServingsAdjuster
-          :servings="servings"
+          :servings="selectedServings"
           :singular-label="recipe.servingsType?.singular"
           :plural-label="recipe.servingsType?.plural"
-          @input="updateNumberOfServings"
+          @input="(value) => (selectedServings = value)"
         />
       </div>
 
       <Divider />
     </div>
 
-    <div
-      v-if="recipe.ingredientGroups.length > 0"
-      :class="css(highlightContainerStyles, { display: 'flex', flexDirection: 'column' })"
-    >
-      <h2>Ingredients</h2>
+    <HeightAwareSticky v-if="recipe.ingredientGroups.length > 0" :offset="48">
+      <RecipeIngredients
+        :class="css(highlightContainerStyles, { display: 'flex', flexDirection: 'column' })"
+        :ingredient-groups="recipe.ingredientGroups"
+        :selected-servings="selectedServings"
+        :original-servings="originalServings"
+      />
+    </HeightAwareSticky>
 
-      <div :class="css({ display: 'flex', flexDirection: 'column', rowGap: '1.2em' })">
-        <div
-          v-for="ingredientSection in recipe.ingredientGroups"
-          :key="`${ingredientSection.name}-${ingredientSection.ingredients.length}`"
-        >
-          <Text
-            v-if="ingredientSection.name"
-            size="lg"
-            weight="bold"
-            is="div"
-            :class="css({ mb: '0.5em' })"
-          >
-            {{ ingredientSection.name }}
-          </Text>
-
-          <ul :class="css({ listStyle: 'inside' })">
-            <template v-for="ingredient in ingredientSection.ingredients">
-              <li v-if="!ingredient.inlineOnly" :key="ingredient.name.singular">
-                <RecipeIngredient
-                  :ingredient="ingredient"
-                  :ingredient-multiplier="servings"
-                  :original-number-of-servings="originalNumberOfServings"
-                />
-              </li>
-            </template>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="recipe.instructionGroups.length > 0" :class="css({ py: 'sm' })">
-      <h2>Instructions</h2>
-
-      <div :class="css({ display: 'flex', flexDirection: 'column', gap: 'sm' })">
-        <div
-          v-for="instructionSection in recipe.instructionGroups"
-          :key="`${instructionSection.name}-${instructionSection.instructions.length}`"
-        >
-          <Text
-            v-if="instructionSection.name"
-            size="lg"
-            weight="bold"
-            is="div"
-            :class="css({ mb: '0.8em' })"
-          >
-            {{ instructionSection.name }}
-          </Text>
-
-          <div :class="css({ display: 'flex', flexDirection: 'column', rowGap: '1.2em' })">
-            <div
-              v-for="(instruction, index) in instructionSection.instructions"
-              :key="instruction.text"
-              :class="css({ display: 'flex', columnGap: 'xs' })"
-            >
-              <VBadge>{{ index + 1 }}</VBadge>
-              <RecipeInstruction
-                :content="instruction.text"
-                :ingredient-multiplier="servings"
-                :original-number-of-servings="originalNumberOfServings"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <RecipeInstructions
+      v-if="recipe.instructionGroups.length > 0"
+      :class="css({ py: 'sm' })"
+      :instruction-groups="recipe.instructionGroups"
+      :selected-servings="selectedServings"
+      :original-servings="originalServings"
+    />
 
     <div
       v-if="recipe.note"
