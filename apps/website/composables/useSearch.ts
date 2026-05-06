@@ -18,21 +18,13 @@ export const useSearch = () => {
       return;
     }
 
-    verifySearchIndexIsCached();
+    const cachedInstance = getCachedSearchIndex();
 
-    // If a valid copy of the search index wasn't found in localstorage,
-    // Trigger an async download of the index in the background
-    if (miniSearch.value === undefined) {
+    if (cachedInstance) {
+      miniSearch.value = cachedInstance;
+    } else {
+      // If a valid copy of the search index wasn't found in localstorage, then fetch and generate the local search index
       await refreshIndex();
-    }
-  };
-
-  const verifySearchIndexIsCached = () => {
-    if (import.meta.client) {
-      const storedIndex = localStorage.getItem("search-index");
-      if (storedIndex) {
-        loadIndex(storedIndex);
-      }
     }
   };
 
@@ -41,16 +33,28 @@ export const useSearch = () => {
    */
   const refreshIndex = async () => {
     if (!import.meta.client) {
+      // The server doesn't need a search index in local dev, and leads to 404 Page not found errors if enabled
       return;
     }
 
-    const { data: index } = await useFetch<string>("/search-index.json");
-    if (index.value) {
-      const jsonString = JSON.stringify(index.value);
-      loadIndex(jsonString);
+    const searchIndex = await fetchSearchIndex();
 
-      localStorage.setItem("search-index", jsonString);
+    if (searchIndex) {
+      cacheSearchIndex(searchIndex);
     }
+  };
+
+  const fetchSearchIndex = async () => {
+    const searchIndexJson = await $fetch<string>("/search-index.json", {
+      responseType: "text", // Don't bother deserialising when we need the raw string
+    });
+
+    if (!searchIndexJson) {
+      console.warn("Empty search index response.");
+      return;
+    }
+
+    return createSearchIndex(searchIndexJson);
   };
 
   /**
@@ -88,20 +92,49 @@ export const useSearch = () => {
     return miniSearch.value.search(MiniSearch.wildcard) as RecipeSearchResult[];
   };
 
-  const loadIndex = (jsonString: string) => {
-    try {
-      miniSearch.value = MiniSearch.loadJSON(jsonString, searchIndexSettings);
-      miniSearch.value.search("a"); // Do a search to validate this is a valid search index
-    } catch (error) {
-      miniSearch.value = undefined;
-      console.error(error);
-    }
-  };
-
   return {
     allItems,
     ensureIndex,
     refreshIndex,
     search,
   };
+};
+
+const createSearchIndex = (jsonString: string) => {
+  try {
+    const searchClient = MiniSearch.loadJSON<SearchIndexSearchFields>(
+      jsonString,
+      searchIndexSettings,
+    );
+    searchClient.search("a"); // Do a search to validate this is a valid search index
+
+    return searchClient;
+  } catch (error) {
+    console.error(error);
+
+    return undefined;
+  }
+};
+
+const getCachedSearchIndex = () => {
+  // The search index is stored in local storage which is only available on the client
+  if (!import.meta.client) {
+    return undefined;
+  }
+
+  const storedSearchIndexJson = localStorage.getItem("search-index");
+  if (!storedSearchIndexJson) {
+    return undefined;
+  }
+
+  return createSearchIndex(storedSearchIndexJson);
+};
+
+const cacheSearchIndex = (searchIndex: MiniSearch<SearchIndexSearchFields>) => {
+  // The search index is stored in local storage which is only available on the client
+  if (!import.meta.client) {
+    return;
+  }
+
+  localStorage.setItem("search-index", JSON.stringify(searchIndex));
 };
