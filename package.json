@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev:website": "turbo run dev --filter website --continue",
-    "generate:website": "turbo run generate --filter website",
+    "website:dev": "turbo run dev --filter website --continue",
+    "website:generate": "turbo run generate --filter website",
     "build": "turbo run build",
     "check": "pnpm run lint && pnpm run format:check",
     "lint": "pnpm run lint:ox",

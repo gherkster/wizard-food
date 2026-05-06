@@ -4,7 +4,6 @@ import { grid } from "styled-system/patterns";
 import { token } from "styled-system/tokens";
 
 import type { RouteLocationRaw } from "#vue-router";
-import HeightAwareSticky from "~/components/ui/HeightAwareSticky.vue";
 import { useJsonld } from "~/utils/jsonld";
 
 const route = useRoute();
