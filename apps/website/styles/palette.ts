@@ -26,7 +26,7 @@ export const palette = defineTokens.colors({
     value: "#cc7a3b",
   },
   molasses: {
-    value: "#201B18E5",
+    value: "#201b18",
   },
   poppySeed: {
     value: "#1b1c1c",

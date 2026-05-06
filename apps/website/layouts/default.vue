@@ -11,7 +11,9 @@ const searchClient = useSearch();
   Periodic checks are done after page load within the versioning middleware.
   This is also needed to pull in the data from localStorage on a fresh page load.
 */
-searchClient.ensureIndex();
+searchClient.ensureIndex().catch((error) => {
+  console.error(error);
+});
 
 const route = useRoute();
 
