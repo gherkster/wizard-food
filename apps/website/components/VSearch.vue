@@ -38,12 +38,6 @@ defineEmits<{
       icon-left="mynaui:search"
       placeholder="Search recipes..."
       @update:model-value="$emit('input', query)"
-    >
-      <template #prepend="{ onClick }">
-        <span :class="css({ lineHeight: 0 })" @click="onClick">
-          <icon name="mynaui:search" :size="20" />
-        </span>
-      </template>
-    </VInput>
+    />
   </form>
 </template>

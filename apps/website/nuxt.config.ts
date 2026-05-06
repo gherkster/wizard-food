@@ -85,14 +85,11 @@ export default defineNuxtConfig({
       // Disable to prevent unnecessary trailing slash redirects
       // https://community.cloudflare.com/t/removing-trailing-slash-on-static-websites/583429/3
       autoSubfolderIndex: false,
-      crawlLinks: false,
       // The recipe links are being dynamically added in the recipe module prerender hook.
+      crawlLinks: false,
       routes: ["/", "/recipes"],
     },
-    cloudflare: {
-      // Fix a redirected config being deployed that assumes a worker mjs file is being used https://github.com/nuxt/nuxt/issues/34186
-      deployConfig: false,
-    },
+    preset: "static",
   },
 
   postcss: {

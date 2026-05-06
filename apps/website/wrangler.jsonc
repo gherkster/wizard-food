@@ -1,6 +1,6 @@
 {
   "name": "wizard-food",
-  "compatibility_date": "2026-04-08",
+  "compatibility_date": "2026-05-06",
   "assets": {
     "directory": "./.output/public",
     "html_handling": "drop-trailing-slash",
