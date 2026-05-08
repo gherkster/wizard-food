@@ -1,38 +1,47 @@
 import type { Options } from "minisearch";
 
 /** The minimal fields that are stored inside the recipe search index. */
-export interface SearchIndexRecipe {
-  title: string;
+export type RecipeSearchIndexEntry = {
+  course: string;
+  cuisine: string;
+  diets: string[] | undefined;
+  durationTotal: string | undefined;
+  featuredTag: string | undefined;
   image: {
     height: number;
-    width: number;
+    sizes: string;
     src: string;
     srcSet: string;
-    sizes: string;
+    width: number;
   };
   slug: string;
-  tags: string[];
-  featuredTag?: string;
-  totalDuration?: string;
-}
+  title: string;
+};
 
-export type SearchIndexSearchFields = Pick<SearchIndexRecipe, "title" | "tags">;
+export type RecipeSearchIndexSearchFields = Pick<RecipeSearchIndexEntry, "title">;
+
+const exhaustiveKeys = <T>() => {
+  return <U extends (keyof T)[]>(...keys: U & ([keyof T] extends [U[number]] ? U : never)) => keys;
+};
 
 // Type safe property name extraction
-const searchIndexIdField: keyof SearchIndexRecipe = "slug";
+const searchIndexIdField: keyof RecipeSearchIndexEntry = "slug";
 
-const searchIndexIndexedFields: (keyof SearchIndexSearchFields)[] = ["title", "tags"];
-const searchIndexStoredFields: (keyof SearchIndexRecipe)[] = [
+const searchIndexSearchFields = exhaustiveKeys<RecipeSearchIndexSearchFields>()("title");
+
+const searchIndexStoredFields = exhaustiveKeys<RecipeSearchIndexEntry>()(
+  "course",
+  "cuisine",
+  "diets",
+  "durationTotal",
+  "featuredTag",
+  "image",
   "slug",
   "title",
-  "tags",
-  "featuredTag",
-  "totalDuration",
-  "image",
-];
+);
 
 export const searchIndexSettings: Options = {
-  fields: searchIndexIndexedFields,
+  fields: searchIndexSearchFields,
   idField: searchIndexIdField,
   storeFields: searchIndexStoredFields,
 };

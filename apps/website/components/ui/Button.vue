@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { css } from "styled-system/css";
+import type { ButtonHTMLAttributes } from "vue";
 
 interface Props {
   disabled?: boolean;
+  type?: ButtonHTMLAttributes["type"];
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  type: "button",
+});
 
 const emit = defineEmits<{
   click: [];
@@ -50,6 +54,7 @@ const onClick = () => {
       })
     "
     :disabled="disabled"
+    :type="type"
     @click="onClick"
   >
     <slot />

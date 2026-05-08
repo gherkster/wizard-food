@@ -35,7 +35,7 @@ export const palette = defineTokens.colors({
     value: "#ffb785",
   },
   rye: {
-    value: "#707070",
+    value: "#808080",
   },
   whey: {
     value: "#f9f5ed",

@@ -32,7 +32,7 @@ defineEmits<{
     role="search"
     @submit.prevent="$emit('search', query)"
   >
-    <VInput
+    <Input
       v-model="query"
       :class="css({ color: token('colors.font.muted') })"
       icon-left="mynaui:search"

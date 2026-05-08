@@ -42,6 +42,7 @@ defineEmits(["click"]);
         cursor: 'pointer',
       })
     "
+    type="button"
     @click="animateMascot"
   >
     <MascotSVG :class="{ excited: animate || isAnimated }" :width="size" />

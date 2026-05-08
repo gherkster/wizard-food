@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PopoverArrow, PopoverContent, PopoverRoot, PopoverTrigger } from "reka-ui";
+import { Popover as HPopover, PopoverButton, PopoverPanel } from "@headlessui/vue";
 import { css } from "styled-system/css";
 import { token } from "styled-system/tokens";
 
@@ -13,7 +13,8 @@ withDefaults(defineProps<Props>(), {
 
 const triggerCss = css({
   cursor: "pointer",
-  '&[data-state="open"] .icon': {
+  outline: "none",
+  "&[data-open] .icon": {
     transform: "rotate(180deg)",
   },
 });
@@ -27,15 +28,18 @@ const contentCss = css({
   borderColor: token("colors.border"),
   borderRadius: "sm",
   borderWidth: "2px",
-  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+  boxShadow: token("shadows.subtle"),
+  left: "-16px",
   padding: "sm",
+  position: "absolute",
   zIndex: 1000,
+  outline: "none",
 });
 </script>
 
 <template>
-  <PopoverRoot>
-    <PopoverTrigger :class="triggerCss">
+  <HPopover :class="css({ position: 'relative' })">
+    <PopoverButton :class="triggerCss">
       <div
         :class="
           css({
@@ -48,21 +52,21 @@ const contentCss = css({
         <Icon
           v-if="iconPosition === 'left'"
           name="mynaui:chevron-down"
-          :class="iconCss"
+          :class="[iconCss, 'icon']"
           :size="24"
         />
         <slot name="trigger" />
         <Icon
           v-if="iconPosition === 'right'"
           name="mynaui:chevron-down"
-          :class="iconCss"
+          :class="[iconCss, 'icon']"
           :size="24"
         />
       </div>
-    </PopoverTrigger>
-    <PopoverContent :class="contentCss" align="start" position-strategy="absolute">
+    </PopoverButton>
+
+    <PopoverPanel :class="contentCss">
       <slot />
-      <PopoverArrow :class="css({ fill: token('colors.border') })" />
-    </PopoverContent>
-  </PopoverRoot>
+    </PopoverPanel>
+  </HPopover>
 </template>

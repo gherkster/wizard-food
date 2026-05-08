@@ -62,7 +62,7 @@ const createSearchLink = (term: string): RouteLocationRaw => {
   return {
     path: "/recipes",
     query: {
-      search: term.trim(),
+      q: term.trim(),
     },
   };
 };

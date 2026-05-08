@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { Image } from "@wizard/content";
-import { center, grid } from "styled-system/patterns";
+import { css } from "styled-system/css";
+import { grid } from "styled-system/patterns";
 
 import { useSearch } from "~/composables/useSearch";
 import { throwIfNil } from "~/utils/error";
-import type { SearchIndexRecipe } from "~/utils/search";
+import { formatSearchSummary } from "~/utils/format";
+import type { RecipeSearchIndexEntry } from "~/utils/search";
 
 const { data: content } = await useFetch("/api/content/recipes");
 throwIfNil(content.value, "Failed to fetch content.");
@@ -22,20 +24,9 @@ if (import.meta.server) {
   });
 }
 
-const route = useRoute();
-const searchTerm = computed(() => {
-  if (!route.query.search || typeof route.query.search !== "string") {
-    return null;
-  }
+const { activeParams, results } = useSearch();
 
-  return route.query.search.trim();
-});
-
-const searchClient = useSearch();
-
-const recipes = ref<SearchIndexRecipe[]>([]);
-
-const toCardImage = (recipe: SearchIndexRecipe): Image => {
+const toCardImage = (recipe: RecipeSearchIndexEntry): Image => {
   return {
     height: recipe.image.height,
     modifiedOn: "",
@@ -47,90 +38,69 @@ const toCardImage = (recipe: SearchIndexRecipe): Image => {
   };
 };
 
-watch(
-  () => route.query,
-  async () => {
-    if (!route.query.search || typeof route.query.search !== "string") {
-      recipes.value = await searchClient.allItems();
-      return;
-    }
-
-    const searchResults = await searchClient.search(route.query.search);
-    recipes.value = searchResults;
-  },
-  {
-    // Need immediate so it also runs on fresh page load
-    immediate: true,
-  },
+const searchDescription = computed(() =>
+  formatSearchSummary(activeParams.value, {
+    hasResults: results.value.length > 0,
+  }),
 );
 
-const isEmptySearchResult = computed(() => recipes.value.length === 0 && !!searchTerm.value);
-
-const searchResultsPrefix = computed(() => {
-  if (isEmptySearchResult.value) {
-    return "No recipes found for ";
+/** Generates a unique key based on the current search state for triggering transitions. */
+const searchStateKey = computed(() => {
+  if (results.value.length === 0) {
+    return "no-results";
   }
 
-  if (searchTerm.value) {
-    return "Search Results for ";
-  }
-
-  return "Recipes";
+  // Create a unique key based on the slugs and their specific order.
+  return results.value.map((r) => r.slug).join(",");
 });
 </script>
 
 <template>
-  <div
-    v-if="isEmptySearchResult"
-    :class="
-      center({
-        display: 'flex',
-        flexDirection: 'column',
-        w: '100%',
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-      })
-    "
-  >
-    <h3>
-      No recipes found for <b>{{ searchTerm }}</b>
-    </h3>
+  <div :class="css({ display: 'flex', flexDirection: 'column', gap: 'md' })">
+    <ClientOnly>
+      <div>
+        <h1>{{ searchDescription }}</h1>
+        <SearchFilters />
+      </div>
 
-    <HoverLink to="/recipes">
-      <Text size="xl">See all recipes</Text>
-    </HoverLink>
-  </div>
-  <div v-else>
-    <h2>
-      {{ searchResultsPrefix }}<b v-show="searchTerm">{{ searchTerm }}</b>
-    </h2>
-    <div
-      :class="
-        grid({
-          columns: {
-            base: 2,
-            md: 3,
-            lg: 4,
-          },
-          columnGap: 'sm',
-          rowGap: 'md',
-        })
-      "
-    >
-      <ClientOnly>
-        <RecipeCard
-          v-for="(recipe, index) in recipes"
-          :key="recipe.slug"
-          :title="recipe.title"
-          :image="toCardImage(recipe)"
-          :to="`/recipes/${recipe.slug}`"
-          :tag="recipe.featuredTag"
-          :duration="recipe.totalDuration"
-          :lazy-load-image="index > 8"
-        />
-      </ClientOnly>
-    </div>
+      <Transition name="quick-fade" mode="out-in">
+        <div
+          :key="searchStateKey"
+          :class="
+            grid({
+              columns: {
+                base: 2,
+                md: 3,
+                lg: 4,
+              },
+              columnGap: 'sm',
+              rowGap: 'md',
+            })
+          "
+        >
+          <RecipeCard
+            v-for="(recipe, index) in results"
+            :key="recipe.slug"
+            :title="recipe.title"
+            :image="toCardImage(recipe)"
+            :to="`/recipes/${recipe.slug}`"
+            :tag="recipe.featuredTag"
+            :duration="recipe.durationTotal"
+            :lazy-load-image="index > 8"
+          />
+        </div>
+      </Transition>
+    </ClientOnly>
   </div>
 </template>
+
+<style scoped>
+.quick-fade-enter-active,
+.quick-fade-leave-active {
+  transition: opacity 0.15s ease;
+}
+.quick-fade-enter-from,
+.quick-fade-leave-to {
+  opacity: 0;
+}
+</style>

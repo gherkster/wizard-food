@@ -12,10 +12,6 @@ defineProps<{
 const model = defineModel<string>({
   required: true,
 });
-
-// Trigger input field focus if the icon is clicked
-const btnRef = ref<HTMLInputElement>();
-const focusButton = () => btnRef.value?.focus();
 </script>
 
 <template>
@@ -25,16 +21,14 @@ const focusButton = () => btnRef.value?.focus();
         display: 'flex',
         alignItems: 'center',
         minWidth: '160px',
-        borderRadius: 'md',
-        borderWidth: '2px',
-        borderStyle: 'solid',
-        borderColor: token('colors.border'),
-        backgroundColor: token('colors.surface'),
-        px: 'xxs',
         '& input': {
           backgroundColor: token('colors.surface'),
+          borderRadius: 'md',
+          borderWidth: '2px',
+          borderStyle: 'solid',
+          borderColor: token('colors.border'),
           outline: 'none',
-          padding: '10px 4px',
+          padding: '10px 12px',
           width: '100%',
         },
         '& label': {
@@ -46,10 +40,9 @@ const focusButton = () => btnRef.value?.focus();
       })
     "
   >
-    <slot name="prepend" :on-click="focusButton" />
     <label>
       {{ label }}
-      <input ref="btnRef" v-model="model" type="input" :placeholder="placeholder" size="1" />
+      <input v-model="model" type="input" :placeholder="placeholder" size="1" />
     </label>
   </div>
 </template>
