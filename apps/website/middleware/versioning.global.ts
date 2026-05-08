@@ -51,7 +51,7 @@ export default defineNuxtRouteMiddleware((to) => {
       */
         if (!searchIndexDownload) {
           searchIndexDownload = useSearch()
-            .refreshIndex()
+            .sync()
             .finally(() => {
               localStorage.setItem(searchIndexHashStorageKey, version.searchIndexHash);
               searchIndexDownload = null;

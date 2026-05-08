@@ -30,20 +30,14 @@ export type Image = {
 };
 
 export type Recipe = {
-  /** The cooking duration in minutes. */
-  cookingDuration?: number;
   /** The recipe course. @example "Mains" */
-  course?: string;
+  course: string;
   /** The large cover image of the recipe. */
   coverImage: Image;
   /** The recipe cuisine. @example "German" */
-  cuisine?: string;
-  /** The custom duration in minutes. */
-  customDuration?: number;
-  /** The name of the custom duration. */
-  customDurationName?: string;
+  cuisine: string;
   /** The date the recipe was published. */
-  datePublished?: string;
+  datePublished: string | undefined;
   /** The description of the recipe. @format html */
   description: string;
   /** The plaintext description of the recipe. */
@@ -51,27 +45,21 @@ export type Recipe = {
   /** The plaintext description snippet. */
   descriptionSnippet: string;
   /** The diets applicable to this recipe. @example ["Vegetarian", "Vegan"] */
-  diets?: string[];
-  durationTotal?: RecipeDuration;
+  diets: string[] | undefined;
+  durationTotal: RecipeDuration | undefined;
   durationComponents: RecipeDuration[];
   /** Whether the recipe is a favourite recipe. */
-  favourite?: boolean;
+  favourite: boolean | undefined;
   /** The featured tag of the recipe metadata. */
-  featuredTag?: string;
-  /** The unique identifier of the recipe. */
-  id: number;
+  featuredTag: string | undefined;
   /** The recipe ingredient groups. */
   ingredientGroups: IngredientGroup[];
   /** The recipe instruction groups. */
   instructionGroups: InstructionGroup[];
   /** The main ingredients of the recipe. @example ["Beef"] */
-  mainIngredients?: string[];
-  /** The method of the recipe. @example "Stir Fry" */
-  method?: string;
+  mainIngredients: string[] | undefined;
   /** The recipe notes. @format html */
-  note?: string;
-  /** The preparation duration in minutes. */
-  preparationDuration?: number;
+  note: string | undefined;
   /** The small preview image of the recipe. */
   previewImage: Image;
   /** The number of recipe servings. */
@@ -98,10 +86,8 @@ export type RecipePreview = Pick<
   | "featuredTag"
   | "favourite"
   | "mainIngredients"
-  | "method"
   | "previewImage"
   | "slug"
-  | "tags"
   | "title"
 >;
 

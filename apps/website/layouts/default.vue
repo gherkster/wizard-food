@@ -5,70 +5,24 @@ import { token } from "styled-system/tokens";
 import { useSearch } from "~/composables/useSearch";
 import { debounce } from "~/utils/debounce";
 
-const searchClient = useSearch();
+const { activeParams, init, updateSearch } = useSearch();
 /*
   Kick off a background download of the search index if it hasn't been downloaded yet.
   Periodic checks are done after page load within the versioning middleware.
   This is also needed to pull in the data from localStorage on a fresh page load.
 */
-searchClient.ensureIndex().catch((error) => {
+init().catch((error) => {
   console.error(error);
 });
 
-const route = useRoute();
+const handleSearch = debounce(async (value: string) => {
+  const trimmedQuery = value.trim();
 
-const initialQuery =
-  route.query.search && typeof route.query.search === "string" ? route.query.search : null;
+  // If a search query already exists, replace history. If fresh search, push to history.
+  const shouldReplace = !!activeParams.value.q;
 
-// Prefill the search box with the previously searched for query if one exists
-// This is only relevant for a page reload or following a search link
-const query = ref(initialQuery ?? "");
-
-// Keep input value in sync with the url query param
-watch(
-  () => route.query.search,
-  (urlSearch) => {
-    if (typeof route.query.search !== "string") {
-      query.value = "";
-      return;
-    }
-    query.value = urlSearch?.toString() ?? "";
-  },
-);
-
-const onInput = (value: string) => {
-  search(value);
-  animateMascot();
-};
-
-/** Debounce value for the search input, can be quite short since it is in-memory */
-const searchDebounceMs = 150;
-
-const search = debounce(async (value: string) => {
-  query.value = value;
-  const trimmedQuery = query.value.trim();
-
-  /*
-  navigateTo.replace is used below so that each keystroke of a search does not push a new entry into the browser history
-  The initial navigation to the search results is considered part of the history if the user was not searching before,
-  but any subsequent key presses triggering searches should not add to the browser history
-  */
-  if (trimmedQuery.length === 0) {
-    await navigateTo("/recipes", {
-      replace: !!route.query.search,
-    });
-    return;
-  }
-
-  await navigateTo({
-    path: "/recipes",
-    replace: !!route.query.search,
-    query: {
-      search: trimmedQuery,
-    },
-  });
-  return;
-}, searchDebounceMs);
+  await updateSearch({ q: trimmedQuery }, shouldReplace);
+}, 200); // Debounce the search input, can be quite short since the searching is in-memory
 
 const isAnimated = ref(false);
 
@@ -78,12 +32,14 @@ const animateMascot = () => {
   finishAnimating();
 };
 
-/** Debounce value for the typing animation, should be longer to reduce jumping */
-const animationDebounceMs = 1000;
-
 const finishAnimating = debounce(() => {
   isAnimated.value = false;
-}, animationDebounceMs);
+}, 1000); // Debounce for the typing animation should be relatively long to reduce jumping
+
+const onInput = (value: string) => {
+  handleSearch(value);
+  animateMascot();
+};
 
 /** The range over which to animate the header and mascot. */
 const animationRangePx = "200px";
@@ -224,7 +180,7 @@ const mascotStyles = css({
           <VMascot :animate="isAnimated" :size="54" :class="mascotStyles" />
 
           <VSearch
-            :value="query"
+            :value="activeParams.q ?? ''"
             :class="
               css({
                 width: '100%',

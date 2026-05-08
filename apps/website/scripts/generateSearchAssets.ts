@@ -6,11 +6,7 @@ import { loadAllRecipes, type RecipePreview } from "@wizard/content";
 import MiniSearch from "minisearch";
 
 import type { AppVersion } from "../types/version";
-import {
-  searchIndexSettings,
-  type SearchIndexRecipe,
-  type SearchIndexSearchFields,
-} from "../utils/search";
+import { searchIndexSettings, type RecipeSearchIndexEntry } from "../utils/search";
 
 // https://developers.cloudflare.com/workers/ci-cd/builds/configuration/
 const commitHashVariableName = "WORKERS_CI_COMMIT_SHA";
@@ -27,9 +23,9 @@ const publicDir = path.resolve(process.cwd(), "public");
  * @param recipes The recipes containing the fields to be indexed and stored in the search index.
  * @returns The md5 hash of the generated search index.
  */
-const generateSearchIndexAsset = async (recipes: SearchIndexRecipe[]) => {
+const generateSearchIndexAsset = async (recipes: RecipeSearchIndexEntry[]) => {
   console.log("Generating recipe search index");
-  const miniSearch = new MiniSearch<SearchIndexSearchFields>(searchIndexSettings);
+  const miniSearch = new MiniSearch(searchIndexSettings);
 
   miniSearch.addAll(recipes);
 
@@ -58,9 +54,13 @@ const generateAppVersionAsset = async (version: AppVersion) => {
 
 // We don't want to index every field in the recipe since it's client side and would make it excessively big,
 // so just index the fields we want to keep client side to show in the search results.
-const mapToSearchIndexRecipe = (recipe: RecipePreview): SearchIndexRecipe => {
+const mapToSearchIndexRecipe = (recipe: RecipePreview): RecipeSearchIndexEntry => {
   return {
-    title: recipe.title,
+    course: recipe.course,
+    cuisine: recipe.cuisine,
+    diets: recipe.diets,
+    durationTotal: recipe.durationTotal?.text,
+    featuredTag: recipe.featuredTag,
     image: {
       height: recipe.previewImage.height,
       width: recipe.previewImage.width,
@@ -68,10 +68,8 @@ const mapToSearchIndexRecipe = (recipe: RecipePreview): SearchIndexRecipe => {
       src: recipe.previewImage.src,
       srcSet: recipe.previewImage.srcSet,
     },
-    totalDuration: recipe.durationTotal?.text,
-    tags: recipe.tags,
-    featuredTag: recipe.featuredTag,
     slug: recipe.slug,
+    title: recipe.title,
   };
 };
 

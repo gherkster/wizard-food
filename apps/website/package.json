@@ -8,14 +8,16 @@
     "content:sync": "pnpm --filter @wizard/content-pipeline run content:sync sync --site $PWD --dotenv-file .env --content-dir .content",
     "search:generate": "tsx ./scripts/generateSearchAssets.ts",
     "prepare": "nuxt prepare && panda codegen",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
     "bundle:analyze": "nuxi analyze",
     "typecheck": "nuxi typecheck",
     "preview": "npx serve .output/public"
   },
   "dependencies": {
+    "@headlessui/vue": "catalog:",
     "fraction.js": "catalog:",
-    "minisearch": "catalog:",
-    "reka-ui": "catalog:"
+    "minisearch": "catalog:"
   },
   "devDependencies": {
     "@iconify-json/mynaui": "catalog:",
@@ -31,6 +33,7 @@
     "schema-dts": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
+    "vitest": "catalog:",
     "vue": "catalog:",
     "vue-tsc": "catalog:"
   },

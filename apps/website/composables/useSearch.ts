@@ -1,52 +1,114 @@
 import MiniSearch, { type SearchResult } from "minisearch";
 
+import type { SelectOption } from "~/types/form";
+import { getQueryParam } from "~/utils/route";
 import {
   searchIndexSettings,
-  type SearchIndexRecipe,
-  type SearchIndexSearchFields,
+  type RecipeSearchIndexEntry,
+  type RecipeSearchIndexSearchFields,
 } from "~/utils/search";
 
-// Store these outside the function in the global scope for re-use
-const miniSearch = ref<MiniSearch<SearchIndexSearchFields>>();
+/** The keys of the facets available for filtering on. */
+export type FacetKey = keyof Pick<RecipeSearchIndexEntry, "course" | "cuisine" | "diets">;
+type Facets = Record<FacetKey, string[]>;
 
-export type RecipeSearchResult = SearchResult & SearchIndexRecipe;
+/** The search and filter query parameters. */
+export type SearchParams = {
+  /** The cuisine to search. */
+  c: string;
+  /** The diet to search. */
+  d: string;
+  /** The course (meal) to search. */
+  m: string;
+  /** The query text to search. */
+  q: string;
+};
+
+export type RecipeSearchResult = SearchResult & RecipeSearchIndexEntry;
+
+// The global search index instance
+let miniSearchIndex: MiniSearch<RecipeSearchIndexSearchFields> | null = null;
 
 export const useSearch = () => {
-  /** Ensures that the search index exists in local storage, retrieving it from the server if not. */
-  const ensureIndex = async () => {
-    if (miniSearch.value) {
+  const route = useRoute();
+
+  /** The current recipe search results, based on the active filters. */
+  const results = useState<RecipeSearchResult[]>("search-results", () => []);
+
+  /** The recipe search facets. */
+  const facets = useState<Facets>("search-facets", () => ({
+    cuisine: [],
+    course: [],
+    diets: [],
+  }));
+
+  const options = useState<Record<FacetKey, SelectOption[]>>("search-facet-options", () => ({
+    cuisine: [],
+    course: [],
+    diets: [],
+  }));
+
+  const activeParams = computed<Required<SearchParams>>(() => ({
+    c: getQueryParam("c") ?? "",
+    d: getQueryParam("d") ?? "",
+    m: getQueryParam("m") ?? "",
+    q: getQueryParam("q") ?? "",
+  }));
+
+  const isReady = useState("search-ready", () => false);
+
+  /** Initialises the search index, hydrating the cached search index if present, otherwise fetching from the server. */
+  const init = async () => {
+    if (isReady.value) {
       return;
     }
 
-    const cachedInstance = getCachedSearchIndex();
-
-    if (cachedInstance) {
-      miniSearch.value = cachedInstance;
-    } else {
-      // If a valid copy of the search index wasn't found in localstorage, then fetch and generate the local search index
-      await refreshIndex();
-    }
-  };
-
-  /**
-   * Refreshes the search index by downloading the latest copy from the server, and replacing the copy in local storage if successful.
-   */
-  const refreshIndex = async () => {
     if (!import.meta.client) {
-      // The server doesn't need a search index in local dev, and leads to 404 Page not found errors if enabled
       return;
     }
 
-    const searchIndex = await fetchSearchIndex();
+    try {
+      const cachedSearchIndexJson = localStorage.getItem("search-index");
+      if (cachedSearchIndexJson) {
+        hydrate(cachedSearchIndexJson);
+      } else {
+        await sync();
+      }
 
-    if (searchIndex) {
-      cacheSearchIndex(searchIndex);
+      isReady.value = true;
+
+      // Populate the initial set of search results
+      await refresh();
+    } catch (e) {
+      console.error("Search init failed", e);
     }
   };
 
-  const fetchSearchIndex = async () => {
+  /** Hydrates the search index using the JSON of the serialised search index. */
+  const hydrate = (searchIndexJson: string) => {
+    miniSearchIndex = MiniSearch.loadJSON<RecipeSearchIndexSearchFields>(
+      searchIndexJson,
+      searchIndexSettings,
+    );
+
+    const all = miniSearchIndex.search(MiniSearch.wildcard) as RecipeSearchResult[];
+
+    // Generate the facets and the available options for each
+    facets.value = {
+      cuisine: [...new Set(all.map((r) => r.cuisine).filter(Boolean))].sort(),
+      course: [...new Set(all.map((r) => r.course).filter(Boolean))].sort(),
+      diets: [...new Set(all.flatMap((r) => r.diets || []))].sort(),
+    };
+  };
+
+  /** Syncs the search index with the server by fetching the latest JSON of the serialised search index. */
+  const sync = async () => {
+    if (!import.meta.client) {
+      return;
+    }
+
     const searchIndexJson = await $fetch<string>("/search-index.json", {
-      responseType: "text", // Don't bother deserialising when we need the raw string
+      responseType: "text",
     });
 
     if (!searchIndexJson) {
@@ -54,87 +116,170 @@ export const useSearch = () => {
       return;
     }
 
-    return createSearchIndex(searchIndexJson);
+    hydrate(searchIndexJson);
+
+    localStorage.setItem("search-index", searchIndexJson);
   };
+
+  /** Refreshes the search index results by performing a search against the current search filters. */
+  const refresh = async () => {
+    if (!isReady.value || !miniSearchIndex) {
+      return;
+    }
+
+    // Get the recipes matching the text search, or all recipes if there is no current text search filter
+    // This is required below to calculate both the filtered search results, as well as the available facets for filtering
+    const querySearchResults = miniSearchIndex.search(
+      activeParams.value.q?.trim() || MiniSearch.wildcard,
+      {
+        combineWith: "AND", // Don't use the default "OR" matching, which can match different recipes when the query includes spaces
+        prefix: true, // Match on the prefix of the result, not exact word matches. I.e. chick -> chicken
+      },
+    ) as RecipeSearchResult[];
+
+    const newResults: RecipeSearchResult[] = [];
+
+    const validFacets = {
+      cuisine: new Set<string>(),
+      course: new Set<string>(),
+      diets: new Set<string>(),
+    };
+
+    for (const recipe of querySearchResults) {
+      let matchedFacetsCount = 0;
+      let lastFailedKey: FacetKey | undefined;
+
+      for (let i = 0; i < filterFacets.length; i++) {
+        const facet = filterFacets[i]!;
+        if (facet.check(recipe, activeParams.value)) {
+          matchedFacetsCount++;
+        } else {
+          lastFailedKey = facet.key;
+        }
+      }
+
+      // If the recipe matches all facet filters, include it in the search results
+      if (matchedFacetsCount === filterFacets.length) {
+        newResults.push(recipe);
+
+        for (let i = 0; i < filterFacets.length; i++) {
+          addToFacetOptions(recipe, filterFacets[i]!.key, validFacets);
+        }
+      } else if (matchedFacetsCount === filterFacets.length - 1 && lastFailedKey) {
+        /**
+         * This is an implementation of smart facets.
+         *
+         * If this recipe matches all but one of the currently active filters,
+         * then it's a valid operation to switch the filter from its current value to that new value,
+         * since it will then match all active filters.
+         *
+         * By doing this, we build up the full set of available options based on the currently selected filters.
+         * It avoids presenting options that would result in zero results being displayed.
+         */
+        addToFacetOptions(recipe, lastFailedKey, validFacets);
+      }
+    }
+
+    const newOptions: Record<FacetKey, SelectOption[]> = { cuisine: [], course: [], diets: [] };
+
+    for (let i = 0; i < filterFacets.length; i++) {
+      const key = filterFacets[i]!.key;
+
+      newOptions[key] = facets.value[key].map((val) => ({
+        label: val,
+        value: val,
+        disabled: !validFacets[key].has(val),
+      }));
+    }
+
+    results.value = newResults;
+    options.value = newOptions;
+  };
+
+  // Watch the current query parameters to ensure the search results stay in sync
+  watch(
+    () => route.query,
+    () => refresh(),
+    { immediate: true },
+  );
 
   /**
-   * Searches the recipe search index for a given query.
-   * @param query The string to prefix search for in the recipe search index.
-   * @returns The search results matching the given search query.
+   * Updates the current recipe search parameters.
+   * @param updates The search parameters to filter the recipes by.
+   * @param replaceHistory True if the search should be updated without adding to the browser history, or false if it should be tracked in history.
    */
-  const search = async (query: string) => {
-    if (!miniSearch.value) {
-      await ensureIndex();
+  const updateSearch = async (updates: Partial<SearchParams>, replaceHistory = false) => {
+    const newQuery: Record<string, string> = { ...route.query, ...updates };
+
+    // Remove empty keys so the URL stays clean (e.g., no ?c=&m=)
+    for (const key in newQuery) {
+      if (!newQuery[key]) delete newQuery[key];
     }
 
-    if (!miniSearch.value) {
-      return [];
-    }
-
-    return miniSearch.value.search(query, {
-      // Match on the prefix of the result, not exact word matches. I.e. chick -> chicken
-      prefix: true,
-      // Don't use the default "OR" matching, which can match different recipes when the query includes spaces
-      combineWith: "AND",
-    }) as RecipeSearchResult[];
+    await navigateTo({
+      path: "/recipes",
+      query: newQuery,
+      replace: replaceHistory,
+    });
   };
 
-  /** Returns all items in the search index. */
-  const allItems = async () => {
-    if (!miniSearch.value) {
-      await ensureIndex();
-    }
-
-    if (!miniSearch.value) {
-      return [];
-    }
-
-    return miniSearch.value.search(MiniSearch.wildcard) as RecipeSearchResult[];
+  /** Clears the currently active search filters. */
+  const clearFilters = async () => {
+    await updateSearch(
+      {
+        c: "",
+        d: "",
+        m: "",
+        q: "",
+      },
+      false,
+    );
   };
 
   return {
-    allItems,
-    ensureIndex,
-    refreshIndex,
-    search,
+    activeParams,
+    clearFilters,
+    init,
+    isReady,
+    options,
+    results,
+    sync,
+    updateSearch,
   };
 };
 
-const createSearchIndex = (jsonString: string) => {
-  try {
-    const searchClient = MiniSearch.loadJSON<SearchIndexSearchFields>(
-      jsonString,
-      searchIndexSettings,
-    );
-    searchClient.search("a"); // Do a search to validate this is a valid search index
-
-    return searchClient;
-  } catch (error) {
-    console.error(error);
-
-    return undefined;
-  }
+// The mapping of facets to the functions that determine if they match.
+// This is implemented as a record to prompt type errors if the facets are changed,
+// and outside the filter loops to avoid excessive allocations.
+const filterFacetsByName: Record<
+  FacetKey,
+  (recipe: RecipeSearchResult, search: SearchParams) => boolean
+> = {
+  course: (recipe, { m }) => !m || recipe.course === m,
+  cuisine: (recipe, { c }) => !c || recipe.cuisine === c,
+  diets: (recipe, { d }) => !d || recipe.diets?.includes(d) === true,
 };
 
-const getCachedSearchIndex = () => {
-  // The search index is stored in local storage which is only available on the client
-  if (!import.meta.client) {
-    return undefined;
+// The array form of the facet matching function map.
+const filterFacets = (Object.keys(filterFacetsByName) as FacetKey[]).map((key) => ({
+  key,
+  check: filterFacetsByName[key],
+}));
+
+// Adds a string or array of string options to the selectable options for a given search facet.
+const addToFacetOptions = (
+  recipe: RecipeSearchResult,
+  key: FacetKey,
+  options: Record<FacetKey, Set<string>>,
+) => {
+  const val = recipe[key];
+  if (val === undefined) return;
+
+  if (Array.isArray(val)) {
+    for (let i = 0; i < val.length; i++) {
+      options[key].add(val[i]!);
+    }
+  } else {
+    options[key].add(val);
   }
-
-  const storedSearchIndexJson = localStorage.getItem("search-index");
-  if (!storedSearchIndexJson) {
-    return undefined;
-  }
-
-  return createSearchIndex(storedSearchIndexJson);
-};
-
-const cacheSearchIndex = (searchIndex: MiniSearch<SearchIndexSearchFields>) => {
-  // The search index is stored in local storage which is only available on the client
-  if (!import.meta.client) {
-    return;
-  }
-
-  localStorage.setItem("search-index", JSON.stringify(searchIndex));
 };

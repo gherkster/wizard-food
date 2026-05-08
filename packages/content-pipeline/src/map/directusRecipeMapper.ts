@@ -161,8 +161,6 @@ export const mapToRecipe = (
   );
 
   return {
-    id: serverRecipe.id!,
-
     cuisine: serverRecipe.cuisine ?? undefined,
     course: serverRecipe.course ?? undefined,
     coverImage: mapImage(serverRecipe.coverImage, "cover"),
@@ -174,6 +172,7 @@ export const mapToRecipe = (
       ? renderRichTextText(serverRecipe.description as RichTextContent)
       : "",
     descriptionSnippet: serverRecipe.description_snippet,
+    diets: serverRecipe.diets as string[] | undefined,
     durationTotal:
       totalDuration !== undefined
         ? {
@@ -204,14 +203,10 @@ export const mapToRecipe = (
 
         return mapInstructionGroup(ig);
       }) ?? [],
+    mainIngredients: serverRecipe.main_ingredients as string[] | undefined,
     note: !isNil(serverRecipe.note) ? renderRichTextHtml(serverRecipe.note as RichTextContent) : "",
     previewImage: mapImage(serverRecipe.coverImage, "preview"),
     title: serverRecipe.title,
-
-    preparationDuration: serverRecipe.preparationDuration ?? undefined,
-    cookingDuration: serverRecipe.cookingDuration ?? undefined,
-    customDurationName: serverRecipe.customDurationName ?? undefined,
-    customDuration: serverRecipe.customDuration ?? undefined,
     servings: serverRecipe.servings,
     servingsType: {
       singular: serverRecipe.serving_type,

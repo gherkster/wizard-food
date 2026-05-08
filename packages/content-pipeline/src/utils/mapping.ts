@@ -6,13 +6,14 @@ export const mapToRecipePreview = (recipe: Recipe): RecipePreview => {
     cuisine: recipe.cuisine ?? undefined,
     datePublished: recipe.datePublished,
     descriptionSnippet: recipe.descriptionSnippet,
+    diets: recipe.diets,
+    mainIngredients: recipe.mainIngredients,
     durationComponents: recipe.durationComponents,
     durationTotal: recipe.durationTotal,
     favourite: recipe.favourite ?? undefined,
     featuredTag: recipe.featuredTag,
     previewImage: recipe.previewImage,
     slug: recipe.slug,
-    tags: recipe.tags,
     title: recipe.title,
   };
 };
