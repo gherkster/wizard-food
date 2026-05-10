@@ -12,16 +12,22 @@ import {
 export type FacetKey = keyof Pick<RecipeSearchIndexEntry, "course" | "cuisine" | "diets">;
 type Facets = Record<FacetKey, string[]>;
 
+/** The filter parameters. */
+export type FilterParams = Record<FacetKey, string | undefined>;
+
 /** The search and filter query parameters. */
-export type SearchParams = {
+export type FilterQueryParams = {
   /** The cuisine to search. */
-  c: string;
+  c: string | undefined;
   /** The diet to search. */
-  d: string;
+  d: string | undefined;
   /** The course (meal) to search. */
-  m: string;
+  m: string | undefined;
+};
+
+export type TermQueryParams = {
   /** The query text to search. */
-  q: string;
+  q: string | undefined;
 };
 
 export type RecipeSearchResult = SearchResult & RecipeSearchIndexEntry;
@@ -48,12 +54,13 @@ export const useSearch = () => {
     diets: [],
   }));
 
-  const activeParams = computed<Required<SearchParams>>(() => ({
-    c: getQueryParam("c") ?? "",
-    d: getQueryParam("d") ?? "",
-    m: getQueryParam("m") ?? "",
-    q: getQueryParam("q") ?? "",
+  const activeFilters = computed<FilterParams>(() => ({
+    cuisine: getQueryParam("c"),
+    diets: getQueryParam("d"),
+    course: getQueryParam("m"),
   }));
+
+  const activeQuery = computed(() => getQueryParam("q"));
 
   const isReady = useState("search-ready", () => false);
 
@@ -130,7 +137,7 @@ export const useSearch = () => {
     // Get the recipes matching the text search, or all recipes if there is no current text search filter
     // This is required below to calculate both the filtered search results, as well as the available facets for filtering
     const querySearchResults = miniSearchIndex.search(
-      activeParams.value.q?.trim() || MiniSearch.wildcard,
+      activeQuery.value?.trim() || MiniSearch.wildcard,
       {
         combineWith: "AND", // Don't use the default "OR" matching, which can match different recipes when the query includes spaces
         prefix: true, // Match on the prefix of the result, not exact word matches. I.e. chick -> chicken
@@ -151,7 +158,7 @@ export const useSearch = () => {
 
       for (let i = 0; i < filterFacets.length; i++) {
         const facet = filterFacets[i]!;
-        if (facet.check(recipe, activeParams.value)) {
+        if (facet.check(recipe, activeFilters.value)) {
           matchedFacetsCount++;
         } else {
           lastFailedKey = facet.key;
@@ -204,47 +211,83 @@ export const useSearch = () => {
   );
 
   /**
-   * Updates the current recipe search parameters.
-   * @param updates The search parameters to filter the recipes by.
+   * Updates the current recipe search filter parameters.
+   * @param updates The parameters to filter the recipes by.
    * @param replaceHistory True if the search should be updated without adding to the browser history, or false if it should be tracked in history.
    */
-  const updateSearch = async (updates: Partial<SearchParams>, replaceHistory = false) => {
-    const newQuery: Record<string, string> = { ...route.query, ...updates };
+  const updateFilters = async (updates: Partial<FilterParams>, replaceHistory = false) => {
+    const queryParams: FilterQueryParams = {
+      c: updates?.cuisine,
+      d: updates?.diets,
+      m: updates?.course,
+    };
+
+    await updateQueryParameters(queryParams, replaceHistory);
+  };
+
+  /**
+   * Updates the current recipe search term parameters.
+   * @param updates The parameters to query the recipes by.
+   * @param replaceHistory True if the search should be updated without adding to the browser history, or false if it should be tracked in history.
+   */
+  const updateQuery = async (query: string | undefined, replaceHistory = false) => {
+    const queryParams: TermQueryParams = {
+      q: query,
+    };
+
+    await updateQueryParameters(queryParams, replaceHistory);
+  };
+
+  const updateQueryParameters = async (
+    queryParams: Record<string, string | undefined>,
+    replaceHistory = false,
+  ) => {
+    // Remove keys with undefined values to avoid removing existing query params during merging
+    stripUndefined(queryParams);
+
+    const newQueryParams = { ...route.query, ...queryParams };
 
     // Remove empty keys so the URL stays clean (e.g., no ?c=&m=)
-    for (const key in newQuery) {
-      if (!newQuery[key]) delete newQuery[key];
-    }
+    stripUndefined(newQueryParams);
 
     await navigateTo({
       path: "/recipes",
-      query: newQuery,
+      query: newQueryParams,
       replace: replaceHistory,
     });
   };
 
+  const stripUndefined = <T extends object>(obj: T) => {
+    for (const key in obj) {
+      if (obj[key] === undefined) {
+        delete obj[key];
+      }
+    }
+  };
+
   /** Clears the currently active search filters. */
   const clearFilters = async () => {
-    await updateSearch(
+    await updateFilters(
       {
-        c: "",
-        d: "",
-        m: "",
-        q: "",
+        course: "",
+        cuisine: "",
+        diets: "",
       },
       false,
     );
   };
 
   return {
-    activeParams,
+    activeFilters,
+    activeQuery,
     clearFilters,
     init,
     isReady,
     options,
     results,
     sync,
-    updateSearch,
+    updateFilters,
+    updateQuery,
   };
 };
 
@@ -253,11 +296,11 @@ export const useSearch = () => {
 // and outside the filter loops to avoid excessive allocations.
 const filterFacetsByName: Record<
   FacetKey,
-  (recipe: RecipeSearchResult, search: SearchParams) => boolean
+  (recipe: RecipeSearchResult, search: FilterParams) => boolean
 > = {
-  course: (recipe, { m }) => !m || recipe.course === m,
-  cuisine: (recipe, { c }) => !c || recipe.cuisine === c,
-  diets: (recipe, { d }) => !d || recipe.diets?.includes(d) === true,
+  course: (recipe, { course }) => !course || recipe.course === course,
+  cuisine: (recipe, { cuisine }) => !cuisine || recipe.cuisine === cuisine,
+  diets: (recipe, { diets }) => !diets || recipe.diets?.includes(diets) === true,
 };
 
 // The array form of the facet matching function map.

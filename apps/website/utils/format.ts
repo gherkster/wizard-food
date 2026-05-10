@@ -1,37 +1,59 @@
-import type { SearchParams } from "~/composables/useSearch";
+import type { FilterParams } from "~/composables/useSearch";
 
 /**
- * Creates a formatted summary string of the search results, based on the currently selected filters and search results.
- * @param params The active search parameters.
- * @param options.hasResults Whether there are greater than zero results for the current search.
+ * Creates a formatted description string of the current search filters.
+ * @param params The active search filter parameters.
  */
-export const formatSearchSummary = (
-  params: SearchParams,
-  options: { hasResults: boolean },
-): string => {
+export const describeFilterCategories = (params: FilterParams) => {
+  // Check if the user applied any category filters
+  const hasAnyFilters = Object.values(params).filter(Boolean).length > 0;
+
+  if (!hasAnyFilters) {
+    return undefined;
+  }
+
+  const { diets, cuisine, course } = params;
+
+  return buildFiltersPhrase({ diets, cuisine, course });
+};
+
+/**
+ * Creates a formatted description string of the current search results.
+ * @param params The active search parameters.
+ * @param options.resultCount The number of results for the current search.
+ */
+export const describeSearchResults = (
+  query: string | undefined,
+  filterParams: FilterParams,
+  options: { resultCount: number },
+) => {
   // Check if the user applied any filters or queries
-  const hasAnyInput = Object.values(params).filter(Boolean).length > 0;
+  const hasAnyInput = !!query || Object.values(filterParams).filter(Boolean).length > 0;
 
   if (!hasAnyInput) {
-    return "All recipes";
+    return undefined;
   }
 
-  const { q: query, d: diet, c: cuisine, m: course } = params;
+  const { diets, cuisine, course } = filterParams;
 
-  const categoryPhrase = buildFiltersPhrase(diet, cuisine, course);
+  const categoryPhrase = buildFiltersPhrase({ diets, cuisine, course });
 
-  if (options.hasResults) {
-    return buildQueryResultsPrefix(categoryPhrase, query);
-  } else {
-    return buildNoResultsMessage(categoryPhrase, query, { hasAnyInput });
-  }
+  return options.resultCount > 0
+    ? buildQueryResultsPrefix(categoryPhrase, query, options.resultCount)
+    : buildNoResultsMessage(categoryPhrase, query, { hasAnyInput });
 };
 
 // Builds the category phrase (e.g., "Vegan Indian Mains" or "Indian recipes")
-const buildFiltersPhrase = (diet: string, cuisine: string, course: string): string => {
-  const prefix = buildFilterPrefix({ diet, cuisine });
+const buildFiltersPhrase = (values: {
+  diets: string | undefined;
+  cuisine: string | undefined;
+  course: string | undefined;
+}): string => {
+  const { course, cuisine, diets } = values;
 
-  const courseOrRecipes = course.trim() || "recipes";
+  const prefix = buildFilterPrefix({ diets, cuisine });
+
+  const courseOrRecipes = course?.trim() || "recipes";
 
   if (prefix) {
     return `${prefix} ${courseOrRecipes}`;
@@ -41,9 +63,12 @@ const buildFiltersPhrase = (diet: string, cuisine: string, course: string): stri
 };
 
 // Combines the non-target filter options into a string prefix
-const buildFilterPrefix = (values: { diet: string; cuisine: string }): string => {
-  const diet = values.diet.trim();
-  const cuisine = values.cuisine.trim();
+const buildFilterPrefix = (values: {
+  diets: string | undefined;
+  cuisine: string | undefined;
+}): string => {
+  const diet = values.diets?.trim();
+  const cuisine = values.cuisine?.trim();
 
   if (diet && cuisine) {
     return `${diet} ${cuisine}`;
@@ -59,27 +84,32 @@ const buildFilterPrefix = (values: { diet: string; cuisine: string }): string =>
 };
 
 // Prefixes the category phrase with the search query if one exists
-const buildQueryResultsPrefix = (categoryPhrase: string, query?: string): string => {
-  const cleanQuery = query?.trim();
+const buildQueryResultsPrefix = (
+  categoryPhrase: string,
+  query: string | undefined,
+  resultCount: number,
+) => {
+  const resultLabel = resultCount <= 1 ? "result" : "results";
 
-  if (cleanQuery) {
-    return `Results for "${cleanQuery}" in ${categoryPhrase}`;
+  const cleanQuery = query?.trim();
+  if (!cleanQuery) {
+    return `${resultCount} ${resultLabel} for ${categoryPhrase}`;
   }
 
-  return categoryPhrase;
+  return `${resultCount} ${resultLabel} for "${cleanQuery}" in ${categoryPhrase}`;
 };
 
 // Builds the final "No results" message based on the descriptor.
 const buildNoResultsMessage = (
   categoryPhrase: string,
-  query: string,
+  query: string | undefined,
   options: { hasAnyInput: boolean },
 ): string => {
   if (!options.hasAnyInput) {
     return "No results";
   }
 
-  const cleanQuery = query.trim();
+  const cleanQuery = query?.trim();
   if (cleanQuery) {
     return `No results for "${cleanQuery}" in ${categoryPhrase}`;
   }

@@ -18,15 +18,15 @@ const model = defineModel<string>({
   <div
     :class="
       css({
-        display: 'flex',
         alignItems: 'center',
+        backgroundColor: token('colors.surface'),
+        border: '2px solid',
+        borderColor: token('colors.border'),
+        borderRadius: 'md',
+        display: 'flex',
         minWidth: '160px',
+
         '& input': {
-          backgroundColor: token('colors.surface'),
-          borderRadius: 'md',
-          borderWidth: '2px',
-          borderStyle: 'solid',
-          borderColor: token('colors.border'),
           outline: 'none',
           padding: '10px 12px',
           width: '100%',

@@ -5,7 +5,7 @@ import { token } from "styled-system/tokens";
 import { useSearch } from "~/composables/useSearch";
 import { debounce } from "~/utils/debounce";
 
-const { activeParams, init, updateSearch } = useSearch();
+const { activeQuery, init, updateQuery } = useSearch();
 /*
   Kick off a background download of the search index if it hasn't been downloaded yet.
   Periodic checks are done after page load within the versioning middleware.
@@ -19,9 +19,9 @@ const handleSearch = debounce(async (value: string) => {
   const trimmedQuery = value.trim();
 
   // If a search query already exists, replace history. If fresh search, push to history.
-  const shouldReplace = !!activeParams.value.q;
+  const shouldReplace = !!activeQuery.value;
 
-  await updateSearch({ q: trimmedQuery }, shouldReplace);
+  await updateQuery(trimmedQuery, shouldReplace);
 }, 200); // Debounce the search input, can be quite short since the searching is in-memory
 
 const isAnimated = ref(false);
@@ -51,19 +51,16 @@ const maxContentWidth = "1600px";
  * and animate expanding back out when scrolling back to the top of the page.'
  */
 const headerStyles = css({
-  alignItems: "center",
   display: "flex",
-  flexDirection: {
-    base: "row",
-    smDown: "column",
-  },
-  gap: "sm",
+  flexDirection: "column",
+  gap: "xs",
   paddingBlockStart: {
     // Reserve a constant padding block start to leave room for the mascot, leaving more space on larger screens
     base: "16px",
     md: "64px",
   },
   paddingBlockEnd: "xs",
+  width: "100%",
   zIndex: 100,
 
   md: {
@@ -83,6 +80,18 @@ const headerStyles = css({
       right: 0,
     },
   },
+});
+
+const topRowCss = css({
+  alignItems: "center",
+  display: "flex",
+  flexDirection: { base: "column", md: "row" },
+  justifyContent: "space-between",
+  position: "relative",
+  py: 4,
+  rowGap: "xs",
+  width: "100%",
+  zIndex: 20,
 });
 
 /**
@@ -147,54 +156,74 @@ const mascotStyles = css({
     <NuxtLoadingIndicator :duration="1000" :throttle="500" :height="3" :color="false" />
 
     <header :class="headerStyles">
-      <NuxtLink to="/" style="color: unset">
-        <Text size="xxxl" text-wrap="noWrap" weight="bold">Wizard Food</Text>
-      </NuxtLink>
+      <nav :class="topRowCss">
+        <NuxtLink to="/" style="color: unset">
+          <Text size="xxxl" text-wrap="noWrap" weight="bold">Wizard Food</Text>
+        </NuxtLink>
 
-      <div
-        :class="
-          css({
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            width: '100%',
-            columnGap: 'sm',
-            rowGap: 'md',
-          })
-        "
-      >
         <div
           :class="
             css({
+              alignItems: 'center',
+              columnGap: 'sm',
               display: 'flex',
-              position: 'relative',
-              flexDirection: 'column',
-              marginLeft: 'auto',
-              width: {
-                base: '260px',
-                smDown: '100%',
+              flexWrap: 'wrap',
+              rowGap: 'md',
+              mdDown: {
+                width: '100%',
               },
             })
           "
         >
-          <VMascot :animate="isAnimated" :size="54" :class="mascotStyles" />
-
-          <VSearch
-            :value="activeParams.q ?? ''"
+          <div
             :class="
               css({
-                width: '100%',
-                zIndex: '50', // Ensure the search is in front of the mascot
+                display: 'flex',
+                position: 'relative',
+                flexDirection: 'column',
+                flex: {
+                  base: 1,
+                  md: 'inherit',
+                },
+                marginLeft: 'auto',
+                width: {
+                  base: '100%',
+                  md: '260px',
+                },
               })
             "
-            @input="onInput"
-            @search="onInput"
-          />
+          >
+            <VMascot :animate="isAnimated" :size="54" :class="mascotStyles" />
+
+            <form
+              :class="
+                css({
+                  display: 'flex',
+                  flexBasis: {
+                    base: undefined,
+                    smDown: '100%',
+                  },
+                  width: '100%',
+                  zIndex: '50', // Ensure the search is in front of the mascot
+                })
+              "
+              role="search"
+              @submit.prevent="$emit('search', activeQuery ?? '')"
+            >
+              <Input
+                :model-value="activeQuery ?? ''"
+                :class="css({ color: token('colors.font.muted'), flexBasis: '100%' })"
+                icon-left="mynaui:search"
+                placeholder="Search recipes..."
+                @update:model-value="onInput"
+              />
+            </form>
+          </div>
         </div>
-      </div>
+      </nav>
     </header>
 
-    <div :class="css({ maxWidth: token('breakpoints.xl'), margin: '0 auto', marginTop: 'md' })">
+    <div :class="css({ maxWidth: token('breakpoints.xl'), margin: '0 auto', marginTop: '2%' })">
       <slot />
     </div>
   </div>

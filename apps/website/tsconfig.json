@@ -3,6 +3,6 @@
   "extends": ["../../tsconfig.base.json", "./.nuxt/tsconfig.json"],
   "vueCompilerOptions": {
     "strictTemplates": true,
-    "fallthroughAttributes": true,
+    "fallthroughAttributes": true
   }
 }

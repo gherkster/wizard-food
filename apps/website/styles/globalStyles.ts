@@ -38,6 +38,7 @@ export const globalStyles = defineGlobalStyles({
   },
   button: {
     fontSize: "md",
+    cursor: "pointer",
   },
   img: {
     fontSize: "0", // Hide alt text while loading
