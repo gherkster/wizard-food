@@ -213,6 +213,7 @@ const mascotStyles = css({
               <Input
                 :model-value="activeQuery ?? ''"
                 :class="css({ color: token('colors.font.muted'), flexBasis: '100%' })"
+                clearable
                 icon-left="mynaui:search"
                 placeholder="Search recipes..."
                 @update:model-value="onInput"

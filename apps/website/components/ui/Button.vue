@@ -20,43 +20,37 @@ const onClick = () => {
     emit("click");
   }
 };
+
+const buttonCss = css({
+  backgroundColor: "transparent",
+  borderRadius: "sm",
+  borderStyle: "none",
+  fontSize: "1rem",
+  lineHeight: 0,
+  width: "fit-content",
+  _active: {
+    "&:not(:disabled)": {
+      transform: "scale(0.97) translateY(1px)",
+      filter: "brightness(80%)", // Darker than hover to simulate depth
+    },
+  },
+  _disabled: {
+    opacity: "0.6",
+    cursor: "not-allowed",
+    filter: "none",
+    transform: "none",
+  },
+  _hover: {
+    "&:not(:disabled)": {
+      cursor: "pointer",
+      filter: "brightness(90%)",
+    },
+  },
+});
 </script>
 
 <template>
-  <button
-    :class="
-      css({
-        backgroundColor: 'transparent',
-        borderRadius: 'sm',
-        borderStyle: 'none',
-        fontSize: '1rem',
-        lineHeight: 0,
-        padding: 0,
-        width: 'fit-content',
-        _active: {
-          '&:not(:disabled)': {
-            transform: 'scale(0.97) translateY(1px)',
-            filter: 'brightness(80%)', // Darker than hover to simulate depth
-          },
-        },
-        _disabled: {
-          opacity: '0.6',
-          cursor: 'not-allowed',
-          filter: 'none',
-          transform: 'none',
-        },
-        _hover: {
-          '&:not(:disabled)': {
-            cursor: 'pointer',
-            filter: 'brightness(90%)',
-          },
-        },
-      })
-    "
-    :disabled="disabled"
-    :type="type"
-    @click="onClick"
-  >
+  <button :class="buttonCss" :disabled="disabled" :type="type" @click="onClick">
     <slot />
   </button>
 </template>
