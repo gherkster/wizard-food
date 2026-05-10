@@ -5,7 +5,7 @@ import { grid } from "styled-system/patterns";
 
 import { useSearch } from "~/composables/useSearch";
 import { throwIfNil } from "~/utils/error";
-import { formatSearchSummary } from "~/utils/format";
+import { describeSearchResults } from "~/utils/format";
 import type { RecipeSearchIndexEntry } from "~/utils/search";
 
 const { data: content } = await useFetch("/api/content/recipes");
@@ -24,7 +24,7 @@ if (import.meta.server) {
   });
 }
 
-const { activeParams, results } = useSearch();
+const { activeFilters, activeQuery, results } = useSearch();
 
 const toCardImage = (recipe: RecipeSearchIndexEntry): Image => {
   return {
@@ -39,8 +39,8 @@ const toCardImage = (recipe: RecipeSearchIndexEntry): Image => {
 };
 
 const searchDescription = computed(() =>
-  formatSearchSummary(activeParams.value, {
-    hasResults: results.value.length > 0,
+  describeSearchResults(activeQuery.value, activeFilters.value, {
+    resultCount: results.value.length,
   }),
 );
 
@@ -53,43 +53,60 @@ const searchStateKey = computed(() => {
   // Create a unique key based on the slugs and their specific order.
   return results.value.map((r) => r.slug).join(",");
 });
+
+const containerStyles = css({
+  display: "flex",
+  flexDirection: "column",
+  gap: "md",
+
+  md: {
+    flexDirection: "row",
+  },
+});
+
+const resultsStyles = css({
+  display: "flex",
+  flexDirection: "column",
+  gap: "sm",
+});
 </script>
 
 <template>
-  <div :class="css({ display: 'flex', flexDirection: 'column', gap: 'md' })">
+  <div :class="containerStyles">
     <ClientOnly>
-      <div>
-        <h1>{{ searchDescription }}</h1>
-        <SearchFilters />
-      </div>
+      <SearchFilters />
 
-      <Transition name="quick-fade" mode="out-in">
-        <div
-          :key="searchStateKey"
-          :class="
-            grid({
-              columns: {
-                base: 2,
-                md: 3,
-                lg: 4,
-              },
-              columnGap: 'sm',
-              rowGap: 'md',
-            })
-          "
-        >
-          <RecipeCard
-            v-for="(recipe, index) in results"
-            :key="recipe.slug"
-            :title="recipe.title"
-            :image="toCardImage(recipe)"
-            :to="`/recipes/${recipe.slug}`"
-            :tag="recipe.featuredTag"
-            :duration="recipe.durationTotal"
-            :lazy-load-image="index > 8"
-          />
-        </div>
-      </Transition>
+      <div :class="resultsStyles">
+        <Text size="xl">{{ searchDescription ?? "All recipes" }}</Text>
+
+        <Transition name="quick-fade" mode="out-in">
+          <div
+            :key="searchStateKey"
+            :class="
+              grid({
+                columns: {
+                  base: 2,
+                  md: 3,
+                  lg: 4,
+                },
+                columnGap: 'sm',
+                rowGap: 'md',
+              })
+            "
+          >
+            <RecipeCard
+              v-for="(recipe, index) in results"
+              :key="recipe.slug"
+              :title="recipe.title"
+              :image="toCardImage(recipe)"
+              :to="`/recipes/${recipe.slug}`"
+              :tag="recipe.featuredTag"
+              :duration="recipe.durationTotal"
+              :lazy-load-image="index > 8"
+            />
+          </div>
+        </Transition>
+      </div>
     </ClientOnly>
   </div>
 </template>

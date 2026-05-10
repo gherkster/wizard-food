@@ -16,7 +16,6 @@ withDefaults(defineProps<Props>(), {
 const textRecipe = cva({
   variants: {
     size: {
-      xs: { fontSize: "xs" },
       sm: { fontSize: "sm" },
       md: { fontSize: "md" },
       lg: { fontSize: "lg" },

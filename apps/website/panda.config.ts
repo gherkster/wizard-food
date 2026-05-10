@@ -70,7 +70,6 @@ export default defineConfig({
         xxs: { value: clamp(4, 8) },
 
         "header-mb": { value: "16px" },
-        "p-my": { value: "16px" },
       },
       radii: {
         sm: { value: "6px" },

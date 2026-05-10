@@ -6,12 +6,13 @@ import {
   ListboxOption,
   ListboxLabel,
 } from "@headlessui/vue";
-import { css, cx } from "styled-system/css";
+import { css } from "styled-system/css";
 import { token } from "styled-system/tokens";
 
 import type { SelectOption } from "~/types/form";
 
 interface Props {
+  block?: boolean;
   label?: string;
   options: SelectOption[];
   placeholder: string;
@@ -23,8 +24,6 @@ const selectedValue = defineModel<string | undefined>({
   required: true,
 });
 
-const minWidth = "160px";
-
 const triggerCss = css({
   alignItems: "center",
   backgroundColor: token("colors.surface"),
@@ -33,7 +32,6 @@ const triggerCss = css({
   borderWidth: "1px",
   cursor: "pointer",
   display: "flex",
-  minWidth: minWidth,
   gap: "8px",
   px: "xs",
   py: "xxs",
@@ -54,7 +52,6 @@ const optionsCss = css({
   borderRadius: "sm",
   borderWidth: "1px",
   boxShadow: token("shadows.subtle"),
-  minWidth: minWidth,
   marginTop: "4px",
   padding: "xxs",
   position: "absolute",
@@ -62,6 +59,7 @@ const optionsCss = css({
   outline: "none",
   overflow: "auto",
   maxHeight: "60vh",
+  width: "100%",
 });
 
 const itemCss = css({
@@ -91,14 +89,15 @@ const itemCss = css({
         <Text size="sm">{{ label }}</Text>
       </ListboxLabel>
       <div :class="css({ position: 'relative' })">
-        <ListboxButton :class="cx(triggerCss)">
-          <span
+        <ListboxButton :class="triggerCss" :style="block ? 'width: 100%' : undefined">
+          <Text
             :class="
               css({ flex: 1, truncate: true, color: !selectedValue ? 'gray.400' : 'inherit' })
             "
+            size="md"
           >
             {{ selectedValue || placeholder }}
-          </span>
+          </Text>
           <icon name="mynaui:chevron-down" />
         </ListboxButton>
 
