@@ -66,6 +66,7 @@ const containerStyles = css({
 
 const resultsStyles = css({
   display: "flex",
+  flex: 1,
   flexDirection: "column",
   gap: "sm",
 });

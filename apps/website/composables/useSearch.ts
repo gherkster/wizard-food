@@ -248,7 +248,7 @@ export const useSearch = () => {
     const newQueryParams = { ...route.query, ...queryParams };
 
     // Remove empty keys so the URL stays clean (e.g., no ?c=&m=)
-    stripUndefined(newQueryParams);
+    stripEmpty(newQueryParams);
 
     await navigateTo({
       path: "/recipes",
@@ -260,6 +260,14 @@ export const useSearch = () => {
   const stripUndefined = <T extends object>(obj: T) => {
     for (const key in obj) {
       if (obj[key] === undefined) {
+        delete obj[key];
+      }
+    }
+  };
+
+  const stripEmpty = <T extends object>(obj: T) => {
+    for (const key in obj) {
+      if (obj[key] === undefined || obj[key] === "") {
         delete obj[key];
       }
     }
