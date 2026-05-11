@@ -6,7 +6,8 @@ import {
   ListboxOption,
   ListboxLabel,
 } from "@headlessui/vue";
-import { css } from "styled-system/css";
+import { css, cx } from "styled-system/css";
+import { reveal } from "styled-system/recipes";
 import { token } from "styled-system/tokens";
 
 import type { SelectOption } from "~/types/form";
@@ -14,6 +15,7 @@ import type { SelectOption } from "~/types/form";
 interface Props {
   block?: boolean;
   label?: string;
+  loading?: boolean;
   options: SelectOption[];
   placeholder: string;
 }
@@ -44,6 +46,11 @@ const triggerCss = css({
   _expanded: {
     borderColor: token("colors.primary"),
   },
+});
+
+const textBaseCss = css({
+  flex: 1,
+  truncate: true,
 });
 
 const optionsCss = css({
@@ -90,13 +97,8 @@ const itemCss = css({
       </ListboxLabel>
       <div :class="css({ position: 'relative' })">
         <ListboxButton :class="triggerCss" :style="block ? 'width: 100%' : undefined">
-          <Text
-            :class="
-              css({ flex: 1, truncate: true, color: !selectedValue ? 'gray.400' : 'inherit' })
-            "
-            size="md"
-          >
-            {{ selectedValue || placeholder }}
+          <Text :class="cx(textBaseCss, reveal({ loading }))" size="md">
+            {{ loading ? "&nbsp;" : selectedValue || placeholder }}
           </Text>
           <icon name="mynaui:chevron-down" />
         </ListboxButton>

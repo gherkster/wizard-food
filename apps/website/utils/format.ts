@@ -9,7 +9,7 @@ export const describeFilterCategories = (params: FilterParams) => {
   const hasAnyFilters = Object.values(params).filter(Boolean).length > 0;
 
   if (!hasAnyFilters) {
-    return undefined;
+    return "All recipes";
   }
 
   const { diets, cuisine, course } = params;
@@ -31,7 +31,7 @@ export const describeSearchResults = (
   const hasAnyInput = !!query || Object.values(filterParams).filter(Boolean).length > 0;
 
   if (!hasAnyInput) {
-    return undefined;
+    return "All recipes";
   }
 
   const { diets, cuisine, course } = filterParams;

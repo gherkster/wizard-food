@@ -2,13 +2,14 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 import type { FacetKey } from "@wizard/content";
 import { css, cx } from "styled-system/css";
+import { reveal } from "styled-system/recipes";
 import { token } from "styled-system/tokens";
 
 import { useSearch } from "~/composables/useSearch";
 import type { SelectOption } from "~/types/form";
 import { describeFilterCategories } from "~/utils/format";
 
-const { activeFilters, clearFilters, createFilterSearchLink, options } = useSearch();
+const { activeFilters, clearFilters, createFilterSearchLink, isReady, options } = useSearch();
 
 const buildOptions = (facet: FacetKey, allResultsLabel: string) =>
   computed<SelectOption[]>(() => {
@@ -125,7 +126,7 @@ const actionsCss = css({
   marginRight: 0,
 
   md: {
-    marginTop: "1.5em",
+    marginTop: "1em",
   },
 });
 </script>
@@ -141,9 +142,10 @@ const actionsCss = css({
     >
       <div :class="css({ alignItems: 'center', display: 'flex', gap: '4px' })">
         <Icon name="mynaui:filter" :size="24" />
-        <Text>{{ filterDescription ?? "Filter results" }}</Text>
+        <Text :class="reveal({ loading: !isReady })">{{
+          isReady ? (filterDescription ?? "Filter results") : "&nbsp;"
+        }}</Text>
       </div>
-
       <Icon name="mynaui:chevron-down" :class="cx(chevronCss, open && chevronOpenCss)" :size="24" />
     </DisclosureButton>
 
@@ -152,6 +154,7 @@ const actionsCss = css({
         <div :class="contentCss">
           <div :class="selectContainerCss">
             <Select
+              :loading="!isReady"
               :model-value="activeFilters.cuisine"
               :options="cuisineOptions"
               :placeholder="allCuisinesLabel"
@@ -162,6 +165,7 @@ const actionsCss = css({
               "
             />
             <Select
+              :loading="!isReady"
               :model-value="activeFilters.course"
               :options="courseOptions"
               :placeholder="allCoursesLabel"
@@ -170,6 +174,7 @@ const actionsCss = css({
               @update:model-value="(value) => navigateTo(createFilterSearchLink({ course: value }))"
             />
             <Select
+              :loading="!isReady"
               :model-value="activeFilters.diets"
               :options="dietOptions"
               :placeholder="allDietsLabel"
@@ -180,8 +185,8 @@ const actionsCss = css({
           </div>
 
           <div :class="actionsCss">
-            <Button v-if="hasActiveFilters" @click="clearFilters">
-              <Text size="sm">Reset filters</Text>
+            <Button v-if="hasActiveFilters && isReady" @click="clearFilters">
+              <Text :class="reveal({ loading: !isReady })" size="sm">Reset filters</Text>
             </Button>
           </div>
         </div>

@@ -92,4 +92,12 @@ export const globalStyles = defineGlobalStyles({
   "::selection": {
     bg: "selection",
   },
+  ".quick-fade-enter-active, .quick-fade-leave-active": {
+    transitionProperty: "opacity",
+    transitionDuration: "token(durations.quickFade)",
+    transitionTimingFunction: "token(easings.quickFade)",
+  },
+  ".quick-fade-enter-from, .quick-fade-leave-to": {
+    opacity: 0,
+  },
 });
