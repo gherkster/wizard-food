@@ -3,7 +3,7 @@ import { css, type Styles } from "styled-system/css";
 import { grid } from "styled-system/patterns";
 import { token } from "styled-system/tokens";
 
-import type { RouteLocationRaw } from "#vue-router";
+import { useSearch, type Facets } from "~/composables/useSearch";
 import { useJsonld } from "~/utils/jsonld";
 
 const route = useRoute();
@@ -17,6 +17,23 @@ if (!recipe.value) {
     statusMessage: "Page not found!",
   });
 }
+
+const tagFilters: Facets = {
+  course: [recipe.value.course],
+  cuisine: [recipe.value.cuisine],
+  diets: recipe.value.diets?.map((d) => d) ?? [],
+};
+
+const { createFilterSearchLink } = useSearch();
+
+const tags = Object.entries(tagFilters).flatMap(([facetKey, facetValues]) => {
+  return facetValues.map((facetValue) => {
+    return {
+      value: facetValue,
+      link: createFilterSearchLink({ [facetKey]: facetValue }),
+    };
+  });
+});
 
 if (import.meta.server) {
   useSeoMeta({
@@ -41,7 +58,8 @@ if (import.meta.server) {
       recipe.value.servings && recipe.value.servingsType
         ? `${recipe.value.servings} ${recipe.value.servingsType}`
         : undefined,
-    keywords: recipe.value.tags
+    keywords: tags
+      .map((t) => t.value)
       .filter((t) => t !== recipe.value!.course && t !== recipe.value!.cuisine)
       .join(", "),
     totalTime: recipe.value.durationTotal?.isoDuration,
@@ -57,15 +75,6 @@ const selectedServings = ref<number>(
 );
 
 const originalServings = selectedServings.value;
-
-const createSearchLink = (term: string): RouteLocationRaw => {
-  return {
-    path: "/recipes",
-    query: {
-      q: term.trim(),
-    },
-  };
-};
 
 const highlightContainerStyles: Styles = {
   display: "flex",
@@ -99,8 +108,8 @@ const highlightContainerStyles: Styles = {
       <h1 :class="css({ margin: 0, textWrapStyle: 'auto' })">{{ recipe.title }}</h1>
 
       <div :class="css({ display: 'flex', flexWrap: 'wrap', gap: 'xs' })">
-        <HoverLink v-for="tag in recipe.tags" :key="tag" :to="createSearchLink(tag)">
-          <Tag icon-name="mynaui:search">{{ tag }}</Tag>
+        <HoverLink v-for="tag in tags" :to="tag.link">
+          <Tag icon-name="mynaui:search">{{ tag.value }}</Tag>
         </HoverLink>
       </div>
 

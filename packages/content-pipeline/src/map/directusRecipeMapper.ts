@@ -8,6 +8,7 @@ import type {
   SingularPluralPair,
   RichTextContent,
   ImagePurpose,
+  FacetKey,
 } from "@wizard/content";
 import type {
   ServerImage,
@@ -39,14 +40,6 @@ export const mapToRecipe = (
   }
 
   assertIsHydrated(serverRecipe.coverImage, "coverImage");
-
-  const tags = buildTagList({
-    course: serverRecipe.course,
-    cuisine: serverRecipe.cuisine,
-    diets: serverRecipe.diets as string[] | undefined,
-    main_ingredients: serverRecipe.main_ingredients as string[] | undefined,
-    method: serverRecipe.method,
-  });
 
   const mapIngredientGroup = (ingredientGroup: ServerIngredientGroup): IngredientGroup => {
     return {
@@ -213,8 +206,14 @@ export const mapToRecipe = (
       plural: serverRecipe.servings_type,
     },
     slug: serverRecipe.slug,
-    tags: tags,
-    featuredTag: getRandomTag(tags, serverRecipe.id!),
+    featuredTag: getRandomTag(
+      {
+        course: [serverRecipe.course],
+        cuisine: [serverRecipe.cuisine],
+        diets: (serverRecipe.diets as string[] | null) ?? [],
+      },
+      serverRecipe.id!,
+    ),
   };
 };
 
@@ -240,7 +239,9 @@ const mapImage = (serverImage: ServerImage, purpose: ImagePurpose): Image => {
   };
 };
 
-const getRandomTag = (tags: string[], recipeId: number) => {
+const getRandomTag = (facets: Record<FacetKey, string[]>, recipeId: number) => {
+  const tags = Object.values(facets).flatMap((f) => f);
+
   if (tags.length === 0) {
     return undefined;
   }
@@ -248,35 +249,6 @@ const getRandomTag = (tags: string[], recipeId: number) => {
   const randomness = prand.xoroshiro128plus(recipeId);
   const [randomIndex] = prand.uniformIntDistribution(0, tags.length - 1, randomness);
   return tags[randomIndex];
-};
-
-type RecipeCategories = {
-  cuisine?: string | null;
-  course?: string | null;
-  diets?: string[];
-  method?: string | null;
-  main_ingredients?: string[];
-};
-
-const buildTagList = (categories: RecipeCategories): string[] => {
-  const tags: string[] = [];
-
-  if (categories.cuisine) {
-    tags.push(categories.cuisine);
-  }
-  if (categories.course) {
-    tags.push(categories.course);
-  }
-  if (categories.diets) {
-    tags.push(...categories.diets);
-  }
-  if (categories.method) {
-    tags.push(categories.method);
-  }
-  if (categories.main_ingredients) {
-    tags.push(...categories.main_ingredients);
-  }
-  return tags.sort();
 };
 
 const isNil = (value: unknown) => {

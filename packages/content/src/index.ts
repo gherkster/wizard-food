@@ -6,4 +6,5 @@ export * from "./image";
 export * from "./loaders";
 export * from "./recipe";
 export * from "./relations";
+export * from "./search";
 export * from "./types";
