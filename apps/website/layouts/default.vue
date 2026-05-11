@@ -5,7 +5,7 @@ import { token } from "styled-system/tokens";
 import { useSearch } from "~/composables/useSearch";
 import { debounce } from "~/utils/debounce";
 
-const { activeQuery, init, updateQuery } = useSearch();
+const { activeQuery, createQuerySearchLink, init } = useSearch();
 /*
   Kick off a background download of the search index if it hasn't been downloaded yet.
   Periodic checks are done after page load within the versioning middleware.
@@ -21,7 +21,7 @@ const handleSearch = debounce(async (value: string) => {
   // If a search query already exists, replace history. If fresh search, push to history.
   const shouldReplace = !!activeQuery.value;
 
-  await updateQuery(trimmedQuery, shouldReplace);
+  await navigateTo(createQuerySearchLink(trimmedQuery, shouldReplace));
 }, 200); // Debounce the search input, can be quite short since the searching is in-memory
 
 const isAnimated = ref(false);
@@ -89,7 +89,7 @@ const topRowCss = css({
   justifyContent: "space-between",
   position: "relative",
   py: 4,
-  rowGap: "xs",
+  rowGap: "sm",
   width: "100%",
   zIndex: 20,
 });

@@ -1,5 +1,7 @@
+import type { FacetKey } from "@wizard/content";
 import MiniSearch, { type SearchResult } from "minisearch";
 
+import type { RouteLocationRaw } from "#vue-router";
 import type { SelectOption } from "~/types/form";
 import { getQueryParam } from "~/utils/route";
 import {
@@ -8,9 +10,7 @@ import {
   type RecipeSearchIndexSearchFields,
 } from "~/utils/search";
 
-/** The keys of the facets available for filtering on. */
-export type FacetKey = keyof Pick<RecipeSearchIndexEntry, "course" | "cuisine" | "diets">;
-type Facets = Record<FacetKey, string[]>;
+export type Facets = Record<FacetKey, string[]>;
 
 /** The filter parameters. */
 export type FilterParams = Record<FacetKey, string | undefined>;
@@ -215,14 +215,17 @@ export const useSearch = () => {
    * @param updates The parameters to filter the recipes by.
    * @param replaceHistory True if the search should be updated without adding to the browser history, or false if it should be tracked in history.
    */
-  const updateFilters = async (updates: Partial<FilterParams>, replaceHistory = false) => {
+  const createFilterSearchLink = (
+    updates: Partial<FilterParams>,
+    replaceHistory = false,
+  ): RouteLocationRaw => {
     const queryParams: FilterQueryParams = {
       c: updates?.cuisine,
       d: updates?.diets,
       m: updates?.course,
     };
 
-    await updateQueryParameters(queryParams, replaceHistory);
+    return createSearchLink(queryParams, replaceHistory);
   };
 
   /**
@@ -230,18 +233,18 @@ export const useSearch = () => {
    * @param updates The parameters to query the recipes by.
    * @param replaceHistory True if the search should be updated without adding to the browser history, or false if it should be tracked in history.
    */
-  const updateQuery = async (query: string | undefined, replaceHistory = false) => {
+  const createQuerySearchLink = (query: string | undefined, replaceHistory = false) => {
     const queryParams: TermQueryParams = {
       q: query,
     };
 
-    await updateQueryParameters(queryParams, replaceHistory);
+    return createSearchLink(queryParams, replaceHistory);
   };
 
-  const updateQueryParameters = async (
+  const createSearchLink = (
     queryParams: Record<string, string | undefined>,
     replaceHistory = false,
-  ) => {
+  ): RouteLocationRaw => {
     // Remove keys with undefined values to avoid removing existing query params during merging
     stripUndefined(queryParams);
 
@@ -250,11 +253,11 @@ export const useSearch = () => {
     // Remove empty keys so the URL stays clean (e.g., no ?c=&m=)
     stripEmpty(newQueryParams);
 
-    await navigateTo({
+    return {
       path: "/recipes",
       query: newQueryParams,
       replace: replaceHistory,
-    });
+    };
   };
 
   const stripUndefined = <T extends object>(obj: T) => {
@@ -273,15 +276,17 @@ export const useSearch = () => {
     }
   };
 
-  /** Clears the currently active search filters. */
+  /** Clears the currently active search filters and navigates to the all results page. */
   const clearFilters = async () => {
-    await updateFilters(
-      {
-        course: "",
-        cuisine: "",
-        diets: "",
-      },
-      false,
+    await navigateTo(
+      createFilterSearchLink(
+        {
+          course: "",
+          cuisine: "",
+          diets: "",
+        },
+        false,
+      ),
     );
   };
 
@@ -289,13 +294,13 @@ export const useSearch = () => {
     activeFilters,
     activeQuery,
     clearFilters,
+    createFilterSearchLink,
+    createQuerySearchLink,
     init,
     isReady,
     options,
     results,
     sync,
-    updateFilters,
-    updateQuery,
   };
 };
 

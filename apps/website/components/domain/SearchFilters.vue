@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
+import type { FacetKey } from "@wizard/content";
 import { css, cx } from "styled-system/css";
 import { token } from "styled-system/tokens";
 
-import { useSearch, type FacetKey } from "~/composables/useSearch";
+import { useSearch } from "~/composables/useSearch";
 import type { SelectOption } from "~/types/form";
 import { describeFilterCategories } from "~/utils/format";
 
-const { activeFilters, clearFilters, options, updateFilters } = useSearch();
+const { activeFilters, clearFilters, createFilterSearchLink, options } = useSearch();
 
 const buildOptions = (facet: FacetKey, allResultsLabel: string) =>
   computed<SelectOption[]>(() => {
@@ -138,7 +139,7 @@ const actionsCss = css({
         borderBottomRightRadius: open ? '0px' : token('radii.md'),
       }"
     >
-      <div :class="css({ alignItems: 'center', display: 'flex' })">
+      <div :class="css({ alignItems: 'center', display: 'flex', gap: '4px' })">
         <Icon name="mynaui:filter" :size="24" />
         <Text>{{ filterDescription ?? "Filter results" }}</Text>
       </div>
@@ -156,7 +157,9 @@ const actionsCss = css({
               :placeholder="allCuisinesLabel"
               block
               label="Cuisine"
-              @update:model-value="(value) => updateFilters({ cuisine: value })"
+              @update:model-value="
+                (value) => navigateTo(createFilterSearchLink({ cuisine: value }))
+              "
             />
             <Select
               :model-value="activeFilters.course"
@@ -164,7 +167,7 @@ const actionsCss = css({
               :placeholder="allCoursesLabel"
               block
               label="Course"
-              @update:model-value="(value) => updateFilters({ course: value })"
+              @update:model-value="(value) => navigateTo(createFilterSearchLink({ course: value }))"
             />
             <Select
               :model-value="activeFilters.diets"
@@ -172,7 +175,7 @@ const actionsCss = css({
               :placeholder="allDietsLabel"
               block
               label="Diet"
-              @update:model-value="(value) => updateFilters({ diets: value })"
+              @update:model-value="(value) => navigateTo(createFilterSearchLink({ diets: value }))"
             />
           </div>
 

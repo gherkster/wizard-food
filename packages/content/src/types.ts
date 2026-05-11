@@ -68,8 +68,6 @@ export type Recipe = {
   servingsType: SingularPluralPair;
   /** The unique URL slug of the recipe. */
   slug: string;
-  /** The array of tags of the recipe metadata. */
-  tags: string[];
   /** The title of the recipe. */
   title: string;
 };
