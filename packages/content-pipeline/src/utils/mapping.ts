@@ -4,13 +4,8 @@ export const mapToRecipePreview = (recipe: Recipe): RecipePreview => {
   return {
     course: recipe.course ?? undefined,
     cuisine: recipe.cuisine ?? undefined,
-    datePublished: recipe.datePublished,
-    descriptionSnippet: recipe.descriptionSnippet,
     diets: recipe.diets,
-    mainIngredients: recipe.mainIngredients,
-    durationComponents: recipe.durationComponents,
     durationTotal: recipe.durationTotal,
-    favourite: recipe.favourite ?? undefined,
     featuredTag: recipe.featuredTag,
     previewImage: recipe.previewImage,
     slug: recipe.slug,
