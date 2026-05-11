@@ -2,32 +2,35 @@ import type { FeaturedRecipes, Recipe } from "@wizard/content";
 
 import { mapToRecipePreview } from "../utils/mapping";
 
-export const buildFeaturedRecipes = (rawRecipes: Recipe[]): FeaturedRecipes => {
-  const recipePreviews = rawRecipes.map(mapToRecipePreview);
-
-  if (recipePreviews.length === 0) {
+export const buildFeaturedRecipes = (recipes: Recipe[]): FeaturedRecipes => {
+  if (recipes.length === 0) {
     throw new Error("Failed to retrieve recipes");
   }
 
+  // Keep track of what has been included in a category already to avoid doubling up
   const alreadyShownRecipes = new Set<string>();
 
   const now = new Date();
 
-  const latestRecipes = recipePreviews
+  const latestRecipes = recipes
     .sort(
       (a, b) =>
         (b.datePublished ? new Date(b.datePublished) : now).getTime() -
         (a.datePublished ? new Date(a.datePublished) : now).getTime(),
     )
-    .slice(0, 3);
+    .slice(0, 3)
+    .map(mapToRecipePreview);
+
   latestRecipes.forEach((r) => alreadyShownRecipes.add(r.slug));
 
-  const favouriteRecipes = shuffle(recipePreviews)
+  const favouriteRecipes = shuffle(recipes)
     .filter((r) => !alreadyShownRecipes.has(r.slug) && r.favourite)
-    .slice(0, 4);
+    .slice(0, 4)
+    .map(mapToRecipePreview);
+
   favouriteRecipes.forEach((r) => alreadyShownRecipes.add(r.slug));
 
-  const quickRecipes = shuffle(recipePreviews)
+  const quickRecipes = shuffle(recipes)
     .filter((r) => {
       return (
         !alreadyShownRecipes.has(r.slug) &&
@@ -37,17 +40,20 @@ export const buildFeaturedRecipes = (rawRecipes: Recipe[]): FeaturedRecipes => {
         r.durationTotal.minutes <= 45
       );
     })
-    .slice(0, 4);
+    .slice(0, 4)
+    .map(mapToRecipePreview);
+
   quickRecipes.forEach((r) => alreadyShownRecipes.add(r.slug));
 
-  const worldCuisineRecipes = shuffle(recipePreviews)
+  const worldCuisineRecipes = shuffle(recipes)
     .filter(
       (r) =>
         !alreadyShownRecipes.has(r.slug) &&
         !!r.cuisine &&
         !["american", "australian"].includes(r.cuisine.toLowerCase()),
     )
-    .slice(0, 4);
+    .slice(0, 4)
+    .map(mapToRecipePreview);
 
   return {
     latestRecipes,
