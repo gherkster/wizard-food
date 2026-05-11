@@ -24,7 +24,7 @@ if (import.meta.server) {
   });
 }
 
-const { activeFilters, activeQuery, results } = useSearch();
+const { activeFilters, activeQuery, isReady, results } = useSearch();
 
 const toCardImage = (recipe: RecipeSearchIndexEntry): Image => {
   return {
@@ -38,11 +38,15 @@ const toCardImage = (recipe: RecipeSearchIndexEntry): Image => {
   };
 };
 
-const searchDescription = computed(() =>
-  describeSearchResults(activeQuery.value, activeFilters.value, {
+const searchDescription = computed(() => {
+  if (!isReady.value) {
+    return "";
+  }
+
+  return describeSearchResults(activeQuery.value, activeFilters.value, {
     resultCount: results.value.length,
-  }),
-);
+  });
+});
 
 /** Generates a unique key based on the current search state for triggering transitions. */
 const searchStateKey = computed(() => {
@@ -74,15 +78,18 @@ const resultsStyles = css({
 
 <template>
   <div :class="containerStyles">
+    <SearchFilters />
+
     <ClientOnly>
-      <SearchFilters />
+      <template #fallback>
+        <div></div>
+      </template>
 
-      <div :class="resultsStyles">
-        <Text size="xl">{{ searchDescription ?? "All recipes" }}</Text>
+      <Transition name="quick-fade" mode="out-in">
+        <div :class="resultsStyles" :key="searchStateKey">
+          <Text size="xl" v-if="searchDescription">{{ searchDescription }}</Text>
 
-        <Transition name="quick-fade" mode="out-in">
           <div
-            :key="searchStateKey"
             :class="
               grid({
                 columns: {
@@ -106,19 +113,8 @@ const resultsStyles = css({
               :lazy-load-image="index > 8"
             />
           </div>
-        </Transition>
-      </div>
+        </div>
+      </Transition>
     </ClientOnly>
   </div>
 </template>
-
-<style scoped>
-.quick-fade-enter-active,
-.quick-fade-leave-active {
-  transition: opacity 0.15s ease;
-}
-.quick-fade-enter-from,
-.quick-fade-leave-to {
-  opacity: 0;
-}
-</style>

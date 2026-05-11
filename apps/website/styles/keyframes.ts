@@ -11,4 +11,8 @@ export const keyframes = defineKeyframes({
     "0%": { transform: "translateY(0%)", opacity: 1 },
     "100%": { transform: "translateY(70%)", opacity: 0 },
   },
+  revealIn: {
+    "0%": { opacity: 0, transform: "translateY(2px)" },
+    "100%": { opacity: 1, transform: "translateY(0)" },
+  },
 });

@@ -11,7 +11,7 @@ const emptyFilters: FilterParams = {
 
 describe("Describe filter categories", () => {
   test("No filters to display all recipes message", () => {
-    expect(describeFilterCategories(emptyFilters)).toBe(undefined);
+    expect(describeFilterCategories(emptyFilters)).toBe("All recipes");
   });
 
   test("Only cuisine to display cuisine recipes message", () => {

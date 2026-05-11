@@ -3,6 +3,7 @@ import { defineConfig } from "@pandacss/dev";
 import { globalFont, globalStyles } from "./styles/globalStyles";
 import { keyframes } from "./styles/keyframes";
 import { palette } from "./styles/palette";
+import { styleRecipes } from "./styles/recipes";
 
 const clamp = (minSize: number, maxSize: number, minVw = 320, maxVw = 1400) => {
   return `clamp(${minSize}px, calc(${minSize}px + (${maxSize} - ${minSize}) * ((100vw - ${minVw}px) / (${maxVw} - ${minVw}))), ${maxSize}px)`;
@@ -39,8 +40,15 @@ export default defineConfig({
       "2xl": "1536px",
     },
     keyframes: keyframes,
+    recipes: styleRecipes,
     tokens: {
       colors: palette,
+      durations: {
+        quickFade: { value: "0.15s" },
+      },
+      easings: {
+        quickFade: { value: "ease" },
+      },
       fonts: {
         headers: { value: globalFont.family },
         paragraph: { value: globalFont.family },

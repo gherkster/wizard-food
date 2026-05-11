@@ -82,6 +82,12 @@ export const useSearch = () => {
         await sync();
       }
 
+      // Wait for Nuxt to completely finish hydrating and the router to settle.
+      // This entirely skips the phase where Nuxt temporarily strips the query params.
+      await new Promise<void>((resolve) => {
+        onNuxtReady(() => resolve());
+      });
+
       isReady.value = true;
 
       // Populate the initial set of search results
