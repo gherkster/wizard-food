@@ -28,8 +28,10 @@ const cardRecipe = cva({
     transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
     width: "100%",
 
-    _hover: {
-      borderColor: token("colors.primary"),
+    _canHover: {
+      _hover: {
+        borderColor: token("colors.primary"),
+      },
     },
   },
   variants: {
@@ -85,9 +87,12 @@ const verticalImageCss = css({
         textDecoration: 'none',
         color: 'font',
 
-        _hover: {
-          color: token('colors.link'),
+        _canHover: {
+          _hover: {
+            color: token('colors.link'),
+          },
         },
+
         _visited: {
           color: 'font',
         },

@@ -10,6 +10,12 @@ const clamp = (minSize: number, maxSize: number, minVw = 320, maxVw = 1400) => {
 };
 
 export default defineConfig({
+  conditions: {
+    extend: {
+      canHover: "@media (hover: hover)",
+    },
+  },
+
   exclude: [],
 
   globalCss: globalStyles,

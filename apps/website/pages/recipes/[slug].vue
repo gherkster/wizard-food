@@ -93,10 +93,12 @@ const tagLinkCss = css({
   _active: {
     transform: "translateY(0px)",
   },
-  _hover: {
-    color: token("colors.primary"),
-    borderColor: token("colors.primary"),
-    transform: "translateY(-2px)",
+  _canHover: {
+    _hover: {
+      color: token("colors.primary"),
+      borderColor: token("colors.primary"),
+      transform: "translateY(-2px)",
+    },
   },
 });
 </script>

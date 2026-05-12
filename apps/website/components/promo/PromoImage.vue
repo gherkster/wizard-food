@@ -21,9 +21,11 @@ const linkCss = css({
   position: "relative",
   width: "100%",
 
-  _hover: {
-    borderColor: token("colors.primary"),
-    color: token("colors.rockmelon"),
+  _canHover: {
+    _hover: {
+      borderColor: token("colors.primary"),
+      color: token("colors.rockmelon"),
+    },
   },
 });
 </script>

@@ -40,10 +40,12 @@ const buttonCss = css({
     filter: "none",
     transform: "none",
   },
-  _hover: {
-    "&:not(:disabled)": {
-      cursor: "pointer",
-      filter: "brightness(110%)",
+  _canHover: {
+    _hover: {
+      "&:not(:disabled)": {
+        cursor: "pointer",
+        filter: "brightness(110%)",
+      },
     },
   },
 });
