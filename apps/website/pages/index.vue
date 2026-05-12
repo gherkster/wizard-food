@@ -10,6 +10,8 @@ const { data: recipes } = await useFetch("/api/featured-recipes");
 throwIfNil(content.value, "Failed to fetch content.");
 throwIfNil(recipes.value, "Failed to fetch recipes.");
 
+const { favourite, latest, quick, worldCuisine } = recipes.value!;
+
 if (import.meta.prerender) {
   useSeoMeta({
     title: content.value.title,
@@ -23,7 +25,7 @@ useHead({
   title: content.value.title,
 });
 
-const sectionStyles = css({
+const sectionTitleRowCss = css({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
@@ -35,90 +37,74 @@ const sectionStyles = css({
   },
 });
 
-const cardGroupStyles = grid({
+const cardGroupCss = grid({
+  columnGap: "sm",
   columns: {
-    base: 2,
+    base: 1,
     md: 3,
-    lg: 4,
   },
-  gap: "sm",
+  rowGap: "md",
   marginTop: "sm",
 });
 </script>
 
 <template>
-  <div :class="css({ display: 'flex', flexDirection: 'column', rowGap: 'lg' })">
-    <section v-if="recipes!.latestRecipes.length > 0">
-      <div :class="sectionStyles">
-        <h2>Latest Recipes</h2>
+  <div :class="css({ display: 'flex', flexDirection: 'column', rowGap: 'xl' })">
+    <section>
+      <div :class="sectionTitleRowCss">
+        <Text is="h2" size="xxxl">Latest Recipes</Text>
         <HoverLink to="/recipes" aria-label="See all recipes">
           <Text>See more</Text>
           <icon name="mynaui:chevron-right" :size="24" />
         </HoverLink>
       </div>
-      <div :class="cardGroupStyles">
-        <RecipeCard
-          v-for="recipe in recipes!.latestRecipes"
-          :key="recipe.slug"
-          :title="recipe.title"
-          :to="`/recipes/${recipe.slug}`"
-          :image="recipe.previewImage"
-          :tag="recipe.featuredTag"
-          :duration="recipe.durationTotal?.text"
-        />
-      </div>
+
+      <GradientFeatureRecipeGrid :promo="latest.promo!" :side-recipes="latest.recipes" />
     </section>
 
-    <section v-if="recipes!.favouriteRecipes.length > 0">
-      <div :class="sectionStyles">
-        <h2>Personal Favourites</h2>
+    <section>
+      <div :class="sectionTitleRowCss">
+        <Text is="h2" size="xxxl">Personal Favourites</Text>
       </div>
-      <div :class="cardGroupStyles">
+
+      <div :class="cardGroupCss">
         <RecipeCard
-          v-for="recipe in recipes!.favouriteRecipes"
-          :key="recipe.slug"
-          :title="recipe.title"
-          :image="recipe.previewImage"
-          :to="`/recipes/${recipe.slug}`"
-          :tag="recipe.featuredTag"
+          v-for="recipe in favourite.recipes"
+          :description="recipe.descriptionSnippet"
           :duration="recipe.durationTotal?.text"
+          :image="recipe.previewImage"
+          :key="recipe.slug"
+          :tag="recipe.featuredTag"
+          :title="recipe.title"
+          :to="`/recipes/${recipe.slug}`"
           lazy-load-image
         />
       </div>
     </section>
 
-    <section v-if="recipes!.quickRecipes.length > 0">
-      <div :class="sectionStyles">
-        <h2>Quick Eats</h2>
+    <section>
+      <div :class="sectionTitleRowCss">
+        <Text is="h2" size="xxxl">Quick Eats</Text>
       </div>
 
-      <div :class="cardGroupStyles">
-        <RecipeCard
-          v-for="recipe in recipes!.quickRecipes"
-          :key="recipe.slug"
-          :title="recipe.title"
-          :image="recipe.previewImage"
-          :to="`/recipes/${recipe.slug}`"
-          :tag="recipe.featuredTag"
-          :duration="recipe.durationTotal?.text"
-          lazy-load-image
-        />
-      </div>
+      <SplitRecipeGrid :promo="quick.promo" :side-recipes="quick.recipes" />
     </section>
 
-    <section v-if="recipes!.worldCuisineRecipes.length > 0">
-      <div :class="sectionStyles">
-        <h2>World Cuisines</h2>
+    <section>
+      <div :class="sectionTitleRowCss">
+        <Text is="h2" size="xxxl">World Cuisines</Text>
       </div>
-      <div :class="cardGroupStyles">
+
+      <div :class="cardGroupCss">
         <RecipeCard
-          v-for="recipe in recipes!.worldCuisineRecipes"
-          :key="recipe.slug"
-          :title="recipe.title"
-          :image="recipe.previewImage"
-          :to="`/recipes/${recipe.slug}`"
-          :tag="recipe.featuredTag"
+          v-for="recipe in worldCuisine.recipes"
+          :description="recipe.descriptionSnippet"
           :duration="recipe.durationTotal?.text"
+          :image="recipe.previewImage"
+          :key="recipe.slug"
+          :tag="recipe.featuredTag"
+          :title="recipe.title"
+          :to="`/recipes/${recipe.slug}`"
           lazy-load-image
         />
       </div>

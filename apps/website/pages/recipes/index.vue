@@ -81,10 +81,6 @@ const resultsStyles = css({
     <SearchFilters />
 
     <ClientOnly>
-      <template #fallback>
-        <div></div>
-      </template>
-
       <Transition name="quick-fade" mode="out-in">
         <div :class="resultsStyles" :key="searchStateKey">
           <Text size="xl" v-if="searchDescription">{{ searchDescription }}</Text>

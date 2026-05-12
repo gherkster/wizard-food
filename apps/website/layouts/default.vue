@@ -224,7 +224,7 @@ const mascotStyles = css({
       </nav>
     </header>
 
-    <div :class="css({ maxWidth: token('breakpoints.xl'), margin: '0 auto', marginTop: '2%' })">
+    <div :class="css({ maxWidth: token('breakpoints.xl'), margin: '2em auto' })">
       <slot />
     </div>
   </div>
