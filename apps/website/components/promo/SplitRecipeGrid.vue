@@ -42,6 +42,9 @@ const sideRecipeCss = css({
   flex: 1,
 
   "& .image-container": {
+    // Reserve enough height for two lines of title text
+    minHeight: "130px",
+
     // Constrain the max width of the image, so that with the defined aspect ratio the height of each card can be calculated
     // Pick a width the works on all screen sizes with the card content
     maxWidth: "40%",

@@ -20,7 +20,7 @@ export default defineEventHandler(async () => {
         (b.datePublished ? new Date(b.datePublished) : now).getTime() -
         (a.datePublished ? new Date(a.datePublished) : now).getTime(),
     )
-    .slice(0, 5);
+    .slice(0, 4);
 
   allLatestRecipes.forEach((r) => alreadyShownRecipes.add(r.slug));
 

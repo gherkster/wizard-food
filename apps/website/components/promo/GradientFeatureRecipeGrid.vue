@@ -46,9 +46,16 @@ const cardFlexItemCss = css({
   display: "flex",
 
   "& .image-container": {
+    // Reserve enough height for two lines of title text
+    minHeight: "120px",
     // Constrain the max width of the image, so that with the defined aspect ratio the height of each card can be calculated
     // Pick a width the works on all screen sizes with the card content
-    maxWidth: "30%",
+    maxWidth: "40%",
+
+    lg: {
+      // Use a taller card on larger screen sizes to fill the space
+      minHeight: "150px",
+    },
   },
 });
 </script>
