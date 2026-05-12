@@ -3,6 +3,8 @@ import { Popover as HPopover, PopoverButton, PopoverPanel } from "@headlessui/vu
 import { css } from "styled-system/css";
 import { token } from "styled-system/tokens";
 
+import { fadeSlideTransition } from "~/styles/utils";
+
 interface Props {
   iconPosition?: "left" | "right";
 }
@@ -65,8 +67,10 @@ const contentCss = css({
       </div>
     </PopoverButton>
 
-    <PopoverPanel :class="contentCss">
-      <slot />
-    </PopoverPanel>
+    <Transition v-bind="fadeSlideTransition">
+      <PopoverPanel :class="contentCss">
+        <slot />
+      </PopoverPanel>
+    </Transition>
   </HPopover>
 </template>

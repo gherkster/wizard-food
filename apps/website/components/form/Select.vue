@@ -10,6 +10,7 @@ import { css, cx } from "styled-system/css";
 import { reveal } from "styled-system/recipes";
 import { token } from "styled-system/tokens";
 
+import { fadeSlideTransition } from "~/styles/utils";
 import type { SelectOption } from "~/types/form";
 
 interface Props {
@@ -84,6 +85,15 @@ const itemCss = css({
     color: token("colors.font.muted"),
   },
 });
+
+const iconCss = css({
+  transition: "transform 0.15s ease",
+
+  // Target the icon when the parent button is expanded
+  '[data-headlessui-state*="open"] &': {
+    transform: "rotate(180deg)",
+  },
+});
 </script>
 
 <template>
@@ -100,22 +110,24 @@ const itemCss = css({
           <Text :class="cx(textBaseCss, reveal({ loading }))" size="md">
             {{ loading ? "&nbsp;" : selectedValue || placeholder }}
           </Text>
-          <icon name="mynaui:chevron-down" />
+          <Icon :class="iconCss" name="mynaui:chevron-down" />
         </ListboxButton>
 
-        <ListboxOptions :class="optionsCss" :style="{ '--anchor-gap': '5px' }">
-          <ListboxOption
-            v-for="option in options"
-            :key="option.value"
-            :disabled="option.disabled"
-            :value="option.value"
-            as="template"
-          >
-            <div :class="itemCss">
-              {{ option.label }}
-            </div>
-          </ListboxOption>
-        </ListboxOptions>
+        <Transition v-bind="fadeSlideTransition">
+          <ListboxOptions :class="optionsCss" :style="{ '--anchor-gap': '5px' }">
+            <ListboxOption
+              v-for="option in options"
+              :key="option.value"
+              :disabled="option.disabled"
+              :value="option.value"
+              as="template"
+            >
+              <div :class="itemCss">
+                {{ option.label }}
+              </div>
+            </ListboxOption>
+          </ListboxOptions>
+        </Transition>
       </div>
     </div>
   </Listbox>
