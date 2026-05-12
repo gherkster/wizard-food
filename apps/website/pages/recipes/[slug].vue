@@ -116,7 +116,7 @@ const tagLinkCss = css({
       })
     "
   >
-    <Image :class="css({ borderRadius: 'sm' })" :image="recipe.coverImage" />
+    <Image :class="css({ borderRadius: 'sm' })" :image="recipe.coverImage" fetch-priority="high" />
 
     <div :class="css({ display: 'flex', flexDirection: 'column', rowGap: '1em' })">
       <h1 :class="css({ margin: 0, textWrapStyle: 'auto' })">{{ recipe.title }}</h1>
