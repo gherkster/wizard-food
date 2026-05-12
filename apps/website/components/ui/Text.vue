@@ -3,7 +3,7 @@ import { cva } from "styled-system/css";
 import type { FontSizeToken, FontWeightToken } from "styled-system/tokens";
 
 interface Props {
-  is?: "div" | "span" | "p";
+  is?: "div" | "span" | "p" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
   size?: FontSizeToken;
   textWrap?: "wrap" | "noWrap";
   weight?: FontWeightToken;

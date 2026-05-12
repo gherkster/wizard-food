@@ -1,34 +1,38 @@
 <script setup lang="ts">
 import type { Image } from "@wizard/content";
 import { css } from "styled-system/css";
-import { token } from "styled-system/tokens";
 
 import type { RouteLocationRaw } from "#vue-router";
 
 interface Props {
-  title: string;
-  image: Image;
+  description?: string;
   duration: string | undefined;
+  image: Image;
+  orientation?: "horizontal" | "vertical";
   tag: string | undefined;
+  title: string;
   to: RouteLocationRaw;
 }
 
-defineProps<Props>();
+withDefaults(defineProps<Props>(), {
+  orientation: "vertical",
+});
+
+const contentStyles = css({
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  gap: "xxs",
+  padding: "xs",
+});
 </script>
 
 <template>
-  <Card :image="image" orientation="vertical" :to="to">
-    <div
-      :class="
-        css({
-          display: 'flex',
-          flexDirection: 'column',
-          gap: token('spacing.xxs'),
-          marginTop: 'xxs',
-        })
-      "
-    >
+  <Card :image="image" :orientation="orientation" :to="to">
+    <div :class="contentStyles">
       <Text size="xl" weight="bold">{{ title }}</Text>
+      <Text v-if="description" class="card-description">{{ description }}</Text>
+
       <div v-if="duration || tag" :class="css({ display: 'flex', gap: '10px' })">
         <Text v-if="tag" size="sm">{{ tag }}</Text>
         <DotSeparator v-if="duration && tag" />

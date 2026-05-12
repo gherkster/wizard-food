@@ -14,7 +14,7 @@ export const palette = defineTokens.colors({
     value: "#d9c2b4",
   },
   clove: {
-    value: "#302621",
+    value: "#4c382f",
   },
   espresso: {
     value: "#171210",

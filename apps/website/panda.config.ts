@@ -71,6 +71,7 @@ export default defineConfig({
         },
       },
       spacing: {
+        xl: { value: clamp(48, 96) },
         lg: { value: clamp(32, 64) },
         md: { value: clamp(24, 48) },
         sm: { value: clamp(18, 24) },
