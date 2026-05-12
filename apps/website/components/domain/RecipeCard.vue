@@ -22,7 +22,7 @@ const contentStyles = css({
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
-  gap: "xxs",
+  gap: "xs",
   padding: "xs",
 });
 </script>
