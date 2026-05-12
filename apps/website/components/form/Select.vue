@@ -40,9 +40,12 @@ const triggerCss = css({
   outline: "none",
   textAlign: "left",
 
-  _hover: {
-    borderColor: token("colors.primary"),
+  _canHover: {
+    _hover: {
+      borderColor: token("colors.primary"),
+    },
   },
+
   _expanded: {
     borderColor: token("colors.primary"),
   },
