@@ -69,7 +69,7 @@ const linkCss = css({
       <div :class="sectionTitleRowCss">
         <Text is="h2" size="xxxl">Latest Recipes</Text>
         <NuxtLink :class="linkCss" to="/recipes" aria-label="See all recipes">
-          <Text>See more</Text>
+          <Text>More recipes</Text>
           <icon name="mynaui:chevron-right" :size="24" />
         </NuxtLink>
       </div>

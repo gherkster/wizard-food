@@ -42,6 +42,7 @@ defineEmits(["click"]);
         cursor: 'pointer',
       })
     "
+    aria-label="Animate mascot"
     type="button"
     @click="animateMascot"
   >
