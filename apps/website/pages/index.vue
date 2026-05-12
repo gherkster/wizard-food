@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { css } from "styled-system/css";
 import { grid } from "styled-system/patterns";
+import { token } from "styled-system/tokens";
 
 import { throwIfNil } from "~/utils/error";
 
@@ -46,6 +47,20 @@ const cardGroupCss = grid({
   rowGap: "md",
   marginTop: "sm",
 });
+
+const linkCss = css({
+  color: token("colors.font"),
+  transition: "translate 0.2s ease-in-out",
+
+  _active: {
+    transform: "translateY(0px)",
+  },
+  _hover: {
+    color: token("colors.primary"),
+    borderColor: token("colors.primary"),
+    transform: "translateY(-1px)",
+  },
+});
 </script>
 
 <template>
@@ -53,10 +68,10 @@ const cardGroupCss = grid({
     <section>
       <div :class="sectionTitleRowCss">
         <Text is="h2" size="xxxl">Latest Recipes</Text>
-        <HoverLink to="/recipes" aria-label="See all recipes">
+        <NuxtLink :class="linkCss" to="/recipes" aria-label="See all recipes">
           <Text>See more</Text>
           <icon name="mynaui:chevron-right" :size="24" />
-        </HoverLink>
+        </NuxtLink>
       </div>
 
       <GradientFeatureRecipeGrid :promo="latest.promo!" :side-recipes="latest.recipes" />

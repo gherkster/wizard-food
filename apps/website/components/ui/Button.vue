@@ -28,10 +28,10 @@ const buttonCss = css({
   fontSize: "1rem",
   lineHeight: 0,
   width: "fit-content",
+
   _active: {
     "&:not(:disabled)": {
       transform: "scale(0.97) translateY(1px)",
-      filter: "brightness(80%)", // Darker than hover to simulate depth
     },
   },
   _disabled: {
@@ -43,7 +43,7 @@ const buttonCss = css({
   _hover: {
     "&:not(:disabled)": {
       cursor: "pointer",
-      filter: "brightness(90%)",
+      filter: "brightness(110%)",
     },
   },
 });
