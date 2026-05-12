@@ -22,6 +22,9 @@ const containerCss = css({
   borderRadius: "md",
   display: "flex",
   minWidth: "160px",
+  transitionDuration: "150ms",
+  transitionProperty: "border-color",
+  transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
 
   "& input": {
     outline: "none",

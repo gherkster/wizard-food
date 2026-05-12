@@ -23,6 +23,9 @@ const cardRecipe = cva({
     borderRadius: "sm",
     display: "flex",
     height: "auto",
+    transitionDuration: "150ms",
+    transitionProperty: "border-color",
+    transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
     width: "100%",
 
     _hover: {
@@ -81,9 +84,7 @@ const verticalImageCss = css({
         borderRadius: 'sm',
         textDecoration: 'none',
         color: 'font',
-        transitionProperty: 'colors',
-        transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
-        transitionDuration: '150ms',
+
         _hover: {
           color: token('colors.link'),
         },
