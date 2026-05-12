@@ -1,12 +1,14 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 
+import type { ContentFileName } from "@wizard/content";
+
 const writeJson = async (target: string, value: unknown) => {
   await fs.writeFile(target, `${JSON.stringify(value)}\n`, "utf8");
 };
 
 type Artifact = {
-  filename: string;
+  filename: ContentFileName;
   content: unknown;
 };
 

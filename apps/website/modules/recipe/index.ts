@@ -14,7 +14,8 @@ export default defineNuxtModule({
     nuxt.hook("prerender:routes", async ({ routes }) => {
       const contentDir = getContentDirectory(nuxt);
 
-      const recipes = await loadAllRecipes(contentDir);
+      const recipesBySlug = await loadAllRecipes(contentDir);
+      const recipes = Object.values(recipesBySlug);
 
       if (recipes.length === 0) {
         throw new Error("No recipes retrieved.");
