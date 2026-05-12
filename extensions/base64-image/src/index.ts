@@ -15,7 +15,7 @@ export default defineHook(({ action, init }, context) => {
   const { database, getSchema, services } = context;
   const { AssetsService, ItemsService } = services;
 
-  // Generate and append the base64 thumbnail image url to any images without it
+  // Generate and append the base64 thumbnail image url to any images without it on startup
   init("routes.custom.after", async () => {
     const schema = await getSchema();
 
@@ -43,6 +43,7 @@ export default defineHook(({ action, init }, context) => {
     }
   });
 
+  // Generate and append the base64 thumbnail image url to any uploaded image
   action("files.upload", async ({ payload, key }) => {
     if (!["image/jpeg", "image/png", "image/webp", "image/tiff"].includes(payload.type)) {
       // Skip non-image files
@@ -68,11 +69,9 @@ export default defineHook(({ action, init }, context) => {
     const { stream } = await assetsService.getAsset(key, {
       transformationParams: {
         quality: 20,
-        // This is the ratio of portrait images (3:4) which tend to be the largest images,
-        // so that any ratio mismatch will be less noticeable.
-        // However they will be so heavily blurred it's unlikely to be noticed.
-        width: 30,
-        height: 40,
+        // This is the ratio of the images (4:3) used by the website
+        width: 40,
+        height: 30,
         fit: "cover",
         format: "webp",
         withoutEnlargement: true,
