@@ -3,12 +3,10 @@ import path from "node:path";
 import type { WebsitePagesContent } from "@wizard/content";
 import type { IngredientUnitForms, ServerRecipe } from "@wizard/openapi";
 
-import { buildFeaturedRecipes } from "./build/featured";
 import { useDirectusApi } from "./directus/client";
 import type { DirectusRuntimeConfig } from "./directus/client";
 import { mapToRecipe } from "./map/directusRecipeMapper";
 import { writeContentArtifacts } from "./output/writeArtifacts";
-import { mapToRecipePreview } from "./utils/mapping";
 
 export const resolveContentOutputDir = (contentDir?: string) => {
   return path.resolve(
@@ -74,8 +72,6 @@ export const syncContent = async (options: SyncContentOptions) => {
   );
 
   const recipesBySlug = Object.fromEntries(recipes.map((recipe) => [recipe.slug, recipe]));
-  const recipePreviews = recipes.map(mapToRecipePreview);
-  const featuredRecipes = buildFeaturedRecipes(recipes);
 
   const pagesContent: WebsitePagesContent = {
     home: {
@@ -93,16 +89,8 @@ export const syncContent = async (options: SyncContentOptions) => {
   await writeContentArtifacts(
     [
       {
-        filename: "recipes.by-slug.json",
+        filename: "recipes.json",
         content: recipesBySlug,
-      },
-      {
-        filename: "recipes.all.json",
-        content: recipePreviews,
-      },
-      {
-        filename: "featured-recipes.json",
-        content: featuredRecipes,
       },
       {
         filename: "pages-content.json",

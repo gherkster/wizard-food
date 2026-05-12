@@ -2,7 +2,7 @@ import * as crypto from "node:crypto";
 import * as fs from "node:fs/promises";
 import path from "node:path";
 
-import { loadAllRecipes, type RecipePreview } from "@wizard/content";
+import { loadAllRecipes, type Recipe } from "@wizard/content";
 import MiniSearch from "minisearch";
 
 import type { AppVersion } from "../types/version";
@@ -54,7 +54,7 @@ const generateAppVersionAsset = async (version: AppVersion) => {
 
 // We don't want to index every field in the recipe since it's client side and would make it excessively big,
 // so just index the fields we want to keep client side to show in the search results.
-const mapToSearchIndexRecipe = (recipe: RecipePreview): RecipeSearchIndexEntry => {
+const mapToSearchIndexRecipe = (recipe: Recipe): RecipeSearchIndexEntry => {
   return {
     course: recipe.course,
     cuisine: recipe.cuisine,
@@ -74,7 +74,9 @@ const mapToSearchIndexRecipe = (recipe: RecipePreview): RecipeSearchIndexEntry =
 };
 
 const contentDir = path.resolve(process.cwd(), ".content");
-const recipes = await loadAllRecipes(contentDir);
+
+const recipesBySlug = await loadAllRecipes(contentDir);
+const recipes = Object.values(recipesBySlug);
 
 const searchIndexEntries = recipes.map((r) => mapToSearchIndexRecipe(r));
 

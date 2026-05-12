@@ -72,10 +72,24 @@ export type Recipe = {
   title: string;
 };
 
+export type RecipePromo = Pick<
+  Recipe,
+  | "course"
+  | "coverImage"
+  | "cuisine"
+  | "description"
+  | "diets"
+  | "durationTotal"
+  | "featuredTag"
+  | "slug"
+  | "title"
+>;
+
 export type RecipePreview = Pick<
   Recipe,
   | "course"
   | "cuisine"
+  | "descriptionSnippet"
   | "diets"
   | "durationTotal"
   | "featuredTag"
@@ -93,13 +107,6 @@ export type RecipeDuration = {
   minutes: number;
   /** The text of the recipe duration. @example "1h 20m" */
   text: string;
-};
-
-export type FeaturedRecipes = {
-  latestRecipes: RecipePreview[];
-  favouriteRecipes: RecipePreview[];
-  quickRecipes: RecipePreview[];
-  worldCuisineRecipes: RecipePreview[];
 };
 
 export type WebsitePageContent = {

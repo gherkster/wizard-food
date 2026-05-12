@@ -1,4 +1,4 @@
-import { loadRecipesBySlug } from "@wizard/content";
+import { loadAllRecipes } from "@wizard/content";
 
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug");
@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
     throw new Error("Recipe slug is required");
   }
 
-  const recipes = await loadRecipesBySlug(".content");
+  const recipes = await loadAllRecipes(".content");
 
   return recipes[slug];
 });
