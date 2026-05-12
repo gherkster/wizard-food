@@ -30,7 +30,7 @@ const linkCss = css({
 
 <template>
   <NuxtLink :to="to" :class="linkCss">
-    <Image :image="image" />
+    <Image :image="image" fetch-priority="high" />
 
     <div
       :class="

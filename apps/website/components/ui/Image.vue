@@ -2,7 +2,10 @@
 import { imageAspectRatio, type Image } from "@wizard/content";
 import { css } from "styled-system/css";
 
+import type { ImgHTMLFetchPriority } from "~/env";
+
 const props = defineProps<{
+  fetchPriority?: ImgHTMLFetchPriority;
   image: Image;
   lazy?: boolean;
   alt?: string;
@@ -65,6 +68,7 @@ const imageCss = css({
     <img
       :alt="alt || image.title"
       :class="imageCss"
+      :fetchpriority="fetchPriority"
       :height="Math.round((image.width * y) / x)"
       :loading="lazy ? 'lazy' : undefined"
       v-bind="{

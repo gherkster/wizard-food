@@ -118,7 +118,7 @@ export default defineConfig({
         },
       },
       borders: {
-        primary: { value: "2px solid {colors.primary}" },
+        primary: { value: "2px solid {colors.border}" },
       },
     },
   },
