@@ -7,26 +7,24 @@ defineProps<{
 }>();
 
 const tagSize = "12px";
+
+const tagCss = css({
+  alignItems: "center",
+  border: `2px solid ${token("colors.primary")}`,
+  borderRadius: "md",
+  boxSizing: "content-box",
+  columnGap: "xxs",
+  display: "flex",
+  fontSize: "md",
+  height: tagSize,
+  lineHeight: tagSize,
+  padding: "6px",
+  textAlign: "center",
+});
 </script>
 
 <template>
-  <div
-    :class="
-      css({
-        display: 'flex',
-        alignItems: 'center',
-        boxSizing: 'content-box',
-        border: `2px solid ${token('colors.primary')}`,
-        columnGap: token('spacing.xxs'),
-        height: tagSize,
-        lineHeight: tagSize,
-        borderRadius: token('radii.md'),
-        textAlign: 'center',
-        fontSize: 'md',
-        padding: '6px',
-      })
-    "
-  >
+  <div :class="tagCss">
     <icon v-if="iconName" :name="iconName" :size="14" />
     <slot />
   </div>

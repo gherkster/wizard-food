@@ -17,7 +17,7 @@ const handleError = () => clearError({ redirect: "/" });
 </script>
 
 <template>
-  <nuxt-layout>
+  <NuxtLayout>
     <div
       :class="
         center({
@@ -32,9 +32,9 @@ const handleError = () => clearError({ redirect: "/" });
       "
     >
       <h2>{{ errorMessage }}</h2>
-      <HoverLink to="/" @click.prevent="handleError">
+      <Button @click="handleError">
         <Text size="xl">Go home</Text>
-      </HoverLink>
+      </Button>
     </div>
-  </nuxt-layout>
+  </NuxtLayout>
 </template>

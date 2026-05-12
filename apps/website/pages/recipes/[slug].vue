@@ -85,6 +85,20 @@ const highlightContainerStyles: Styles = {
   borderColor: token("colors.border"),
   padding: "sm",
 };
+
+const tagLinkCss = css({
+  color: token("colors.font"),
+  transition: "translate 0.2s ease-in-out",
+
+  _active: {
+    transform: "translateY(0px)",
+  },
+  _hover: {
+    color: token("colors.primary"),
+    borderColor: token("colors.primary"),
+    transform: "translateY(-2px)",
+  },
+});
 </script>
 
 <template>
@@ -108,9 +122,9 @@ const highlightContainerStyles: Styles = {
       <h1 :class="css({ margin: 0, textWrapStyle: 'auto' })">{{ recipe.title }}</h1>
 
       <div :class="css({ display: 'flex', flexWrap: 'wrap', gap: 'xs' })">
-        <HoverLink v-for="tag in tags" :to="tag.link">
+        <NuxtLink v-for="tag in tags" :class="tagLinkCss" :to="tag.link">
           <Tag icon-name="mynaui:search">{{ tag.value }}</Tag>
-        </HoverLink>
+        </NuxtLink>
       </div>
 
       <div v-if="recipe.description" v-html="recipe.description" />
