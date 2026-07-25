@@ -107,6 +107,8 @@ export type RecipeDuration = {
   minutes: number;
   /** The text of the recipe duration. @example "1h 20m" */
   text: string;
+  /** The type of duraction this applies to. */
+  type: "preparation" | "cooking" | "custom" | "total";
 };
 
 export type WebsitePageContent = {

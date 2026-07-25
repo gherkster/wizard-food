@@ -131,11 +131,19 @@ export const mapToRecipe = (
   };
 
   const preparationDuration = !isNil(serverRecipe.preparationDuration)
-    ? { name: "Preparation", duration: secondsToDuration(serverRecipe.preparationDuration) }
+    ? {
+        name: "Preparation",
+        duration: secondsToDuration(serverRecipe.preparationDuration),
+        type: "preparation" as const,
+      }
     : undefined;
 
   const cookingDuration = !isNil(serverRecipe.cookingDuration)
-    ? { name: "Cooking", duration: secondsToDuration(serverRecipe.cookingDuration) }
+    ? {
+        name: "Cooking",
+        duration: secondsToDuration(serverRecipe.cookingDuration),
+        type: "cooking" as const,
+      }
     : undefined;
 
   const customDuration =
@@ -143,6 +151,7 @@ export const mapToRecipe = (
       ? {
           name: serverRecipe.customDurationName,
           duration: secondsToDuration(serverRecipe.customDuration),
+          type: "custom" as const,
         }
       : undefined;
 
@@ -173,6 +182,7 @@ export const mapToRecipe = (
             label: "Total",
             minutes: totalDuration.asMinutes(),
             text: formatDuration(totalDuration),
+            type: "total",
           }
         : undefined,
     durationComponents: recipeDurations.map((d) => {
@@ -181,6 +191,7 @@ export const mapToRecipe = (
         label: d.name,
         minutes: d.duration.asMinutes(),
         text: formatDuration(d.duration),
+        type: d.type,
       };
     }),
     favourite: serverRecipe.favourite,

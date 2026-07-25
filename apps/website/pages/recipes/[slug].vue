@@ -56,9 +56,11 @@ if (import.meta.server) {
   useJsonld({
     "@context": "https://schema.org",
     "@type": "Recipe",
+    cookTime: recipe.value.durationComponents.find((d) => d.type === "cooking")?.isoDuration,
     name: recipe.value.title,
     description: recipe.value.descriptionSnippet,
     image: recipe.value.coverImage.src,
+    prepTime: recipe.value.durationComponents.find((d) => d.type === "preparation")?.isoDuration,
     // Ingredients and instructions are not included, as that would require including both rich text and plain text variants of strings,
     // which is not worth increasing the payload size over a minimal feature
     recipeCategory: recipe.value.course,
