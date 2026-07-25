@@ -5,16 +5,16 @@ export default defineOperationApp({
   name: "Deploy cloudflare pages",
   icon: "rocket_launch",
   description: "Deploy a cloudflare pages instance",
-  overview: ({ cloudflareProjectName }) => [
+  overview: ({ cloudflareAccountId }) => [
     {
-      label: "Project name",
-      text: cloudflareProjectName,
+      label: "Account ID",
+      text: cloudflareAccountId,
     },
   ],
   options: [
     {
       field: "cloudflareAccountId",
-      name: "Cloudflare Pages account ID",
+      name: "Cloudflare account ID",
       type: "string",
       meta: {
         width: "full",
@@ -22,12 +22,13 @@ export default defineOperationApp({
       },
     },
     {
-      field: "cloudflareProjectName",
-      name: "Cloudflare Pages project name",
+      field: "deployHookUrl",
+      name: "Deploy hook URL",
       type: "string",
       meta: {
         width: "full",
         interface: "input",
+        note: "The deploy hook URL from your Cloudflare Workers project. Triggers a new deployment.",
       },
     },
   ],
