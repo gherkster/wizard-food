@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { SingularPluralPair } from "@wizard/content";
 import { css, type Styles } from "styled-system/css";
 import { grid } from "styled-system/patterns";
 import { token } from "styled-system/tokens";
@@ -44,6 +45,14 @@ if (import.meta.server) {
     ogImage: recipe.value.coverImage.src,
   });
 
+  const formatYield = (servings: number, type: SingularPluralPair) => {
+    if (!servings) {
+      return undefined;
+    }
+
+    return servings > 1 ? `${servings} ${type.plural}` : `${servings} ${type.singular}`;
+  };
+
   useJsonld({
     "@context": "https://schema.org",
     "@type": "Recipe",
@@ -54,10 +63,7 @@ if (import.meta.server) {
     // which is not worth increasing the payload size over a minimal feature
     recipeCategory: recipe.value.course,
     recipeCuisine: recipe.value.cuisine,
-    recipeYield:
-      recipe.value.servings && recipe.value.servingsType
-        ? `${recipe.value.servings} ${recipe.value.servingsType}`
-        : undefined,
+    recipeYield: formatYield(recipe.value.servings, recipe.value.servingsType),
     keywords: tags
       .map((t) => t.value)
       .filter((t) => t !== recipe.value!.course && t !== recipe.value!.cuisine)
