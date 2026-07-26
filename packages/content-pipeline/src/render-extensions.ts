@@ -18,8 +18,6 @@ import Text from "@tiptap/extension-text";
 import type {
   EditorDefaultAttributes,
   InlineIngredient,
-  InlineIngredientHTMLElementDataset,
-  KebabCaseDataAttributes,
   RelationBlockAttrs,
 } from "@wizard/content";
 import { formatIngredient } from "@wizard/content";
@@ -83,37 +81,37 @@ export const inlineIngredientSerializer = Node.create({
     const htmlAttributes = props.HTMLAttributes as InlineIngredientAttributes;
 
     if (htmlAttributes.collection === "ingredients" && htmlAttributes.data) {
-      const inlineIngredientAttributes: KebabCaseDataAttributes<InlineIngredientHTMLElementDataset> =
-        {
-          "data-ingredient": JSON.stringify(htmlAttributes.data),
-        };
-
-      const isSingularForm =
-        htmlAttributes.data.amount !== undefined && Number(htmlAttributes.data.amount) <= 1;
-
       return [
         "span",
         {
           class: "inline-ingredient",
-          ...inlineIngredientAttributes,
+          "data-ingredient": JSON.stringify(htmlAttributes.data),
         },
-        formatIngredient({
-          amount:
-            htmlAttributes.data.amount !== undefined
-              ? new Fraction(htmlAttributes.data.amount)
-              : undefined,
-          unit: isSingularForm
-            ? htmlAttributes.data.unit?.singular
-            : htmlAttributes.data.unit?.plural,
-          name: isSingularForm
-            ? htmlAttributes.data.name.singular
-            : htmlAttributes.data.name.plural,
-        }),
+        formatInlineIngredient(htmlAttributes.data),
       ];
     }
 
     return [props.node.type.name, htmlAttributes];
   },
+  renderText(props) {
+    const attrs = props.node.attrs as InlineIngredientAttributes;
+
+    if (attrs.collection === "ingredients" && attrs.data) {
+      return formatInlineIngredient(attrs.data);
+    }
+
+    return "";
+  },
 });
+
+const formatInlineIngredient = (data: InlineIngredient) => {
+  const isSingularForm = data.amount !== undefined && Number(data.amount) <= 1;
+
+  return formatIngredient({
+    amount: data.amount !== undefined ? new Fraction(data.amount) : undefined,
+    unit: isSingularForm ? data.unit?.singular : data.unit?.plural,
+    name: isSingularForm ? data.name.singular : data.name.plural,
+  });
+};
 
 recipeRenderExtensions.push(inlineIngredientSerializer);

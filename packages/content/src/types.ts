@@ -58,6 +58,8 @@ export type Recipe = {
   instructionGroups: InstructionGroup[];
   /** The main ingredients of the recipe. @example ["Beef"] */
   mainIngredients: string[] | undefined;
+  /** Pre-computed JSON-LD structured data string for schema.org Recipe. */
+  jsonLd?: string;
   /** The recipe notes. @format html */
   note: string | undefined;
   /** The small preview image of the recipe. */
@@ -135,7 +137,10 @@ export type IngredientGroup = {
 export type Ingredient = {
   amount?: number;
   unit?: SingularPluralPair;
+  /** The ingredient name. @format html */
   name: SingularPluralPair;
+  /** The plaintext ingredient name. */
+  namePlain: SingularPluralPair;
   note?: string;
   inlineOnly?: boolean;
 };
@@ -150,5 +155,6 @@ export type InstructionGroup = {
 };
 
 export type Instruction = {
+  /** The rich text representation of the instruction. @format html */
   text: string;
 };

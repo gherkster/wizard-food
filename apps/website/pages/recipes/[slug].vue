@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import type { SingularPluralPair } from "@wizard/content";
 import { css, type Styles } from "styled-system/css";
 import { grid } from "styled-system/patterns";
 import { token } from "styled-system/tokens";
 
 import { useSearch, type Facets } from "~/composables/useSearch";
-import { useJsonld } from "~/utils/jsonld";
 
 const route = useRoute();
 const slug = route.params.slug!.toString();
@@ -45,32 +43,13 @@ if (import.meta.server) {
     ogImage: recipe.value.coverImage.src,
   });
 
-  const formatYield = (servings: number, type: SingularPluralPair) => {
-    if (!servings) {
-      return undefined;
-    }
-
-    return servings > 1 ? `${servings} ${type.plural}` : `${servings} ${type.singular}`;
-  };
-
-  useJsonld({
-    "@context": "https://schema.org",
-    "@type": "Recipe",
-    cookTime: recipe.value.durationComponents.find((d) => d.type === "cooking")?.isoDuration,
-    name: recipe.value.title,
-    description: recipe.value.descriptionSnippet,
-    image: recipe.value.coverImage.src,
-    prepTime: recipe.value.durationComponents.find((d) => d.type === "preparation")?.isoDuration,
-    // Ingredients and instructions are not included, as that would require including both rich text and plain text variants of strings,
-    // which is not worth increasing the payload size over a minimal feature
-    recipeCategory: recipe.value.course,
-    recipeCuisine: recipe.value.cuisine,
-    recipeYield: formatYield(recipe.value.servings, recipe.value.servingsType),
-    keywords: tags
-      .map((t) => t.value)
-      .filter((t) => t !== recipe.value!.course && t !== recipe.value!.cuisine)
-      .join(", "),
-    totalTime: recipe.value.durationTotal?.isoDuration,
+  useHead({
+    script: [
+      {
+        type: "application/ld+json",
+        innerHTML: recipe.value.jsonLd,
+      },
+    ],
   });
 }
 
