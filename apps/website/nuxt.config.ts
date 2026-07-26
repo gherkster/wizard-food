@@ -28,7 +28,7 @@ export default defineNuxtConfig({
     externalBaseUrl: "", // Overridden by recipe module
   },
 
-  compatibilityDate: "2025-02-27",
+  compatibilityDate: "2026-07-26",
 
   components: [
     {
@@ -39,6 +39,10 @@ export default defineNuxtConfig({
 
   css: ["@/assets/css/global.css"],
 
+  experimental: {
+    ssrStreaming: true,
+  },
+
   fonts: {
     defaults: {
       weights: [400],
@@ -46,7 +50,7 @@ export default defineNuxtConfig({
   },
 
   future: {
-    compatibilityVersion: 4,
+    compatibilityVersion: 5,
   },
 
   icon: {
