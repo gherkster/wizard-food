@@ -33,7 +33,7 @@ export const mapToJsonLd = (hydrated: HydratedRecipe): object => {
       hydrated.servings > 1
         ? `${hydrated.servings} ${hydrated.servingsType.plural}`
         : `${hydrated.servings} ${hydrated.servingsType.singular}`,
-    keywords: hydrated.diets?.join(", "),
+    keywords: [...(hydrated.diets ?? []), ...(hydrated.mainIngredients ?? [])].join(", "),
     totalTime: hydrated.durationTotal?.isoDuration,
   };
 };
