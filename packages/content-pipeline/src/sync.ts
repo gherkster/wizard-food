@@ -5,8 +5,12 @@ import type { IngredientUnitForms, ServerRecipe } from "@wizard/openapi";
 
 import { useDirectusApi } from "./directus/client";
 import type { DirectusRuntimeConfig } from "./directus/client";
+import { fetchBase64Thumbnail } from "./map/cloudinaryThumbnail";
 import { mapToRecipe } from "./map/directusRecipeMapper";
+import { setThumbnail } from "./map/thumbnailMetadata";
 import { writeContentArtifacts } from "./output/writeArtifacts";
+import { assertIsHydrated } from "./utils";
+import { resolveConfig } from "./utils/config";
 
 export const resolveContentOutputDir = (contentDir?: string) => {
   return path.resolve(
@@ -62,6 +66,29 @@ export const syncContent = async (options: SyncContentOptions) => {
     unitSingularPluralMap.set(mapKey(uf.singular_form), uf);
     unitSingularPluralMap.set(mapKey(uf.plural_form), uf);
   });
+
+  // Fetch each recipe cover image thumbnail in parallel and assign it to the
+  // image metadata, where mapImage reads it back while mapping. Recipes do not
+  // share cover images, so one fetch per recipe is one fetch per image.
+  const cloudinaryConfig = resolveConfig();
+
+  await Promise.all(
+    recipesResponse.map(async (recipe) => {
+      if (recipe.coverImage === null || recipe.coverImage === undefined) {
+        throw new Error("Recipe image not provided");
+      }
+
+      assertIsHydrated(recipe.coverImage, "coverImage");
+
+      const thumbnail = await fetchBase64Thumbnail(
+        cloudinaryConfig,
+        recipe.coverImage.id!,
+        recipe.coverImage.modified_on!,
+      );
+
+      setThumbnail(recipe.coverImage, thumbnail);
+    }),
+  );
 
   const recipes = recipesResponse.map((recipe) =>
     mapToRecipe(recipe, {

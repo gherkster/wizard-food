@@ -271,18 +271,6 @@ importers:
         specifier: 'catalog:'
         version: 3.2.6(typescript@5.9.3)
 
-  extensions/base64-image:
-    devDependencies:
-      '@directus/extensions-sdk':
-        specifier: 'catalog:'
-        version: 17.1.3(@types/node@22.19.15)(@unhead/vue@1.11.20(vue@3.5.24(typescript@5.9.3)))(jiti@2.7.0)(knex@3.1.0)(pinia@2.3.1(typescript@5.9.3)(vue@3.5.24(typescript@5.9.3)))(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.9.0)
-      '@types/node':
-        specifier: 'catalog:'
-        version: 22.19.15
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-
   extensions/cloudflare-pages-deploy:
     dependencies:
       cloudflare:

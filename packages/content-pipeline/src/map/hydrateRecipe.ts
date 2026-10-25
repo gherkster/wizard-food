@@ -24,6 +24,7 @@ import { renderRichTextHtml, renderPlainText } from "../render";
 import { assertIsHydrated, throwExpression } from "../utils";
 import { resolveConfig } from "../utils/config";
 import { buildImageVariant } from "./cloudinaryImage";
+import { getThumbnail } from "./thumbnailMetadata";
 import type { HydratedInstruction, HydratedInstructionGroup, HydratedRecipe } from "./types";
 
 const mapIngredient = (
@@ -247,9 +248,7 @@ const mapImage = (serverImage: ServerImage, purpose: ImagePurpose): Image => {
 
   return {
     ...variant,
-    base64ThumbnailUrl:
-      serverImage.metadata?.base64Url ??
-      throwExpression("Image base64 thumbnail URL must be provided"),
+    base64ThumbnailUrl: getThumbnail(serverImage),
     height: serverImage.height ?? throwExpression("Image height must be provided"),
     modifiedOn,
     title: serverImage.title ?? throwExpression("Image title must be provided"),

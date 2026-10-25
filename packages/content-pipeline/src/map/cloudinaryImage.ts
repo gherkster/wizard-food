@@ -11,7 +11,7 @@ const imageWidths: Record<ImagePurpose, number[]> = {
 
 const imageSizes: Record<ImagePurpose, string> = {
   preview: "(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw",
-  cover: "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, vw",
+  cover: "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw",
 };
 
 const transformToCloudinaryVersion = (modifiedOn: string): number => {
@@ -25,7 +25,7 @@ const transformToCloudinaryVersion = (modifiedOn: string): number => {
   return timestamp;
 };
 
-const buildTransformation = (width: number): string => {
+export const buildTransformation = (width: number, quality: number | "auto" = "auto"): string => {
   const { x, y } = imageAspectRatio;
   /**
    * Cloudinary Transformation Parameters:
@@ -36,7 +36,7 @@ const buildTransformation = (width: number): string => {
    * f_webp: WebP format (explicit, no Accept negotiation)
    * q_auto: Smart quality compression
    */
-  return `c_fill,g_auto,ar_${x}:${y},w_${width},f_webp,q_auto`;
+  return `c_fill,g_auto,ar_${x}:${y},w_${width},f_webp,q_${quality}`;
 };
 
 const generateCloudinaryDeliverySignature = (signingKey: string, slug: string) => {
@@ -44,7 +44,7 @@ const generateCloudinaryDeliverySignature = (signingKey: string, slug: string) =
   return `s--${hash.substring(0, 8).replaceAll("+", "-").replaceAll("/", "_")}--`;
 };
 
-const buildSignedUrl = (
+export const buildSignedUrl = (
   config: CloudinaryRuntimeConfig,
   imageId: string,
   modifiedOn: string,
