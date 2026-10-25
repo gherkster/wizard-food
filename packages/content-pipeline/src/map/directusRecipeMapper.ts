@@ -2,8 +2,8 @@ import type { Recipe, SingularPluralPair } from "@wizard/content";
 import type { ServerRecipe } from "@wizard/openapi";
 
 import { hydrateRecipe } from "./hydrateRecipe";
-import { mapToRecipe as mapHydratedToRecipe } from "./mapToRecipe";
 import { mapToJsonLd } from "./mapToJsonLd";
+import { mapToRecipe as mapHydratedToRecipe } from "./mapToRecipe";
 
 export const mapToRecipe = (
   serverRecipe: ServerRecipe,
