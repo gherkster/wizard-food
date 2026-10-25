@@ -1,7 +1,7 @@
 import path from "node:path";
 
 import type { WebsitePagesContent } from "@wizard/content";
-import type { IngredientUnitForms, ServerImage, ServerRecipe } from "@wizard/openapi";
+import type { IngredientUnitForms, ServerRecipe } from "@wizard/openapi";
 
 import { useDirectusApi } from "./directus/client";
 import type { DirectusRuntimeConfig } from "./directus/client";
