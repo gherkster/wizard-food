@@ -33,10 +33,10 @@ const buildTransformation = (width: number): string => {
    * g_auto: AI-based subject centering
    * ar_x:y: Force aspect ratio
    * w_xxx: Target width in pixels
-   * f_auto: Best format (AVIF/WebP)
+   * f_webp: WebP format (explicit, no Accept negotiation)
    * q_auto: Smart quality compression
    */
-  return `c_fill,g_auto,ar_${x}:${y},w_${width},f_auto,q_auto`;
+  return `c_fill,g_auto,ar_${x}:${y},w_${width},f_webp,q_auto`;
 };
 
 const generateCloudinaryDeliverySignature = (signingKey: string, slug: string) => {
